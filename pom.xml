@@ -12,8 +12,8 @@
   <packaging>pom</packaging>
   <name>eXo Integration</name>
   <scm>
-    <connection>scm:svn:http://svn.exoplatform.org/projects/integration/trunk</connection>
-    <developerConnection>scm:svn:http://svn.exoplatform.org/projects/integration/trunk</developerConnection>
+    <connection>scm:git:ssh://github.com/exoplatform/integration.git</connection>
+    <developerConnection>scm:git:ssh://github.com/exoplatform/integration.git</developerConnection>
     <url>http://fisheye.exoplatform.org/browse/integration/trunk</url>
   </scm>
   <properties>
