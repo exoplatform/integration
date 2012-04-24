@@ -12,9 +12,9 @@
   <packaging>pom</packaging>
   <name>eXo Integration</name>
   <scm>
-    <connection>scm:git:ssh://github.com/exoplatform/integration.git</connection>
-    <developerConnection>scm:git:ssh://github.com/exoplatform/integration.git</developerConnection>
-    <url>http://fisheye.exoplatform.org/browse/integration/trunk</url>
+   <connection>scm:git:git://github.com/exoplatform/integration.git</connection>
+   <developerConnection>scm:git:git@github.com:exoplatform/integration.git</developerConnection>
+   <url>http://fisheye.exoplatform.org/browse/integration/trunk</url>
   </scm>
   <properties>
     <!-- ********************* -->
