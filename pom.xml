@@ -22,7 +22,8 @@
     <!-- ********************* -->
     <org.exoplatform.portal.version>3.2.5-PLF-SNAPSHOT</org.exoplatform.portal.version>
     <org.exoplatform.cs.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.cs.version>
-    <org.exoplatform.ks.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.ks.version>
+    <org.exoplatform.wiki.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.wiki.version>
+    <org.exoplatform.forum.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.forum.version>
     <org.exoplatform.ecms.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.ecms.version>
     <org.exoplatform.social.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.social.version>
     <org.exoplatform.commons.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.commons.version>
