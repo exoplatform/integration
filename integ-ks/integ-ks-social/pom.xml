@@ -55,44 +55,44 @@
     </dependency>
     
    <dependency>
-      <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.eXoApplication.forum.service</artifactId>
-      <version>${org.exoplatform.ks.version}</version>
+      <groupId>org.exoplatform.forum</groupId>
+      <artifactId>exo.forum.service</artifactId>
+      <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
-      <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.eXoApplication.faq.service</artifactId>
-      <version>${org.exoplatform.ks.version}</version>
+      <groupId>org.exoplatform.forum</groupId>
+      <artifactId>exo.answer.service</artifactId>
+      <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
-      <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.eXoApplication.wiki.service</artifactId>
-      <version>${org.exoplatform.ks.version}</version>
+      <groupId>org.exoplatform.wiki</groupId>
+      <artifactId>wiki-service</artifactId>
+      <version>${org.exoplatform.wiki.version}</version>
       <scope>provided</scope>
     </dependency>
    
    <dependency>
-      <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.component.common</artifactId>
-      <version>${org.exoplatform.ks.version}</version>
+      <groupId>org.exoplatform.forum</groupId>
+      <artifactId>exo.forum.component.common</artifactId>
+      <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
    	<dependency>
-      <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.eXoApplication.common</artifactId>
-      <version>${org.exoplatform.ks.version}</version>
+      <groupId>org.exoplatform.forum</groupId>
+      <artifactId>exo.forum.application.common</artifactId>
+      <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
    <dependency>
-      <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.component.bbcode</artifactId>
-      <version>${org.exoplatform.ks.version}</version>
+      <groupId>org.exoplatform.forum</groupId>
+      <artifactId>exo.forum.component.bbcode</artifactId>
+      <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
