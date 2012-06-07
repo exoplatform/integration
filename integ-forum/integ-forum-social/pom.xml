@@ -56,35 +56,35 @@
     
    <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo.forum.service</artifactId>
+      <artifactId>exo-forum-service</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo.answer.service</artifactId>
+      <artifactId>exo-answer-service</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
    <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo.forum.component.common</artifactId>
+      <artifactId>exo-forum-component-common</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
    	<dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo.forum.application.common</artifactId>
+      <artifactId>exo-forum-application-common</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
    <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo.forum.component.bbcode</artifactId>
+      <artifactId>exo-forum-component-bbcode</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
