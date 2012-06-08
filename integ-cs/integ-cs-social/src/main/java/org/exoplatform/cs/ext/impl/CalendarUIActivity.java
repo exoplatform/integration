@@ -6,11 +6,13 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.jcr.PathNotFoundException;
 
 import org.exoplatform.calendar.service.CalendarEvent;
 import org.exoplatform.calendar.service.CalendarService;
+import org.exoplatform.calendar.service.CalendarSetting;
 import org.exoplatform.calendar.service.Utils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
@@ -43,12 +45,14 @@ public class CalendarUIActivity extends BaseUIActivity {
   private boolean          isTaskAssignedToMe = false;
 
   private boolean          isTaskDone         = false;
-  
+
   private boolean          eventNotFound      = false;
 
   private String           taskStatus;
 
   private String           eventId, calendarId;
+
+  private String           timeZone           = "";
 
   public CalendarUIActivity() {
     super();
@@ -60,6 +64,8 @@ public class CalendarUIActivity extends BaseUIActivity {
       calendarId = getActivity().getTemplateParams().get(CalendarSpaceActivityPublisher.CALENDAR_ID_KEY);
       String username = ConversationState.getCurrent().getIdentity().getUserId();      
       CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+      CalendarSetting setting = calService.getCalendarSetting(username);
+      timeZone = setting.getTimeZone();
       CalendarEvent event = null;
       try {
         event = calService.getGroupEvent(calendarId, eventId);
@@ -213,7 +219,7 @@ public class CalendarUIActivity extends BaseUIActivity {
     return type;
   }
 
-  SimpleDateFormat dformat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+  SimpleDateFormat dformat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
   public String getEventStartTime(WebuiBindingContext ctx) {
     String timeStr = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_STARTTIME_KEY);
@@ -252,7 +258,8 @@ public class CalendarUIActivity extends BaseUIActivity {
     Locale locale = requestContext.getLocale();
     Calendar calendar = GregorianCalendar.getInstance(locale);
     calendar.setTimeInMillis(time);
-
+    TimeZone tz = TimeZone.getTimeZone(timeZone);
+    dformat.setTimeZone(tz);
     return dformat.format(calendar.getTime());
 
   }
