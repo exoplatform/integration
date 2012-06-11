@@ -96,7 +96,8 @@
     <module>integ-gatein</module>
     <module>integ-ecms</module>
     <module>integ-cs</module>
-    <module>integ-ks</module>
+    <module>integ-wiki</module>
+    <module>integ-forum</module>
     <module>integ-social</module>
   </modules>
 </project>
