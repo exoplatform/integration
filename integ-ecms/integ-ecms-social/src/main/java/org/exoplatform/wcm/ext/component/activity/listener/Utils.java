@@ -35,6 +35,7 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.cms.BasePath;
 import org.exoplatform.services.cms.link.LinkManager;
+import org.exoplatform.services.context.DocumentContext;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator;
@@ -132,6 +133,10 @@ public class Utils {
    * @return void
    */
   public static void postActivity(Node node, String activityMsgBundleKey) throws Exception {
+    Object isSkipRaiseAct = DocumentContext.getCurrent().getAttributes().get(DocumentContext.IS_SKIP_RAISE_ACT);
+    if (isSkipRaiseAct != null && Boolean.valueOf(isSkipRaiseAct.toString())) {
+      return;
+    }
     if (!isSupportedContent(node)) {
       return;
     }
