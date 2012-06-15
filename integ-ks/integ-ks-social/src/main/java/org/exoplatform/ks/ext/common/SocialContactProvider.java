@@ -19,7 +19,7 @@ package org.exoplatform.ks.ext.common;
 import java.util.List;
 import java.util.Map;
 
-import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.ks.common.user.CommonContact;
 import org.exoplatform.ks.common.user.ContactProvider;
 import org.exoplatform.ks.common.user.DefaultContactProvider;
@@ -40,79 +40,70 @@ import org.exoplatform.social.core.service.LinkProvider;
  */
 public class SocialContactProvider implements ContactProvider {
   
-  private static Log log = ExoLogger.getLogger(SocialContactProvider.class);
+  private final static Log LOG = ExoLogger.getLogger(SocialContactProvider.class);
   
   @SuppressWarnings("unchecked")
   @Override
   public CommonContact getCommonContact(String userId) {
-    CommonContact contact = new CommonContact();
-    try {
-      IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
+    CommonContact contact = null;
+    IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
+    if (identityM != null) {
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, true);
-      Profile profile = userIdentity.getProfile();
+      if (userIdentity != null) {
+        contact = new CommonContact();
+        Profile profile = userIdentity.getProfile();
 
-      contact.setEmailAddress(profile.getEmail());
-      contact.setFullName(profile.getFullName());
-      contact.setAvatarUrl(profile.getAvatarUrl());
-      if (profile.contains(Profile.FIRST_NAME)) {
-        contact.setFirstName(profile.getProperty(Profile.FIRST_NAME).toString());
-      }
-      if (profile.contains(Profile.LAST_NAME)) {
-        contact.setLastName(profile.getProperty(Profile.LAST_NAME).toString());
-      }
-      if (profile.contains(Profile.GENDER)) {
-        contact.setGender(profile.getProperty(Profile.GENDER).toString());
-      }
-      if (profile.contains(Profile.CONTACT_PHONES)) {
-        List<Map<String, String>> profiles = (List<Map<String, String>>) profile.getProperty(Profile.CONTACT_PHONES);
-        for (Map<String, String> mapInfo : profiles) {
-          try {
-            String str = mapInfo.get("key");
-            if (str != null && str.length() > 0) {
-              if (str.equals("Work")) {
-                str = mapInfo.get("value");
-                if (contact.getWorkPhone().length() > 0) {
-                  str = contact.getWorkPhone() + ", " + str;
-                }
-                contact.setWorkPhone(str);
-              } else if (str.equals("Home")) {
-                str = mapInfo.get("value");
-                if (contact.getHomePhone().length() > 0) {
-                  str = contact.getHomePhone() + ", " + str;
-                }
-                contact.setHomePhone(str);
-              }
+        contact.setEmailAddress(profile.getEmail());
+        contact.setFullName(profile.getFullName());
+        contact.setAvatarUrl(profile.getAvatarUrl());
+        contact.setJob(profile.getPosition());
+        if (profile.contains(Profile.FIRST_NAME)) {
+          contact.setFirstName(profile.getProperty(Profile.FIRST_NAME).toString());
+        }
+        if (profile.contains(Profile.LAST_NAME)) {
+          contact.setLastName(profile.getProperty(Profile.LAST_NAME).toString());
+        }
+        if (profile.contains(Profile.GENDER)) {
+          contact.setGender(profile.getProperty(Profile.GENDER).toString());
+        }
+        if (profile.contains(Profile.CONTACT_PHONES)) {
+          List<Map<String, String>> profiles = (List<Map<String, String>>) profile.getProperty(Profile.CONTACT_PHONES);
+          if (profiles != null) {
+            for (Map<String, String> mapInfo : profiles) {
+              contact.setWorkPhone(getValueByKey(mapInfo, "Work", contact.getWorkPhone()));
+              contact.setHomePhone(getValueByKey(mapInfo, "Home", contact.getHomePhone()));
             }
-          } catch (Exception e) {
           }
         }
-      }
-      if (profile.contains(Profile.CONTACT_URLS)) {
-        List<Map<String, String>> profiles = (List<Map<String, String>>) profile.getProperty(Profile.CONTACT_URLS);
-        for (Map<String, String> mapInfo : profiles) {
-          try {
-            String str = mapInfo.get("key");
-            if (str != null && str.length() > 0) {
-              if (str.equals("url")) {
-                str = mapInfo.get("value");
-                if (contact.getWebSite().length() > 0) {
-                  str = contact.getWebSite() + "," + str;
-                }
-                contact.setWebSite(str);
-              }
+        if (profile.contains(Profile.CONTACT_URLS)) {
+          List<Map<String, String>> profiles = (List<Map<String, String>>) profile.getProperty(Profile.CONTACT_URLS);
+          if (profiles != null) {
+            for (Map<String, String> mapInfo : profiles) {
+              contact.setWebSite(getValueByKey(mapInfo, "url", contact.getWebSite()));
             }
-          } catch (Exception e) {
           }
+        } else {
+          contact.setWebSite(LinkProvider.getProfileUri(userId));
         }
-      } else {
-        contact.setWebSite(LinkProvider.getProfileUri(userId));
       }
-    } catch (Exception e) {
-      log.warn("Could not retrieve forum user profile for " + userId + " by SocialContactProvider, DefaultContactProvider will be used.\nCaused by:", e);
-      OrganizationService orgService = (OrganizationService) PortalContainer.getInstance().getComponentInstanceOfType(OrganizationService.class);
-      DefaultContactProvider provider = new DefaultContactProvider(orgService);
-      contact = provider.getCommonContact(userId);
+    }
+    if (contact == null) {
+      LOG.warn(String.format("Could not retrieve forum user profile for %s by SocialContactProvider, DefaultContactProvider will be used.", userId));
+      OrganizationService orgService = (OrganizationService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(OrganizationService.class);
+      contact = new DefaultContactProvider(orgService).getCommonContact(userId);
     }
     return contact;
   }
+  
+  private String getValueByKey(Map<String, String> mapInfo, String key, String value) {
+    if (mapInfo != null && key.equals(mapInfo.get("key"))) {
+      String str = mapInfo.get("value");
+      if (value.length() > 0) {
+        str = new StringBuffer(value).append(", ").append(str).toString();
+      }
+      return str;
+    }
+    return value;
+  }
+  
 }
