@@ -12,6 +12,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityConstants;
+import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -103,6 +104,20 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     return permissions != null && permissions.containsKey(IdentityConstants.ANY) && ArrayUtils.contains(permissions.get(IdentityConstants.ANY), PermissionType.READ);
   }
   
+  /**
+   * Check If a page can be read by all users of a space
+   * 
+   * @param page Page
+   * @param space Space
+   * @return true : can, false : not can;
+   * @throws Exception
+   */
+  private boolean isPublicInSpace(Page page, Space space) throws Exception {
+    HashMap<String, String[]> pagePermissions = page.getPermission();
+    String groupMemberShip = MembershipEntry.ANY_TYPE + ":" + space.getGroupId();
+    return (pagePermissions.containsKey(groupMemberShip) && ArrayUtils.contains(pagePermissions.get(groupMemberShip), PermissionType.READ));
+  }
+  
   private void saveActivity(String wikiType, String wikiOwner, String pageId, Page page, String addType) throws Exception {
     try {
       Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
@@ -131,6 +146,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
       try {
         space = spaceService.getSpaceByGroupId(groupId);
         if (space != null) {
+          if (!isPublicInSpace(page, space)) return;
           ownerStream = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
           spaceUrl = space.getUrl();
         }
