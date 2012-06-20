@@ -3,13 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.exoplatform.integration</groupId>
-    <artifactId>integ-cs</artifactId>
+    <artifactId>integ-calendar</artifactId>
     <version>4.0.0.Alpha1-SNAPSHOT</version>
   </parent>
-  <artifactId>integ-cs-social</artifactId>
+  <artifactId>integ-calendar-social</artifactId>
   <packaging>jar</packaging>
-  <name>eXo Social -Collaboration Activities</name>
-  <description>CS with Social activity</description>	
+  <name>eXo Social - Calendar Activities</name>
+  <description>Calendar with Social activity</description>	
   <dependencies>
    
     <dependency>
@@ -56,14 +56,14 @@
     
      <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>exo.social.component.core</artifactId>
+      <artifactId>social-component-core</artifactId>
       <version>${org.exoplatform.social.version}</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>exo.social.component.webui</artifactId>
+      <artifactId>social-component-webui</artifactId>
       <version>${org.exoplatform.social.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -71,29 +71,22 @@
     
     <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>exo.social.component.common</artifactId>
+      <artifactId>social-component-common</artifactId>
       <version>${org.exoplatform.social.version}</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
-      <groupId>org.exoplatform.cs</groupId>
-      <artifactId>exo.cs.eXoApplication.calendar.service</artifactId>
-      <version>${org.exoplatform.cs.version}</version>
+      <groupId>org.exoplatform.calendar</groupId>
+      <artifactId>calendar-service </artifactId>
+      <version>${org.exoplatform.calendar.version}</version>
       <scope>provided</scope>
     </dependency>
-    
-    <!-- <dependency>
-      <groupId>org.exoplatform.cs</groupId>
-      <artifactId>exo.cs.eXoApplication.contact.service</artifactId>
-      <version>${org.exoplatform.cs.version}</version>
-      <scope>provided</scope>
-    </dependency> -->
-    
+        
     <dependency>
-      <groupId>org.exoplatform.cs</groupId>
-      <artifactId>exo.cs.web.webservice</artifactId>
-      <version>${org.exoplatform.cs.version}</version>
+      <groupId>org.exoplatform.calendar</groupId>
+      <artifactId>calendar-webservice</artifactId>
+      <version>${org.exoplatform.calendar.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

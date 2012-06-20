@@ -6,10 +6,10 @@
     <artifactId>integ</artifactId>
     <version>4.0.0.Alpha1-SNAPSHOT</version>
   </parent>
-  <artifactId>integ-cs</artifactId>
+  <artifactId>integ-calendar</artifactId>
   <packaging>pom</packaging>
-  <name>eXo Integration - Collaboration</name>
+  <name>eXo Integration - Calendar</name>
   <modules>
-    <module>integ-cs-social</module>
+    <module>integ-calendar-social</module>
   </modules>
 </project>

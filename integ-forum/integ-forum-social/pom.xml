@@ -8,7 +8,7 @@
   </parent>
   <artifactId>integ-forum-social</artifactId>
   <packaging>jar</packaging>
-  <name>eXo Social - Knowledge Activities</name>
+  <name>eXo Social - Forum Activities</name>
   <description>Forum with Social activity</description>	
   <dependencies>
    
@@ -56,56 +56,56 @@
     
    <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo-forum-service</artifactId>
+      <artifactId>forum-forum-service</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo-answer-service</artifactId>
+      <artifactId>forum-answer-service</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
    <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo-forum-component-common</artifactId>
+      <artifactId>forum-component-common</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
    	<dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo-forum-application-common</artifactId>
+      <artifactId>forum-application-common</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
    <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>exo-forum-component-bbcode</artifactId>
+      <artifactId>forum-component-bbcode</artifactId>
       <version>${org.exoplatform.forum.version}</version>
       <scope>provided</scope>
     </dependency>
    
     <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>exo.social.component.core</artifactId>
+      <artifactId>social-component-core</artifactId>
       <version>${org.exoplatform.social.version}</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>exo.social.component.common</artifactId>
+      <artifactId>social-component-common</artifactId>
       <version>${org.exoplatform.social.version}</version>
       <scope>provided</scope>
     </dependency>
 		
 		<dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>exo.social.component.webui</artifactId>
+      <artifactId>social-component-webui</artifactId>
       <version>${org.exoplatform.social.version}</version>
       <scope>provided</scope>
     </dependency>		

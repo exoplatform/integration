@@ -21,7 +21,7 @@
     <!-- Dependencies versions -->
     <!-- ********************* -->
     <org.exoplatform.portal.version>3.2.5-PLF-SNAPSHOT</org.exoplatform.portal.version>
-    <org.exoplatform.cs.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.cs.version>
+    <org.exoplatform.calendar.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.calendar.version>
     <org.exoplatform.wiki.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.wiki.version>
     <org.exoplatform.forum.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.forum.version>
     <org.exoplatform.ecms.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.ecms.version>
@@ -95,7 +95,7 @@
   <modules>
     <module>integ-gatein</module>
     <module>integ-ecms</module>
-    <module>integ-cs</module>
+    <module>integ-calendar</module>
     <module>integ-wiki</module>
     <module>integ-forum</module>
     <module>integ-social</module>
