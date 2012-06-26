@@ -16,6 +16,7 @@
  */
 package org.exoplatform.ks.ext.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
+import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
 import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -111,7 +113,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setUserId(author.getId());
     activity.setTitle(StringEscapeUtils.unescapeHtml(title));
-    activity.setBody(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(body, (List<String>) Collections.EMPTY_LIST)));
+    activity.setBody(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(body, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()))));
     activity.setType(SPACE_APP_ID);
     activity.setTemplateParams(templateParams);
     return activity;

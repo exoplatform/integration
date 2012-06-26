@@ -1,8 +1,10 @@
 package org.exoplatform.ks.ext.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
@@ -12,7 +14,9 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
 import org.exoplatform.ks.common.CommonUtils;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.WebUIUtils;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
@@ -86,7 +90,8 @@ public class AnswerUIActivity extends BaseKSActivity {
       IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, comment.getCommentBy(), false);
       activity.setUserId(userIdentity.getId());
-      activity.setTitle(comment.getComments());
+      activity.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(comment.getComments(),
+                                                                                   new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()))));
       activity.setPostedTime(comment.getDateComment().getTime());
       activity.setId(comment.getId());
 
