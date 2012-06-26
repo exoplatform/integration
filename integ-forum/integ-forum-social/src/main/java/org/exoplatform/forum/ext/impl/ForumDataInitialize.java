@@ -45,7 +45,7 @@ import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
  */
 public class ForumDataInitialize extends SpaceListenerPlugin {
 
-  private static final Log log = ExoLogger.getLogger(ForumDataInitialize.class);
+  private static final Log LOG = ExoLogger.getLogger(ForumDataInitialize.class);
   
   private final InitParams params;
   
@@ -65,6 +65,9 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
       portletName = params.getValueParam("portletName").getValue();
     } catch (Exception e) {
       // do nothing here. It means that initparam is not configured.
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Initparam is not configured for portletName property");
+      }    	
     }
 
     if (!portletName.equals(event.getSource())) {
@@ -114,8 +117,8 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         fServie.saveForum(categorySpId, forum, true);
       }
     } catch (Exception e) {
-      if(log.isDebugEnabled()) {
-        log.debug("Failed to add forum space. " + e.getMessage());
+      if(LOG.isDebugEnabled()) {
+        LOG.debug("Failed to add forum space. " + e.getMessage());
       }
     }
   }

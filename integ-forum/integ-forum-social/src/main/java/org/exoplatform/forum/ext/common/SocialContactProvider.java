@@ -40,7 +40,7 @@ import org.exoplatform.social.core.service.LinkProvider;
  */
 public class SocialContactProvider implements ContactProvider {
   
-  private static Log log = ExoLogger.getLogger(SocialContactProvider.class);
+  private static Log LOG = ExoLogger.getLogger(SocialContactProvider.class);
   
   @SuppressWarnings("unchecked")
   @Override
@@ -84,6 +84,10 @@ public class SocialContactProvider implements ContactProvider {
               }
             }
           } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+              LOG.debug("Can't add contact phone [" + mapInfo.get("key") + ":"
+                  + mapInfo.get("value") + "] to user's profile " + userId);
+            }
           }
         }
       }
@@ -102,13 +106,17 @@ public class SocialContactProvider implements ContactProvider {
               }
             }
           } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+              LOG.debug("Can't add contact url [" + mapInfo.get("key") + ":" + mapInfo.get("value")
+                  + "] to user's profile " + userId);
+            }
           }
         }
       } else {
         contact.setWebSite(LinkProvider.getProfileUri(userId));
       }
     } catch (Exception e) {
-      log.warn("Could not retrieve forum user profile for " + userId + " by SocialContactProvider, DefaultContactProvider will be used.\nCaused by:", e);
+      LOG.warn("Could not retrieve forum user profile for " + userId + " by SocialContactProvider, DefaultContactProvider will be used.\nCaused by:", e);
       OrganizationService orgService = (OrganizationService) PortalContainer.getInstance().getComponentInstanceOfType(OrganizationService.class);
       DefaultContactProvider provider = new DefaultContactProvider(orgService);
       contact = provider.getCommonContact(userId);

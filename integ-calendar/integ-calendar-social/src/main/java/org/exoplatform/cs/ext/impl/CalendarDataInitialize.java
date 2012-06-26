@@ -34,7 +34,7 @@ import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
  */
 public class CalendarDataInitialize extends SpaceListenerPlugin {
 
-  private static final Log   log                = ExoLogger.getLogger(CalendarDataInitialize.class);
+  private static final Log   LOG                = ExoLogger.getLogger(CalendarDataInitialize.class);
 
   public static final String ANY                = "*.*".intern();
 
@@ -68,6 +68,9 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
       portletName = params.getValueParam("portletName").getValue();
     } catch (Exception e) {
       // do nothing here. It means that initparam is not configured.
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Initparam is not configured for portletName property");
+      } 
     }
 
     if (!portletName.equals(event.getSource())) {
@@ -87,6 +90,9 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
         calendar = calService.getGroupCalendar(calendarId);
       } catch (Exception pfe) {
         // do nothing here. this case occurs because desired calendar is not exist.
+        if (LOG.isDebugEnabled()) {
+          LOG.warn("Desired calendar for "+space.getPrettyName()+" is not exist, create a new calendar.");  
+        }    	  
       }
       if (calendar == null) {
         calendar = new Calendar();
@@ -99,7 +105,7 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
         calService.savePublicCalendar(calendar, true, username);
       }
     } catch (Exception e) {
-      log.error(e.getMessage());
+      LOG.error(e.getMessage());
     }
   }
 

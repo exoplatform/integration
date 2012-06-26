@@ -36,7 +36,7 @@ import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
  */
 public class AnswerDataInitialize extends SpaceListenerPlugin {
 
-  private static final Log log = ExoLogger.getLogger(AnswerDataInitialize.class);
+  private static final Log LOG = ExoLogger.getLogger(AnswerDataInitialize.class);
 
   private final InitParams params;
   
@@ -57,6 +57,9 @@ public class AnswerDataInitialize extends SpaceListenerPlugin {
       portletName = params.getValueParam("portletName").getValue();
     } catch (Exception e) {
       // do nothing here. It means that initparam is not configured.
+      if (LOG.isDebugEnabled()) {
+    	  LOG.debug("Initparam is not configured for portletName property");
+      }
     }
     
     if (!portletName.equals(event.getSource())) {
@@ -84,10 +87,10 @@ public class AnswerDataInitialize extends SpaceListenerPlugin {
           fServie.saveCategory(Utils.CATEGORY_HOME, cat, true);
         }
       } else {
-        log.error("\n\n Root category null please check to create one !");
+        LOG.error("\n\n Root category null please check to create one !");
       }
     } catch (Exception e) {
-      log.error("\n\n Initialize category false " + e.getMessage());
+      LOG.error("\n\n Initialize category false " + e.getMessage());
     }
   }
 

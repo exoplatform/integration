@@ -18,6 +18,8 @@ package org.exoplatform.wcm.ext.component.identity.provider;
 
 import javax.jcr.RepositoryException;
 
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.identity.IdentityProvider;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -31,6 +33,7 @@ import org.exoplatform.wcm.ext.component.document.service.DocumentService;
  */
 public class DocumentIdentityProvider extends IdentityProvider<Document> {
 
+  private static final Log LOG = ExoLogger.getLogger(DocumentIdentityProvider.class);
   public static final String NAME       = "document";
 
   private DocumentService    docService = WCMCoreUtils.getService(DocumentService.class);
@@ -46,6 +49,7 @@ public class DocumentIdentityProvider extends IdentityProvider<Document> {
     try {
       return docService.findDocById(id);
     } catch (RepositoryException e) {
+      LOG.error("RepositoryException: ", e);
     }
     return null;
   }
