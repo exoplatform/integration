@@ -20,7 +20,7 @@
     <!-- ********************* -->
     <!-- Dependencies versions -->
     <!-- ********************* -->
-    <org.exoplatform.portal.version>3.2.5-PLF-SNAPSHOT</org.exoplatform.portal.version>
+    <org.exoplatform.portal.version>3.3.0-GA</org.exoplatform.portal.version>
     <org.exoplatform.calendar.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.calendar.version>
     <org.exoplatform.wiki.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.wiki.version>
     <org.exoplatform.forum.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.forum.version>

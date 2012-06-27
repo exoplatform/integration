@@ -135,6 +135,7 @@ public class UIDocActivity extends BaseUIActivity {
     public void execute(Event<UIDocActivity> event) throws Exception {
       UIDocActivity uiComp = event.getSource() ;
       String downloadLink = org.exoplatform.wcm.webui.Utils.getDownloadLink(uiComp.getDocNode());
+      //JS Resource HTTPRequest will be loaded in UIDocActivity.gtmpl template
       event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
     }
   }

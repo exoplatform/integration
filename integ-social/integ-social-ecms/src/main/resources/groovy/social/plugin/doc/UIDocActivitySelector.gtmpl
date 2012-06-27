@@ -21,7 +21,11 @@
 */
 %>
 
-<% 
+<%
+  def rcontext = _ctx.getRequestContext();
+  def jsManager = rcontext.getJavascriptManager();
+  jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
+
   String cancel = uicomponent.event(uicomponent.CANCEL);
   String select = uicomponent.event(uicomponent.SELECTEDFILE);
 %>
