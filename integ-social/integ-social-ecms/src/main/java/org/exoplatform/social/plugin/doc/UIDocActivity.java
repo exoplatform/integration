@@ -17,10 +17,14 @@
 package org.exoplatform.social.plugin.doc;
 
 import javax.jcr.Node;
+import javax.portlet.PortletRequest;
 
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
+import org.exoplatform.wcm.webui.Utils;
+import org.exoplatform.webui.application.WebuiRequestContext;
+import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupWindow;
@@ -41,6 +45,7 @@ import org.exoplatform.webui.event.EventListener;
    events = {
      @EventConfig(listeners = UIDocActivity.DownloadDocumentActionListener.class),
      @EventConfig(listeners = UIDocActivity.ViewDocumentActionListener.class),
+     @EventConfig(listeners = UIDocActivity.GotoFolderActionListener.class),
      @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class),
      @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
      @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
@@ -134,8 +139,32 @@ public class UIDocActivity extends BaseUIActivity {
     @Override
     public void execute(Event<UIDocActivity> event) throws Exception {
       UIDocActivity uiComp = event.getSource() ;
-      String downloadLink = org.exoplatform.wcm.webui.Utils.getDownloadLink(uiComp.getDocNode());
+      String downloadLink = Utils.getDownloadLink(uiComp.getDocNode());
       event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
+    }
+  }
+  
+  public static class GotoFolderActionListener extends EventListener<UIDocActivity> {
+    @Override
+    public void execute(Event<UIDocActivity> event) throws Exception {
+      //
+      String folderPath = Utils.getEditLink(event.getSource().getDocNode(), false, false);
+      folderPath = folderPath.substring(0, folderPath.lastIndexOf("&amp;"));
+      folderPath = folderPath.substring(0, folderPath.lastIndexOf("/"));
+      
+      //
+      StringBuilder siteExplorerURL = new StringBuilder();
+      PortletRequestContext portletRequestContext = WebuiRequestContext.getCurrentInstance();
+      PortletRequest portletRequest = portletRequestContext.getRequest();
+      siteExplorerURL.append(portletRequest.getScheme());
+      siteExplorerURL.append("://");
+      siteExplorerURL.append(portletRequest.getServerName());
+      siteExplorerURL.append(":");
+      siteExplorerURL.append(portletRequest.getServerPort());
+      siteExplorerURL.append(folderPath);
+      
+      //
+      event.getRequestContext().getJavascriptManager().addJavascript(";window.location.href='" + siteExplorerURL.toString() +"';");
     }
   }
 }

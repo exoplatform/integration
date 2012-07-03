@@ -143,6 +143,7 @@
 
   def downloadFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.Download");
   def viewFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.View_File");
+  def gotoFolderLabel = _ctx.appRes("UIComposerDocumentExtension.label.Goto_Folder");
 %>
 
 <div class="UIActivity">
@@ -223,7 +224,8 @@
       <% }%>
      <% }%>
         <a class="ColorLink" href="<%= uicomponent.event("DownloadDocument")%>">$downloadFileLabel</a> |
-        <a class="ColorLink" href="<%= uicomponent.event("ViewDocument")%>">$viewFileLabel</a>
+        <a class="ColorLink" href="<%= uicomponent.event("ViewDocument")%>">$viewFileLabel</a> |
+        <a class="ColorLink" href="<%= uicomponent.event("GotoFolder")%>">$gotoFolderLabel</a>
       </div>
       </div>
       
