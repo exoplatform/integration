@@ -30,9 +30,9 @@
     <org.exoplatform.kernel.version>2.3.8-GA-SNAPSHOT</org.exoplatform.kernel.version>
     <org.exoplatform.jcr.version>1.14.8-GA-SNAPSHOT</org.exoplatform.jcr.version>
     <org.exoplatform.core.version>2.4.8-GA-SNAPSHOT</org.exoplatform.core.version>
-    <org.gatein.shindig.version>2.0.2</org.gatein.shindig.version>
+    <org.gatein.shindig.version>2.0.2-CP01</org.gatein.shindig.version>
     <org.slf4j.version>1.5.8</org.slf4j.version>
-    <org.shindig.version>2.0.2</org.shindig.version>
+    <org.shindig.version>2.0.2-CP01</org.shindig.version>
     <org.json.version>20070829</org.json.version>
     <javax.jcr.version>1.0</javax.jcr.version>
 
