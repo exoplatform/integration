@@ -45,7 +45,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
  * Jul 30, 2010  
  */
 public class CalendarSpaceActivityPublisher extends CalendarEventListener {
-  private Log                LOG                   = ExoLogger.getLogger(CalendarSpaceActivityPublisher.class);
+  private final static Log   LOG                   = ExoLogger.getLogger(CalendarSpaceActivityPublisher.class);
 
   public static final String CALENDAR_APP_ID       = "cs-calendar:spaces";
 

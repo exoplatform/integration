@@ -35,7 +35,7 @@ import org.exoplatform.webui.event.EventListener;
 
 )
 public class CalendarUIActivity extends BaseUIActivity {
-  private static final Log log                = ExoLogger.getLogger(CalendarUIActivity.class);
+  private static final Log LOG                = ExoLogger.getLogger(CalendarUIActivity.class);
 
   private boolean          isAnswered         = false;
 
@@ -65,8 +65,8 @@ public class CalendarUIActivity extends BaseUIActivity {
       try {
         event = calService.getGroupEvent(calendarId, eventId);
       } catch (RepositoryException rpe) {
-        if (log.isDebugEnabled()) 
-          log.debug("Couldn't find the event: " + eventId, rpe);
+        if (LOG.isDebugEnabled()) 
+          LOG.debug("Couldn't find the event: " + eventId, rpe);
       }
       if (event == null) {
         eventNotFound = true;
@@ -99,8 +99,8 @@ public class CalendarUIActivity extends BaseUIActivity {
 
     } catch (Exception e) {
       // Exception from CalendarService gets group event 
-      if (log.isErrorEnabled())
-        log.error("Could not calculate values of Calendar activity with event(task): " + eventId, e);
+      if (LOG.isErrorEnabled())
+        LOG.error("Could not calculate values of Calendar activity with event(task): " + eventId, e);
     }
 
   }
@@ -280,8 +280,8 @@ public class CalendarUIActivity extends BaseUIActivity {
           
           calService.confirmInvitation(user.getUserName(), user.getEmail(), user.getUserName(), org.exoplatform.calendar.service.Calendar.TYPE_PUBLIC, uiComponent.getCalendarId(), uiComponent.getEventId(), answer);
         } catch (Exception e) { //CalendarService.confirmInvitation          
-          if (log.isWarnEnabled())
-            log.warn("Could not answer the invitation of event: " + uiComponent.getEventId());
+          if (LOG.isWarnEnabled())
+            LOG.warn("Could not answer the invitation of event: " + uiComponent.getEventId());
           throw e;
         }
       }
@@ -303,8 +303,8 @@ public class CalendarUIActivity extends BaseUIActivity {
           String remoteUser = requestContext.getRemoteUser();
           calService.assignGroupTask(uiComponent.getEventId(), uiComponent.getCalendarId(), remoteUser);
         } catch (Exception e) { //CalendarService.assignGroupTask
-          if (log.isWarnEnabled())
-            log.warn("Could not assign user for task: " + uiComponent.getEventId());
+          if (LOG.isWarnEnabled())
+            LOG.warn("Could not assign user for task: " + uiComponent.getEventId());
           throw e;
         }
       }
@@ -328,8 +328,8 @@ public class CalendarUIActivity extends BaseUIActivity {
           calService.setGroupTaskStatus(uiComponent.getEventId(), uiComponent.getCalendarId(), param);
         }
       } catch (Exception e) { //CalendarService.setGroupTaskStatus
-        if (log.isWarnEnabled())
-          log.warn("Could not set task status for task: " + uiComponent.getEventId());
+        if (LOG.isWarnEnabled())
+          LOG.warn("Could not set task status for task: " + uiComponent.getEventId());
         throw e;
       }
       requestContext.addUIComponentToUpdateByAjax(uiComponent);

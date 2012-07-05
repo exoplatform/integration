@@ -29,15 +29,15 @@ import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
       }
 )
 public class WikiUIActivity extends BaseUIActivity {
-  public static final Log log = ExoLogger.getLogger(WikiUIActivity.class);
+  private static final Log LOG = ExoLogger.getLogger(WikiUIActivity.class);
 
   public WikiUIActivity() {
   }
 
   public String getUriOfAuthor() {   
     if (getOwnerIdentity() == null){
-      if (log.isDebugEnabled()) {
-        log.debug("Failed to get Url of user, author isn't set");        
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Failed to get Url of user, author isn't set");        
       }       
       return "";
     }        
@@ -60,7 +60,7 @@ public class WikiUIActivity extends BaseUIActivity {
   public String getSpaceAvatarImageSource(String spaceIdentityId) {    
     try {
       if (getOwnerIdentity() == null){
-        log.error("Failed to get Space Avatar Source, unknow owner identity.");
+        LOG.error("Failed to get Space Avatar Source, unknow owner identity.");
         return null;
       }
       String spaceId = getOwnerIdentity().getRemoteId();
@@ -70,7 +70,7 @@ public class WikiUIActivity extends BaseUIActivity {
         return space.getAvatarUrl();
       }
     } catch (SpaceStorageException e) { // SpaceService
-      log.error(String.format("Failed to getSpaceById: %s. \n Cause by: ", spaceIdentityId), e);
+      LOG.error(String.format("Failed to getSpaceById: %s. \n Cause by: ", spaceIdentityId), e);
     }
 
     return null;

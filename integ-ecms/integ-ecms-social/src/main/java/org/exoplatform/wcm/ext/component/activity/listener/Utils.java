@@ -66,7 +66,7 @@ import org.exoplatform.wcm.ext.component.activity.ContentUIActivityBuilder;
  */
 public class Utils {
 
-  private static final Log log = ExoLogger.getLogger(Utils.class);
+  private static final Log LOG = ExoLogger.getLogger(Utils.class);
 
   /** The Constant Activity Type */
   private static final String CONTENT_SPACES = "contents:spaces";
@@ -309,7 +309,7 @@ public class Utils {
     } catch (PathNotFoundException ex) {
       return uri;
     } catch (Exception e) { //WebContentSchemaHandler
-      log.warn(e.getMessage(), e);
+      LOG.warn(e.getMessage(), e);
     }
     return uri;
   }
@@ -361,7 +361,7 @@ public class Utils {
           return node.getNode(NodetypeConstant.JCR_CONTENT).getProperty(NodetypeConstant.JCR_MIME_TYPE).getString();
       }
     } catch (RepositoryException e) {
-      log.error(e.getMessage(), e);
+      LOG.error(e.getMessage(), e);
     }
     return "";
   }

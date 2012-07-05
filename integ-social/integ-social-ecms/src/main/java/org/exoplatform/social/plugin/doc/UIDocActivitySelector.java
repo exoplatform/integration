@@ -53,7 +53,7 @@ public class UIDocActivitySelector extends UIContainer implements UIPopupCompone
   protected static final String UIDOCUMENTSELECTOR = "UIDocumentSelector";
   protected static final String CANCEL             = "Cancel";
   public static final String    SELECTEDFILE       = "SelectedFile";
-  protected static Log          log                = ExoLogger.getLogger(UIDocActivitySelector.class);
+  private static final Log      LOG                = ExoLogger.getLogger(UIDocActivitySelector.class);
 
   public UIDocActivitySelector(){
     try {
@@ -62,7 +62,7 @@ public class UIDocActivitySelector extends UIContainer implements UIPopupCompone
                                                      UIDOCUMENTSELECTOR);
     } catch (Exception e) { 
       //UIContainer add selector exception
-      log.error("An exception happens when init UIDocActivitySelector", e);
+      LOG.error("An exception happens when init UIDocActivitySelector", e);
     }
   }
   @Override

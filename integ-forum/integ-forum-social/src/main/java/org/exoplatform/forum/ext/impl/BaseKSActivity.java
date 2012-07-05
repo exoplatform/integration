@@ -34,15 +34,15 @@ import org.exoplatform.social.webui.activity.BaseUIActivity;
  */
 
 public class BaseKSActivity extends BaseUIActivity {
-  public static final Log log = ExoLogger.getLogger(BaseUIActivity.class);
+  private static final Log LOG = ExoLogger.getLogger(BaseKSActivity.class);
 
   public String getUriOfAuthor() {
     Identity id = getOwnerIdentity(); 
     if (id != null){
       String url = id.getProfile().getUrl();
       if (url == null){
-        if (log.isDebugEnabled()) {
-          log.debug(String.format("Url of user %s has not set yet", id.getProfile().getId()));
+        if (LOG.isDebugEnabled()) {
+          LOG.debug(String.format("Url of user %s has not set yet", id.getProfile().getId()));
         }
       }          
       return new StringBuilder().append("<a href='").append(url).append("'>")
@@ -73,7 +73,7 @@ public class BaseKSActivity extends BaseUIActivity {
         return space.getAvatarUrl();
       }
     } catch (SpaceStorageException e) {
-      log.warn(String.format("Failed to getSpaceById: %s",spaceIdentityId), e);
+      LOG.warn(String.format("Failed to getSpaceById: %s",spaceIdentityId), e);
     }
     return null;
   }

@@ -71,7 +71,7 @@ public class ContentUIActivity extends BaseUIActivity {
 
   private static final String NEW_DATE_FORMAT = "hh:mm:ss MMM d, yyyy";
 
-  private static final Log   log           = ExoLogger.getLogger(ContentUIActivity.class);
+  private static final Log   LOG           = ExoLogger.getLogger(ContentUIActivity.class);
 
   public static final String ACTIVITY_TYPE = "CONTENT_ACTIVITY";
 
@@ -254,8 +254,8 @@ public class ContentUIActivity extends BaseUIActivity {
         }
       }
     } catch (RepositoryException re) {
-      if (log.isWarnEnabled())
-        log.warn("RepositoryException: ", re);
+      if (LOG.isWarnEnabled())
+        LOG.warn("RepositoryException: ", re);
     }
     
     return desc;
@@ -288,7 +288,7 @@ public class ContentUIActivity extends BaseUIActivity {
         return space.getAvatarUrl();
       }
     } catch (SpaceStorageException e) {
-      log.warn("Failed to getSpaceById: " + spaceIdentityId, e);
+      LOG.warn("Failed to getSpaceById: " + spaceIdentityId, e);
     }
     return null;
   }

@@ -16,6 +16,8 @@ import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.webui.WebUIUtils;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -49,7 +51,8 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
     }
 )
 public class AnswerUIActivity extends BaseKSActivity {
-
+  private static final Log LOG = ExoLogger.getLogger(AnswerUIActivity.class);
+  
   public AnswerUIActivity() {}
   
   @Override
@@ -70,8 +73,8 @@ public class AnswerUIActivity extends BaseKSActivity {
             }
           }
         } catch (Exception e) { //FQAService
-          if (log.isWarnEnabled()) {
-            log.warn(String.format("Failed to get comments of question: %s", getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID_KEY)), e);
+          if (LOG.isWarnEnabled()) {
+            LOG.warn(String.format("Failed to get comments of question: %s", getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID_KEY)), e);
           }
         }
       }

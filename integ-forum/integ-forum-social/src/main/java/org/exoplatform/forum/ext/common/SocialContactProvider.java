@@ -44,7 +44,7 @@ import org.exoplatform.social.core.storage.IdentityStorageException;
  */
 public class SocialContactProvider implements ContactProvider {
   
-  private static Log LOG = ExoLogger.getLogger(SocialContactProvider.class);
+  private static final Log LOG = ExoLogger.getLogger(SocialContactProvider.class);
   
   @SuppressWarnings("unchecked")
   @Override

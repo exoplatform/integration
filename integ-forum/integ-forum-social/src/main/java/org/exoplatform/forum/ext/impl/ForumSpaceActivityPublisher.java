@@ -78,7 +78,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   
   private static final int   TYPE_PRIVATE      = 2;
 
-  private static Log         LOG               = ExoLogger.getExoLogger(ForumSpaceActivityPublisher.class);
+  private static final Log   LOG               = ExoLogger.getExoLogger(ForumSpaceActivityPublisher.class);
 
   @Override
   public void saveCategory(Category category) {

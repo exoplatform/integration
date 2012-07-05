@@ -34,7 +34,7 @@ import org.exoplatform.social.webui.activity.BaseUIActivityBuilder;
  * 15, 2011
  */
 public class ContentUIActivityBuilder extends BaseUIActivityBuilder {
-  private static final Log log = ExoLogger.getLogger(ContentUIActivityBuilder.class);
+  private static final Log LOG = ExoLogger.getLogger(ContentUIActivityBuilder.class);
   
   @Override
   protected void extendUIActivity(BaseUIActivity uiActivity, ExoSocialActivity activity) {
@@ -61,7 +61,7 @@ public class ContentUIActivityBuilder extends BaseUIActivityBuilder {
         }
       }
     } catch (RepositoryException re) {
-      log.error("Can not get the repository. ", re);
+      LOG.error("Can not get the repository. ", re);
     }
       
     contentActivity.setContentNode(contentNode);

@@ -71,7 +71,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   public static final String QUESTION_UPDATE = QUESTION + "Update";
   public static final String COMMENT_UPDATE = COMMENT + "Update";
   
-  private static Log LOG = ExoLogger.getExoLogger(AnswerEventListener.class);
+  private final static Log LOG = ExoLogger.getExoLogger(AnswersSpaceActivityPublisher.class);
   
   private boolean isCategoryPublic(String categoryId, List<String> categories) throws Exception {
     if (categoryId != null) {
