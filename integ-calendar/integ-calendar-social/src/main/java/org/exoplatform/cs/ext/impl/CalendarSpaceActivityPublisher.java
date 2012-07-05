@@ -27,6 +27,7 @@ import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.common.ExoSocialException;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -93,20 +94,14 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * @return empty string if the process is failed.
    */
   private String makeEventLink(CalendarEvent event) {
-    StringBuffer sb = new StringBuffer("");
-    try {
+    StringBuffer sb = new StringBuffer("");    
       PortalRequestContext requestContext = Util.getPortalRequestContext();
       sb.append(requestContext.getPortalURI())
         .append(requestContext.getNodePath())
         .append(INVITATION_DETAIL)
         .append(ConversationState.getCurrent().getIdentity().getUserId())
         .append("/").append(event.getId())
-        .append("/").append(event.getCalType());
-    } catch (Exception e) {
-      if (LOG.isWarnEnabled()) 
-        LOG.warn(String.format("Could not create url for the event %s", event.getId()), e);
-      return "";
-    }
+        .append("/").append(event.getCalType());    
     return sb.toString();
   }
 
@@ -136,7 +131,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     if (calendarId == null || calendarId.indexOf(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX) < 0) {
       return;
     }
-    try {
+    try{
       IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
       ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
       SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
@@ -155,7 +150,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 
         activityM.saveActivityNoReturn(spaceIdentity, activity);
       }
-    } catch (Exception e) {
+    }catch(ExoSocialException e){ //getSpaceByPrettyName
       if (LOG.isErrorEnabled())
         LOG.error("Can not record Activity for space when event added ", e);
     }

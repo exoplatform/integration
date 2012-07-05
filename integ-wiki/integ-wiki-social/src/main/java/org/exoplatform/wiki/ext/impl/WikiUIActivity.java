@@ -9,6 +9,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.core.storage.SpaceStorageException;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -33,16 +34,15 @@ public class WikiUIActivity extends BaseUIActivity {
   public WikiUIActivity() {
   }
 
-  public String getUriOfAuthor() {
-    try {
-      return new StringBuilder().append("<a href='").append(getOwnerIdentity().getProfile().getUrl()).append("'>")
-                                .append(getOwnerIdentity().getProfile().getFullName()).append("</a>").toString();
-    } catch (Exception e) {
+  public String getUriOfAuthor() {   
+    if (getOwnerIdentity() == null){
       if (log.isDebugEnabled()) {
-        log.debug(String.format("Failed to get Url of user: %s", getOwnerIdentity().getProfile().getId()), e);
-      }
-    }
-    return "";
+        log.debug("Failed to get Url of user, author isn't set");        
+      }       
+      return "";
+    }        
+    return new StringBuilder().append("<a href='").append(getOwnerIdentity().getProfile().getUrl()).append("'>")
+                                .append(getOwnerIdentity().getProfile().getFullName()).append("</a>").toString();    
   }
 
   public String getUserFullName(String userId) {
@@ -57,17 +57,22 @@ public class WikiUIActivity extends BaseUIActivity {
     return getOwnerIdentity().getProfile().getAvatarUrl();
   }
 
-  public String getSpaceAvatarImageSource(String spaceIdentityId) {
+  public String getSpaceAvatarImageSource(String spaceIdentityId) {    
     try {
+      if (getOwnerIdentity() == null){
+        log.error("Failed to get Space Avatar Source, unknow owner identity.");
+        return null;
+      }
       String spaceId = getOwnerIdentity().getRemoteId();
       SpaceService spaceService = getApplicationComponent(SpaceService.class);
       Space space = spaceService.getSpaceById(spaceId);
       if (space != null) {
         return space.getAvatarUrl();
       }
-    } catch (Exception e) {
-      log.warn(String.format("Failed to getSpaceById: %s",spaceIdentityId), e);
+    } catch (SpaceStorageException e) { // SpaceService
+      log.error(String.format("Failed to getSpaceById: %s. \n Cause by: ", spaceIdentityId), e);
     }
+
     return null;
   }
   

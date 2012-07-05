@@ -63,16 +63,14 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
 
   @Override
   public void applicationAdded(SpaceLifeCycleEvent event) {
-    String portletName = "";
-    try {
-      portletName = params.getValueParam("portletName").getValue();
-    } catch (Exception e) {
-      // do nothing here. It means that initparam is not configured.
-      if (LOG.isDebugEnabled()) {
+    String portletName = "";    
+    
+    if (params.getValueParam("portletName") != null) 
+      portletName =  params.getValueParam("portletName").getValue();
+    else
+      if (LOG.isDebugEnabled())
         LOG.debug("Initparam is not configured for portletName property");
-      } 
-    }
-
+    
     if (!portletName.equals(event.getSource())) {
       /*
        * this function is called only if Calendar Portlet is added to Social Space. Hence, if the application added to space do not have the name as configured, we will do nothing.
@@ -89,7 +87,8 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
       try {
         calendar = calService.getGroupCalendar(calendarId);
       } catch (Exception pfe) {
-        // do nothing here. this case occurs because desired calendar is not exist.
+        // Illegal catch because of Exception thrown by CalendarService.getGroupCalendar
+        // Do nothing here, this case occurs because desired calendar is not exist.       
         if (LOG.isDebugEnabled()) {
           LOG.warn("Desired calendar for "+space.getPrettyName()+" is not exist, create a new calendar.");  
         }    	  
@@ -101,11 +100,12 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
         calendar.setGroups((new String[] { space.getGroupId() }));
         calendar.setName(space.getDisplayName());
         calendar.setEditPermission(new String[] { space.getGroupId() + SLASH_COLON + ANY });
-        calendar.setCalendarOwner(username);
-        calService.savePublicCalendar(calendar, true, username);
+        calendar.setCalendarOwner(username);        
+        calService.savePublicCalendar(calendar, true);
       }
     } catch (Exception e) {
-      LOG.error(e.getMessage());
+      // Illegal catch because of Exception thrown by CalendarService.savePublicCalendar
+      LOG.error("Couldn't save calendar to public area (group calendar).\n Cause by: ", e);
     }
   }
 

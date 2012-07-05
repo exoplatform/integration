@@ -60,8 +60,9 @@ public class UIDocActivitySelector extends UIContainer implements UIPopupCompone
       UIDocumentSelector documentSelector = addChild(UIDocumentSelector.class,
                                                      null,
                                                      UIDOCUMENTSELECTOR);
-    } catch (Exception e) {
-      log.error("An exception happens when init UIAddAttachment", e);
+    } catch (Exception e) { 
+      //UIContainer add selector exception
+      log.error("An exception happens when init UIDocActivitySelector", e);
     }
   }
   @Override

@@ -56,7 +56,7 @@ public class ContentUIActivityBuilder extends BaseUIActivityBuilder {
         try {
           contentNode = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(contentActivity.getNodeUUID());
           break;
-        } catch (Exception e) {
+        } catch (RepositoryException e) {
           continue;
         }
       }

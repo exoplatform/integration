@@ -134,19 +134,16 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     if(uiPopup == null){
       try {
         uiPopup = optionContainer.addChild(UIPopupWindow.class, null, POPUP_COMPOSER);
-      } catch (Exception e) {
-        LOG.error(e);
+      } catch (Exception e) { //UIContainer
+        LOG.error("An exception happens when add document popup.\n Cause by: ", e);
+        return null;
       }
     }
 
     final UIComponent child = uiPopup.getUIComponent();
-    if(child != null && child instanceof UIDocActivitySelector){
-      try {
+    if(child != null && child instanceof UIDocActivitySelector){      
         uiPopup.setShow(true);
-        uiPopup.setResizable(true);
-      } catch (Exception e) {
-        LOG.error(e);
-      }
+        uiPopup.setResizable(true);      
     }
     else {
       try {
@@ -154,8 +151,8 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
         uiPopup.setUIComponent(selector);
         uiPopup.setShow(true);
         uiPopup.setResizable(true);
-      } catch (Exception e) {
-        LOG.error(e);
+      } catch (Exception e) { //UIPopupWindow
+        LOG.error("An exception happens when add document popup.\n Cause by: ", e);
       }
     }
     
@@ -208,7 +205,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     IdentityManager identityManager = uiComposer.getApplicationComponent(IdentityManager.class);
 
     String ownerName = uiUserActivitiesDisplay.getOwnerName();
-    Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, ownerName);
+    Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, ownerName, true);
 
     String remoteUser = requestContext.getRemoteUser();
     saveActivity(activityParams, activityManager, identityManager, ownerIdentity, remoteUser);

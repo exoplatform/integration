@@ -69,7 +69,7 @@ public class AnswerUIActivity extends BaseKSActivity {
               comments.add(act);
             }
           }
-        } catch (Exception e) {
+        } catch (Exception e) { //FQAService
           if (log.isWarnEnabled()) {
             log.warn(String.format("Failed to get comments of question: %s", getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID_KEY)), e);
           }
@@ -135,7 +135,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       if (fullName == null || fullName.trim().length() <= 0)
         fullName = userName;
       return fullName;
-    } catch (Exception e) {
+    } catch (Exception e) { //UserHandler
       return userName;
     }
   }

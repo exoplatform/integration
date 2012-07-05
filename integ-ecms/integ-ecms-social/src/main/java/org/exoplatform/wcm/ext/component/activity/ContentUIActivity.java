@@ -23,6 +23,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
 import javax.portlet.PortletRequest;
 
 import org.exoplatform.commons.utils.ISO8601;
@@ -39,6 +41,7 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.core.storage.SpaceStorageException;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
@@ -235,25 +238,26 @@ public class ContentUIActivity extends BaseUIActivity {
    * Gets the summary.
    * 
    * @param node the node
-   * @return the summary
-   * @throws Exception the exception
+   * @return the summary of Node. Return empty string if catch an exception.
    */
-  public String getSummary(Node node) throws Exception {
+  public String getSummary(Node node) {
     String desc = "";
-    if (node != null) {
-      if (node.hasProperty("exo:summary")) {
-        desc = node.getProperty("exo:summary").getValue().getString();
-      } else if (node.hasNode("jcr:content")) {
-        Node content = node.getNode("jcr:content");
-        if (content.hasProperty("dc:description")) {
-          try {
+    try {
+      if (node != null) {
+        if (node.hasProperty("exo:summary")) {
+          desc = node.getProperty("exo:summary").getValue().getString();
+        } else if (node.hasNode("jcr:content")) {
+          Node content = node.getNode("jcr:content");
+          if (content.hasProperty("dc:description")) {
             desc = content.getProperty("dc:description").getValues()[0].getString();
-          } catch (Exception ex) {
-            return "";
           }
         }
       }
+    } catch (RepositoryException re) {
+      if (log.isWarnEnabled())
+        log.warn("RepositoryException: ", re);
     }
+    
     return desc;
   }
 
@@ -283,7 +287,7 @@ public class ContentUIActivity extends BaseUIActivity {
       if (space != null) {
         return space.getAvatarUrl();
       }
-    } catch (Exception e) {
+    } catch (SpaceStorageException e) {
       log.warn("Failed to getSpaceById: " + spaceIdentityId, e);
     }
     return null;

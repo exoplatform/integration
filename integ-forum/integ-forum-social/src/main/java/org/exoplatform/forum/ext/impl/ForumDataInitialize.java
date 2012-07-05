@@ -61,15 +61,13 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
   @Override
   public void applicationAdded(SpaceLifeCycleEvent event) {
     String portletName = "";
-    try {
+    
+    if (params.getValueParam("portletName") != null)
       portletName = params.getValueParam("portletName").getValue();
-    } catch (Exception e) {
-      // do nothing here. It means that initparam is not configured.
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Initparam is not configured for portletName property");
-      }    	
+    else if (LOG.isDebugEnabled()) {
+      LOG.debug("Initparam is not configured for portletName property");
     }
-
+   
     if (!portletName.equals(event.getSource())) {
       /*
        * this function is called only if Forum Portlet is added to Social Space. 
@@ -116,7 +114,7 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         forum.setViewer(roles);
         fServie.saveForum(categorySpId, forum, true);
       }
-    } catch (Exception e) {
+    } catch (Exception e) { //ForumService      
       if(LOG.isDebugEnabled()) {
         LOG.debug("Failed to add forum space. " + e.getMessage());
       }

@@ -158,7 +158,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           }
         }
       }
-    }  catch (Exception e) {
+    }  catch (Exception e) { //FQAService      
       LOG.error("Can not record Activity for space when post answer ", e);
     }
 
@@ -195,7 +195,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       }
       
       
-    } catch (Exception e) {
+    } catch (Exception e) { //FQAService      
       LOG.error("Can not record Activity for space when add new question ", e);
     }
   }
@@ -213,9 +213,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     } catch (ClassNotFoundException e) {
       if (LOG.isDebugEnabled())
         LOG.debug("Please check the integrated project does the social deploy? " + e.getMessage());
-    } catch (Exception e) {
-      LOG.error("Can not record Activity for space when post answer " + e.getMessage());
-    }
+    } 
+    //catch other type of exception in saveAnswer(String questionId, Answer answers, boolean isNew)
   }
 
 }

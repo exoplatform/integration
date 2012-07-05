@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -214,9 +215,9 @@ public class Utils {
       if (linkManager.isLink(currentNode)) {
         try {
           currentNode = linkManager.getTarget(currentNode, false);
-        } catch (Exception ex) {
+        } catch (RepositoryException ex) {
           currentNode = linkManager.getTarget(currentNode, true);
-        }
+        }         
       }
     }
   }
@@ -307,7 +308,7 @@ public class Utils {
       uri = generateThumbnailImageURI(illustrativeImage);
     } catch (PathNotFoundException ex) {
       return uri;
-    } catch (Exception e) {
+    } catch (Exception e) { //WebContentSchemaHandler
       log.warn(e.getMessage(), e);
     }
     return uri;
@@ -359,7 +360,7 @@ public class Utils {
         if (node.hasNode(NodetypeConstant.JCR_CONTENT))
           return node.getNode(NodetypeConstant.JCR_CONTENT).getProperty(NodetypeConstant.JCR_MIME_TYPE).getString();
       }
-    } catch (Exception e) {
+    } catch (RepositoryException e) {
       log.error(e.getMessage(), e);
     }
     return "";

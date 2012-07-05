@@ -32,6 +32,8 @@ import org.exoplatform.services.cms.impl.DMSConfiguration;
 import org.exoplatform.services.cms.mimetype.DMSMimeTypeResolver;
 import org.exoplatform.services.cms.templates.TemplateService;
 import org.exoplatform.services.jcr.core.ManageableRepository;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.wcm.webui.Utils;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
@@ -49,6 +51,7 @@ import org.exoplatform.webui.ext.UIExtensionManager;
 @ComponentConfig(lifecycle = Lifecycle.class)
 public class ContentPresentation extends UIBaseNodePresentation {
 
+  private static final Log LOG = ExoLogger.getLogger(ContentPresentation.class);
   /** The node that want to view its content */
   private Node                node;
 
@@ -56,9 +59,9 @@ public class ContentPresentation extends UIBaseNodePresentation {
   private JCRResourceResolver resourceResolver;
 
   /** The repository. */
-  private String              repository;
+  //private String              repository;
 
-  public ContentPresentation() {
+  public ContentPresentation() {    
   }
 
   public void setNode(Node node) {
@@ -97,10 +100,15 @@ public class ContentPresentation extends UIBaseNodePresentation {
     return templateService.getTemplatePath(getOriginalNode(), false);
   }
 
+  /**
+   * As getTemplatePath() but it will return value NULL in case of exception.
+   */
   public String getTemplate() {
     try {
       return getTemplatePath();
     } catch (Exception e) {
+      if (LOG.isDebugEnabled())
+        LOG.debug("Catch an exception when getting template, return value NULL.\n Cause by: ", e);
       return null;
     }
   }
@@ -115,8 +123,9 @@ public class ContentPresentation extends UIBaseNodePresentation {
     try {
       DMSConfiguration dmsConfiguration = getApplicationComponent(DMSConfiguration.class);
       String workspace = dmsConfiguration.getConfig().getSystemWorkspace();
-      resourceResolver = new JCRResourceResolver(repository, workspace, "exo:templateFile");
+      resourceResolver = new JCRResourceResolver(workspace);
     } catch (Exception e) {
+      //Control unexpected exception in UI
       Utils.createPopupMessage(this, "UIMessageBoard.msg.get-template-resource", null, ApplicationMessage.ERROR);
     }
     return resourceResolver;

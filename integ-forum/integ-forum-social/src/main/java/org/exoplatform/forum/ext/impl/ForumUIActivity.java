@@ -67,7 +67,7 @@ public class ForumUIActivity extends BaseKSActivity {
         title = _ctx.appRes("ForumUIActivity.label.update-topic");
         linkTag = getLink(herf, getActivityParamValue(ForumSpaceActivityPublisher.TOPIC_NAME_KEY));
       }
-    } catch (Exception e) {
+    } catch (Exception e) { //WebUIBindingContext
       log.debug("Failed to get activity content and title ", e);
     }
     if (!Utils.isEmpty(title)) {

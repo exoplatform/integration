@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.lang.Void;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.exoplatform.ecm.resolver.JCRResourceResolver;
 import org.exoplatform.ecm.webui.presentation.UIBaseNodePresentation;
@@ -106,9 +107,14 @@ public class UIDocViewer extends UIBaseNodePresentation {
       if(templateService.isManagedNodeType(nodeType)) {
         return templateService.getTemplatePathByUser(false, nodeType, userName);
       }
-    } catch (Exception e) {
+    }catch (RepositoryException re){
+      if (LOG.isDebugEnabled() || LOG.isWarnEnabled())
+        LOG.error("Get template catch RepositoryException: ", re);      
+    }
+    catch (Exception e) { //TemplateService
       LOG.warn(e.getMessage(), e);
     }
+    
     return null;
   }
 

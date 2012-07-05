@@ -20,8 +20,10 @@ import java.util.Map;
 
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.core.storage.SpaceStorageException;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 
 /**
@@ -35,15 +37,19 @@ public class BaseKSActivity extends BaseUIActivity {
   public static final Log log = ExoLogger.getLogger(BaseUIActivity.class);
 
   public String getUriOfAuthor() {
-    try {
-      return new StringBuilder().append("<a href='").append(getOwnerIdentity().getProfile().getUrl()).append("'>")
-                                .append(getOwnerIdentity().getProfile().getFullName()).append("</a>").toString();
-    } catch (Exception e) {
-      if (log.isDebugEnabled()) {
-        log.debug(String.format("Failed to get Url of user: %s", getOwnerIdentity().getProfile().getId()), e);
-      }
-    }
-    return "";
+    Identity id = getOwnerIdentity(); 
+    if (id != null){
+      String url = id.getProfile().getUrl();
+      if (url == null){
+        if (log.isDebugEnabled()) {
+          log.debug(String.format("Url of user %s has not set yet", id.getProfile().getId()));
+        }
+      }          
+      return new StringBuilder().append("<a href='").append(url).append("'>")
+        .append(id.getProfile().getFullName()).append("</a>").toString();
+    }  
+    else
+      return "";
   }
 
   public String getUserFullName(String userId) {
@@ -66,7 +72,7 @@ public class BaseKSActivity extends BaseUIActivity {
       if (space != null) {
         return space.getAvatarUrl();
       }
-    } catch (Exception e) {
+    } catch (SpaceStorageException e) {
       log.warn(String.format("Failed to getSpaceById: %s",spaceIdentityId), e);
     }
     return null;

@@ -19,10 +19,13 @@ package org.exoplatform.forum.ext.common;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
+
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ks.common.user.CommonContact;
 import org.exoplatform.ks.common.user.ContactProvider;
 import org.exoplatform.ks.common.user.DefaultContactProvider;
+import org.exoplatform.services.jcr.config.RepositoryConfigurationException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
@@ -31,6 +34,7 @@ import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.service.LinkProvider;
+import org.exoplatform.social.core.storage.IdentityStorageException;
 
 /**
  * Created by The eXo Platform SAS
@@ -47,7 +51,8 @@ public class SocialContactProvider implements ContactProvider {
   public CommonContact getCommonContact(String userId) {
     CommonContact contact = new CommonContact();
     try {
-      IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
+      IdentityManager identityM = (IdentityManager) PortalContainer.getInstance()
+                                                                   .getComponentInstanceOfType(IdentityManager.class);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, true);
       Profile profile = userIdentity.getProfile();
 
@@ -66,7 +71,6 @@ public class SocialContactProvider implements ContactProvider {
       if (profile.contains(Profile.CONTACT_PHONES)) {
         List<Map<String, String>> profiles = (List<Map<String, String>>) profile.getProperty(Profile.CONTACT_PHONES);
         for (Map<String, String> mapInfo : profiles) {
-          try {
             String str = mapInfo.get("key");
             if (str != null && str.length() > 0) {
               if (str.equals("Work")) {
@@ -83,18 +87,11 @@ public class SocialContactProvider implements ContactProvider {
                 contact.setHomePhone(str);
               }
             }
-          } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-              LOG.debug("Can't add contact phone [" + mapInfo.get("key") + ":"
-                  + mapInfo.get("value") + "] to user's profile " + userId);
-            }
-          }
         }
       }
       if (profile.contains(Profile.CONTACT_URLS)) {
         List<Map<String, String>> profiles = (List<Map<String, String>>) profile.getProperty(Profile.CONTACT_URLS);
         for (Map<String, String> mapInfo : profiles) {
-          try {
             String str = mapInfo.get("key");
             if (str != null && str.length() > 0) {
               if (str.equals("url")) {
@@ -105,17 +102,12 @@ public class SocialContactProvider implements ContactProvider {
                 contact.setWebSite(str);
               }
             }
-          } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-              LOG.debug("Can't add contact url [" + mapInfo.get("key") + ":" + mapInfo.get("value")
-                  + "] to user's profile " + userId);
-            }
-          }
+          
         }
       } else {
         contact.setWebSite(LinkProvider.getProfileUri(userId));
       }
-    } catch (Exception e) {
+    } catch (IdentityStorageException e) { //IdentityStorage
       LOG.warn("Could not retrieve forum user profile for " + userId + " by SocialContactProvider, DefaultContactProvider will be used.\nCaused by:", e);
       OrganizationService orgService = (OrganizationService) PortalContainer.getInstance().getComponentInstanceOfType(OrganizationService.class);
       DefaultContactProvider provider = new DefaultContactProvider(orgService);
