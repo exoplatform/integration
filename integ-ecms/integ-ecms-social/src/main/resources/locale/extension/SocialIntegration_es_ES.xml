@@ -5,16 +5,16 @@
       <createdBy>fue creado por</createdBy>
       <editedBy>fue editado por</editedBy>
       <system>el sistema</system>
-      <readmore>...Leer m\u00e1s.</readmore>
+      <readmore>...Leer más.</readmore>
     </messages>
     <publicationStates>
       <archived>Archivado</archived>
       <obsolete>Obsoleto</obsolete>
-      <unpublished>In\u00e9dito</unpublished>
+      <unpublished>Inédito</unpublished>
       <draft>Borrador</draft>
       <pending>Pendiente</pending>
       <approved>Aprobado</approved>
-      <inreview>En Revisi\u00f3n</inreview>
+      <inreview>En Revisión</inreview>
       <staged>Escenificado</staged>
       <published>Publicado</published>
       <live>Publicado</live>
