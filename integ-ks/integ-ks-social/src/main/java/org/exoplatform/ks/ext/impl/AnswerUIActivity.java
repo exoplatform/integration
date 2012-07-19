@@ -127,6 +127,11 @@ public class AnswerUIActivity extends BaseKSActivity {
     return false;
   }
 
+  public String getActivityIconStatus() {
+    String value = getActivityParamValue(AnswersSpaceActivityPublisher.ACTIVITY_TYPE_KEY);
+    return CommonUtils.isEmpty(value) ? "DefaultActivityIcon" : value + AnswersSpaceActivityPublisher.ICON;
+  }
+
   static public String getFullName(String userName) throws Exception {
     try {
       OrganizationService organizationService = (OrganizationService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(OrganizationService.class);

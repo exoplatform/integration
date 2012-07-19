@@ -70,6 +70,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   public static final String ANSWER_UPDATE = ANSWER + "Update";
   public static final String QUESTION_UPDATE = QUESTION + "Update";
   public static final String COMMENT_UPDATE = COMMENT + "Update";
+  public static final String ICON = "ActivityIcon";
   
   private static Log LOG = ExoLogger.getExoLogger(AnswerEventListener.class);
   
@@ -149,7 +150,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             // publish the activity in the user stream.
             streamOwner = userIdentity;
           }
-          String activityType = isNew ? ANSWER_ADD : ANSWER_UPDATE;
+          String activityType = answer.isNew() ? ANSWER_ADD : ANSWER_UPDATE;
           if (streamOwner != null) {
             Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), activityType, questionId, q.getQuestion(), q.getLanguage(), q.getLink());
             templateParams.put(ANSWER_ID_KEY, answer.getId());
