@@ -94,6 +94,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     }
     excerpt = (excerpt.length() > EXCERPT_LENGTH) ? excerpt.substring(0, EXCERPT_LENGTH) + "..." : excerpt;
     templateParams.put(PAGE_EXCERPT, excerpt);
+    templateParams.put(org.exoplatform.social.core.BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, PAGE_EXCERPT);
     activity.setTemplateParams(templateParams);
     return activity;
   }
