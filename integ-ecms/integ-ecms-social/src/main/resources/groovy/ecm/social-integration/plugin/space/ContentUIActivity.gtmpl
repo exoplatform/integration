@@ -293,19 +293,21 @@
 			   	 &nbsp;&nbsp; state: <%=_ctx.appRes("SocialIntegration.publicationStates." + state)%>
 			<% } %>		
         </div>
-		<div id="MediaContent${activity.id}" class="MediaContent">
 		<%if (mimeType != null && mimeType.length() > 0){
-           if(mimeType.startsWith("image")  && currentNode != null){
-           	  def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
+           if(mimeType.startsWith("image")  && currentNode != null){%>
+                 <div id="MediaContent${activity.id}" class="MediaContent">
+           	 <%def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
            	  encodedPath = encodedPath.replaceAll ("%2F", "/");
               String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;              
-							%><a onclick="javascript:window.open('$binarySrc');" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="" style="max-height: 300px; max-width: 300px;" /></a><%
-            }else if (mimeType.startsWith("application/pdf")  && currentNode != null){
-               def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
+							%><a onclick="javascript:window.open('$binarySrc');" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="" style="max-height: 300px; max-width: 300px;" /></a></div><%
+            }else if (mimeType.startsWith("application/pdf")  && currentNode != null){%>
+               <div id="MediaContent${activity.id}" class="MediaContent">
+               <%def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
            	   encodedPath = encodedPath.replaceAll ("%2F", "/");
                String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
-               %><a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder" style="max-height: 300px; max-width: 300px;" /></a><%
+               %><a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder" style="max-height: 300px; max-width: 300px;" /></a></div><%
             }else if((uicomponent.getImagePath() != null && uicomponent.getImagePath().length() > 0) || (summary != null && summary.length() > 0)) { %> 
+              <div id="MediaContent${activity.id}" class="MediaContent">
 				<div class="WebContentBorder">
 					<%if (uicomponent.getImagePath() != null && uicomponent.getImagePath().length() > 0) {%>
 						<div class="IllustrationThumbnail"><a href="$ilBinarySrc" title="$activityContentTitle"><image onerror='loadImageOnError(this);' src="$ilBinarySrc" alt="" style="border:1px solid;"/></a></div>
@@ -314,14 +316,13 @@
 						<span>$summary</span>
 						<div class="ReadMoreLink"><a href="$contentActivityUri"><em><%=_ctx.appRes("SocialIntegration.messages.readmore") %></em></a></div>
 					<%}%>
-				</div>
+				</div></div>
 	          
 	      <%}else if(fileComponent != null) {
 	      	  jsManager.addOnLoadJavascript("changeStyleForMediaComponent('" + "MediaContent" + activity.id + "')");
               uicontentpresentation.renderUIComponent(fileComponent);
             }
         }%>
-        </div>
 		<!--ECMS update content of activity END-->
       </p>
       <!--ECMS change icon-->
