@@ -170,7 +170,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
       IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
       if (isPostPublic(post)) {
         try {
-        Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, ConversationState.getCurrent().getIdentity().getUserId(), false);
+        Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, post.getOwner(), false);
         Identity ownerStream = null, author = userIdentity;
         Topic topic = forumService.getTopic(categoryId, forumId, topicId, "");
         if (isTopicPublic(topic)) {
@@ -196,7 +196,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   private void saveActivityForTopic(Topic topic, String categoryId, String forumId, ACTIVITYTYPE type) {
     ForumService forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
     IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
-    Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, ConversationState.getCurrent().getIdentity().getUserId(), false);
+    Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false);
     Identity ownerStream = null, author;
     author = userIdentity;
     if (isTopicPublic(topic)) {
