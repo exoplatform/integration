@@ -14,6 +14,9 @@
 /temp
 /bin
 /target
+*~
+
+
 
 # /integ-cs/
 /integ-cs/.settings

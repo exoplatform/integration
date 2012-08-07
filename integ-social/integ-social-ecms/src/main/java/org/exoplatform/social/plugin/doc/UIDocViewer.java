@@ -20,10 +20,8 @@ package org.exoplatform.social.plugin.doc;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.lang.Void;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
 import org.exoplatform.ecm.resolver.JCRResourceResolver;
 import org.exoplatform.ecm.webui.presentation.UIBaseNodePresentation;
 import org.exoplatform.ecm.webui.utils.Utils;
