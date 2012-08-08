@@ -62,30 +62,35 @@ import org.exoplatform.wcm.ext.component.activity.ContentUIActivity;
  */
 public class Utils {
 
-  private static final Log LOG = ExoLogger.getLogger(Utils.class);
+  private static final Log    LOG                = ExoLogger.getLogger(Utils.class);
 
   /** The Constant Activity Type */
-  private static final String CONTENT_SPACES = "contents:spaces";
+  private static final String CONTENT_SPACES     = "contents:spaces";
 
   /** the publication:currentState property name */
   private static final String CURRENT_STATE_PROP = "publication:currentState";
 
   /**
    * Populate activity data with the data from Node
-   *
+   * 
    * @param Node the node
    * @param String the message of the activity
    * @return Map the mapped data
    */
-  public static Map<String, String> populateActivityData(Node node, String activityOwnerId, String activityMsgBundleKey) throws Exception {
+  public static Map<String, String> populateActivityData(Node node,
+                                                         String activityOwnerId,
+                                                         String activityMsgBundleKey) throws Exception {
     /** The date formatter. */
     DateFormat dateFormatter = null;
     dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
 
-    //get activity data
-    String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration().getName();
+    // get activity data
+    String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration()
+                                                                                  .getName();
     String workspace = node.getSession().getWorkspace().getName();
-    String state = node.hasProperty(CURRENT_STATE_PROP) ? node.getProperty(CURRENT_STATE_PROP).getValue().getString() : "";
+    String state = node.hasProperty(CURRENT_STATE_PROP) ? node.getProperty(CURRENT_STATE_PROP)
+                                                              .getValue()
+                                                              .getString() : "";
     String illustrationImg = Utils.getIllustrativeImage(node);
     String strDateCreated = "";
     if (node.hasProperty(NodetypeConstant.EXO_DATE_CREATED)) {
@@ -96,14 +101,15 @@ public class Utils {
     if (node.hasNode(NodetypeConstant.JCR_CONTENT)) {
       Node contentNode = node.getNode(NodetypeConstant.JCR_CONTENT);
       if (contentNode.hasProperty(NodetypeConstant.JCR_LAST_MODIFIED)) {
-        Calendar lastModified = contentNode.getProperty(NodetypeConstant.JCR_LAST_MODIFIED).getDate();
+        Calendar lastModified = contentNode.getProperty(NodetypeConstant.JCR_LAST_MODIFIED)
+                                           .getDate();
         strLastModified = dateFormatter.format(lastModified.getTime());
       }
     }
 
     activityOwnerId = activityOwnerId != null ? activityOwnerId : "";
 
-    //populate data to map object
+    // populate data to map object
     Map<String, String> activityParams = new HashMap<String, String>();
     activityParams.put(ContentUIActivity.CONTENT_NAME, node.getName());
     activityParams.put(ContentUIActivity.STATE, state);
@@ -111,7 +117,8 @@ public class Utils {
     activityParams.put(ContentUIActivity.DATE_CREATED, strDateCreated);
     activityParams.put(ContentUIActivity.LAST_MODIFIED, strLastModified);
     activityParams.put(ContentUIActivity.CONTENT_LINK, getContentLink(node));
-    activityParams.put(ContentUIActivity.ID, node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "");
+    activityParams.put(ContentUIActivity.ID,
+                       node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "");
     activityParams.put(ContentUIActivity.REPOSITORY, repository);
     activityParams.put(ContentUIActivity.WORKSPACE, workspace);
     activityParams.put(ContentUIActivity.MESSAGE, activityMsgBundleKey);
@@ -124,13 +131,15 @@ public class Utils {
 
   /**
    * post activity to the activity stream
-   *
+   * 
    * @param String the activity invoker
    * @param node the node
    * @return void
    */
   public static void postActivity(Node node, String activityMsgBundleKey) throws Exception {
-    Object isSkipRaiseAct = DocumentContext.getCurrent().getAttributes().get(DocumentContext.IS_SKIP_RAISE_ACT);
+    Object isSkipRaiseAct = DocumentContext.getCurrent()
+                                           .getAttributes()
+                                           .get(DocumentContext.IS_SKIP_RAISE_ACT);
     if (isSkipRaiseAct != null && Boolean.valueOf(isSkipRaiseAct.toString())) {
       return;
     }
@@ -145,45 +154,60 @@ public class Utils {
 
     SpaceService spaceService = WCMCoreUtils.getService(SpaceService.class);
 
-    //refine to get the valid node
+    // refine to get the valid node
     refineNode(node);
 
-    //get owner
+    // get owner
     String activityOwnerId = getActivityOwnerId();
 
-    ExoSocialActivity activity = createActivity(identityManager, activityOwnerId, node, activityMsgBundleKey);
+    ExoSocialActivity activity = createActivity(identityManager,
+                                                activityOwnerId,
+                                                node,
+                                                activityMsgBundleKey);
     String spaceName = getSpaceName(node);
 
-    if (spaceName != null && spaceName.length() > 0 && spaceService.getSpaceByPrettyName(spaceName) != null) {
+    if (spaceName != null && spaceName.length() > 0
+        && spaceService.getSpaceByPrettyName(spaceName) != null) {
       // post activity to space stream
-      Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, spaceName, true);
+      Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,
+                                                                   spaceName,
+                                                                   true);
       activityManager.saveActivityNoReturn(spaceIdentity, activity);
     } else if (activityOwnerId != null && activityOwnerId.length() > 0) {
       // post activity to user status stream
-      Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, activityOwnerId, true);
+      Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                   activityOwnerId,
+                                                                   true);
       activityManager.saveActivityNoReturn(ownerIdentity, activity);
     } else {
       return;
     }
 
-    //TODO: At the moment, we are waiting for social team to support a mechanism for extending the social streams.
-    //(we want add one more stream named Document to manage the change of documents)
-//    //save with DocumentIdentity
-//    String workspace = node.getSession().getWorkspace().getName();
-//    String nodeUUID = node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "";
-//    Identity docIdentity = identityManager.getOrCreateIdentity(DocumentIdentityProvider.NAME, workspace + ":/" + nodeUUID, true);
-//    activityManager.saveActivityNoReturn(docIdentity, activity);
+    // TODO: At the moment, we are waiting for social team to support a
+    // mechanism for extending the social streams.
+    // (we want add one more stream named Document to manage the change of
+    // documents)
+    // //save with DocumentIdentity
+    // String workspace = node.getSession().getWorkspace().getName();
+    // String nodeUUID = node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ?
+    // node.getUUID() : "";
+    // Identity docIdentity =
+    // identityManager.getOrCreateIdentity(DocumentIdentityProvider.NAME,
+    // workspace + ":/" + nodeUUID, true);
+    // activityManager.saveActivityNoReturn(docIdentity, activity);
   }
 
   /**
    * check the nodes that we support to post activities
+   * 
    * @param node for checking
    * @return result of checking
    * @throws RepositoryException
    */
   private static boolean isSupportedContent(Node node) throws Exception {
     if (getActivityOwnerId() != null && getActivityOwnerId().length() > 0) {
-      NodeHierarchyCreator nodeHierarchyCreator = (NodeHierarchyCreator) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(NodeHierarchyCreator.class);
+      NodeHierarchyCreator nodeHierarchyCreator = (NodeHierarchyCreator) ExoContainerContext.getCurrentContainer()
+                                                                                            .getComponentInstanceOfType(NodeHierarchyCreator.class);
       SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
       Node userNode = nodeHierarchyCreator.getUserNode(sessionProvider, getActivityOwnerId());
       if (userNode != null && node.getPath().startsWith(userNode.getPath() + "/Private/")) {
@@ -196,6 +220,7 @@ public class Utils {
 
   /**
    * refine node for validation
+   * 
    * @param currentNode
    * @throws Exception
    */
@@ -213,16 +238,17 @@ public class Utils {
           currentNode = linkManager.getTarget(currentNode, false);
         } catch (RepositoryException ex) {
           currentNode = linkManager.getTarget(currentNode, true);
-        }         
+        }
       }
     }
   }
 
   /**
    * get activity owner
+   * 
    * @return activity owner
    */
-  private static String getActivityOwnerId () {
+  private static String getActivityOwnerId() {
     String activityOwnerId = "";
     ConversationState conversationState = ConversationState.getCurrent();
     if (conversationState != null) {
@@ -233,52 +259,65 @@ public class Utils {
 
   /**
    * get the space name of node
+   * 
    * @param node
    * @return
    * @throws Exception
    */
-  private static String getSpaceName (Node node) throws Exception {
-	NodeHierarchyCreator nodeHierarchyCreator = (NodeHierarchyCreator) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(NodeHierarchyCreator.class);
-	String groupPath = nodeHierarchyCreator.getJcrPath(BasePath.CMS_GROUPS_PATH);
-	String spacesFolder = groupPath + "/spaces/";
-	String spaceName = "";
-	String nodePath = node.getPath();
-	if (nodePath.startsWith(spacesFolder)) {
-		spaceName = nodePath.substring(spacesFolder.length());
-		spaceName = spaceName.substring(0, spaceName.indexOf("/"));
-	}
+  private static String getSpaceName(Node node) throws Exception {
+    NodeHierarchyCreator nodeHierarchyCreator = (NodeHierarchyCreator) ExoContainerContext.getCurrentContainer()
+                                                                                          .getComponentInstanceOfType(NodeHierarchyCreator.class);
+    String groupPath = nodeHierarchyCreator.getJcrPath(BasePath.CMS_GROUPS_PATH);
+    String spacesFolder = groupPath + "/spaces/";
+    String spaceName = "";
+    String nodePath = node.getPath();
+    if (nodePath.startsWith(spacesFolder)) {
+      spaceName = nodePath.substring(spacesFolder.length());
+      spaceName = spaceName.substring(0, spaceName.indexOf("/"));
+    }
 
     return spaceName;
   }
 
   /**
    * Generate the viewer link to site explorer by node
-   *
+   * 
    * @param Node the node
    * @return String the viewer link
    * @throws RepositoryException
    */
   public static String getContentLink(Node node) throws RepositoryException {
-      String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration().getName();
-      String workspace = node.getSession().getWorkspace().getName();
-      return repository + '/' + workspace + node.getPath();
+    String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration()
+                                                                                  .getName();
+    String workspace = node.getSession().getWorkspace().getName();
+    return repository + '/' + workspace + node.getPath();
   }
 
   /**
    * Create ExoSocialActivity
-   *
+   * 
    * @param IdentityManager the identity Manager
    * @param String the remote user name
    * @return the ExoSocialActivity
    * @throws Exception the activity storage exception
    */
-  public static ExoSocialActivity createActivity(IdentityManager identityManager, String activityOwnerId, Node node, String activityMsgBundleKey) throws Exception {
+  public static ExoSocialActivity createActivity(IdentityManager identityManager,
+                                                 String activityOwnerId,
+                                                 Node node,
+                                                 String activityMsgBundleKey) throws Exception {
 
     // Populate activity data
-    Map<String, String> activityParams = populateActivityData(node, activityOwnerId, activityMsgBundleKey);
-    String title = node.hasProperty(NodetypeConstant.EXO_TITLE) ? node.getProperty(NodetypeConstant.EXO_TITLE).getString()
-                                                 : StringUtils.EMPTY;
-    Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, ConversationState.getCurrent().getIdentity().getUserId(), false);
+    Map<String, String> activityParams = populateActivityData(node,
+                                                              activityOwnerId,
+                                                              activityMsgBundleKey);
+    String title = node.hasProperty(NodetypeConstant.EXO_TITLE) ? node.getProperty(NodetypeConstant.EXO_TITLE)
+                                                                      .getString()
+                                                               : StringUtils.EMPTY;
+    Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                            ConversationState.getCurrent()
+                                                                             .getIdentity()
+                                                                             .getUserId(),
+                                                            false);
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setUserId(identity.getId());
     activity.setType(CONTENT_SPACES);
@@ -290,7 +329,7 @@ public class Utils {
 
   /**
    * Gets the illustrative image.
-   *
+   * 
    * @param node the node
    * @return the illustrative image
    */
@@ -304,7 +343,7 @@ public class Utils {
       uri = generateThumbnailImageURI(illustrativeImage);
     } catch (PathNotFoundException ex) {
       return uri;
-    } catch (Exception e) { //WebContentSchemaHandler
+    } catch (Exception e) { // WebContentSchemaHandler
       LOG.warn(e.getMessage(), e);
     }
     return uri;
@@ -312,7 +351,7 @@ public class Utils {
 
   /**
    * Generate the Thumbnail Image URI.
-   *
+   * 
    * @param node the node
    * @return the Thumbnail uri with medium size
    * @throws Exception the exception
@@ -325,7 +364,9 @@ public class Utils {
     String nodeIdentifiler = file.getPath().replaceFirst("/", "");
     String portalName = PortalContainer.getCurrentPortalContainerName();
     String restContextName = PortalContainer.getCurrentRestContextName();
-    InputStream stream = file.getNode(NodetypeConstant.JCR_CONTENT).getProperty(NodetypeConstant.JCR_DATA).getStream();
+    InputStream stream = file.getNode(NodetypeConstant.JCR_CONTENT)
+                             .getProperty(NodetypeConstant.JCR_DATA)
+                             .getStream();
     if (stream.available() == 0)
       return null;
     stream.close();
@@ -345,7 +386,7 @@ public class Utils {
 
   /**
    * Get the MimeType
-   *
+   * 
    * @param node the node
    * @return the MimeType
    */
@@ -354,7 +395,9 @@ public class Utils {
       if (node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
 
         if (node.hasNode(NodetypeConstant.JCR_CONTENT))
-          return node.getNode(NodetypeConstant.JCR_CONTENT).getProperty(NodetypeConstant.JCR_MIME_TYPE).getString();
+          return node.getNode(NodetypeConstant.JCR_CONTENT)
+                     .getProperty(NodetypeConstant.JCR_MIME_TYPE)
+                     .getString();
       }
     } catch (RepositoryException e) {
       LOG.error(e.getMessage(), e);

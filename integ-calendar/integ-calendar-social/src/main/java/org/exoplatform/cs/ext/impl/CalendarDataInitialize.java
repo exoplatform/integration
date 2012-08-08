@@ -34,19 +34,19 @@ import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
  */
 public class CalendarDataInitialize extends SpaceListenerPlugin {
 
-  private static final Log   LOG                = ExoLogger.getLogger(CalendarDataInitialize.class);
+  private static final Log   LOG                      = ExoLogger.getLogger(CalendarDataInitialize.class);
 
-  public static final String ANY                = "*.*".intern();
+  public static final String ANY                      = "*.*".intern();
 
-  public static final String SLASH_COLON        = "/:".intern();
+  public static final String SLASH_COLON              = "/:".intern();
 
-  public static final String SLASH              = "/".intern();
+  public static final String SLASH                    = "/".intern();
 
-  public static final String COLON              = ":".intern();
+  public static final String COLON                    = ":".intern();
 
-  public static final String SPLITER            = "://".intern();
+  public static final String SPLITER                  = "://".intern();
 
-  public static final String PUBLIC_TYPE        = "2".intern();
+  public static final String PUBLIC_TYPE              = "2".intern();
 
   public static final String SPACE_CALENDAR_ID_SUFFIX = "_space_calendar";
 
@@ -63,35 +63,40 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
 
   @Override
   public void applicationAdded(SpaceLifeCycleEvent event) {
-    String portletName = "";    
-    
-    if (params.getValueParam("portletName") != null) 
-      portletName =  params.getValueParam("portletName").getValue();
-    else
-      if (LOG.isDebugEnabled())
-        LOG.debug("Initparam is not configured for portletName property");
-    
+    String portletName = "";
+
+    if (params.getValueParam("portletName") != null)
+      portletName = params.getValueParam("portletName").getValue();
+    else if (LOG.isDebugEnabled())
+      LOG.debug("Initparam is not configured for portletName property");
+
     if (!portletName.equals(event.getSource())) {
       /*
-       * this function is called only if Calendar Portlet is added to Social Space. Hence, if the application added to space do not have the name as configured, we will do nothing.
+       * this function is called only if Calendar Portlet is added to Social
+       * Space. Hence, if the application added to space do not have the name as
+       * configured, we will do nothing.
        */
       return;
     }
 
     try {
       Space space = event.getSpace();
-      CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+      CalendarService calService = (CalendarService) PortalContainer.getInstance()
+                                                                    .getComponentInstanceOfType(CalendarService.class);
       String calendarId = space.getPrettyName() + SPACE_CALENDAR_ID_SUFFIX;
       String username = space.getGroupId();
       Calendar calendar = null;
       try {
         calendar = calService.getGroupCalendar(calendarId);
       } catch (Exception pfe) {
-        // Illegal catch because of Exception thrown by CalendarService.getGroupCalendar
-        // Do nothing here, this case occurs because desired calendar is not exist.       
+        // Illegal catch because of Exception thrown by
+        // CalendarService.getGroupCalendar
+        // Do nothing here, this case occurs because desired calendar is not
+        // exist.
         if (LOG.isDebugEnabled()) {
-          LOG.warn("Desired calendar for "+space.getPrettyName()+" is not exist, create a new calendar.");  
-        }    	  
+          LOG.warn("Desired calendar for " + space.getPrettyName()
+              + " is not exist, create a new calendar.");
+        }
       }
       if (calendar == null) {
         calendar = new Calendar();
@@ -100,11 +105,12 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
         calendar.setGroups((new String[] { space.getGroupId() }));
         calendar.setName(space.getDisplayName());
         calendar.setEditPermission(new String[] { space.getGroupId() + SLASH_COLON + ANY });
-        calendar.setCalendarOwner(username);        
+        calendar.setCalendarOwner(username);
         calService.savePublicCalendar(calendar, true);
       }
     } catch (Exception e) {
-      // Illegal catch because of Exception thrown by CalendarService.savePublicCalendar
+      // Illegal catch because of Exception thrown by
+      // CalendarService.savePublicCalendar
       LOG.error("Couldn't save calendar to public area (group calendar).\n Cause by: ", e);
     }
   }
