@@ -25,9 +25,16 @@ import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 
-@ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/cs/social-integration/plugin/space/CalendarUIActivity.gtmpl", events = { @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class), @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class), @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class), @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class), @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
-    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment"), @EventConfig(listeners = CalendarUIActivity.AcceptEventActionListener.class), @EventConfig(listeners = CalendarUIActivity.AssignTaskActionListener.class),
+@ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/cs/social-integration/plugin/space/CalendarUIActivity.gtmpl", events = {
+    @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
+    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment"),
+    @EventConfig(listeners = CalendarUIActivity.AcceptEventActionListener.class),
+    @EventConfig(listeners = CalendarUIActivity.AssignTaskActionListener.class),
     @EventConfig(listeners = CalendarUIActivity.SetTaskStatusActionListener.class) }
 
 )
@@ -41,7 +48,7 @@ public class CalendarUIActivity extends BaseUIActivity {
   private boolean          isTaskAssignedToMe = false;
 
   private boolean          isTaskDone         = false;
-  
+
   private boolean          eventNotFound      = false;
 
   private String           taskStatus;
@@ -55,14 +62,16 @@ public class CalendarUIActivity extends BaseUIActivity {
   public void init() {
     try {
       eventId = getActivity().getTemplateParams().get(CalendarSpaceActivityPublisher.EVENT_ID_KEY);
-      calendarId = getActivity().getTemplateParams().get(CalendarSpaceActivityPublisher.CALENDAR_ID_KEY);
-      String username = ConversationState.getCurrent().getIdentity().getUserId();      
-      CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+      calendarId = getActivity().getTemplateParams()
+                                .get(CalendarSpaceActivityPublisher.CALENDAR_ID_KEY);
+      String username = ConversationState.getCurrent().getIdentity().getUserId();
+      CalendarService calService = (CalendarService) PortalContainer.getInstance()
+                                                                    .getComponentInstanceOfType(CalendarService.class);
       CalendarEvent event = null;
       try {
         event = calService.getGroupEvent(calendarId, eventId);
       } catch (RepositoryException rpe) {
-        if (LOG.isDebugEnabled()) 
+        if (LOG.isDebugEnabled())
           LOG.debug("Couldn't find the event: " + eventId, rpe);
       }
       if (event == null) {
@@ -70,7 +79,8 @@ public class CalendarUIActivity extends BaseUIActivity {
         return;
       }
       Map<String, String> pars = new HashMap<String, String>();
-      if (event.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) && event.getParticipantStatus() != null) {
+      if (event.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT)
+          && event.getParticipantStatus() != null) {
         for (String part : event.getParticipantStatus()) {
           String[] entry = part.split(":");
           if (entry.length > 1)
@@ -80,7 +90,8 @@ public class CalendarUIActivity extends BaseUIActivity {
         }
         if (pars.containsKey(username)) {
           isInvited = true;
-          if (pars.get(username).equalsIgnoreCase(Utils.STATUS_YES) || pars.get(username).equalsIgnoreCase(Utils.STATUS_NO)) {
+          if (pars.get(username).equalsIgnoreCase(Utils.STATUS_YES)
+              || pars.get(username).equalsIgnoreCase(Utils.STATUS_NO)) {
             isAnswered = true;
           }
         }
@@ -95,14 +106,15 @@ public class CalendarUIActivity extends BaseUIActivity {
       }
 
     } catch (Exception e) {
-      // Exception from CalendarService gets group event 
+      // Exception from CalendarService gets group event
       if (LOG.isErrorEnabled())
         LOG.error("Could not calculate values of Calendar activity with event(task): " + eventId, e);
     }
-
   }
 
-  /** used by the template **/
+  /*
+   * used by the template, line 164 CalendarUIActivity.gtmpl
+   */
   private String getTitleTemplate() {
     String typeOfEvent = getTypeOfEvent();
     String titleKey = "";
@@ -115,20 +127,27 @@ public class CalendarUIActivity extends BaseUIActivity {
     } else if (CalendarSpaceActivityPublisher.TASK_UPDATED.equals(typeOfEvent)) {
       titleKey = "CalendarUIActivity.msg.task-update";
     }
-    return WebuiRequestContext.getCurrentInstance().getApplicationResourceBundle().getString(titleKey);
+    return WebuiRequestContext.getCurrentInstance()
+                              .getApplicationResourceBundle()
+                              .getString(titleKey);
   }
-  
-  /** used by the template **/
+
+  /*
+   * used by the template, line 165 CalendarUIActivity.gtmpl
+   */
   private String getSummary() {
     return getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_SUMMARY_KEY);
   }
-  
-  /** used by the template **/
+
+  /*
+   * used by the template, line 165 CalendarUIActivity.gtmpl
+   */
   private String getEventLink() {
     String value = null;
-    return (value = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_LINK_KEY)) != null ? value : "";
+    return (value = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_LINK_KEY)) != null ? value
+                                                                                                 : "";
   }
-  
+
   /**
    * @return the taskStatus
    */
@@ -260,7 +279,7 @@ public class CalendarUIActivity extends BaseUIActivity {
 
     @Override
     public void execute(Event<CalendarUIActivity> event) throws Exception {
-      
+
       CalendarUIActivity uiComponent = event.getSource();
       WebuiRequestContext requestContext = event.getRequestContext();
       String paramStr = requestContext.getRequestParameter(OBJECTID);
@@ -269,14 +288,22 @@ public class CalendarUIActivity extends BaseUIActivity {
         if (paramStr != null)
           isAccepted = Boolean.parseBoolean(paramStr);
         try {
-          CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
-          User user = (User) ConversationState.getCurrent().getAttribute(CacheUserProfileFilter.USER_PROFILE);
+          CalendarService calService = (CalendarService) PortalContainer.getInstance()
+                                                                        .getComponentInstanceOfType(CalendarService.class);
+          User user = (User) ConversationState.getCurrent()
+                                              .getAttribute(CacheUserProfileFilter.USER_PROFILE);
           int answer = Utils.DENY;
           if (isAccepted)
             answer = Utils.ACCEPT;
-          
-          calService.confirmInvitation(user.getUserName(), user.getEmail(), user.getUserName(), org.exoplatform.calendar.service.Calendar.TYPE_PUBLIC, uiComponent.getCalendarId(), uiComponent.getEventId(), answer);
-        } catch (Exception e) { //CalendarService.confirmInvitation          
+
+          calService.confirmInvitation(user.getUserName(),
+                                       user.getEmail(),
+                                       user.getUserName(),
+                                       org.exoplatform.calendar.service.Calendar.TYPE_PUBLIC,
+                                       uiComponent.getCalendarId(),
+                                       uiComponent.getEventId(),
+                                       answer);
+        } catch (Exception e) { // CalendarService.confirmInvitation
           if (LOG.isWarnEnabled())
             LOG.warn("Could not answer the invitation of event: " + uiComponent.getEventId());
           throw e;
@@ -296,10 +323,13 @@ public class CalendarUIActivity extends BaseUIActivity {
       WebuiRequestContext requestContext = event.getRequestContext();
       if (!uiComponent.isTaskAssigned()) {
         try {
-          CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+          CalendarService calService = (CalendarService) PortalContainer.getInstance()
+                                                                        .getComponentInstanceOfType(CalendarService.class);
           String remoteUser = requestContext.getRemoteUser();
-          calService.assignGroupTask(uiComponent.getEventId(), uiComponent.getCalendarId(), remoteUser);
-        } catch (Exception e) { //CalendarService.assignGroupTask
+          calService.assignGroupTask(uiComponent.getEventId(),
+                                     uiComponent.getCalendarId(),
+                                     remoteUser);
+        } catch (Exception e) { // CalendarService.assignGroupTask
           if (LOG.isWarnEnabled())
             LOG.warn("Could not assign user for task: " + uiComponent.getEventId());
           throw e;
@@ -319,12 +349,15 @@ public class CalendarUIActivity extends BaseUIActivity {
       WebuiRequestContext requestContext = event.getRequestContext();
       String param = requestContext.getRequestParameter(OBJECTID);
       try {
-        CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+        CalendarService calService = (CalendarService) PortalContainer.getInstance()
+                                                                      .getComponentInstanceOfType(CalendarService.class);
 
         if (param != null && !param.equalsIgnoreCase(uiComponent.getTaskStatus())) {
-          calService.setGroupTaskStatus(uiComponent.getEventId(), uiComponent.getCalendarId(), param);
+          calService.setGroupTaskStatus(uiComponent.getEventId(),
+                                        uiComponent.getCalendarId(),
+                                        param);
         }
-      } catch (Exception e) { //CalendarService.setGroupTaskStatus
+      } catch (Exception e) { // CalendarService.setGroupTaskStatus
         if (LOG.isWarnEnabled())
           LOG.warn("Could not set task status for task: " + uiComponent.getEventId());
         throw e;

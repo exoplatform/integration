@@ -10,25 +10,24 @@ import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
 
-@ComponentConfig(
-    lifecycle = UIFormLifecycle.class, template = "classpath:groovy/ks/social-integration/plugin/space/ForumUIActivity.gtmpl", 
-    events = {
-      @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class),
-      @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
-      @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
-      @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
-      @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
-      @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
-      @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment") 
-    }
-)
+@ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/ks/social-integration/plugin/space/ForumUIActivity.gtmpl", events = {
+    @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
+    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment") })
 public class ForumUIActivity extends BaseKSActivity {
 
   private static final Log LOG = ExoLogger.getLogger(BaseUIActivity.class);
-  
+
   public ForumUIActivity() {
   }
-  
+
+  /*
+   * used by template, see line 201 ForumUIActivity.gtmpl
+   */
   @SuppressWarnings("unused")
   private String getReplyLink() {
     String link = getViewLink();
@@ -38,13 +37,15 @@ public class ForumUIActivity extends BaseKSActivity {
     link += "false";
     return link;
   }
-  
+
   private String getViewLink() {
     String link = "";
-    if (getActivityParamValue(ForumSpaceActivityPublisher.ACTIVITY_TYPE_KEY).toLowerCase().indexOf("topic") >= 0) {
+    if (getActivityParamValue(ForumSpaceActivityPublisher.ACTIVITY_TYPE_KEY).toLowerCase()
+                                                                            .indexOf("topic") >= 0) {
       link = getActivityParamValue(ForumSpaceActivityPublisher.TOPIC_LINK_KEY);
     } else {
-      link = getActivityParamValue(ForumSpaceActivityPublisher.POST_LINK_KEY) + "/" + getActivityParamValue(ForumSpaceActivityPublisher.POST_ID_KEY);
+      link = getActivityParamValue(ForumSpaceActivityPublisher.POST_LINK_KEY) + "/"
+          + getActivityParamValue(ForumSpaceActivityPublisher.POST_ID_KEY);
     }
     return link;
   }
@@ -53,7 +54,10 @@ public class ForumUIActivity extends BaseKSActivity {
     tagLink = StringUtils.replace(tagLink, "{0}", getViewLink());
     return StringUtils.replace(tagLink, "{1}", nameLink);
   }
-  
+
+  /*
+   * used by Template, line 160 ForumUIActivity.gtmpl
+   */
   @SuppressWarnings("unused")
   private String getActivityContentTitle(WebuiBindingContext _ctx, String herf) throws Exception {
     String title = "", linkTag = "";
@@ -71,7 +75,7 @@ public class ForumUIActivity extends BaseKSActivity {
         title = _ctx.appRes("ForumUIActivity.label.update-topic");
         linkTag = getLink(herf, getActivityParamValue(ForumSpaceActivityPublisher.TOPIC_NAME_KEY));
       }
-    } catch (Exception e) { //WebUIBindingContext
+    } catch (Exception e) { // WebUIBindingContext
       LOG.debug("Failed to get activity content and title ", e);
     }
     if (!Utils.isEmpty(title)) {
