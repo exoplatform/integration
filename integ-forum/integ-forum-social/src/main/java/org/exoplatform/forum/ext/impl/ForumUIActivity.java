@@ -20,7 +20,7 @@ import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
     @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment") })
 public class ForumUIActivity extends BaseKSActivity {
 
-  private static final Log LOG = ExoLogger.getLogger(BaseUIActivity.class);
+  private static final Log LOG = ExoLogger.getLogger(ForumUIActivity.class);
 
   public ForumUIActivity() {
   }
