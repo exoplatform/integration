@@ -30,12 +30,13 @@ public class ForumUIActivity extends BaseKSActivity {
    */
   @SuppressWarnings("unused")
   private String getReplyLink() {
-    String link = getViewLink();
-    if (!link.endsWith("/"))
-      link += "/";
+    StringBuffer sb = new StringBuffer(getViewLink());
+    if (sb.lastIndexOf("/") == -1 || sb.lastIndexOf("/") != sb.length() - 1) {
+      sb.append("/");
+    }
     // add signal to show reply form
-    link += "false";
-    return link;
+    sb.append("false");
+    return sb.toString();
   }
 
   private String getViewLink() {

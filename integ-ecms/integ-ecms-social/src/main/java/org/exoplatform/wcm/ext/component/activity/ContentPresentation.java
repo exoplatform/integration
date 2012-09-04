@@ -86,11 +86,11 @@ public class ContentPresentation extends UIBaseNodePresentation {
     InputStreamDownloadResource dresource = new InputStreamDownloadResource(input, mimeType);
     DMSMimeTypeResolver mimeTypeSolver = DMSMimeTypeResolver.getInstance();
     String ext = mimeTypeSolver.getExtension(mimeType);
-    String fileName = node.getName();
-    if (fileName.lastIndexOf("." + ext) < 0) {
-      fileName = fileName + "." + ext;
+    StringBuffer fileNameStrBuffer = new StringBuffer(node.getName());
+    if (fileNameStrBuffer.lastIndexOf("." + ext) < 0) {
+      fileNameStrBuffer.append(".").append(ext);
     }
-    dresource.setDownloadName(fileName);
+    dresource.setDownloadName(fileNameStrBuffer.toString());
     return dservice.getDownloadLink(dservice.addDownloadResource(dresource));
   }
 

@@ -81,19 +81,21 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     String pageURL = (page.getURL() == null) ? (spaceUrl != null ? (spaceUrl + "/" + WIKI_PAGE_NAME) : "") : page.getURL();
     templateParams.put(URL_KEY, pageURL);
     
-    String excerpt = StringUtils.EMPTY;
+    StringBuffer excerpt;
     if (ADD_PAGE_TYPE.equals(activityType)) {
       RenderingService renderingService = (RenderingService) PortalContainer.getInstance()
         .getComponentInstanceOfType(RenderingService.class);
-      excerpt = renderingService.render(page.getContent().getText(), page.getSyntax(), Syntax.PLAIN_1_0.toIdString(), false);
+      excerpt = new StringBuffer(renderingService.render(page.getContent().getText(), page.getSyntax(), Syntax.PLAIN_1_0.toIdString(), false));
     } else {
       String verName = ((PageImpl) page).getVersionableMixin().getBaseVersion().getName();
       //templateParams.put(VIEW_CHANGE_URL_KEY, page.getURL() + "?action=CompareRevision&verName=" + verName);
       templateParams.put(VIEW_CHANGE_URL_KEY, Utils.getURL(page.getURL(), verName));
-      excerpt = page.getComment();
+      excerpt =new StringBuffer(page.getComment());
+    } 
+    if (excerpt.length() > EXCERPT_LENGTH) {
+      excerpt.replace(EXCERPT_LENGTH, excerpt.length(), "...");
     }
-    excerpt = (excerpt.length() > EXCERPT_LENGTH) ? excerpt.substring(0, EXCERPT_LENGTH) + "..." : excerpt;
-    templateParams.put(PAGE_EXCERPT, excerpt);
+    templateParams.put(PAGE_EXCERPT, excerpt.toString());
     templateParams.put(org.exoplatform.social.core.BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, PAGE_EXCERPT);
     activity.setTemplateParams(templateParams);
     return activity;
