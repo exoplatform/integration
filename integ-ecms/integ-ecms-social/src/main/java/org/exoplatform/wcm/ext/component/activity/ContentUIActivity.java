@@ -355,7 +355,7 @@ public class ContentUIActivity extends BaseUIActivity {
       popupWindow.setShow(true);
       popupWindow.setResizable(true);
 
-      event.getRequestContext().addUIComponentToUpdateByAjax(activitiesContainer);
+      event.getRequestContext().addUIComponentToUpdateByAjax(popupWindow);
     }
   }
 }
