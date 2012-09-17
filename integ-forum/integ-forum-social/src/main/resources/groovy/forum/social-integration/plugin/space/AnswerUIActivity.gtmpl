@@ -32,7 +32,7 @@
   def pcontext = Util.getPortalRequestContext();
   
   def jsManager = pcontext.getJavascriptManager();
-  jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
+  //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
 
   def labelActivityHasBeenDeleted = _ctx.appRes("UIActivity.label.Activity_Has_Been_Deleted");
   def activity = uicomponent.getActivity();
@@ -41,8 +41,7 @@
   def streamOwner = activity.getStreamOwner();
 %>
 
-<% if (activity) { //process if not null
-	jsManager.loadScriptResource("social-ui-activity");	
+<% if (activity) { //process if not null	
 
   def labelComment = _ctx.appRes("UIActivity.label.Comment");
   def labelLike = _ctx.appRes("UIActivity.label.Like");
@@ -90,7 +89,9 @@
      commentFormFocused: ${uicomponent.isCommentFormFocused()}
     }
   """
-  jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
+  //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");     
+  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.UIActivity.onLoad($params);");  
+  
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
   def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
@@ -138,12 +139,7 @@
   }
 %>
 
-<div class="UIActivity">
-  <script type="text/javascript">
-    function initUIActivity${activity.id}() {
-      new eXo.social.webui.UIActivity($params);
-    }
-  </script>
+<div class="UIActivity"> 
 
   <% uiform.begin() %>
   <div class="NormalBox ClearFix">

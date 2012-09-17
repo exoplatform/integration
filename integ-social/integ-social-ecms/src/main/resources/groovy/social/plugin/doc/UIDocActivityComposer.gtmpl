@@ -22,7 +22,7 @@
 
   def rcontext = _ctx.getRequestContext();
   def jsManager = rcontext.getJavascriptManager();
-  jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
+  //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
 
   def selectFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.Select_File");
 %>
