@@ -172,8 +172,8 @@ public class UIDocViewer extends UIBaseNodePresentation {
       UIDocViewer uiComp = event.getSource();
       String downloadLink = uiComp.getDownloadLink(org.exoplatform.wcm.webui.Utils.getFileLangNode(uiComp.getNode()));
       JavascriptManager jsManager = event.getRequestContext().getJavascriptManager();
-      jsManager.loadScriptResource("base"); //for ajaxRedirect(url)
-      jsManager.addJavascript("ajaxRedirect('" + downloadLink + "');");      
+      downloadLink = downloadLink.replaceAll("&amp;", "&") ;           
+      jsManager.addJavascript("window.location.href = " + downloadLink + ";");
     }
   }
 }

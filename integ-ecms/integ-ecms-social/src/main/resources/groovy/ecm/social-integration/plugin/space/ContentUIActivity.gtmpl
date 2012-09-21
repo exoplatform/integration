@@ -47,11 +47,7 @@
 
 <% if (activity) { //process if not null
 
-  def jsManager = pcontext.getJavascriptManager();
-  jsManager.importJavascript("eXo.social.Util", LinkProvider.JAVASCRIPT_RESOURCE_URL);
-  jsManager.importJavascript("eXo.social.PortalHttpRequest", LinkProvider.JAVASCRIPT_RESOURCE_URL);
-  jsManager.importJavascript("eXo.social.webui.UIForm", LinkProvider.JAVASCRIPT_RESOURCE_URL);
-  jsManager.importJavascript("eXo.social.webui.UIActivity", LinkProvider.JAVASCRIPT_RESOURCE_URL);
+  def jsManager = pcontext.getJavascriptManager();  
 
   //ECMS declare variables - BEGIN
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
@@ -138,7 +134,9 @@
      commentFormFocused: ${uicomponent.isCommentFormFocused()}
     }
   """
-  jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
+  //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
+  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.UIActivity.onLoad($params);");
+  
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
   def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
@@ -187,10 +185,7 @@
 %>
 
 <div class="UIActivity">
-  <script type="text/javascript">
-    function initUIActivity${activity.id}() {
-      new eXo.social.webui.UIActivity($params);
-    }
+  <script type="text/javascript">    
 	  
 	//javascript function added by ECMS - BEGIN
 	function changeStyleForMediaComponent (mediaContentDivId) {
