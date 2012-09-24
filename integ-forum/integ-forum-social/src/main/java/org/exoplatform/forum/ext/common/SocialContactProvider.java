@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.ks.common.user.CommonContact;
-import org.exoplatform.ks.common.user.ContactProvider;
-import org.exoplatform.ks.common.user.DefaultContactProvider;
+import org.exoplatform.forum.common.user.CommonContact;
+import org.exoplatform.forum.common.user.ContactProvider;
+import org.exoplatform.forum.common.user.DefaultContactProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
