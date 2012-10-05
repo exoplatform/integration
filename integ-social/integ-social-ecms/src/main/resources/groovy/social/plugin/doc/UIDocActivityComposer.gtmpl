@@ -21,34 +21,38 @@
   import org.exoplatform.webui.form.UIFormStringInput;
 
   def rcontext = _ctx.getRequestContext();
+      
+  def selectFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.Select_File");
+  
   def jsManager = rcontext.getJavascriptManager();
   //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
-
-  def selectFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.Select_File");
+  def requireJS = jsManager.getRequireJS();
+  requireJS.require("SHARED/social-ui-activity-composer", "composer");
+    
+  def currentActivityComposer = uicomponent.getActivityComposerManager().getCurrentActivityComposer();
+  def isReady = currentActivityComposer.isReadyForPostingActivity();  
+  if (isReady) requireJS.addScripts("composer.UIComposer.handleShareButton($isReady);");
 %>
 <div id="<%=uicomponent.id%>">
   <%
-    if(uicomponent.isDocumentReady()){
+    if(uicomponent.isDocumentReady()){		
       %>
+	  
       <span class="TopInputLink"></span>
       <div class="InputDoc">
         <span class="BrowsedDocument"><%=uicomponent.getDocumentName()%></span>
         <a class="CloseIconLink" href="<%= uicomponent.event("RemoveDocument")%>">&nbsp;</a><br/>
       </div>
       
-        <script type="text/javascript">
-          try{setShareButtonDisable(false);}catch(e){}
-        </script>
       <%
     } else {
       %>
+	  
         <span class="TopInputLink"></span>
         <div class="InputDoc">
           <a class="BrowseFile" href="<%= uicomponent.event("SelectDocument")%>">$selectFileLabel</a>
         </div>
-        <script type="text/javascript">
-          try{setShareButtonDisable(true);}catch(e){}
-        </script>
+		
       <%
     }
   %>
