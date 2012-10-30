@@ -11,8 +11,6 @@
   <name>eXo Social - Document composer</name>
   <description>Select document to public on activity</description>	
    <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-    <outputDirectory>target/classes</outputDirectory>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
