@@ -6,9 +6,13 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import javax.jcr.RepositoryException;
+import java.util.TimeZone;
+
+import javax.jcr.PathNotFoundException;
+
 import org.exoplatform.calendar.service.CalendarEvent;
 import org.exoplatform.calendar.service.CalendarService;
+import org.exoplatform.calendar.service.CalendarSetting;
 import org.exoplatform.calendar.service.Utils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
@@ -55,6 +59,8 @@ public class CalendarUIActivity extends BaseUIActivity {
 
   private String           eventId, calendarId;
 
+  private String           timeZone           = "";
+
   public CalendarUIActivity() {
     super();
   }
@@ -62,17 +68,17 @@ public class CalendarUIActivity extends BaseUIActivity {
   public void init() {
     try {
       eventId = getActivity().getTemplateParams().get(CalendarSpaceActivityPublisher.EVENT_ID_KEY);
-      calendarId = getActivity().getTemplateParams()
-                                .get(CalendarSpaceActivityPublisher.CALENDAR_ID_KEY);
-      String username = ConversationState.getCurrent().getIdentity().getUserId();
-      CalendarService calService = (CalendarService) PortalContainer.getInstance()
-                                                                    .getComponentInstanceOfType(CalendarService.class);
+      calendarId = getActivity().getTemplateParams().get(CalendarSpaceActivityPublisher.CALENDAR_ID_KEY);
+      String username = ConversationState.getCurrent().getIdentity().getUserId();      
+      CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+      CalendarSetting setting = calService.getCalendarSetting(username);
+      timeZone = setting.getTimeZone();
       CalendarEvent event = null;
       try {
         event = calService.getGroupEvent(calendarId, eventId);
-      } catch (RepositoryException rpe) {
-        if (LOG.isDebugEnabled())
-          LOG.debug("Couldn't find the event: " + eventId, rpe);
+      } catch (PathNotFoundException pnf) {
+        if (LOG.isDebugEnabled()) 
+        	LOG.debug("Couldn't find the event: " + eventId, pnf);
       }
       if (event == null) {
         eventNotFound = true;
@@ -231,7 +237,7 @@ public class CalendarUIActivity extends BaseUIActivity {
     return type;
   }
 
-  SimpleDateFormat dformat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+  SimpleDateFormat dformat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
   public String getEventStartTime(WebuiBindingContext ctx) {
     String timeStr = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_STARTTIME_KEY);
@@ -270,7 +276,8 @@ public class CalendarUIActivity extends BaseUIActivity {
     Locale locale = requestContext.getLocale();
     Calendar calendar = GregorianCalendar.getInstance(locale);
     calendar.setTimeInMillis(time);
-
+    TimeZone tz = TimeZone.getTimeZone(timeZone);
+    dformat.setTimeZone(tz);
     return dformat.format(calendar.getTime());
 
   }
