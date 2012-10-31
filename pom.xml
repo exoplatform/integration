@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.exoplatform.integration</groupId>
   <artifactId>integ</artifactId>
-  <version>4.0.0.Alpha1-SNAPSHOT</version>
+  <version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>eXo Integration</name>
   <scm>
@@ -30,12 +30,12 @@
     <!-- Project Dependencies                     -->
     <!-- **************************************** -->
     <org.exoplatform.portal.version>3.4.0.Final</org.exoplatform.portal.version>
-    <org.exoplatform.calendar.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.calendar.version>
-    <org.exoplatform.wiki.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.wiki.version>
-    <org.exoplatform.forum.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.forum.version>
-    <org.exoplatform.ecms.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.ecms.version>
-    <org.exoplatform.social.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.social.version>
-    <org.exoplatform.commons.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.commons.version>
+    <org.exoplatform.calendar.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.calendar.version>
+    <org.exoplatform.wiki.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.wiki.version>
+    <org.exoplatform.forum.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.forum.version>
+    <org.exoplatform.ecms.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.ecms.version>
+    <org.exoplatform.social.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.social.version>
+    <org.exoplatform.commons.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.commons.version>
     <org.exoplatform.kernel.version>2.3.9-GA-SNAPSHOT</org.exoplatform.kernel.version>
     <org.exoplatform.jcr.version>1.14.9-GA-SNAPSHOT</org.exoplatform.jcr.version>
     <org.exoplatform.core.version>2.4.9-GA-SNAPSHOT</org.exoplatform.core.version>
