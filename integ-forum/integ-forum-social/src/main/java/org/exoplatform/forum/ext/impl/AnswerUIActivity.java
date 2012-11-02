@@ -1,10 +1,8 @@
 package org.exoplatform.forum.ext.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
@@ -14,9 +12,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
-import org.exoplatform.forum.bbcode.core.ExtendedBBCodeProvider;
 import org.exoplatform.forum.common.CommonUtils;
-import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
@@ -94,8 +90,7 @@ public class AnswerUIActivity extends BaseKSActivity {
                                                             comment.getCommentBy(),
                                                             false);
       activity.setUserId(userIdentity.getId());
-      activity.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(comment.getComments(),
-                                                                                   new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()))));
+      activity.setTitle(comment.getComments());
       activity.setPostedTime(comment.getDateComment().getTime());
       activity.setId(comment.getId());
 

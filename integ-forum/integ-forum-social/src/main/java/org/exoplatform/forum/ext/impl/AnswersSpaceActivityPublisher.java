@@ -16,7 +16,6 @@
  */
 package org.exoplatform.forum.ext.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +31,6 @@ import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
-
-import org.exoplatform.forum.bbcode.core.ExtendedBBCodeProvider;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -114,7 +111,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setUserId(author.getId());
     activity.setTitle(StringEscapeUtils.unescapeHtml(title));
-    activity.setBody(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(body, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()))));
+    activity.setBody(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(body, (List<String>) Collections.EMPTY_LIST)));
     activity.setType(SPACE_APP_ID);
     activity.setTemplateParams(templateParams);
     return activity;
@@ -153,7 +150,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             // publish the activity in the user stream.
             streamOwner = userIdentity;
           }
-          String activityType = isNew ? ANSWER_ADD : ANSWER_UPDATE;
+          String activityType = answer.isNew() ? ANSWER_ADD : ANSWER_UPDATE;
           if (streamOwner != null) {
             Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), activityType, questionId, q.getQuestion(), q.getLanguage(), q.getLink());
             templateParams.put(ANSWER_ID_KEY, answer.getId());
@@ -217,9 +214,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     } catch (ClassNotFoundException e) {
       if (LOG.isDebugEnabled())
         LOG.debug("Please check the integrated project does the social deploy? " + e.getMessage());
-    } catch (Exception e) {
-      LOG.error("Can not record Activity for space when post answer " + e.getMessage());
-    }
+    } 
+    //catch other type of exception in saveAnswer(String questionId, Answer answers, boolean isNew)
   }
 
 }
