@@ -1,6 +1,7 @@
 package org.exoplatform.wiki.ext.impl;
 
 import java.util.Map;
+
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.model.Space;
