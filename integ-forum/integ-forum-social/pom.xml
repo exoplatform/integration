@@ -13,94 +13,76 @@
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <scope>compile</scope>
+      <artifactId>commons-lang</artifactId>      
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>compile</scope>
+      <artifactId>servlet-api</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.core</groupId>
-      <artifactId>exo.core.component.organization.api</artifactId>
-      <scope>compile</scope>
+      <artifactId>exo.core.component.organization.api</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>forum-answer-service</artifactId>
-      <scope>compile</scope>
+      <artifactId>forum-answer-service</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>forum-application-common</artifactId>
-      <scope>compile</scope>
+      <artifactId>forum-application-common</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>forum-component-bbcode</artifactId>
-      <scope>compile</scope>
+      <artifactId>forum-component-bbcode</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>forum-component-common</artifactId>
-      <scope>compile</scope>
+      <artifactId>forum-component-common</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.forum</groupId>
-      <artifactId>forum-forum-service</artifactId>
-      <scope>compile</scope>
+      <artifactId>forum-forum-service</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
-      <artifactId>exo.kernel.commons</artifactId>
-      <scope>compile</scope>
+      <artifactId>exo.kernel.commons</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
-      <artifactId>exo.kernel.container</artifactId>
-      <scope>compile</scope>
+      <artifactId>exo.kernel.container</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.component.portal</artifactId>
-      <scope>compile</scope>
+      <artifactId>exo.portal.component.portal</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.component.web.controller</artifactId>
-      <scope>compile</scope>
+      <artifactId>exo.portal.component.web.controller</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.webui.core</artifactId>
-      <scope>compile</scope>
+      <artifactId>exo.portal.webui.core</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.webui.framework</artifactId>
-      <scope>compile</scope>
+      <artifactId>exo.portal.webui.framework</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.webui.portal</artifactId>
-      <scope>compile</scope>
+      <artifactId>exo.portal.webui.portal</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>social-component-core</artifactId>
-      <scope>compile</scope>
+      <artifactId>social-component-core</artifactId>      
     </dependency>
     <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>social-component-webui</artifactId>
-      <scope>compile</scope>
+      <artifactId>social-component-webui</artifactId>      
     </dependency>
     <!-- mvn analyze unused but build failed when remove -->
     <dependency>
       <groupId>org.gatein.shindig</groupId>
-      <artifactId>shindig-social-api</artifactId>
-      <scope>compile</scope>
+      <artifactId>shindig-social-api</artifactId>      
     </dependency>
   </dependencies>
 </project>
