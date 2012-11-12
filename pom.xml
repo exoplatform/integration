@@ -3,9 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.exoplatform</groupId>
-    <artifactId>exo.parent</artifactId>
-    <version>8.1</version>
-    <relativePath/>
+    <artifactId>maven-parent-pom</artifactId>
+    <version>9-SNAPSHOT</version>
+    <relativePath />
   </parent>
   <groupId>org.exoplatform.integration</groupId>
   <artifactId>integ</artifactId>
@@ -18,9 +18,17 @@
    <url>http://fisheye.exoplatform.org/browse/integration</url>
   </scm>
   <properties>
-    <!-- ********************* -->
-    <!-- Dependencies versions -->
-    <!-- ********************* -->
+    <!-- **************************************** -->
+    <!-- Jira Settings                            -->
+    <!-- **************************************** -->
+    <jira.project.key>INTEG</jira.project.key>
+    <!-- **************************************** -->
+    <!-- Jenkins Settings                         -->
+    <!-- **************************************** -->
+    <jenkins.job.name>integration-master-ci</jenkins.job.name>
+    <!-- **************************************** -->
+    <!-- Project Dependencies                     -->
+    <!-- **************************************** -->
     <org.gatein.portal.version>3.5.0.Beta01</org.gatein.portal.version>
     <org.exoplatform.calendar.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.calendar.version>
     <org.exoplatform.wiki.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.wiki.version>
@@ -36,63 +44,12 @@
     <org.shindig.version>2.0.2.Final-gatein-2</org.shindig.version>
     <org.json.version>20070829</org.json.version>
     <javax.jcr.version>1.0</javax.jcr.version>
-
-    <!-- ***************************************************** -->
-    <!-- Plugin versions (waiting for an upgrade in exo parent -->
-    <!-- ***************************************************** -->
-    <version.clean.plugin>2.4.1</version.clean.plugin>
-    <version.compiler.plugin>2.3.1</version.compiler.plugin>
-    <version.deploy.plugin>2.5</version.deploy.plugin>
-    <version.install.plugin>2.3.1</version.install.plugin>
-    <version.jar.plugin>2.3.1</version.jar.plugin>
-    <version.resources.plugin>2.4.3</version.resources.plugin>
-    <version.surefire.plugin>2.6</version.surefire.plugin>
-    <version.versions.plugin>1.2</version.versions.plugin>
-    <version.war.plugin>2.1</version.war.plugin>
-    <version.assembly.plugin>2.2.1</version.assembly.plugin>
-    <version.release.plugin>2.2.1</version.release.plugin>
-    <version.buildnumber.plugin>1.1</version.buildnumber.plugin>
   </properties>
   <dependencyManagement>
     <dependencies>
       <!-- ALL VERSIONS OF DEPENDENCIES HAVE TO BE DEFINED HERE -->
     </dependencies>
   </dependencyManagement>
-  <profiles>
-   <profile>
-      <id>release</id>
-      <build>
-        <plugins>          
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.apache.resources</groupId>
-                <artifactId>apache-source-release-assembly-descriptor</artifactId>
-                <version>1.0.2</version>
-              </dependency>
-            </dependencies>
-            <executions>
-              <execution>
-                <id>source-release-assembly</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-                  <descriptorRefs>
-                    <descriptorRef>source-release</descriptorRef>
-                  </descriptorRefs>
-                  <tarLongFileFormat>gnu</tarLongFileFormat>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
   <modules>
     <module>integ-gatein</module>
     <module>integ-ecms</module>

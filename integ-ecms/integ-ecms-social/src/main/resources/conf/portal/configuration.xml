@@ -2,17 +2,17 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.exoplaform.org/xml/ns/kernel_1_1.xsd http://www.exoplaform.org/xml/ns/kernel_1_1.xsd"
 	xmlns="http://www.exoplaform.org/xml/ns/kernel_1_1.xsd">
-	<component>
+	<component profiles="default,all,social">
 		<key>org.exoplatform.wcm.ext.component.document.service.DocumentService</key>
 		<type>org.exoplatform.wcm.ext.component.document.service.DocumentServiceImpl</type>
 	</component>
-	<component>
+	<component profiles="default,all,social">
 		<type>org.exoplatform.wcm.ext.component.identity.provider.DocumentIdentityProvider</type>
 	</component>
 		
 	<external-component-plugins>
 		<target-component> org.exoplatform.social.core.manager.IdentityManager</target-component>
-		<component-plugin>
+		<component-plugin profiles="default,all,social">
 			<name>DocumentIdentityProvider plugin</name>
 			<set-method>registerIdentityProviders</set-method>
 			<type>org.exoplatform.social.core.identity.IdentityProviderPlugin</type>
@@ -31,19 +31,19 @@
 	
 	<external-component-plugins>
 		<target-component>org.exoplatform.services.listener.ListenerService</target-component>
-		<component-plugin>
+		<component-plugin profiles="default,all,social">
 			<name>PublicationService.event.postInitState</name>
 			<set-method>addListener</set-method>
 			<type>org.exoplatform.wcm.ext.component.activity.listener.ContentCreateActivityListener</type>
 			<description>this listener will publish an activity when a content has been	created and initiated state</description>
 		</component-plugin>
-		<component-plugin>
+		<component-plugin profiles="default,all,social">
 			<name>PublicationService.event.postChangeState</name>
 			<set-method>addListener</set-method>
 			<type>org.exoplatform.wcm.ext.component.activity.listener.ContentUpdateActivityListener</type>
 			<description>this listener will publish an activity when the state of a content	has been changed</description>
 		</component-plugin>
-		<component-plugin>
+		<component-plugin profiles="default,all,social">
 			<name>PostEditContentEventListener.event.postEditContent</name>
 			<set-method>addListener</set-method>
 			<type>org.exoplatform.wcm.ext.component.activity.listener.ContentUpdateActivityListener</type>
@@ -53,7 +53,7 @@
 	
 	<external-component-plugins>
 		<target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
-		<component-plugin>
+		<component-plugin profiles="default,all,social">
 			<name>add.action</name>
 			<set-method>registerUIExtensionPlugin</set-method>
 			<type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
@@ -83,7 +83,7 @@
 		<!-- The full qualified name of the ResourceBundleService -->
 		<target-component>
 			org.exoplatform.services.resources.ResourceBundleService</target-component>
-		<component-plugin>
+		<component-plugin profiles="default,all,social">
 			<!-- The name of the plugin -->
 			<name>ResourceBundle Plugin</name>
 			<!-- The name of the method to call on the ResourceBundleService in order to register the ResourceBundles -->
