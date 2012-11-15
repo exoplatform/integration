@@ -37,7 +37,7 @@
     <!-- **************************************** -->
     <!-- Project Dependencies                     -->
     <!-- **************************************** -->
-    <!-- eXo deps -->    
+    <!-- eXo deps -->
     <org.exoplatform.portal.version>3.4.0.Final</org.exoplatform.portal.version>
     <org.exoplatform.calendar.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.calendar.version>
     <org.exoplatform.wiki.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.wiki.version>
@@ -59,7 +59,7 @@
     <javax.portlet.version>2.0</javax.portlet.version>
     <org.xwiki.rendering.version>4.1.3</org.xwiki.rendering.version>
   </properties>
-      <!-- ALL VERSIONS OF DEPENDENCIES HAVE TO BE DEFINED HERE -->
+  <!-- ALL VERSIONS OF DEPENDENCIES HAVE TO BE DEFINED HERE -->
   <dependencyManagement>
     <dependencies>
       <dependency>

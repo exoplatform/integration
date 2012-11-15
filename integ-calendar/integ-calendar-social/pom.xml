@@ -13,59 +13,59 @@
   <dependencies>
     <dependency>
       <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>      
+      <artifactId>jcr</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.calendar</groupId>
-      <artifactId>calendar-service</artifactId>      
+      <artifactId>calendar-service</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.core</groupId>
-      <artifactId>exo.core.component.organization.api</artifactId>      
+      <artifactId>exo.core.component.organization.api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.core</groupId>
-      <artifactId>exo.core.component.security.core</artifactId>      
+      <artifactId>exo.core.component.security.core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
-      <artifactId>exo.kernel.commons</artifactId>      
+      <artifactId>exo.kernel.commons</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
-      <artifactId>exo.kernel.container</artifactId>      
+      <artifactId>exo.kernel.container</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.component.web.controller</artifactId>      
+      <artifactId>exo.portal.component.web.controller</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.webui.core</artifactId>      
+      <artifactId>exo.portal.webui.core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.webui.framework</artifactId>      
+      <artifactId>exo.portal.webui.framework</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.webui.portal</artifactId>      
+      <artifactId>exo.portal.webui.portal</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>social-component-common</artifactId>      
+      <artifactId>social-component-common</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>social-component-core</artifactId>      
+      <artifactId>social-component-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.social</groupId>
-      <artifactId>social-component-webui</artifactId>      
+      <artifactId>social-component-webui</artifactId>
     </dependency>
     <dependency>
       <groupId>org.gatein.shindig</groupId>
-      <artifactId>shindig-social-api</artifactId>      
+      <artifactId>shindig-social-api</artifactId>
     </dependency>
   </dependencies>
 </project>

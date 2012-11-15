@@ -13,15 +13,15 @@
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>      
+      <artifactId>commons-lang</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.core</groupId>
-      <artifactId>exo.core.component.security.core</artifactId>      
+      <artifactId>exo.core.component.security.core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
-      <artifactId>exo.kernel.commons</artifactId> 
+      <artifactId>exo.kernel.commons</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
@@ -29,7 +29,7 @@
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.component.portal</artifactId>      
+      <artifactId>exo.portal.component.portal</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
@@ -37,7 +37,7 @@
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>exo.portal.webui.framework</artifactId>      
+      <artifactId>exo.portal.webui.framework</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.social</groupId>
@@ -49,7 +49,7 @@
     </dependency>
     <dependency>
       <groupId>org.exoplatform.wiki</groupId>
-      <artifactId>wiki-renderer</artifactId>      
+      <artifactId>wiki-renderer</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.wiki</groupId>
@@ -62,7 +62,7 @@
     </dependency>
     <dependency>
       <groupId>org.xwiki.rendering</groupId>
-      <artifactId>xwiki-rendering-api</artifactId>      
+      <artifactId>xwiki-rendering-api</artifactId>
     </dependency>
   </dependencies>
 </project>
