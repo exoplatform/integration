@@ -108,7 +108,22 @@
       <!-- Our own project modules -->
       <dependency>
         <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-calendar-social</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-ecms-social</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
         <artifactId>integ-social-ecms</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-wiki-social</artifactId>
         <version>${project.version}</version>
       </dependency>
       <!-- To be replaced by an import of jcr parent POM -->
