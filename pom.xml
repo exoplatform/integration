@@ -59,6 +59,20 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <!-- Import versions from calendar project -->
+      <dependency>
+        <groupId>org.exoplatform.calendar</groupId>
+        <artifactId>calendar</artifactId>
+        <version>${org.exoplatform.calendar.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!--  To be replaced by an import of calendar-social POM-->
+      <dependency>
+        <groupId>org.exoplatform.calendar</groupId>
+        <artifactId>calendar-service</artifactId>
+        <version>${org.exoplatform.calendar.version}</version>
+      </dependency>
       <!-- Import versions from commons project -->
       <dependency>
         <groupId>org.exoplatform.commons</groupId>
@@ -67,13 +81,11 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <!-- Import versions from calendar project -->
+      <!-- To be replaced by an import of social-ecms POM-->
       <dependency>
-        <groupId>org.exoplatform.calendar</groupId>
-        <artifactId>calendar</artifactId>
-        <version>${org.exoplatform.calendar.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
+        <groupId>org.exoplatform.commons</groupId>
+        <artifactId>commons-webui-ext</artifactId>
+        <version>${org.exoplatform.commons.version}</version>
       </dependency>
       <!-- To be replaced by an import of core parent POM -->
       <dependency>
@@ -104,6 +116,17 @@
         <version>${org.exoplatform.forum.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.forum</groupId>
+        <artifactId>forum-answer-service</artifactId>
+        <version>${org.exoplatform.forum.version}</version>
+      </dependency>
+      <!--  To be replaced by an import of forum-social POM -->
+      <dependency>
+        <groupId>org.exoplatform.forum</groupId>
+        <artifactId>forum-forum-service</artifactId>
+        <version>${org.exoplatform.forum.version}</version>
       </dependency>
       <!-- Our own project modules -->
       <dependency>
@@ -166,6 +189,11 @@
       </dependency>
       <dependency>
         <groupId>org.exoplatform.portal</groupId>
+        <artifactId>exo.portal.component.resources</artifactId>
+        <version>${org.exoplatform.portal.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.portal</groupId>
         <artifactId>exo.portal.component.web.controller</artifactId>
         <version>${org.exoplatform.portal.version}</version>
       </dependency>
@@ -222,6 +250,12 @@
         <version>${org.exoplatform.wiki.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <!-- To be replaced by an import of  wiki-social POM-->
+      <dependency>
+        <groupId>org.exoplatform.wiki</groupId>
+        <artifactId>wiki-service</artifactId>
+        <version>${org.exoplatform.wiki.version}</version>
       </dependency>
       <!-- To be replaced by an import of GateIn Shinding parent POM -->
       <dependency>
