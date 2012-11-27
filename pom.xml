@@ -51,30 +51,6 @@
   </properties>
   <dependencyManagement>
     <dependencies>
-      <!-- Import versions of external dependencies to use -->
-      <dependency>
-        <groupId>org.exoplatform</groupId>
-        <artifactId>maven-depmgt-pom</artifactId>
-        <version>1-SNAPSHOT</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <!-- Import versions from calendar project -->
-      <dependency>
-        <groupId>org.exoplatform.calendar</groupId>
-        <artifactId>calendar</artifactId>
-        <version>${org.exoplatform.calendar.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <!-- Import versions from commons project -->
-      <dependency>
-        <groupId>org.exoplatform.commons</groupId>
-        <artifactId>commons</artifactId>
-        <version>${org.exoplatform.commons.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <!-- To be replaced by an import of core parent POM -->
       <dependency>
         <groupId>org.exoplatform.core</groupId>
@@ -96,14 +72,6 @@
         <groupId>org.exoplatform.ecms</groupId>
         <artifactId>ecms-core-webui</artifactId>
         <version>${org.exoplatform.ecms.version}</version>
-      </dependency>
-      <!-- Import versions from forum project -->
-      <dependency>
-        <groupId>org.exoplatform.forum</groupId>
-        <artifactId>forum</artifactId>
-        <version>${org.exoplatform.forum.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.exoplatform.forum</groupId>
@@ -236,6 +204,44 @@
         <artifactId>social-component-webui</artifactId>
         <version>${org.exoplatform.social.version}</version>
       </dependency>
+      <!-- To be replaced by an import of GateIn Shinding parent POM -->
+      <dependency>
+        <groupId>org.gatein.shindig</groupId>
+        <artifactId>shindig-social-api</artifactId>
+        <version>${org.gatein.shindig.version}</version>
+      </dependency>
+      <!-- Import versions of external dependencies to use -->
+      <dependency>
+        <groupId>org.exoplatform</groupId>
+        <artifactId>maven-depmgt-pom</artifactId>
+        <version>1-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Import versions from calendar project -->
+      <dependency>
+        <groupId>org.exoplatform.calendar</groupId>
+        <artifactId>calendar</artifactId>
+        <version>${org.exoplatform.calendar.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Import versions from commons project -->
+      <dependency>
+        <groupId>org.exoplatform.commons</groupId>
+        <artifactId>commons</artifactId>
+        <version>${org.exoplatform.commons.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Import versions from forum project -->
+      <dependency>
+        <groupId>org.exoplatform.forum</groupId>
+        <artifactId>forum</artifactId>
+        <version>${org.exoplatform.forum.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <!-- Import versions from wiki project -->
       <dependency>
         <groupId>org.exoplatform.wiki</groupId>
@@ -243,12 +249,6 @@
         <version>${org.exoplatform.wiki.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <!-- To be replaced by an import of GateIn Shinding parent POM -->
-      <dependency>
-        <groupId>org.gatein.shindig</groupId>
-        <artifactId>shindig-social-api</artifactId>
-        <version>${org.gatein.shindig.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
