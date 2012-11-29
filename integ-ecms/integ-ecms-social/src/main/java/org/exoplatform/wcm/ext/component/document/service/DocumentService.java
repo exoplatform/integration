@@ -17,6 +17,7 @@
 package org.exoplatform.wcm.ext.component.document.service;
 
 import javax.jcr.RepositoryException;
+
 import org.exoplatform.wcm.ext.component.document.model.Document;
 
 /**

@@ -17,10 +17,10 @@
 package org.exoplatform.social.plugin.doc;
 
 import javax.jcr.Node;
-import javax.portlet.PortletRequest;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
+import javax.portlet.PortletRequest;
 
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
