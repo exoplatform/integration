@@ -86,16 +86,13 @@
         <artifactId>exo.core.component.security.core</artifactId>
         <version>${org.exoplatform.core.version}</version>
       </dependency>
-      <!-- To be replaced by an import of ecms parent POM -->
+      <!-- Import versions from ecms project -->
       <dependency>
         <groupId>org.exoplatform.ecms</groupId>
-        <artifactId>ecms-core-services</artifactId>
+        <artifactId>ecms</artifactId>
         <version>${org.exoplatform.ecms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.exoplatform.ecms</groupId>
-        <artifactId>ecms-core-webui</artifactId>
-        <version>${org.exoplatform.ecms.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <!-- Import versions from forum project -->
       <dependency>
@@ -104,17 +101,6 @@
         <version>${org.exoplatform.forum.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.exoplatform.forum</groupId>
-        <artifactId>forum-answer-service</artifactId>
-        <version>${org.exoplatform.forum.version}</version>
-      </dependency>
-      <!--  To be replaced by an import of forum-social POM -->
-      <dependency>
-        <groupId>org.exoplatform.forum</groupId>
-        <artifactId>forum-forum-service</artifactId>
-        <version>${org.exoplatform.forum.version}</version>
       </dependency>
       <!-- Our own project modules -->
       <dependency>
@@ -220,21 +206,13 @@
         <artifactId>exo.portal.webui.portlet</artifactId>
         <version>${org.gatein.portal.version}</version>
       </dependency>
-      <!-- To be replaced by an import of social parent POM -->
+      <!-- Import versions from social project -->
       <dependency>
         <groupId>org.exoplatform.social</groupId>
-        <artifactId>social-component-common</artifactId>
+        <artifactId>social</artifactId>
         <version>${org.exoplatform.social.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.exoplatform.social</groupId>
-        <artifactId>social-component-core</artifactId>
-        <version>${org.exoplatform.social.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.exoplatform.social</groupId>
-        <artifactId>social-component-webui</artifactId>
-        <version>${org.exoplatform.social.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <!-- Import versions from wiki project -->
       <dependency>
