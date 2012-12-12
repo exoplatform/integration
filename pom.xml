@@ -47,7 +47,7 @@
     <org.exoplatform.social.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.social.version>
     <org.exoplatform.wiki.version>4.0.0.Alpha1-kill-exobuild-SNAPSHOT</org.exoplatform.wiki.version>
     <org.gatein.portal.version>3.5.0.Final</org.gatein.portal.version>
-    <org.gatein.shindig.version>2.0.2-CP01</org.gatein.shindig.version>
+    <org.gatein.shindig.version>2.0.2.Final-gatein-3</org.gatein.shindig.version>
   </properties>
   <dependencyManagement>
     <dependencies>
