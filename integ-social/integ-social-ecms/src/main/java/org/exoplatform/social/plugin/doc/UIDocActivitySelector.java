@@ -104,7 +104,8 @@ public class UIDocActivitySelector extends UIContainer implements UIPopupCompone
         uiDocActivityComposer.doSelect(null, rawPath) ;
         uiDocActivitySelector.deActivate() ;
         event.getRequestContext().addUIComponentToUpdateByAjax(optionContainer);
-        event.getRequestContext().addUIComponentToUpdateByAjax(uiDocActivityComposer);
+//        event.getRequestContext().addUIComponentToUpdateByAjax(uiDocActivityComposer);
+        event.getRequestContext().addUIComponentToUpdateByAjax(uiComposer);
       }
     }
 
