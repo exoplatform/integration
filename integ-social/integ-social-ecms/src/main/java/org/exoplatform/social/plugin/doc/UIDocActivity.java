@@ -25,6 +25,7 @@ import javax.portlet.PortletRequest;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.wcm.webui.Utils;
@@ -80,24 +81,16 @@ public class UIDocActivity extends BaseUIActivity {
   public String message;
   public String docName;
   public String docPath;
-  private Node docNode;
+  public String repository;
+  public String workspace;
 
   public UIDocActivity() {
   }
 
-  public void setDocNode(Node docNode) {
-    this.docNode = docNode;
-  }
-
-  public Node getDocNode() {
-    return docNode;
-  }
-
-
   protected boolean isPreviewable() {
     String mimeType = "";    
       try {
-        mimeType = docNode.getNode("jcr:content").getProperty("jcr:mimeType").getString();
+        mimeType = getDocNode().getNode("jcr:content").getProperty("jcr:mimeType").getString();
       } catch (ValueFormatException e) {
         if (LOG.isDebugEnabled())
           LOG.debug(e);
@@ -183,5 +176,10 @@ public class UIDocActivity extends BaseUIActivity {
       //
       event.getRequestContext().getJavascriptManager().addJavascript(";window.location.href='" + siteExplorerURL.toString() +"';");
     }
+  }
+  
+  private Node getDocNode() {
+    NodeLocation nodeLocation = new NodeLocation(repository, workspace,docPath);
+    return NodeLocation.getNodeByLocation(nodeLocation);
   }
 }

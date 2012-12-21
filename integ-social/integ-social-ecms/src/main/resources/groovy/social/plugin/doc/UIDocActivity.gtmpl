@@ -78,18 +78,19 @@
   def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
   def likesDisplayed = uicomponent.isLikesDisplayed();
   //params for init UIActivity javascript object
-  def params = """
-    {activityId: '${activity.id}',
-     inputWriteAComment: '$inputWriteAComment',
-     commentMinCharactersAllowed: ${uicomponent.getCommentMinCharactersAllowed()},
-     commentMaxCharactersAllowed: ${uicomponent.getCommentMaxCharactersAllowed()},
-     commentFormDisplayed: $commentFormDisplayed,
-     allCommentSize: ${allComments.size()},
-     commentFormFocused: ${uicomponent.isCommentFormFocused()}
-    }
-  """
+  
+	def params = """ {
+	    activityId: '${activity.id}',
+	    inputWriteAComment: '$inputWriteAComment',
+	    commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
+	    commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
+	    commentFormDisplayed: '$commentFormDisplayed',
+	    allCommentSize: '${allComments.size()}',
+	    commentFormFocused: '${uicomponent.isCommentFormFocused()}'
+	} """
+    
   //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
-  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.UIActivity.onLoad($params);");
+  jsManager.require("SHARED/social-ui-activity", "activity").addScripts("activity.UIActivity.onLoad($params);");
   
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
@@ -180,12 +181,7 @@
 					</div>
 				</div><!--end heading-->			
 				<%
-				if (!dMessage.equals(null) && !dMessage.equals("")){
-				%>
-				  <div class="description">$dMessage</div>
-				<%
-				  }
-				%>
+
 				<div class="uiBox roundedBottom introBox docShare">					
 					  <% 
 						if(uicomponent.isPreviewable()) {
@@ -196,7 +192,7 @@
 						   </a>
 						  <div class="text">
 							<a class="linkTitle" target="_blank" href="#">Sushi.png</a>
-							<p class="linkDescription">My homemade sushi <br/>Proin facilisis dictum magna.</p>
+							<p class="linkDescription">$dMessage</p>
 							<div class="versionFile">Version 2 - 2Mo</div>
 						  </div>
 					  </div><!--hackcode-->
