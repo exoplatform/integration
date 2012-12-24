@@ -98,7 +98,7 @@
   def listPeopleLikeBlockClass = "", listPeopleBGClass = "";
 
   if (!likesDisplayed) {
-    listPeopleLikeBlockClass = "DisplayNone";
+    listPeopleLikeBlockClass = "displayNone";
   }
   if (uicomponent.isLiked()) {
     if (identityLikesNum > 1) {
@@ -118,7 +118,7 @@
 
   if (!labelLikes) {
    //hides diplayPeopleBG
-   listPeopleBGClass = "DisplayNone";
+   listPeopleBGClass = "displayNone";
   }
 
   activityContentTitle = activity.title;
@@ -179,9 +179,7 @@
 						  <a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconGroup"></i>&nbsp;$spaceName</a>
 						<%} %>						
 					</div>
-				</div><!--end heading-->			
-				<%
-
+				</div><!--end heading-->
 				<div class="uiBox roundedBottom introBox docShare">					
 					  <% 
 						if(uicomponent.isPreviewable()) {
@@ -212,12 +210,12 @@
 						}
 					  %>				
 					</div><!--end introBox,linkShare-->	  
-				  <div class="statusBar clearfix docActivityIcon">						
-						<ul class="pull-right statusAction">	
+				  <div class="statusBar clearfix docActivityIcon">	
 						<% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 						 def commentLink = "";
 						%>
-						<% if (activityCommentAndLikable) { %>
+						<% if (activityCommentAndLikable) { %>											
+						<ul class="pull-right statusAction">	
 						<li>
 							<a class="$commentLink" onclick="$toggleDisplayCommentAction" id="CommentLink${activity.id}" href="#comment">
 							 <i class="uiIconComment"></i>&nbsp;2<!-- hackcode add dynamic later-->
@@ -236,8 +234,8 @@
 							</a>
 						</li>
 						<% }%>
-						<% }%>
 						</ul>
+						<% }%>
 					 <ul class="pull-left statusAction">					 
 						<li><a href="<%= uicomponent.event("ViewDocument")%>"><i class="uiIconWatch"></i>&nbsp;$viewFileLabel</a></li> 
 						<li><a href="<%= uicomponent.event("DownloadDocument")%>"><i class="uiIconSocDownload"></i>&nbsp;$downloadFileLabel</a></li>
