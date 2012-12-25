@@ -158,8 +158,8 @@
 					  <span onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="uiIconClose" id="DeleteActivityButton${activity.id}"></span>
 					<%}%>
 					<div class="author">
-						<a rel="tooltip" data-placement="bottom" title="" href="">
-						  root <!--hack code-->
+						<a rel="tooltip" data-placement="bottom" title="$ownerName" href="$ownerUri">
+						$ownerName
 						</a>          
 					</div>	
 					<div class="dataInfor">
@@ -173,7 +173,7 @@
 						<%} %>
 					</div>
 				</div><!--end heading-->
-				<div class="uiBox roundedBottom introBox ">	
+				<div class="uiBox roundedBottom introBox forumShare">	
 					<div class="clearfix headingContainer">
 						<div class="pull-right sumaryRate">
 							<i class="uiIconStarUp"></i><!--hack code-->	
@@ -183,14 +183,14 @@
 							<i class="uiIconStarDown"></i><!--hack code-->	
 						</div>
 						<div class="titleForum">
-							<a href="" title="">What’s new in GateIn 3.5 ? </a><!--hackcode-->
+							<a class="linkTitle" href="" title="">What’s new in GateIn 3.5 ? </a><!--hackcode-->
 						</div>
 					</div>	
-				  <div class="contentForum">
+				  <div class="contentForum theContent">
 					<p class="text">$activity.body</p>
 					<span>2 Replies</span><!--hack code-->	
 				  </div>
-				</div><!--end introBox,linkShare-->							 
+				</div><!--end introBox,linkShare-->					
 				<div class="statusBar clearfix forumActivityIcon">
 				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 					 def commentLink = "";
@@ -220,12 +220,12 @@
 				<ul class="pull-left statusAction">					 
 					<li>
 						<a href="${uicomponent.getReplyLink()}" id="ReplyLink${activity.id}">
-						   <i class="uiIconSocReply"></i>&nbsp;<%= _ctx.appRes("ForumUIActivity.label.reply")%>
+						   <i class="uiIconReply"></i>&nbsp;<%= _ctx.appRes("ForumUIActivity.label.reply")%>
 						 </a>
 					</li> 
 					<li>
 						<a href="${uicomponent.getViewLink()}" id="View${activity.id}">
-						   <i class="uiIconSocLastestReply"></i>&nbsp;<%= _ctx.appRes("ForumUIActivity.label.view") %>
+						   <i class="uiIconLastestReply"></i>&nbsp;<%= _ctx.appRes("ForumUIActivity.label.view") %>
 						 </a>
 					</li>							
 				 </ul>
