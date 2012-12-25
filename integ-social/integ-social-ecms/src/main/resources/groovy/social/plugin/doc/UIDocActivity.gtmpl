@@ -154,7 +154,7 @@
 			  <img rel="tooltip" data-placement="bottom" title="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<div class="activityType"><span><i class="uiIconSocFileSharing"></i></span></div>					
+		<div class="activityType"><span><i class="uiIconFileSharing"></i></span></div>					
 	</div><!--end activityTimeLine-->	
     <div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="contentBox">
@@ -191,7 +191,7 @@
 						  <div class="text">
 							<a class="linkTitle" target="_blank" href="#">Sushi.png</a>
 							<p class="linkDescription">$dMessage</p>
-							<div class="versionFile">Version 2 - 2Mo</div>
+							<span class="versionFile">Version 2 - 2Mo</span>
 						  </div>
 					  </div><!--hackcode-->
 						  
@@ -203,7 +203,7 @@
 							<div class="text">
 								<a class="linkTitle" target="_blank" href="#">GateIn35.pdf</a>
 								<p class="linkDescription">This is article is unveilling all new features of GateIn 3.5<br/>Proin facilisis dictum magna.</p>
-								<div class="versionFile">Version 2 - 2Mo</div>
+								<span class="versionFile">Version 2 - 2Mo</span>
 							  </div><!--hackcode-->
 						</div>
 					  <%
