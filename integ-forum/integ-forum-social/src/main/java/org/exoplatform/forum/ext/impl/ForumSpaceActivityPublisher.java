@@ -226,14 +226,64 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void addTopic(Topic topic, String categoryId, String forumId) {
     saveActivityForTopic(topic, categoryId, forumId, ACTIVITYTYPE.AddTopic);
   }
-
+  
   @Override
-  public void updatePost(Post post, String categoryId, String forumId, String topicId) {
-    saveActivityForPost(post, categoryId, forumId, topicId, ACTIVITYTYPE.UpdatePost);
+  public void updateTopic(Topic topic) {
+    saveActivityForTopic(topic, topic.getCategoryId(), topic.getForumId(), ACTIVITYTYPE.UpdateTopic);
   }
 
   @Override
+  public void updateStatusTopic(Topic topic, int type) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void moveTopic(Topic topic, String toCategoryName, String toForumName) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void mergeTopic(Topic newTopic, String removeActivityId1, String removeActivityId2) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void splitTopic(Topic newTopic, Topic splitedTopic, String removeActivityId) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void updatePost(Post post) {
+    saveActivityForPost(post, post.getCategoryId(), post.getForumId(), post.getTopicId(), ACTIVITYTYPE.UpdatePost);
+  }
+
+  @Override
+  public void updateStatusPost(Post post, int type) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void removeActiviry(String activityId) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  @Deprecated
   public void updateTopic(Topic topic, String categoryId, String forumId) {
-    saveActivityForTopic(topic, categoryId, forumId, ACTIVITYTYPE.UpdateTopic);
+    // TODO Not used
+    
+  }
+
+  @Override
+  @Deprecated
+  public void updatePost(Post post, String categoryId, String forumId, String topicId) {
+    // TODO Not used
+    
   }
 }
