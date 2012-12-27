@@ -60,6 +60,7 @@ public class CalendarUIActivity extends BaseUIActivity {
   private String           eventId, calendarId;
 
   private String           timeZone           = "";
+  private CalendarEvent event =  null ;
 
   public CalendarUIActivity() {
     super();
@@ -73,7 +74,6 @@ public class CalendarUIActivity extends BaseUIActivity {
       CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
       CalendarSetting setting = calService.getCalendarSetting(username);
       timeZone = setting.getTimeZone();
-      CalendarEvent event = null;
       try {
         event = calService.getGroupEvent(calendarId, eventId);
       } catch (PathNotFoundException pnf) {

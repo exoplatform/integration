@@ -30,7 +30,8 @@
   /* this block is required for rendering calendar content */
   import org.exoplatform.calendar.service.CalendarEvent;
   /* end block */
-
+	
+  uicomponent.init();
   def pcontext = Util.getPortalRequestContext();
   def jsManager = pcontext.getJavascriptManager();
   //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()     
@@ -40,6 +41,7 @@
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
   def streamOwner = activity.getStreamOwner();
+  def event = uicomponent.event ;
 %>
 
 <% if (activity) { //process if not null   
@@ -142,20 +144,27 @@
 
 <div class="activityStream uiCalendarActivity"> 
   <% uiform.begin() %>
+  <%
+  def calendarIconClass = "eventActivityIcon";
+  def typeCalenderIconClass = "uiIconCalendarMini";
+  if (uicomponent.getTypeOfEvent().contains("Task")) {
+	calendarIconClass = "taskActivityIcon";
+	typeCalenderIconClass = "uiIconTaskSharing";
+  } 
+  %>
+  <% /* end the block for rendering the calendar activity content */ %>
 	<div class="activityTimeLine pull-left">
 		<div class="activityAvatar avatarCircle">
 			<a class="avatar" rel="tooltip" data-placement="bottom" title="$ownerName" href="$ownerUri">
-			  <img rel="tooltip" data-placement="bottom" title="$ownerName" src="$ownerAvatar"/>
+			  <img  alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
 		<div class="activityType">
 			<span>
-				<i class="uiIconCalendarMini"></i> <!--check condition case task, change uiIconCalendarMini to other name 
-				example : uiIconCalTaskMini ask BD team to know exactly name -->
+				<i class="$typeCalenderIconClass"></i>
 			</span>
 		</div>					
-	</div><!--end activityTimeLine-->
-	
+	</div><!--end activityTimeLine-->	
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="contentBox">
 			<div id="ActivityContextBox${activity.id}">     
@@ -180,9 +189,18 @@
 						<%} %>
 					</div>
 				</div><!--end heading-->
+				<%
+					if (uicomponent.getTypeOfEvent().contains("Event")) {
+				%>		
 				<div class="description">First version of Juzu website after many days of hard work, now time for CRaSH website.</div><!--hackcode check if if exist description if no remove this line-->
+				<% } %>
 				<div class="uiBox roundedBottom introBox CalendarShare">
 					<div class="clearfix">
+						<%
+							if (uicomponent.getTypeOfEvent().contains("Task")) {
+						%>
+						<div class="pull-left statusTask"><i class="<%=event.getEventState()%>Icon"  ></i></div>
+						<%} else { %> <!-- check if is event-->
 						  <div class="pull-left calendarBox">
 							<div class="heading">
 								Feb<!--hackcode-->
@@ -190,9 +208,9 @@
 							<div class="content">
 								22<!--hackcode-->
 							</div>
-						  </div>					
-						  <div class="text">							
-								<% uicomponent.init(); %>
+						  </div>
+						<% } %>	
+						  <div class="text">								
 								  <%
 									title = "<a class='linkTitle' href='" + uicomponent.getEventLink() +"' title='" + uicomponent.getSummary() + "'>" + uicomponent.getSummary() + "</a>";
 									print title;
@@ -203,20 +221,18 @@
 								  } else {
 								%>
 								<p><%= uicomponent.getDescription();%> </p>
-								<span class="dateTime"><%= uicomponent.getEventStartTime(_ctx);%></span><br/> 
-								<span class="dateTime"><%= uicomponent.getEventEndTime(_ctx);%></span> 
+								<%
+									if (uicomponent.getTypeOfEvent().contains("Task")) {
+								%>
+									<span class="dateTime">Due for: <%= uicomponent.getEventEndTime(_ctx);%></span> 
+								<% } else {%>  
+									<span class="dateTime"><%= uicomponent.getEventStartTime(_ctx);%></span><br/>
+									<span class="location"><%= uicomponent.getLocation();%> <br></span>	
+									<%}%>
 								<% } %>  
 						  </div>
 					</div>
-				</div><!--end introBox-->
-				<%
-				  def calendarIconClass = "eventActivityIcon";
-				  if (uicomponent.getTypeOfEvent().contains("Task")) {
-					calendarIconClass = "taskActivityIcon";
-				  } 
-				  %>
-				  <% /* end the block for rendering the calendar activity content */ %>
-				  
+				</div><!--end introBox-->				  
 				<div class="statusBar clearfix $calendarIconClass">
 				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 					 def commentLink = "";
@@ -243,34 +259,6 @@
 					  <% }%>											 
 					</ul>  
 				 <% }%>	
-				   <ul class="statusAction pull-left">
-					 <% /* begin the block for rendering the calendar actions */ %>
-					 <%
-					 if (!uicomponent.eventNotFound && uicomponent.isInvited && !uicomponent.isAnswered && uicomponent.getTypeOfEvent().contains("Event")) {
-					 %>					  
-					   <li><a  onclick="<%=uicomponent.event("AcceptEvent", "true");%>"  id="AcceptButton${activity.id}" /><i class="uiIconAccepButton"></i>&nbsp;<%=_ctx.appRes("CalendarUIActivity.label.accept-invite")%></a></li>
-					   <li><a  onclick="<%=uicomponent.event("AcceptEvent", "false");%>"   id="RefuseButton${activity.id}" /><i class="uiIconRefuseButton"></i>&nbsp;<%=_ctx.appRes("CalendarUIActivity.label.refuse-invite")%></a></li>
-					 <% } else if (!uicomponent.eventNotFound && uicomponent.getTypeOfEvent().contains("Task")) { %>
-					   <% if (!uicomponent.isTaskAssigned()) { %>
-						 <li><a  onclick="<%=uicomponent.event("AssignTask", "me");%>"   id="AssignButton${activity.id}" /><i class="uiIconAssignButton"></i>&nbsp;<%=_ctx.appRes("CalendarUIActivity.label.assign-to-me")%></a></li>
-					   <% } else { %>
-					   <% if (!CalendarEvent.NEEDS_ACTION.equalsIgnoreCase(uicomponent.getTaskStatus())) { %>
-						   <li><a  onclick="<%=uicomponent.event("SetTaskStatus", CalendarEvent.NEEDS_ACTION);%>"  id="NeedActionButton${activity.id}" /><i class="uiIconNeedActionButton"></i>&nbsp;<%=_ctx.appRes("CalendarUIActivity.label.need-action")%></a></li>
-						 <% }
-						  if (!CalendarEvent.IN_PROCESS.equalsIgnoreCase(uicomponent.getTaskStatus())) { %>
-							<li><a  onclick="<%=uicomponent.event("SetTaskStatus", CalendarEvent.IN_PROCESS);%>"   id="InProgressButton${activity.id}" /><i class="uiIconInProgressButton"></i>&nbsp;<%=_ctx.appRes("CalendarUIActivity.label.in-progress")%></a></li>
-						 <% }
-						  if (!CalendarEvent.CANCELLED.equalsIgnoreCase(uicomponent.getTaskStatus())) { %>
-							<li><a  onclick="<%=uicomponent.event("SetTaskStatus", CalendarEvent.CANCELLED);%>"  id="CancelButton${activity.id}" /><i class="uiIconCancelButton"></i>&nbsp;<%=_ctx.appRes("CalendarUIActivity.label.cancel")%></a></li>
-						 <% }
-						  if (!CalendarEvent.COMPLETED.equalsIgnoreCase(uicomponent.getTaskStatus())) { %>
-						   <li><a  onclick="<%=uicomponent.event("SetTaskStatus", CalendarEvent.COMPLETED);%>"  id="CompleteButton${activity.id}" /><i class="uiIconCompleteButton"></i>&nbsp;<%=_ctx.appRes("CalendarUIActivity.label.complete")%></a></li>
-					 <%     }
-						 }
-					   }
-					  /* end the block for rendering the calendar actions */
-					 %>
-					  </ul>
 				</div><!--end statusBar-->
 				<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>				
 				<div class="listLikedBox $listPeopleBGClass">		
@@ -288,7 +276,7 @@
 						  if (!personLikeAvatarImageSource) personLikeAvatarImageSource = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
 						  %>
 							<a class="avatarSmall" rel="tooltip" data-placement="bottom" title="$personLikeFullName" href="$personLikeProfileUri">
-							  <img src="$personLikeAvatarImageSource" rel="tooltip" data-placement="bottom" title="$personLikeFullName" />
+							  <img src="$personLikeAvatarImageSource" alt="$personLikeFullName" />
 							</a>
 						 <% })%>
 						</div>
@@ -339,7 +327,7 @@
 					  <% } %>
 						<div class="commmentLeft">
 						  <a class="avatarSmall" href="$commenterProfileUri" rel="tooltip" data-placement="bottom" title="$commenterFullName" >
-							<img rel="tooltip" data-placement="bottom" title="$commenterFullName" src="$commenterAvatarImgSrc" />
+							<img alt="$commenterFullName" src="$commenterAvatarImgSrc" />
 						  </a>
 						</div><!--end commentLeft-->     
 						<div class="commentRight">
@@ -377,7 +365,7 @@
 					<% } %>
 					  <div class="commmentLeft">
 							<a class="avatarSmall" rel="tooltip" data-placement="bottom" title="$currentCommenterName" href="$currentCommenterUri">
-								<img src="$currentCommenterAvatar" rel="tooltip" data-placement="bottom" title="$currentCommenterName"/>
+								<img src="$currentCommenterAvatar" alt="$currentCommenterName"/>
 							</a>
 						</div><!--end commentLeft--> 
 						<div class="commentRight">
