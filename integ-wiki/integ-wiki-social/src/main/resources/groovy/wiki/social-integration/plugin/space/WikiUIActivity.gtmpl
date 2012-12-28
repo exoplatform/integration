@@ -154,10 +154,10 @@
 	</div>		
   </div><!--end activityTimeLine-->  
   <div class="boxContainer" id="boxContainer">
-	<div id="ContextBox${activity.id}"class="contentBox">
+	<div id="ContextBox${activity.id}"class="contentBox uiBox">
 		<div id="ActivityContextBox${activity.id}">
-			<div class="heading uiBox  roundedTop">
-				<span class="arrow left"></span>
+			<div class="heading ">
+				<span class="arrowLeft"></span>
 				 <% if (activityDeletable) {%>
 					<a href="javascript:void(0)" onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="uiIconClose" id="DeleteActivityButton${activity.id}"></a>
 				  <%}%>
@@ -188,7 +188,7 @@
 						<% } %>
 					</div>
 			</div><!--end introBox,linkShare-->	
-			<div class="statusBar clearfix ">
+			<div class="actionBar clearfix ">
 				 <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 							 def commentLink = "";
 						  %> 
@@ -214,7 +214,7 @@
 				  <% }%>					  			
 				</ul>
 				 <% }%>		
-			</div><!--end statusBar-->
+			</div><!--end actionBar-->
 			<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>				
 			<div class="listLikedBox $listPeopleBGClass">		
 				<div class="listPeopleContent">
@@ -239,7 +239,7 @@
 				</div>				
 			</div><!--end list like people--> 
 			<%}%>
-			<div id="CommentBlockBound${activity.id}" class="commentBox uiBox roundedBottom">    
+			<div id="CommentBlockBound${activity.id}" class="commentBox">    
 			  <% if (uicomponent.commentListToggleable()) {
 			  def showAllCommentsAction = uicomponent.event("SetCommentListStatus", "all");
 			  def hideAllCommentsAction = uicomponent.event("SetCommentListStatus", "none");
