@@ -157,12 +157,12 @@
 		<div class="activityType"><span><i class="uiIconFileSharing"></i></span></div>					
 	</div><!--end activityTimeLine-->	
     <div class="boxContainer" id="boxContainer">
-		<div id="ContextBox${activity.id}"class="contentBox">
+		<div id="ContextBox${activity.id}"class="uiBox contentBox">
 			<div id="ActivityContextBox${activity.id}"> 
-				<div class="heading uiBox  roundedTop">
-					<span class="arrow left"></span>
+				<div class="heading">
+					<span class="arrowLeft"></span>
 					  <% if (activityDeletable) {%>
-						  <span onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="uiIconClose" id="DeleteActivityButton${activity.id}"></span>
+						  <a href="javascript:void(0)" onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="uiIconClose" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 					<div class="author">
 						<a rel="tooltip" data-placement="bottom" title="$ownerName" href="$ownerUri">$ownerName</a>                
@@ -186,7 +186,7 @@
 					  %>
 					  <div class="clearfix isPreviewable">
 							<a class="pull-left" href="<%= uicomponent.event("ViewDocument")%>" title="$dName">      
-								<img src="<%= uicomponent.docThumbnail %>" style="max-height: 200px; max-width: 330px;height:192px;width:330px;" />
+								<img src="<%= uicomponent.docThumbnail %>" />
 						   </a>
 						  <div class="text">
 							<a class="linkTitle" target="_blank" href="#">Sushi.png</a>
@@ -210,7 +210,7 @@
 						}
 					  %>				
 					</div><!--end introBox,linkShare-->	  
-				  <div class="statusBar clearfix docActivityIcon">	
+				  <div class="actionBar clearfix docActivityIcon">	
 						<% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 						 def commentLink = "";
 						%>
@@ -241,7 +241,7 @@
 						<li><a href="<%= uicomponent.event("DownloadDocument")%>"><i class="uiIconSocDownload"></i>&nbsp;$downloadFileLabel</a></li>
 						<li><a href="<%= uicomponent.event("GotoFolder")%>"><i class="uiIconSocForder"></i>&nbsp;$gotoFolderLabel</a></li>
 					 </ul>
-				</div><!--end statusBar-->		
+				</div><!--end actionBar-->		
 				<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>				
 				<div class="listLikedBox $listPeopleBGClass">		
 					  <div class="listPeopleContent">
@@ -267,7 +267,7 @@
 					 </div>				
 				</div><!--end list like people--> 
 				<%}%>
-				<div id="CommentBlockBound${activity.id}" class="commentBox uiBox roundedBottom">    
+				<div id="CommentBlockBound${activity.id}" class="commentBox">    
 				  <% if (uicomponent.commentListToggleable()) {
 				  def showAllCommentsAction = uicomponent.event("SetCommentListStatus", "all");
 				  def hideAllCommentsAction = uicomponent.event("SetCommentListStatus", "none");
