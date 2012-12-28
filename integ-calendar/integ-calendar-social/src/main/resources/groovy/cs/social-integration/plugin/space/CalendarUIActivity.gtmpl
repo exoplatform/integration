@@ -166,10 +166,10 @@
 		</div>					
 	</div><!--end activityTimeLine-->	
 	<div class="boxContainer" id="boxContainer">
-		<div id="ContextBox${activity.id}"class="contentBox">
+		<div id="ContextBox${activity.id}"class="uiBox contentBox">
 			<div id="ActivityContextBox${activity.id}">     
-				<div class="heading uiBox  roundedTop">
-					<span class="arrow left"></span>
+				<div class="heading">
+					<span class="arrowLeft"></span>
 					<% if (activityDeletable) {%>
 					  <span onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="uiIconClose" id="DeleteActivityButton${activity.id}"></span>
 					<%}%>
@@ -233,7 +233,7 @@
 						  </div>
 					</div>
 				</div><!--end introBox-->				  
-				<div class="statusBar clearfix $calendarIconClass">
+				<div class="actionBar clearfix $calendarIconClass">
 				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 					 def commentLink = "";
 				  %>
@@ -259,7 +259,7 @@
 					  <% }%>											 
 					</ul>  
 				 <% }%>	
-				</div><!--end statusBar-->
+				</div><!--end actionBar-->
 				<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>				
 				<div class="listLikedBox $listPeopleBGClass">		
 						<div class="listPeopleContent">
@@ -284,7 +284,7 @@
 					  </div>
 				</div><!--end list like people--> 
 				<%}%>       
-				<div id="CommentBlockBound${activity.id}" class="commentBox uiBox roundedBottom">					
+				<div id="CommentBlockBound${activity.id}" class="commentBox">					
 					  <% if (uicomponent.commentListToggleable()) {
 					  def showAllCommentsAction = uicomponent.event("SetCommentListStatus", "all");
 					  def hideAllCommentsAction = uicomponent.event("SetCommentListStatus", "none");
@@ -344,7 +344,7 @@
 					  <%
 						if (uicomponent.isCommentDeletable(it.userId)) {
 					  %>
-						<a class="uiIconClose" id="DeleteCommentButton${activity.id}${commentCounter}"  onclick="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"></a>
+						<a class="uiIconClose" href="javascript:void(0)" id="DeleteCommentButton${activity.id}${commentCounter}"  onclick="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"></a>
 					  <% } %>					  
 					  
 					  </div><!--end commentItem-->
