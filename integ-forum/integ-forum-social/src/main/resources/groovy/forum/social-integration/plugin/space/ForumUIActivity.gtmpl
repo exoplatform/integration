@@ -183,7 +183,7 @@
 							<i class="uiIconStarDown"></i><!--hack code-->	
 						</div>
 						<div class="titleForum">
-							<a class="linkTitle" href="" title="">What’s new in GateIn 3.5 ? </a><!--hackcode-->
+							<a class="linkTitle" href="" title="">Whatï¿½s new in GateIn 3.5 ? </a><!--hackcode-->
 						</div>
 					</div>	
 				  <div class="contentForum theContent">
@@ -322,7 +322,7 @@
 					  </div><!--end commentItem-->
 					<% }) %>				
 					</div> <!--end commentlist-->
-				    <div class="commentList inputContainer">
+				    <div class="commentList inputContainer" id="InputContainer${activity.id}">
 					<%
 					  def currentCommenterIdentity = Utils.getOwnerIdentity();
 					  def currentCommenterUri = LinkProvider.getUserProfileUri(currentCommenterIdentity.getRemoteId());
