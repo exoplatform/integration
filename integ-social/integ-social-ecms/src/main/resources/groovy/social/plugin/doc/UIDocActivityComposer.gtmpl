@@ -31,7 +31,7 @@
     
   def currentActivityComposer = uicomponent.getActivityComposerManager().getCurrentActivityComposer();
   def isReady = currentActivityComposer.isReadyForPostingActivity();  
-  if (isReady) requireJS.addScripts("composer.UIComposer.handleShareButton($isReady);");
+  if (isReady) requireJS.addScripts("composer.handleShareButton($isReady);");
 %>
 <div id="<%=uicomponent.id%>">
   <%
