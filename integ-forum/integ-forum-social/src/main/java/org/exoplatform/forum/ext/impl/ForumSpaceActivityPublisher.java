@@ -210,6 +210,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
         if (ownerStream != null) {
           Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), topic.getId(), topic.getLink(), topic.getOwner(), topic.getTopicName(), type);
           saveActivity(ownerStream, activity(author, topic.getTopicName(), topic.getDescription(), forumId, categoryId, topic.getId(), type.name(), templateParams));
+          //forumService.saveActivityIdForOwner(ownerId, Utils.TOPIC, activityId)
         }
       } catch (Exception e) { //ForumService
         LOG.error("Can not record Activity for space when add topic " + e.getMessage());
@@ -274,7 +275,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   }
 
   @Override
-  @Deprecated
+
   public void updateTopic(Topic topic, String categoryId, String forumId) {
     // TODO Not used
     
