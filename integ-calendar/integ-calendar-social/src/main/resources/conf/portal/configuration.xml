@@ -1,6 +1,34 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
+    <component>
+    <key>org.exoplatform.social.core.processor.I18NActivityProcessor</key>
+    <type>org.exoplatform.social.core.processor.I18NActivityProcessor</type>
+    <component-plugins>
+      <component-plugin>
+        <name>cs-calendar:spaces</name> <!-- activity type -->
+        <set-method>addActivityResourceBundlePlugin</set-method>
+        <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
+        <init-params>
+          <object-param>
+            <name>locale.calendar.integration.integration</name> <!-- resource bundle key file -->
+            <description>activity key type resource bundle mapping for cs-calendar:spaces</description>
+            <object type="org.exoplatform.social.core.processor.ActivityResourceBundlePlugin">
+              <field name="activityKeyTypeMapping">
+                <map type="java.util.HashMap">
+                  <entry>
+                    <key><string>summary_updated</string></key>
+                    <value><string>CalendarUIActivity.msg.summary_updated</string></value>
+                  </entry>
+                </map>
+              </field>
+            </object>
+          </object-param>
+        </init-params>
+      </component-plugin>
+    </component-plugins>
+  </component>
+  
  <!-- Social integration -->
     <external-component-plugins>
     <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
@@ -87,6 +115,7 @@
       </init-params>
     </component-plugin>
   </external-component-plugins>
+  
   
   <!-- End social intergration -->
   
