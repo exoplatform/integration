@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.exoplatform.calendar.service.CalendarEvent;
@@ -176,9 +177,9 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         ExoSocialActivity activity = new ExoSocialActivityImpl();
         activity.setUserId(userIdentity.getId());
         activity.setTitle(event.getSummary());
-        activity.setBody(event.getDescription());
-        activity.setType(CALENDAR_APP_ID);
-        activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
+//        activity.setBody(event.getDescription());
+        activity.setType("CALENDAR_ACTIVITY");
+//        activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
         activityM.saveActivityNoReturn(spaceIdentity, activity);
         event.setActivityId(activity.getId());
       }
@@ -219,24 +220,30 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         activity.setUserId(userIdentity.getId());
         activity.setTitle(event.getSummary());
         activity.setBody(event.getDescription());
-        activity.setType(CALENDAR_APP_ID);
+        activity.setType("CALENDAR_ACTIVITY");
         activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
         activityM.saveActivityNoReturn(spaceIdentity, activity);
         } else {
-          activity.setTitle(event.getSummary());
-          activity.setBody(event.getDescription());
-          activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
-          activityM.updateActivity(activity);
+//          activity.setTitle(event.getSummary());
+//          activity.setBody(event.getDescription());
+//          activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
+//          activityM.updateActivity(activity);
           for(String key : messagesParams.keySet()) {
             ExoSocialActivity newComment = new ExoSocialActivityImpl();
-            newComment.setUserId(userIdentity.getId());
-            newComment.isComment(true);
+//            newComment.setUserId(userIdentity.getId());
+//            newComment.isComment(true);
             newComment.setType("cs-calendar:spaces");
-            newComment.setTitleId(key);
-            Map<String, String> data = new HashMap<String, String>(); 
-            data.put(key, messagesParams.get(key)[1]);
-            data.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, key);
+            newComment.setTitleId("summary_updated");
+            Map<String, String> data = new LinkedHashMap<String, String>(); 
+            data.put("SUMMARY_PARAM", messagesParams.get(key)[1]);
+            data.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, "SUMMARY_PARAM");
             newComment.setTemplateParams(data);
+            
+//            Map<String, String> templateParams = new LinkedHashMap<String, String>();
+//            templateParams.put("SUMMARY_PARAM", event.getProfile().getPosition());
+//            templateParams.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, "SUMMARY_PARAM");
+//            comment.setTemplateParams(templateParams);
+            
             newComment.setTitle(messagesParams.get(key)[0]);
             activityM.saveComment(activity, newComment);
           } 
