@@ -1,6 +1,84 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
+  <external-component-plugins>
+   <target-component>org.exoplatform.social.core.processor.I18NActivityProcessor</target-component>
+   <component-plugin>
+     <name>CALENDAR_ACTIVITY</name> <!-- activity type -->
+     <set-method>addActivityResourceBundlePlugin</set-method>
+     <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
+     <init-params>
+       <object-param>
+         <name>locale.calendar.integration.integration</name> <!-- resource bundle key file -->
+         <description>activity key type resource bundle mapping for exosocial:spaces</description>
+         <object type="org.exoplatform.social.core.processor.ActivityResourceBundlePlugin">
+           <field name="activityKeyTypeMapping">
+             <map type="java.util.HashMap">
+               <entry>
+                 <key><string>summary_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.summary_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>description_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.description_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>location_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.location_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>priority_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.priority_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>allDay_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.allDay_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>fromDateTime_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.fromDateTime_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>toDateTime_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.toDateTime_updated</string></value>
+               </entry>
+                <entry>
+                 <key><string>repeatType_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.repeatType_updated</string></value>
+               </entry>
+                <entry>
+                 <key><string>name_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.name_updated</string></value>
+               </entry>
+                <entry>
+                 <key><string>note_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.note_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>needs-action</string></key>
+                 <value><string>CalendarUIActivity.msg.needs-action</string></value>
+               </entry>
+               <entry>
+                 <key><string>in-process</string></key>
+                 <value><string>CalendarUIActivity.msg.in-process</string></value>
+               </entry>
+               <entry>
+                 <key><string>completed</string></key>
+                 <value><string>CalendarUIActivity.msg.completed</string></value>
+               </entry>
+               <entry>
+                 <key><string>canceled</string></key>
+                 <value><string>CalendarUIActivity.msg.canceled</string></value>
+               </entry>
+
+             </map>
+           </field>
+         </object>
+       </object-param>
+     </init-params>
+   </component-plugin>
+ </external-component-plugins>
+  
  <!-- Social integration -->
     <external-component-plugins>
     <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
@@ -87,6 +165,7 @@
       </init-params>
     </component-plugin>
   </external-component-plugins>
+  
   
   <!-- End social intergration -->
   
