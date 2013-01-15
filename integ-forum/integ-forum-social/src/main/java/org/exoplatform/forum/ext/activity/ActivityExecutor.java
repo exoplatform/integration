@@ -16,6 +16,8 @@
  */
 package org.exoplatform.forum.ext.activity;
 
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+
 /**
  * Created by The eXo Platform SAS
  * Author : thanh_vucong
@@ -23,5 +25,19 @@ package org.exoplatform.forum.ext.activity;
  * Jan 9, 2013  
  */
 public class ActivityExecutor {
+  
+  public static ExoSocialActivity execute(ActivityTask<ForumActivityContext> task, ForumActivityContext ctx) {
+    
+    task.start(ctx);
+    
+    //
+    ExoSocialActivity got = task.execute(ctx);
+    
+    //
+    task.end(ctx);
+    
+    //
+    return got;
+  }
 
 }

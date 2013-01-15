@@ -16,10 +16,13 @@
  */
 package org.exoplatform.forum.ext.activity;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.exoplatform.forum.service.ForumService;
+import org.exoplatform.forum.service.Topic;
+import org.exoplatform.forum.service.Utils;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.manager.ActivityManager;
 
 /**
  * Created by The eXo Platform SAS
@@ -27,35 +30,98 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
  *          thanh_vucong@exoplatform.com
  * Jan 9, 2013  
  */
-public abstract class PostActivityTask extends AbstractActivityTask<ForumActivityContext> {
+public abstract class PostActivityTask implements ActivityTask<ForumActivityContext> {
 
+  protected static final Log   LOG = ExoLogger.getExoLogger(PostActivityTask.class);
+  
   @Override
   public void start(ForumActivityContext ctx) { }
   
   @Override
   public void end(ForumActivityContext ctx) { }
   
-  protected Map<String, String> makeParams(String id, String link, String owner, String name) throws Exception {
-    Map<String, String> templateParams = new HashMap<String, String>();
-    templateParams.put(POST_ID_KEY, id);
-    templateParams.put(POST_LINK_KEY, link);
-    templateParams.put(POST_NAME_KEY, name);
-    templateParams.put(POST_OWNER_KEY, owner);
-    return templateParams;
+  abstract ExoSocialActivity processTitle(ExoSocialActivity activity);
+  
+  protected ExoSocialActivity process(ForumActivityContext ctx) {
+    ExoSocialActivity activity = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
+    return processTitle(activity); 
   }
   
-  public static PostActivityTask CREATE_POST = new PostActivityTask() {
+  public static PostActivityTask ADD_POST = new PostActivityTask() {
+
     @Override
-    public ExoSocialActivity publish(ForumActivityContext ctx) {
+    ExoSocialActivity processTitle(ExoSocialActivity activity) {
+      return ForumActivityType.ADD_POST.getActivity(activity, activity.getTitle());
+    }
+
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+        Topic topic = ForumActivityUtils.getTopic(ctx);
+        String activityId = ForumActivityUtils.getForumService().getActivityIdForOwnerPath(topic.getPath());
+        
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        
+        //
+        if (Utils.isEmpty(activityId)) {
+          LOG.error("Can not get Activity for topic " + ctx.getTopicId());
+          return null;
+        }
+        
+        ////FORUM_33 case: update topic activity's number of reply 
+        ExoSocialActivity topicActivity = am.getActivity(activityId);
+        am.updateActivity(topicActivity);
+        
+        //add new comment with title: first 3 lines
+        ExoSocialActivity newComment = process(ctx);
+        am.saveComment(topicActivity, newComment);
+        
+        return topicActivity;
+      } catch (Exception e) {
+        LOG.error("Can not record Comment for when add post " + ctx.getPost().getId(), e);
+      }
       return null;
     }
+    
   };
   
   public static PostActivityTask UPDATE_POST = new PostActivityTask() {
+    
     @Override
-    public ExoSocialActivity publish(ForumActivityContext ctx) {
+    ExoSocialActivity processTitle(ExoSocialActivity activity) {
+      //where $value is first 3 lines of the reply
+      return ForumActivityType.UPDATE_POST.getActivity(activity, activity.getBody());
+    }
+    
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+        ForumService fs = ForumActivityUtils.getForumService();
+        Topic topic = fs.getTopic(ctx.getCategoryId(), ctx.getForumId(), ctx.getTopicId(), null);        
+        String activityId = fs.getActivityIdForOwnerPath(topic.getPath());
+        
+        //
+        if (Utils.isEmpty(activityId)) {
+          LOG.error("Can not get Activity for topic " + ctx.getTopicId());
+          return null;
+        }
+        
+        //
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        ExoSocialActivity topicActivity = am.getActivity(activityId);
+        ExoSocialActivity newComment = process(ctx);
+          
+        //FORUM_34 case: update activity's title
+        //add comment for updated post
+        am.saveComment(topicActivity, newComment);
+          
+        return topicActivity;
+      } catch (Exception e) {
+        LOG.error("Can not record Comment when updates post " + ctx.getPost().getId(), e);
+      }
+      
       return null;
     }
+    
   };
-  
 }

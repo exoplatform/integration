@@ -26,6 +26,6 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
  */
 public interface ActivityTask<T> {
   void start(T ctx);
-  ExoSocialActivity publish(T ctx);
+  ExoSocialActivity execute(T ctx);
   void end(T ctx);
 }

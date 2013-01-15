@@ -53,11 +53,11 @@ public class ForumActivityContext {
   private Topic splitedTopic;
   
   /** create ForumActivityContext for create new topic case*/
-  public static ForumActivityContext makeContextForAddTopic(Topic topic, String categoryId, String forumId) {
+  public static ForumActivityContext makeContextForAddTopic(Topic topic) {
     ForumActivityContext ctx = new ForumActivityContext();
     ctx.topic = topic;
-    ctx.categoryId = categoryId;
-    ctx.forumId = forumId;
+    ctx.categoryId = topic.getCategoryId();
+    ctx.forumId = topic.getForumId();
     
     return ctx;
   }
