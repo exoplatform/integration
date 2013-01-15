@@ -26,7 +26,10 @@
 %>
 <div id="<%=uicomponent.id%>">
   <%
-    if(uicomponent.isDocumentReady()){		
+    if(uicomponent.isDocumentReady()){
+      def jsManager = _ctx.getRequestContext().getJavascriptManager();
+      jsManager.require("SHARED/social-ui-activity-composer", "composer")
+               .addScripts("composer.UIComposer.activeShareButton();");
       %>
 	  
       <span class="TopInputLink"></span>
