@@ -4,7 +4,7 @@
   <external-component-plugins>
    <target-component>org.exoplatform.social.core.processor.I18NActivityProcessor</target-component>
    <component-plugin>
-     <name>cs-calendar:spaces</name> <!-- activity type -->
+     <name>CALENDAR_ACTIVITY</name> <!-- activity type -->
      <set-method>addActivityResourceBundlePlugin</set-method>
      <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
      <init-params>
@@ -17,6 +17,30 @@
                <entry>
                  <key><string>summary_updated</string></key>
                  <value><string>CalendarUIActivity.msg.summary_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>description_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.description_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>location_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.location_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>priority_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.priority_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>allDay_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.allDay_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>fromDateTime_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.fromDateTime_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>toDateTime_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.toDateTime_updated</string></value>
                </entry>
              </map>
            </field>
@@ -78,7 +102,7 @@
           <name>Calendar Space Activity</name>
           <object type="org.exoplatform.social.webui.activity.UIActivityExtension">
             <field name="type"><string>org.exoplatform.social.webui.activity.BaseUIActivity</string></field>
-            <field name="name"><string>CALENDAR_ACTIVITY</string></field>
+            <field name="name"><string>cs-calendar:spaces</string></field>
             <field name="component"><string>org.exoplatform.cs.ext.impl.CalendarUIActivity</string></field>
             <field name="activityBuiderClass"><string>org.exoplatform.cs.ext.impl.CalendarSpaceUIActivityBuilder</string></field>
           </object>
