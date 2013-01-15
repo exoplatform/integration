@@ -42,6 +42,35 @@
                  <key><string>toDateTime_updated</string></key>
                  <value><string>CalendarUIActivity.msg.toDateTime_updated</string></value>
                </entry>
+                <entry>
+                 <key><string>repeatType_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.repeatType_updated</string></value>
+               </entry>
+                <entry>
+                 <key><string>name_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.name_updated</string></value>
+               </entry>
+                <entry>
+                 <key><string>note_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.note_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>needs-action</string></key>
+                 <value><string>CalendarUIActivity.msg.needs-action</string></value>
+               </entry>
+               <entry>
+                 <key><string>in-process</string></key>
+                 <value><string>CalendarUIActivity.msg.in-process</string></value>
+               </entry>
+               <entry>
+                 <key><string>completed</string></key>
+                 <value><string>CalendarUIActivity.msg.completed</string></value>
+               </entry>
+               <entry>
+                 <key><string>canceled</string></key>
+                 <value><string>CalendarUIActivity.msg.canceled</string></value>
+               </entry>
+
              </map>
            </field>
          </object>
