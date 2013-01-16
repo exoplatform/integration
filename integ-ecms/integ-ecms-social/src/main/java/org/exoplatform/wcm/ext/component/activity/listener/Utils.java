@@ -281,9 +281,13 @@ public class Utils {
     Map<String, String> activityParams = populateActivityData(node, activityOwnerId, activityMsgBundleKey);
     String title = node.hasProperty(NodetypeConstant.EXO_TITLE) ? node.getProperty(NodetypeConstant.EXO_TITLE).getString()
                                                  : StringUtils.EMPTY;
-    Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, ConversationState.getCurrent().getIdentity().getUserId(), false);
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    activity.setUserId(identity.getId());
+    if(ConversationState.getCurrent() != null)
+    {
+      Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, 
+    		  ConversationState.getCurrent().getIdentity().getUserId(), false);
+      activity.setUserId(identity.getId());
+    }
     activity.setType(CONTENT_SPACES);
     activity.setUrl(node.getPath());
     activity.setTitle(title);

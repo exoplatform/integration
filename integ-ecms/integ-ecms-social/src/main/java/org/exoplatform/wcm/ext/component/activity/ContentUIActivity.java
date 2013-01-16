@@ -245,7 +245,7 @@ public class ContentUIActivity extends BaseUIActivity {
         desc = node.getProperty("exo:summary").getValue().getString();
       } else if (node.hasNode("jcr:content")) {
         Node content = node.getNode("jcr:content");
-        if (content.hasProperty("dc:description")) {
+        if (content.hasProperty("dc:description") && content.getProperty("dc:description").getValues().length > 0) {
           try {
             desc = content.getProperty("dc:description").getValues()[0].getString();
           } catch (Exception ex) {
