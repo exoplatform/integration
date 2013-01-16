@@ -246,7 +246,6 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
           } 
         }
       }
-
     } catch (ExoSocialException e){  
       if (LOG.isDebugEnabled())
         LOG.error("Can not update Activity for space when event modified ", e);
@@ -310,9 +309,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
             messagesParams.put(TO_UPDATED[0],new String[]{TO_UPDATED[1].replace("$value",  dformat.format(newEvent.getToDateTime())), dformat.format(newEvent.getToDateTime()), TO_UPDATED[2]}) ; 
           }
         }
-        if(newEvent.getRepeatType()!= null && oldEvent.getRepeatType() == null ) {
-          messagesParams.put(REPEAT_UPDATED[0],new String[]{REPEAT_UPDATED[1].replace("$value", newEvent.getRepeatType()),newEvent.getRepeatType(), REPEAT_UPDATED[2]}) ;
-        } if (oldEvent.getRepeatType() == null && newEvent.getRepeatType()!= null && !newEvent.getRepeatType().equals(oldEvent.getRepeatType())) {
+        if(!newEvent.getRepeatType().equals(oldEvent.getRepeatType())) {
           messagesParams.put(REPEAT_UPDATED[0],new String[]{REPEAT_UPDATED[1].replace("$value", newEvent.getRepeatType()),newEvent.getRepeatType(), REPEAT_UPDATED[2]}) ;
         }
       } else {
@@ -401,6 +398,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   public void updatePublicEvent(CalendarEvent oldEvent, CalendarEvent newEvent, String calendarId) {
     String eventType = newEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
     Map<String, String[]> messagesParams = buildParams(oldEvent, newEvent);
+    if(newEvent.getActivityId() == null) newEvent.setActivityId(oldEvent.getActivityId());
     updateToActivity(newEvent, calendarId, eventType, messagesParams);
   }
 
