@@ -75,6 +75,11 @@
       <groupId>org.exoplatform.social</groupId>
       <artifactId>social-component-webui</artifactId>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- mvn analyze unused but build failed when remove -->
     <dependency>
       <groupId>org.gatein.shindig</groupId>
