@@ -31,6 +31,10 @@
                  <value><string>CalendarUIActivity.msg.priority_updated</string></value>
                </entry>
                <entry>
+                 <key><string>attachment_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.attachment_updated</string></value>
+               </entry>
+               <entry>
                  <key><string>allDay_updated</string></key>
                  <value><string>CalendarUIActivity.msg.allDay_updated</string></value>
                </entry>
@@ -53,6 +57,10 @@
                 <entry>
                  <key><string>note_updated</string></key>
                  <value><string>CalendarUIActivity.msg.note_updated</string></value>
+               </entry>
+               <entry>
+                 <key><string>task_attachment_updated</string></key>
+                 <value><string>CalendarUIActivity.msg.task_attachment_updated</string></value>
                </entry>
                <entry>
                  <key><string>needs-action</string></key>

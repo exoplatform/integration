@@ -106,12 +106,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   private static final String[] NOTE_UPDATED = {"note_updated", "Note has been updated to: $value.", "NOTE_UPDATED"};
   private static final String[] TASK_CATEGORY_UPDATED = {"taskCategoryName_updated", "Task's category is now: $value."};
   private static final String[] TASK_CALENDAR_UPDATED = {"task_CalendarId_updated", "Task's calendar is now: $value."};
+  private static final String[] TASK_ATTACH_UPDATED = {"task_attachment_updated", "Attachment(s) has been added to the task.", "TASK_ATTACH_UPDATED"};
   private static final String[] TASK_NEED_ACTION = {CalendarEvent.NEEDS_ACTION, "Task needs action.", "TASK_NEED_ACTION"};
   private static final String[] TASK_IN_PROCESS_ACTION = {CalendarEvent.IN_PROCESS, "Task is in process.", "TASK_IN_PROCESS_ACTION"};
   private static final String[] TASK_COMPLETED_ACTION = {CalendarEvent.COMPLETED, "Task has been completed.", "TASK_COMPLETED_ACTION"};
   private static final String[] TASK_CANCELLED_ACTION = {CalendarEvent.CANCELLED, "Task has been cancelled.", "TASK_CANCELLED_ACTION"};
 
-  private static final SimpleDateFormat dformat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+  private static final SimpleDateFormat dformat = new SimpleDateFormat("EEEEE, MMMMM dd, yyyy HH:mm a");
   private CalendarService calService_ ;
 
   /**
@@ -186,7 +187,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         event.setActivityId(activity.getId());
       }
     }catch(ExoSocialException e){ //getSpaceByPrettyName
-      if (LOG.isErrorEnabled())
+      if (LOG.isDebugEnabled())
         LOG.error("Can not record Activity for space when event added ", e);
     }
   }
@@ -247,7 +248,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
       }
 
     } catch (ExoSocialException e){  
-      if (LOG.isErrorEnabled())
+      if (LOG.isDebugEnabled())
         LOG.error("Can not update Activity for space when event modified ", e);
     }
   }
@@ -273,12 +274,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         activityM.deleteActivity(event.getActivityId());
       }
     } catch (ExoSocialException e){ //getSpaceByPrettyName
-      if (LOG.isErrorEnabled())
+      if (LOG.isDebugEnabled())
         LOG.error("Can not delete Activity for space when event deleted ", e);
     }
   }
   private Map<String, String[]> buildParams(CalendarEvent oldEvent, CalendarEvent newEvent){
-    Map<String, String[]> messagesParams = new HashMap<String, String[]>();
+    dformat.setTimeZone(getUserTimeZone());
+    Map<String, String[]> messagesParams = new LinkedHashMap<String, String[]>();
     try {
       if(CalendarEvent.TYPE_EVENT.equals(newEvent.getEventType())) {
         if(!oldEvent.getSummary().equals(newEvent.getSummary())) {
@@ -300,12 +302,12 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         }
         if(isAllDayEvent(newEvent) && !isAllDayEvent(oldEvent)) {
           messagesParams.put(ALLDAY_UPDATED[0],new String[]{ALLDAY_UPDATED[1], ALLDAY_UPDATED[1], ALLDAY_UPDATED[2]}) ;
-        }else {
-          if(newEvent.getFromDateTime().getTime() != oldEvent.getFromDateTime().getTime()){
-            messagesParams.put(FROM_UPDATED[0],new String[]{FROM_UPDATED[1].replace("$value", dformat.format(newEvent.getFromDateTime())), FROM_UPDATED[2]}) ;
+        } else if (!isAllDayEvent(newEvent)) {
+          if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
+            messagesParams.put(FROM_UPDATED[0],new String[]{FROM_UPDATED[1].replace("$value",  dformat.format(newEvent.getFromDateTime())), dformat.format(newEvent.getFromDateTime()), FROM_UPDATED[2]}) ;
           }
-          if(newEvent.getToDateTime().getTime() != oldEvent.getToDateTime().getTime()){
-            messagesParams.put(TO_UPDATED[0],new String[]{TO_UPDATED[1].replace("$value", dformat.format(newEvent.getToDateTime())), TO_UPDATED[2]}) ;
+          if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
+            messagesParams.put(TO_UPDATED[0],new String[]{TO_UPDATED[1].replace("$value",  dformat.format(newEvent.getToDateTime())), dformat.format(newEvent.getToDateTime()), TO_UPDATED[2]}) ; 
           }
         }
         if(newEvent.getRepeatType()!= null && oldEvent.getRepeatType() == null ) {
@@ -313,60 +315,79 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         } if (oldEvent.getRepeatType() == null && newEvent.getRepeatType()!= null && !newEvent.getRepeatType().equals(oldEvent.getRepeatType())) {
           messagesParams.put(REPEAT_UPDATED[0],new String[]{REPEAT_UPDATED[1].replace("$value", newEvent.getRepeatType()),newEvent.getRepeatType(), REPEAT_UPDATED[2]}) ;
         }
-      }  else {
+      } else {
         if(!oldEvent.getSummary().equals(newEvent.getSummary())) {
           messagesParams.put(NAME_UPDATED[0],new String[]{NAME_UPDATED[1].replace("$value", newEvent.getSummary()),newEvent.getSummary(), NAME_UPDATED[2]}) ;
         }
         if(newEvent.getDescription() != null && !newEvent.getDescription().equals(oldEvent.getDescription())) {
           messagesParams.put(NOTE_UPDATED[0],new String[]{NOTE_UPDATED[1].replace("$value", newEvent.getDescription()),newEvent.getDescription(),NOTE_UPDATED[2]}) ;
         }
-        if(newEvent.getAttachment() != null) if(oldEvent.getAttachment() == null ){
-          messagesParams.put(ATTACH_UPDATED[0],new String[]{ATTACH_UPDATED[1], ATTACH_UPDATED[1], ATTACH_UPDATED[2]}) ;
-        } else if(newEvent.getAttachment().size() != oldEvent.getAttachment().size()) {
-          messagesParams.put(ATTACH_UPDATED[0],new String[]{ATTACH_UPDATED[1], ATTACH_UPDATED[1], ATTACH_UPDATED[2]}) ;
+        if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
+          messagesParams.put(FROM_UPDATED[0],new String[]{FROM_UPDATED[1].replace("$value",  dformat.format(newEvent.getFromDateTime())), dformat.format(newEvent.getFromDateTime()), FROM_UPDATED[2]});
         }
-
-        if(newEvent.getStatus() != null && !newEvent.getStatus().equals(oldEvent.getStatus())) {
-          if(CalendarEvent.NEEDS_ACTION.equals(newEvent.getStatus())) {
-            messagesParams.put(TASK_NEED_ACTION[0],new String[]{TASK_NEED_ACTION[1].replace("$value", newEvent.getStatus()),newEvent.getStatus(),TASK_NEED_ACTION[2]}) ;
-          } else if(CalendarEvent.IN_PROCESS.equals(newEvent.getStatus())) {
-            messagesParams.put(TASK_IN_PROCESS_ACTION[0],new String[]{TASK_IN_PROCESS_ACTION[1].replace("$value", newEvent.getStatus()),newEvent.getStatus(), TASK_IN_PROCESS_ACTION[2]}) ;
-          } else if(CalendarEvent.COMPLETED.equals(newEvent.getStatus())) {
-            messagesParams.put(TASK_COMPLETED_ACTION[0],new String[]{TASK_COMPLETED_ACTION[1].replace("$value", newEvent.getStatus()),newEvent.getStatus(),TASK_COMPLETED_ACTION[2]}) ;
-          } else if(CalendarEvent.CANCELLED.equals(newEvent.getStatus())) {
-            messagesParams.put(TASK_CANCELLED_ACTION[0],new String[]{TASK_CANCELLED_ACTION[1].replace("$value", newEvent.getStatus()),newEvent.getStatus(), TASK_CANCELLED_ACTION[2]}) ;
+        if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
+          messagesParams.put(TO_UPDATED[0],new String[]{TO_UPDATED[1].replace("$value",  dformat.format(newEvent.getToDateTime())), dformat.format(newEvent.getToDateTime()), TO_UPDATED[2]}); 
+        }
+        if(newEvent.getPriority()!= null && !newEvent.getPriority().equals(oldEvent.getPriority())) {
+          messagesParams.put(PRIORITY_UPDATED[0],new String[]{PRIORITY_UPDATED[1].replace("$value", newEvent.getPriority()),newEvent.getPriority(), PRIORITY_UPDATED[2]}) ;
+        }
+        if(newEvent.getAttachment() != null) if(oldEvent.getAttachment() == null ){
+          messagesParams.put(TASK_ATTACH_UPDATED[0],new String[]{TASK_ATTACH_UPDATED[1], TASK_ATTACH_UPDATED[1], TASK_ATTACH_UPDATED[2]}) ;
+        } else if(newEvent.getAttachment().size() != oldEvent.getAttachment().size()) {
+          messagesParams.put(TASK_ATTACH_UPDATED[0],new String[]{TASK_ATTACH_UPDATED[1], TASK_ATTACH_UPDATED[1], TASK_ATTACH_UPDATED[2]}) ;
+        }
+        if(newEvent.getEventState() != null && !newEvent.getEventState().equals(oldEvent.getEventState())) {
+          if(CalendarEvent.NEEDS_ACTION.equals(newEvent.getEventState())) {
+            messagesParams.put(TASK_NEED_ACTION[0],new String[]{TASK_NEED_ACTION[1].replace("$value", newEvent.getEventState()),newEvent.getEventState(),TASK_NEED_ACTION[2]}) ;
+          } else if(CalendarEvent.IN_PROCESS.equals(newEvent.getEventState())) {
+            messagesParams.put(TASK_IN_PROCESS_ACTION[0],new String[]{TASK_IN_PROCESS_ACTION[1].replace("$value", newEvent.getEventState()),newEvent.getEventState(), TASK_IN_PROCESS_ACTION[2]}) ;
+          } else if(CalendarEvent.COMPLETED.equals(newEvent.getEventState())) {
+            messagesParams.put(TASK_COMPLETED_ACTION[0],new String[]{TASK_COMPLETED_ACTION[1].replace("$value", newEvent.getEventState()),newEvent.getEventState(),TASK_COMPLETED_ACTION[2]}) ;
+          } else if(CalendarEvent.CANCELLED.equals(newEvent.getEventState())) {
+            messagesParams.put(TASK_CANCELLED_ACTION[0],new String[]{TASK_CANCELLED_ACTION[1].replace("$value", newEvent.getEventState()),newEvent.getEventState(), TASK_CANCELLED_ACTION[2]}) ;
           }
         }
       }
     } catch (Exception e) {
-      if (LOG.isErrorEnabled())
-        LOG.error("Can not update Activity for space when event updated ", e);
+      if (LOG.isDebugEnabled())
+        LOG.error("Can not build message for space when event updated ", e);
     }
     return messagesParams;
   }
 
   private boolean isAllDayEvent(CalendarEvent eventCalendar) {
     try {
-      if(calService_ == null) calService_ = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
-      CalendarSetting cal = calService_.getCalendarSetting(Util.getPortalRequestContext().getRemoteUser()) ;
-      TimeZone tz = TimeZone.getTimeZone(cal.getTimeZone());
-      Calendar cal1 = GregorianCalendar.getInstance(TimeZone.getTimeZone(cal.getTimeZone()));
+      TimeZone tz = getUserTimeZone() ;
+      Calendar cal1 = GregorianCalendar.getInstance(tz);
       Calendar cal2 = cal1 ;
       cal1.setLenient(false);
-      cal1.setTimeZone(tz);
       cal1.setTime(eventCalendar.getFromDateTime()) ;
+      cal1.setTimeZone(tz);
       cal2.setLenient(false);
-      cal2.setTimeZone(tz);
       cal2.setTime(eventCalendar.getToDateTime()) ;
+      cal2.setTimeZone(tz);
       return (cal1.get(Calendar.HOUR_OF_DAY) == 0  && 
           cal1.get(Calendar.MINUTE) == 0 &&
           cal2.get(Calendar.HOUR_OF_DAY) == cal2.getActualMaximum(Calendar.HOUR_OF_DAY)&& 
           cal2.get(Calendar.MINUTE) == cal2.getActualMaximum(Calendar.MINUTE) );
     } catch (Exception e) {
-      if (LOG.isErrorEnabled())
+      if (LOG.isDebugEnabled())
         LOG.error("Can not check all day event when event updated ", e);
     }
     return false;
+  }
+  
+  private TimeZone getUserTimeZone() {
+    try {
+      String username = ConversationState.getCurrent().getIdentity().getUserId();      
+      CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+      CalendarSetting setting = calService.getCalendarSetting(username);
+      return TimeZone.getTimeZone(setting.getTimeZone());
+    } catch (Exception e) {
+      if (LOG.isDebugEnabled())
+        LOG.error("Can not get time zone from user setting ", e);
+      return null ;
+    }
   }
 
   public void savePublicEvent(CalendarEvent event, String calendarId) {
