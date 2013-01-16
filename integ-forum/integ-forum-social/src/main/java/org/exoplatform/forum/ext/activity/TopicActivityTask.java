@@ -38,12 +38,9 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
    * @param activity
    * @return
    */
-  abstract ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity);
+  protected abstract ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity);
     
-  protected ExoSocialActivity processActivity(ForumActivityContext ctx) {
-    ExoSocialActivity activity = ForumActivityBuilder.createActivity(ctx.getTopic(), ctx);
-    return processTitle(ctx, activity); 
-  }
+  protected abstract ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity);
   
   protected ExoSocialActivity processComment(ForumActivityContext ctx) {
     ExoSocialActivity activity = ForumActivityBuilder.createActivityComment(ctx.getTopic(), ctx);
@@ -52,18 +49,18 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
   public static TopicActivityTask ADD_TOPIC = new TopicActivityTask() {
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return ForumActivityType.ADD_TOPIC.getActivity(activity, null);
     }
     
     @Override
-    protected ExoSocialActivity processActivity(ForumActivityContext ctx) {
-      ExoSocialActivity newActivity = ForumActivityBuilder.createActivity(ctx.getTopic(), ctx);
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      
       //censoring status, hidden topic's activity in stream
       if (ctx.getTopic().getIsWaiting()) {
-        newActivity.isHidden(true);
+        activity.isHidden(true);
       }
-      return processTitle(ctx, newActivity); 
+      return processTitle(ctx, activity); 
     }
 
     @Override
@@ -74,7 +71,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         Identity streamOwner = getOwnerStream(ctx);
         
         ////FORUM_01 case: creates topic
-        ExoSocialActivity newActivity = processActivity(ctx);
+        ExoSocialActivity newActivity = ForumActivityBuilder.createActivity(ctx.getTopic(), ctx);
+        newActivity = processActivity(ctx, newActivity);
         
         
         am.saveActivityNoReturn(streamOwner, newActivity);
@@ -91,26 +89,34 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask UPDATE_TOPIC_TITLE = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return ForumActivityType.UPDATE_TOPIC_TITLE.getActivity(activity, activity.getTitle());
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      activity.setTitle(ctx.getTopic().getTopicName());
+      processTitle(ctx, activity);
+      
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        
+
         ForumService fs = ForumActivityUtils.getForumService();
         String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-
-        //FORUM_12 case: update topic's title
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = am.getActivity(activityId);
-        ExoSocialActivity newComment = processComment(ctx);
         
         //
-        a.setTitle(newComment.getTitle());
+        a = processActivity(ctx, a);
         am.updateActivity(a);
         
+        //FORUM_12 case: update topic's title
+        ExoSocialActivity newComment = processComment(ctx);
         //
         am.saveComment(a, newComment);
         
@@ -126,25 +132,31 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask UPDATE_TOPIC_CONTENT = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.UPDATE_TOPIC_CONTENT.getActivity(activity, activity.getTitle());
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return ForumActivityType.UPDATE_TOPIC_CONTENT.getActivity(activity, null);
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      processTitle(ctx, activity);
+      
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
         
+        ActivityManager am = ForumActivityUtils.getActivityManager();
         ForumService fs = ForumActivityUtils.getForumService();
         String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
+        
+        ExoSocialActivity a = am.getActivity(activityId);
+        a = processActivity(ctx, a);
+        am.updateActivity(a);
 
         //FORUM_13 case: update topic's content
-        ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
         ExoSocialActivity newComment = processComment(ctx);
-        
-        //
-        a.setTitle(newComment.getTitle());
-        am.updateActivity(a);
         
         //
         am.saveComment(a, newComment);
@@ -161,9 +173,17 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask CLOSE_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return ForumActivityType.CLOSE_TOPIC.getActivity(activity, null);
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      
+      activity.isLocked(true);
+      
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
@@ -171,11 +191,12 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         ForumService fs = ForumActivityUtils.getForumService();
         String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-
-        //FORUM_15 case: close topic
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = am.getActivity(activityId);
-        a.isLocked(true);
+        
+        //FORUM_15 case: close topic
+        a = processActivity(ctx, a);
         am.updateActivity(a);
         
         ExoSocialActivity newComment = processComment(ctx);
@@ -192,22 +213,36 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask OPEN_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return ForumActivityType.OPEN_TOPIC.getActivity(activity, null);
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      
+      activity.isLocked(false);
+      
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-
+        
+        ForumService fs = ForumActivityUtils.getForumService();
+        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        Identity streamOwner = getOwnerStream(ctx);
+        ExoSocialActivity a = am.getActivity(activityId);
         
-        //Don't have specs open a closed topic
-        ExoSocialActivity newActivity = processComment(ctx);
-        am.saveActivityNoReturn(streamOwner, newActivity);
+        //FORUM_xx case: open topic
+        a = processActivity(ctx, a);
+        am.updateActivity(a);
         
-        return newActivity;
+        ExoSocialActivity newComment = processComment(ctx);
+        am.saveComment(a, newComment);
+        
+        return newComment;
       } catch (Exception e) {
         LOG.error("Can not record Comment for when open topic " + ctx.getTopic().getId(), e);
       }
@@ -218,21 +253,29 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask LOCK_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return ForumActivityType.LOCK_TOPIC.getActivity(activity, null);
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      
+      activity.isLocked(true);
+      
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        
         ForumService fs = ForumActivityUtils.getForumService();
         String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-
-        //FORUM_16 case: lock topic
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = am.getActivity(activityId);
-        a.isLocked(true);
+        a = processActivity(ctx, a);
+        
+        //FORUM_16 case: lock topic
         am.updateActivity(a);
         
         ExoSocialActivity newComment = processComment(ctx);
@@ -249,9 +292,17 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask UNLOCK_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return ForumActivityType.UNLOCK_TOPIC.getActivity(activity, null);
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+     
+      activity.isLocked(false);
+      
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
@@ -259,11 +310,13 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         ForumService fs = ForumActivityUtils.getForumService();
         String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-
-        //FORUM_16 case: lock topic
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = am.getActivity(activityId);
-        a.isLocked(false);
+        
+        a = processActivity(ctx, a);
+        
+        //FORUM_17 case: unlock topic
         am.updateActivity(a);
         
         ExoSocialActivity newComment = processComment(ctx);
@@ -280,9 +333,16 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask HIDDEN_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return activity;
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      
+      activity.isHidden(true);
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
@@ -290,11 +350,13 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
         ForumService fs = ForumActivityUtils.getForumService();
         String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-
-        //FORUM_25: hidding into a topic
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = am.getActivity(activityId);
-        a.isHidden(true);
+        
+
+        //FORUM_25: hidding into a topic
+        a = processActivity(ctx, a);
         am.updateActivity(a);
         
         return a;
@@ -308,9 +370,15 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask CENSORING_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return activity;
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      activity.isHidden(true);
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
@@ -318,14 +386,15 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         ForumService fs = ForumActivityUtils.getForumService();
         String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-
-        //FORUM_24 case: censoring topic
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = am.getActivity(activityId);
-        a.isHidden(true);
-        am.updateActivity(a);
 
-       return a;
+        //FORUM_24 case: censoring topic
+        a = processActivity(ctx, a);
+        am.updateActivity(a);
+        
+        return a;
       } catch (Exception e) {
         LOG.error("Can not hide activity for censoring topic " + ctx.getTopic().getId(), e);
         return null;
@@ -336,9 +405,15 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask UNCENSORING_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    public ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return activity;
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      activity.isHidden(false);
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
@@ -346,14 +421,15 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         ForumService fs = ForumActivityUtils.getForumService();
         String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-
-        //FORUM_xx case: unscensoring topic
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = am.getActivity(activityId);
-        a.isHidden(false);
-        am.updateActivity(a);
 
-       return a;
+        //FORUM_xx case: unscensoring topic
+        a = processActivity(ctx, a);
+        am.updateActivity(a);
+        
+        return a;
       } catch (Exception e) {
         LOG.error("Can not show activity for uncensoring topic " + ctx.getTopic().getId(), e);
         return null;
@@ -364,9 +440,15 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask ACTIVE_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return activity;
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      activity.isHidden(false);
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
@@ -374,11 +456,12 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         ForumService fs = ForumActivityUtils.getForumService();
         String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-
-        //FORUM_26: showing into a topic
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = am.getActivity(activityId);
-        a.isHidden(false);
+
+        //FORUM_26: showing into a topic
+        a = processActivity(ctx, a);
         am.updateActivity(a);
         
         return a;
@@ -392,9 +475,14 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask MOVE_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return ForumActivityType.MOVE_TOPIC.getActivity(activity, ctx.getToCategoryName(), ctx.getToForumName());
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return activity;
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
@@ -420,9 +508,14 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask MERGE_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return ForumActivityType.MERGE_TOPICS.getActivity(activity, null);
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return processTitle(ctx, activity);
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
@@ -434,7 +527,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         Identity streamOwner = getOwnerStream(ctx);
         
         ////FORUM_21 case: merge topic
-        ExoSocialActivity newActivity = processActivity(ctx);
+        ExoSocialActivity newActivity = ForumActivityBuilder.createActivity(ctx.getTopic(), ctx);
+        newActivity = processActivity(ctx, newActivity);
         am.saveActivityNoReturn(streamOwner, newActivity);
         
         return newActivity;
@@ -448,9 +542,14 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask SPLIT_TOPIC = new TopicActivityTask() {
 
     @Override
-    ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+    public ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return ForumActivityType.SPLIT_TOPIC.getActivity(activity, null);
     }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return processTitle(ctx, activity);
+    };
 
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
@@ -462,7 +561,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         Identity streamOwner = getOwnerStream(ctx);
         
         ////FORUM_01 case: creates topic
-        ExoSocialActivity newActivity = processActivity(ctx);
+        ExoSocialActivity newActivity = ForumActivityBuilder.createActivity(ctx.getTopic(), ctx);
+        newActivity = processActivity(ctx, newActivity);
         am.saveActivityNoReturn(streamOwner, newActivity);
         
         return newActivity;

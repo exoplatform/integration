@@ -17,6 +17,7 @@
 package org.exoplatform.forum.ext.activity;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Random;
 
 import junit.framework.TestCase;
@@ -24,7 +25,10 @@ import junit.framework.TestCase;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.services.idgenerator.IDGeneratorService;
+import org.exoplatform.services.idgenerator.impl.IDGeneratorServiceImpl;
 import org.exoplatform.services.jcr.util.IdGenerator;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 
 /**
  * Created by The eXo Platform SAS
@@ -34,44 +38,53 @@ import org.exoplatform.services.jcr.util.IdGenerator;
  */
 public class AbstractActivityTypeTest extends TestCase {
 
+  private IdGenerator ig;
   @Override
   protected void setUp() throws Exception {
+    IDGeneratorService is = new IDGeneratorServiceImpl();
+    ig = new IdGenerator(is);
     super.setUp();
   }
   
   @Override
   protected void tearDown() throws Exception {
     super.tearDown();
+    ig = null;
   }
   
-  protected Topic lockTopic(Topic topic) {
+  protected final String topicTitle = "topic title";
+  protected final String topicContent = "topic content";
+  
+  protected Topic lockTopic() {
+    Topic topic = createdTopic("demo");
     topic.setEditedIsLock(true);
     return topic;
   }
   
-  protected Topic unlockTopic(Topic lockedTopic) {
-    lockedTopic.setEditedIsLock(false);
-    return lockedTopic;
+  protected Topic unlockTopic() {
+    Topic topic = createdTopic("demo");
+    topic.setIsLock(true);
+    topic.setEditedIsLock(false);
+    return topic;
   }
   
-  protected Topic censoringTopic(Topic topic) {
+  protected Topic censoringTopic() {
+    Topic topic = createdTopic("demo");
     topic.setEditedIsWaiting(true);
     return topic;
   }
   
-  protected Topic uncensoringTopic(Topic censoredTopic) {
-    censoredTopic.setEditedIsWaiting(false);
-    return censoredTopic;
-  }
-  
-  protected Topic activeTopic(Topic topic) {
-    topic.setEditedIsActive(true);
+  protected Topic uncensoringTopic() {
+    Topic topic = createdTopic("demo");
+    topic.setIsWaiting(true);
+    topic.setEditedIsWaiting(false);
     return topic;
   }
   
-  protected Topic hiddenTopic(Topic activatedTopic) {
-    activatedTopic.setEditedIsActive(false);
-    return activatedTopic;
+  protected Topic activeTopic() {
+    Topic topic = createdTopic("demo");
+    topic.setEditedIsActive(true);
+    return topic;
   }
   
   protected Topic updateTopicName(Topic topic) {
@@ -84,17 +97,49 @@ public class AbstractActivityTypeTest extends TestCase {
     return topic;
   }
   
+  public void assertNumberOfReplies(ExoSocialActivity activity, long expectedNumber) {
+   Map<String, String> templateParams = activity.getTemplateParams();
+    
+   String got = templateParams.get(ForumActivityBuilder.TOPIC_POST_COUNT_KEY);
+   assertEquals("" + expectedNumber, got);
+  }
+  
+  public void assertVoteRate(ExoSocialActivity activity, double expectedNumber) {
+    Map<String, String> templateParams = activity.getTemplateParams();
+     
+    String got = templateParams.get(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY);
+    assertEquals("" + expectedNumber, got);
+   }
+  
+  public void assertTopicTitle(ExoSocialActivity activity, String expectedTitle) {
+    assertEquals(expectedTitle, activity.getTitle());
+  }
+  
+  public void assertTopicContent(ExoSocialActivity activity, String expectedContent) {
+    assertEquals(expectedContent, activity.getBody());
+  }
+  
+  protected Topic updateTopicTitle(Topic topic, String newTitle) {
+    topic.setEditedTopicName(newTitle);
+    return topic;
+  }
+  
+  protected Topic updateTopicContent(Topic topic, String newContent) {
+    topic.setEditedDescription(newContent);
+    return topic;
+  }
+  
   protected Topic createdTopic(String owner) {
     Topic topicNew = new Topic();
 
     topicNew.setOwner(owner);
-    topicNew.setTopicName("TestTopic");
+    topicNew.setTopicName(topicTitle);
     topicNew.setCreatedDate(new Date());
     topicNew.setModifiedBy("root");
     topicNew.setModifiedDate(new Date());
     topicNew.setLastPostBy("root");
     topicNew.setLastPostDate(new Date());
-    topicNew.setDescription("Topic description");
+    topicNew.setDescription(topicContent);
     topicNew.setPostCount(0);
     topicNew.setViewCount(0);
     topicNew.setIsNotifyWhenAddPost("");

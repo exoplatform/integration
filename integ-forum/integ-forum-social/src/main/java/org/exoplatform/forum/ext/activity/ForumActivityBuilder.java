@@ -61,16 +61,19 @@ public class ForumActivityBuilder {
 
   public static final String TOPIC_NAME_KEY    = "TopicName";
   
+  public static final String TOPIC_POST_COUNT_KEY    = "NumberOfReplies";
+  
+  public static final String TOPIC_VOTE_RATE_KEY    = "TopicVoteRate";
+  
   private ForumActivityBuilder() {
     
   }
   
   public static ExoSocialActivity createActivityComment(Post post, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = StringEscapeUtils.unescapeHtml(TransformHTML.getTitleInHTMLCode(post.getMessage(), new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes())));
-    
-    Identity author = ForumActivityUtils.getIdentity(post.getOwner());
-    activity.setUserId(author.getId());
+    String body = getThreeFirstLines(post);
+
+    activity.setUserId(post.getOwner());
     String title = StringEscapeUtils.unescapeHtml(post.getName());
     activity.setTitle(title);
     activity.setBody(body);
@@ -96,38 +99,32 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivityComment(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = StringEscapeUtils.unescapeHtml(TransformHTML.getTitleInHTMLCode(topic.getDescription(), new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes())));
+    String body = getThreeFirstLines(topic);
     
-    Identity author = ForumActivityUtils.getIdentity(topic.getOwner());
-    activity.setUserId(author.getId());
+    activity.setUserId(topic.getOwner());
     String title = StringEscapeUtils.unescapeHtml(topic.getTopicName());
     activity.setTitle(title);
     activity.setBody(body);
     activity.isComment(true);
     activity.setType(FORUM_ACTIVITY_TYPE);
-    
-    //
-//    Map<String, String> templateParams = new HashMap<String, String>();
-//    
-//    templateParams.put(TOPIC_ID_KEY, topic.getId());
-//    templateParams.put(TOPIC_LINK_KEY, topic.getLink());
-//    templateParams.put(TOPIC_NAME_KEY, topic.getTopicName());
-//    templateParams.put(TOPIC_OWNER_KEY, topic.getOwner());
-//    //
-//    templateParams.put(FORUM_ID_KEY, ctx.getForumId());
-//    templateParams.put(CATE_ID_KEY, ctx.getCategoryId());
-//    templateParams.put(TOPIC_ID_KEY, ctx.getTopicId());
-//    templateParams.put(ACTIVITY_TYPE_KEY, "" + ctx.getUpdateType());
-//    activity.setTemplateParams(templateParams);
+
     return activity;
+  }
+  
+  public static String getThreeFirstLines(Topic topic) {
+    return StringEscapeUtils.escapeHtml(topic.getDescription());
+  }
+  
+  public static String getThreeFirstLines(Post post) {
+    return StringEscapeUtils.escapeHtml(post.getMessage());
   }
   
   public static ExoSocialActivity createActivity(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = StringEscapeUtils.unescapeHtml(TransformHTML.getTitleInHTMLCode(topic.getDescription(), new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes())));
+    String body = getThreeFirstLines(topic);
     
-    Identity author = ForumActivityUtils.getIdentity(topic.getOwner());
-    activity.setUserId(author.getId());
+    //Identity author = ForumActivityUtils.getIdentity(topic.getOwner());
+    activity.setUserId(topic.getOwner());
     String title = StringEscapeUtils.unescapeHtml(topic.getTopicName());
     activity.setTitle(title);
     activity.setBody(body);
@@ -138,6 +135,8 @@ public class ForumActivityBuilder {
     //
     Map<String, String> templateParams = new HashMap<String, String>();
     
+    templateParams.put(TOPIC_POST_COUNT_KEY, "" + topic.getPostCount());
+    templateParams.put(TOPIC_VOTE_RATE_KEY, "" + topic.getVoteRating());
     templateParams.put(TOPIC_ID_KEY, topic.getId());
     templateParams.put(TOPIC_LINK_KEY, topic.getLink());
     templateParams.put(TOPIC_NAME_KEY, topic.getTopicName());
@@ -147,6 +146,21 @@ public class ForumActivityBuilder {
     templateParams.put(FORUM_ID_KEY, topic.getForumId());
     templateParams.put(CATE_ID_KEY, topic.getCategoryId());
     activity.setTemplateParams(templateParams);
+    return activity;
+  }
+  
+  public static ExoSocialActivity updateNumberOfReplies(Topic topic, ExoSocialActivity activity) {
+    //
+    Map<String, String> templateParams = activity.getTemplateParams();
+    
+    templateParams.put(TOPIC_POST_COUNT_KEY, "" + topic.getPostCount());
+    return activity;
+  }
+  
+  public static ExoSocialActivity updateVoteRate(Topic topic, ExoSocialActivity activity) {
+    //
+    Map<String, String> templateParams = activity.getTemplateParams();
+    templateParams.put(TOPIC_VOTE_RATE_KEY, "" + topic.getVoteRating());
     return activity;
   }
   
