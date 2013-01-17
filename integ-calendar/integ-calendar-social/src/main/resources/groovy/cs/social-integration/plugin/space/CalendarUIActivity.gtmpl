@@ -93,7 +93,7 @@
 	} """
 	
   //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
-  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.UIActivity.onLoad($params);");
+  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
   
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
