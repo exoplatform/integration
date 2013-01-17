@@ -27,6 +27,7 @@ public enum ForumActivityType {
   ADD_TOPIC("%s"),
   UPDATE_TOPIC_TITLE("Title has been updated to: %s"),
   UPDATE_TOPIC_CONTENT("Content has been edited."),
+  UPDATE_TOPIC_RATE("Rated the topic: %s"),
   CLOSE_TOPIC("Topic has been closed."),
   OPEN_TOPIC("Topic has been opened."),
   LOCK_TOPIC("Topic has been locked."),
@@ -35,7 +36,7 @@ public enum ForumActivityType {
   SPLIT_TOPIC("%s"),
   MOVE_TOPIC("Topic have been moved to: %s>%s"),
   RATE_TOPIC("Rated the topic: %s"),
-  ADD_POST(""),
+  ADD_POST("%s"),
   UPDATE_POST("Edited his reply to: %s");
 
   private final String titleTemplate;
@@ -47,6 +48,8 @@ public enum ForumActivityType {
   public ExoSocialActivity getActivity(ExoSocialActivity a, String value) {
     if (value != null) {
       a.setTitle(String.format(titleTemplate, value));
+    } else {
+      a.setTitle(titleTemplate);
     }
     
     return a;

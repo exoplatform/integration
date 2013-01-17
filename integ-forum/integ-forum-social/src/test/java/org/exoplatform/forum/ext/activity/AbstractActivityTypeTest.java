@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
+import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.idgenerator.IDGeneratorService;
 import org.exoplatform.services.idgenerator.impl.IDGeneratorServiceImpl;
@@ -54,6 +55,15 @@ public class AbstractActivityTypeTest extends TestCase {
   
   protected final String topicTitle = "topic title";
   protected final String topicContent = "topic content";
+  
+  protected final String postTitle = "post title";
+  protected final String postContent = "post content";
+  
+  protected Topic closeTopic() {
+    Topic topic = createdTopic("demo");
+    topic.setEditedIsClosed(true);
+    return topic;
+  }
   
   protected Topic lockTopic() {
     Topic topic = createdTopic("demo");
@@ -92,6 +102,12 @@ public class AbstractActivityTypeTest extends TestCase {
     return topic;
   }
   
+  protected Topic updateTopicRate(Double rate) {
+    Topic topic = createdTopic("demo");
+    topic.setEditedVoteRating(rate);
+    return topic;
+  }
+  
   protected Topic updateTopicDescription(Topic topic) {
     topic.setEditedDescription("new topic description.");
     return topic;
@@ -115,6 +131,10 @@ public class AbstractActivityTypeTest extends TestCase {
     assertEquals(expectedTitle, activity.getTitle());
   }
   
+  public void assertPostTitle(ExoSocialActivity comment, String expectedTitle) {
+    assertEquals(expectedTitle, comment.getTitle());
+  }
+  
   public void assertTopicContent(ExoSocialActivity activity, String expectedContent) {
     assertEquals(expectedContent, activity.getBody());
   }
@@ -129,15 +149,20 @@ public class AbstractActivityTypeTest extends TestCase {
     return topic;
   }
   
+  protected Post updatePostContent(Post post, String newContent) {
+    post.setMessage(newContent);
+    return post;
+  }
+  
   protected Topic createdTopic(String owner) {
     Topic topicNew = new Topic();
 
     topicNew.setOwner(owner);
     topicNew.setTopicName(topicTitle);
     topicNew.setCreatedDate(new Date());
-    topicNew.setModifiedBy("root");
+    topicNew.setModifiedBy("demo");
     topicNew.setModifiedDate(new Date());
-    topicNew.setLastPostBy("root");
+    topicNew.setLastPostBy("demo");
     topicNew.setLastPostDate(new Date());
     topicNew.setDescription(topicContent);
     topicNew.setPostCount(0);
@@ -152,8 +177,32 @@ public class AbstractActivityTypeTest extends TestCase {
     topicNew.setIsApproved(true);
     topicNew.setCanView(new String[] {});
     topicNew.setCanPost(new String[] {});
+    topicNew.setPath("forumCategory123/forum123/" + topicNew.getId());
+    
+    assertEquals("forumCategory123", topicNew.getCategoryId());
+    assertEquals("forum123", topicNew.getForumId());
     return topicNew;
   }
+  
+  public Post createdPost(Topic topic) {
+    Post post = new Post();
+    post.setOwner("demo");
+    post.setCreatedDate(new Date());
+    post.setModifiedBy("demo");
+    post.setModifiedDate(new Date());
+    post.setName(postTitle);
+    post.setMessage(postContent);
+    post.setRemoteAddr("192.168.1.11");
+    post.setIcon("classNameIcon");
+    post.setIsApproved(true);
+    post.setIsActiveByTopic(true);
+    post.setIsHidden(false);
+    post.setIsWaiting(false);
+    post.setPath("forumCategory123/forum123/topic123/" + post.getId());
+    topic.setPostCount(topic.getPostCount() + 1);
+    return post;
+  }
+  
 
   protected Forum createdForum() {
     Forum forum = new Forum();

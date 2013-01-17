@@ -18,6 +18,8 @@ package org.exoplatform.forum.ext.activity;
 
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 /**
  * Created by The eXo Platform SAS
@@ -25,6 +27,7 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
  *          thanh_vucong@exoplatform.com
  * Jan 16, 2013  
  */
+@FixMethodOrder(MethodSorters.JVM)
 public class TopicActivityTest extends AbstractActivityTypeTest {
   
   @Override
@@ -91,10 +94,201 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     
     TopicActivityTask task = TopicActivityTask.UPDATE_TOPIC_TITLE;
     ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
     a = task.processActivity(ctx, a);
     assertNumberOfReplies(a, 0);
     assertVoteRate(a, topic.getVoteRating());
     assertTopicTitle(a, "Title has been updated to: edited to new title for topic.");
     assertTopicContent(a, topicContent);
+    
+    //comment
+    ExoSocialActivity newComment = task.processComment(ctx);
+    assertTopicTitle(newComment, "Title has been updated to: edited to new title for topic.");
   }
+  
+  public void testUpdateTopicContent() throws Exception {
+    Topic topic = createdTopic("demo");
+    topic = updateTopicContent(topic, "edited to new content for topic.");
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_CONTENT, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    assertNumberOfReplies(a, 0);
+    assertVoteRate(a, topic.getVoteRating());
+    assertTopicTitle(a, topicTitle);
+    assertTopicContent(a, "edited to new content for topic.");
+    
+  }
+  
+  public void testUpdateTopicContentWithJob() throws Exception {
+    Topic topic = createdTopic("demo");
+    topic = updateTopicContent(topic, "edited to new content for topic.");
+    assertEquals(1, topic.getChangeEvent().length);
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    TopicActivityTask task = TopicActivityTask.UPDATE_TOPIC_CONTENT;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertNumberOfReplies(a, 0);
+    assertVoteRate(a, topic.getVoteRating());
+    assertTopicTitle(a, "Content has been edited.");
+    assertTopicContent(a, "edited to new content for topic.");
+    
+    //comment
+    ExoSocialActivity newComment = task.processComment(ctx);
+    assertTopicTitle(newComment, "Content has been edited.");
+  }
+  
+  public void testUpdateTopicRate() throws Exception {
+    Topic topic = updateTopicRate(1.5);
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_RATING, topic.getChangeEvent()[0].getPropertyName());
+    assertEquals(1.5, topic.getVoteRating());
+  }
+  
+  public void testUpdateTopicRateWithJob() throws Exception {
+    Topic topic = updateTopicRate(1.5);
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    assertEquals(1.5, topic.getVoteRating());
+    
+    //
+    TopicActivityTask task = TopicActivityTask.UPDATE_TOPIC_RATE;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertTopicTitle(a, "Rated the topic: 1.5");
+    
+    //comment
+    ExoSocialActivity newComment = task.processComment(ctx);
+    assertTopicTitle(newComment, "Rated the topic: 1.5");
+  }
+  
+  public void testCloseTopic() throws Exception {
+    Topic topic = closeTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATE_CLOSED, topic.getChangeEvent()[0].getPropertyName());
+    assertEquals(true, topic.getIsClosed());
+  }
+  
+  public void testCloseTopicWithJob() throws Exception {
+    Topic topic = closeTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATE_CLOSED, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    TopicActivityTask task = TopicActivityTask.CLOSE_TOPIC;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertEquals(true, a.isLocked());
+    
+    //comment
+    ExoSocialActivity newComment = task.processComment(ctx);
+    assertTopicTitle(newComment, "Topic has been closed.");
+  }
+  
+  public void testLockTopic() throws Exception {
+    Topic topic = lockTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATUS_LOCK, topic.getChangeEvent()[0].getPropertyName());
+    assertEquals(true, topic.getIsLock());
+  }
+  
+  public void testLockTopicWithJob() throws Exception {
+    Topic topic = lockTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATUS_LOCK, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    TopicActivityTask task = TopicActivityTask.LOCK_TOPIC;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertEquals(true, a.isLocked());
+    
+    //comment
+    ExoSocialActivity newComment = task.processComment(ctx);
+    assertTopicTitle(newComment, "Topic has been locked.");
+  }
+  
+  public void testUnlockTopic() throws Exception {
+    Topic topic = unlockTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATUS_LOCK, topic.getChangeEvent()[0].getPropertyName());
+    assertEquals(false, topic.getIsLock());
+  }
+  
+  public void testUnlockTopicWithJob() throws Exception {
+    Topic topic = unlockTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATUS_LOCK, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    TopicActivityTask task = TopicActivityTask.UNLOCK_TOPIC;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertEquals(false, a.isLocked());
+    
+    //comment
+    ExoSocialActivity newComment = task.processComment(ctx);
+    assertTopicTitle(newComment, "Topic has been unlocked.");
+  }
+  
+  public void testCensoringTopic() throws Exception {
+    Topic topic = censoringTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATUS_WAITING, topic.getChangeEvent()[0].getPropertyName());
+    assertEquals(true, topic.getIsWaiting());
+  }
+  
+  public void testCensoringTopicWithJob() throws Exception {
+    Topic topic = censoringTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATUS_WAITING, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    TopicActivityTask task = TopicActivityTask.CENSORING_TOPIC;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertEquals(true, a.isHidden());
+  }
+  
+  public void testUncensoringTopic() throws Exception {
+    Topic topic = uncensoringTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATUS_WAITING, topic.getChangeEvent()[0].getPropertyName());
+    assertEquals(false, topic.getIsWaiting());
+  }
+  
+  public void testUncensoringTopicWithJob() throws Exception {
+    Topic topic = censoringTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATUS_WAITING, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    TopicActivityTask task = TopicActivityTask.UNCENSORING_TOPIC;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertEquals(false, a.isHidden());
+  }
+  
+  
 }

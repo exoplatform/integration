@@ -116,6 +116,12 @@ public class ForumActivityContext {
     ctx.post = post;
     return ctx;
   }
+  
+  
+
+  public void setTopic(Topic topic) {
+    this.topic = topic;
+  }
 
   /**
    * Gets categoryId

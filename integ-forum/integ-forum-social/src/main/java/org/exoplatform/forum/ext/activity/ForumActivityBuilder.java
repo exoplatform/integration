@@ -16,18 +16,14 @@
  */
 package org.exoplatform.forum.ext.activity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.exoplatform.forum.bbcode.core.ExtendedBBCodeProvider;
-import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
-import org.exoplatform.social.core.identity.model.Identity;
 
 /**
  * Created by The eXo Platform SAS
@@ -74,7 +70,7 @@ public class ForumActivityBuilder {
     String body = getThreeFirstLines(post);
 
     activity.setUserId(post.getOwner());
-    String title = StringEscapeUtils.unescapeHtml(post.getName());
+    String title = StringEscapeUtils.unescapeHtml(post.getMessage());
     activity.setTitle(title);
     activity.setBody(body);
     activity.isComment(true);

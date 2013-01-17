@@ -16,6 +16,8 @@
  */
 package org.exoplatform.forum.ext.activity;
 
+import java.util.Map;
+
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.log.ExoLogger;
@@ -50,7 +52,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   public static TopicActivityTask ADD_TOPIC = new TopicActivityTask() {
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.ADD_TOPIC.getActivity(activity, null);
+      return ForumActivityType.ADD_TOPIC.getActivity(activity, activity.getTitle());
     }
     
     @Override
@@ -138,6 +140,50 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      activity.getTemplateParams();
+      processTitle(ctx, activity);
+      return activity;
+    };
+
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+        
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        ForumService fs = ForumActivityUtils.getForumService();
+        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
+        
+        ExoSocialActivity a = am.getActivity(activityId);
+        a = processActivity(ctx, a);
+        am.updateActivity(a);
+
+        //FORUM_13 case: update topic's content
+        ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        am.saveComment(a, newComment);
+        
+        return newComment;
+      } catch (Exception e) {
+        LOG.error("Can not record Comment for when update topic's content " + ctx.getTopic().getId(), e);
+      }
+      return null;
+    }
+    
+  };
+  
+  public static TopicActivityTask UPDATE_TOPIC_RATE = new TopicActivityTask() {
+
+    @Override
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return ForumActivityType.UPDATE_TOPIC_RATE.getActivity(activity, "" + ctx.getTopic().getVoteRating());
+    }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      Map<String, String> templateParams = activity.getTemplateParams();
+      templateParams.put(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY, "" + ctx.getTopic().getVoteRating());
+      
       processTitle(ctx, activity);
       
       return activity;
@@ -181,7 +227,6 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
       
       activity.isLocked(true);
-      
       return activity;
     };
 
@@ -509,7 +554,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.MERGE_TOPICS.getActivity(activity, null);
+      return ForumActivityType.MERGE_TOPICS.getActivity(activity, activity.getTitle());
     }
     
     @Override
@@ -543,7 +588,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     public ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.SPLIT_TOPIC.getActivity(activity, null);
+      return ForumActivityType.SPLIT_TOPIC.getActivity(activity, activity.getTitle());
     }
     
     @Override

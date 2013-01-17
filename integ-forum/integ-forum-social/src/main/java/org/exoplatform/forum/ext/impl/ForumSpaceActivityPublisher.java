@@ -114,6 +114,8 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
       got = TopicActivityTask.UPDATE_TOPIC_TITLE;
     } else if (Topic.TOPIC_CONTENT.equals(event.getPropertyName())) {
       got = TopicActivityTask.UPDATE_TOPIC_CONTENT;
+    } else if (Topic.TOPIC_RATING.equals(event.getPropertyName())) {
+      got = TopicActivityTask.UPDATE_TOPIC_RATE;
     } else if (Topic.TOPIC_STATE_CLOSED.equals(event.getPropertyName())) {
       
       //

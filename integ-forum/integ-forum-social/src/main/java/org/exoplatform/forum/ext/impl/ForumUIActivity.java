@@ -31,7 +31,9 @@ public class ForumUIActivity extends BaseKSActivity {
    */
   @SuppressWarnings("unused")
   private String getReplyLink() {
-    StringBuffer sb = new StringBuffer(getViewLink());
+    String viewLink = getActivityParamValue(ForumActivityBuilder.TOPIC_LINK_KEY);
+    
+    StringBuffer sb = new StringBuffer(viewLink);
     if (sb.lastIndexOf("/") == -1 || sb.lastIndexOf("/") != sb.length() - 1) {
       sb.append("/");
     }
@@ -40,21 +42,9 @@ public class ForumUIActivity extends BaseKSActivity {
     return sb.toString();
   }
 
-  private String getViewLink() {
-    String link = "";
-//    if (getActivityParamValue(ForumActivityBuilder.ACTIVITY_TYPE_KEY).toLowerCase()
-//                                                                            .indexOf("topic") >= 0) {
-//      link = getActivityParamValue(ForumActivityBuilder.TOPIC_LINK_KEY);
-//    } else {
-//      link = getActivityParamValue(ForumActivityBuilder.POST_LINK_KEY) + "/"
-//          + getActivityParamValue(ForumActivityBuilder.POST_ID_KEY);
-//    }
-    return link;
-  }
-
   private String getLink(String tagLink, String nameLink) {
-    tagLink = StringUtils.replace(tagLink, "{0}", getViewLink());
-    return StringUtils.replace(tagLink, "{1}", nameLink);
+    String viewLink = getActivityParamValue(ForumActivityBuilder.TOPIC_LINK_KEY);
+    return String.format(tagLink, viewLink, nameLink);
   }
 
   /*
@@ -64,19 +54,7 @@ public class ForumUIActivity extends BaseKSActivity {
   private String getActivityContentTitle(WebuiBindingContext _ctx, String herf) throws Exception {
     String title = "", linkTag = "";
     try {
-//      if (getActivityParamValue(ForumActivityBuilder.ACTIVITY_TYPE_KEY).equalsIgnoreCase(ForumActivityBuilder.ACTIVITY_TYPE.AddPost.toString())) {
-//        title = _ctx.appRes("ForumUIActivity.label.add-post");
-//        linkTag = getLink(herf, getActivityParamValue(ForumActivityBuilder.POST_NAME_KEY));
-//      } else if (getActivityParamValue(ForumActivityBuilder.ACTIVITY_TYPE_KEY).equalsIgnoreCase(ForumActivityBuilder.ACTIVITY_TYPE.UpdatePost.toString())) {
-//        title = _ctx.appRes("ForumUIActivity.label.update-post");
-//        linkTag = getLink(herf, getActivityParamValue(ForumActivityBuilder.POST_NAME_KEY));
-//      } else if (getActivityParamValue(ForumActivityBuilder.ACTIVITY_TYPE_KEY).equalsIgnoreCase(ForumActivityBuilder.ACTIVITY_TYPE.AddTopic.toString())) {
-//        title = _ctx.appRes("ForumUIActivity.label.add-topic");
-//        linkTag = getLink(herf, getActivityParamValue(ForumActivityBuilder.TOPIC_NAME_KEY));
-//      } else if (getActivityParamValue(ForumActivityBuilder.ACTIVITY_TYPE_KEY).equalsIgnoreCase(ForumActivityBuilder.ACTIVITY_TYPE.UpdateTopic.toString())) {
-//        title = _ctx.appRes("ForumUIActivity.label.update-topic");
-//        linkTag = getLink(herf, getActivityParamValue(ForumActivityBuilder.TOPIC_NAME_KEY));
-//      }
+      linkTag = getLink(herf, getActivityParamValue(ForumActivityBuilder.TOPIC_NAME_KEY));
     } catch (Exception e) { // WebUIBindingContext
       LOG.debug("Failed to get activity content and title ", e);
     }
