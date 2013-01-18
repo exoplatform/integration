@@ -220,12 +220,26 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
         ExoSocialActivity activity = activityM.getActivity(event.getActivityId()) ;
         if(activity == null){ activity = new ExoSocialActivityImpl() ;
+        event.setActivityId(activity.getId());
         activity.setUserId(userIdentity.getId());
         activity.setTitle(event.getSummary());
         activity.setBody(event.getDescription());
         activity.setType("cs-calendar:spaces");
         activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
         activityM.saveActivityNoReturn(spaceIdentity, activity);
+        for(String key : messagesParams.keySet()) {
+          String[] dataChanges = messagesParams.get(key);
+          ExoSocialActivity newComment = new ExoSocialActivityImpl();
+          newComment.setUserId(userIdentity.getId());
+          newComment.setType("CALENDAR_ACTIVITY");
+          newComment.setTitleId(key);
+          Map<String, String> data = new LinkedHashMap<String, String>(); 
+          data.put(dataChanges[2], dataChanges[1]);
+          data.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, dataChanges[2]);
+          newComment.setTemplateParams(data);
+          newComment.setTitle(dataChanges[0]);
+          activityM.saveComment(activity, newComment);
+        } 
         } else {
           activity.setTitle(event.getSummary());
           activity.setBody(event.getDescription());
@@ -373,7 +387,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     }
     return false;
   }
-  
+
   private TimeZone getUserTimeZone() {
     try {
       String username = ConversationState.getCurrent().getIdentity().getUserId();      
