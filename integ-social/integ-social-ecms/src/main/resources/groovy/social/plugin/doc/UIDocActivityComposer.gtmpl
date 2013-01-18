@@ -29,7 +29,7 @@
     if(uicomponent.isDocumentReady()){
       def jsManager = _ctx.getRequestContext().getJavascriptManager();
       jsManager.require("SHARED/social-ui-activity-composer", "composer")
-               .addScripts("composer.UIComposer.activeShareButton();");
+               .addScripts("composer.activeShareButton();");
       %>
 	  
       <span class="TopInputLink"></span>

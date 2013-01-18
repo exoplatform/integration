@@ -65,12 +65,12 @@ public class UIDocActivitySelector extends UIContainer implements UIPopupCompone
     }
   }
   @Override
-  public void activate() throws Exception {
+  public void activate() {
 
   }
 
   @Override
-  public void deActivate() throws Exception {
+  public void deActivate() {
     UIPopupWindow popup = (UIPopupWindow)this.getParent();
     popup.setUIComponent(null);
     popup.setShow(false);
