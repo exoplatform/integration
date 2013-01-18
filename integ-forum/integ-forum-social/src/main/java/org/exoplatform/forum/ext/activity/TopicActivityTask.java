@@ -18,6 +18,7 @@ package org.exoplatform.forum.ext.activity;
 
 import java.util.Map;
 
+import org.exoplatform.commons.utils.PropertyChangeSupport;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.log.ExoLogger;
@@ -82,6 +83,61 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         return newActivity;
       } catch (Exception e) {
         LOG.error("Can not record Activity for when add topic's title " + ctx.getTopic().getId(), e);
+      }
+      return null;
+    }
+    
+  };
+  
+  public static TopicActivityTask UPDATE_TOPIC_PROPERTIES = new TopicActivityTask() {
+
+    @Override
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return activity;
+    }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      activity.setTitle(ctx.getTopic().getTopicName());
+      StringBuilder sb = new StringBuilder();
+      PropertyChangeSupport newPcs = ctx.getPcs();
+      Topic topic = ctx.getTopic();
+      
+      if (newPcs.hasPropertyName(Topic.TOPIC_NAME)) {
+        sb.append(ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(topic.getTopicName())).append("\n");
+      }
+      
+      if (newPcs.hasPropertyName(Topic.TOPIC_CONTENT)) {
+        sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(topic.getDescription()));
+      }
+      
+      activity.setTitle(sb.toString());
+      
+      return activity;
+    };
+
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+
+        ForumService fs = ForumActivityUtils.getForumService();
+        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
+        
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        ExoSocialActivity a = am.getActivity(activityId);
+        
+        //
+        a = processActivity(ctx, a);
+        am.updateActivity(a);
+        
+        //FORUM_12 case: update topic's title
+        ExoSocialActivity newComment = processComment(ctx);
+        //
+        am.saveComment(a, newComment);
+        
+        return newComment;
+      } catch (Exception e) {
+        LOG.error("Can not record Comment for when update topic " + ctx.getTopic().getId(), e);
       }
       return null;
     }

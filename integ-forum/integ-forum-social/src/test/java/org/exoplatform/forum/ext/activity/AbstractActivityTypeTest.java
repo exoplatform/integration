@@ -37,7 +37,7 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
  *          thanh_vucong@exoplatform.com
  * Jan 14, 2013  
  */
-public class AbstractActivityTypeTest extends TestCase {
+public abstract class AbstractActivityTypeTest extends TestCase {
 
   private IdGenerator ig;
   @Override

@@ -17,7 +17,10 @@
 package org.exoplatform.forum.ext.impl;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.exoplatform.commons.utils.PropertyChangeSupport;
 import org.exoplatform.forum.ext.activity.ActivityExecutor;
 import org.exoplatform.forum.ext.activity.ForumActivityContext;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
@@ -67,14 +70,45 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   
   @Override
   public void updateTopic(Topic topic) {
-    PropertyChangeEvent[] events = topic.getChangeEvent();
+    
     TopicActivityTask task = null;
     ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    updateProperties(topic, ctx);
+    
+    PropertyChangeEvent[] events = topic.getChangeEvent();
     
     for (int i = 0; i < events.length; i++) {
       task = getTaskFromUpdateTopic(events[i]);
       ActivityExecutor.execute(task, ctx);
     }
+  }
+  
+  private void updateProperties(Topic topic, ForumActivityContext ctx) {
+    PropertyChangeSupport newPcs = new PropertyChangeSupport(topic);
+    PropertyChangeSupport pcs = topic.getPcs();
+    
+    //Topic.TOPIC_NAME
+    if (pcs.hasPropertyName(Topic.TOPIC_NAME)) {
+      newPcs.addPropertyChange(pcs.getPropertyChange(Topic.TOPIC_NAME));
+    }
+    
+    //Topic.TOPIC_CONTENT
+    if (pcs.hasPropertyName(Topic.TOPIC_CONTENT)) {
+      newPcs.addPropertyChange(pcs.getPropertyChange(Topic.TOPIC_CONTENT));
+    }
+    
+    if (newPcs.getChangeEvents().length > 1) {
+      ctx.setPcs(newPcs);
+      
+      //1. executes task
+      TopicActivityTask task = TopicActivityTask.UPDATE_TOPIC_PROPERTIES;
+      ActivityExecutor.execute(task, ctx);
+      //2. remove events
+      pcs.removePropertyChange(Topic.TOPIC_NAME);
+      pcs.removePropertyChange(Topic.TOPIC_CONTENT);
+    }
+    
   }
   
  
