@@ -55,11 +55,27 @@ public enum ForumActivityType {
     return a;
   }
   
+  public String getTitle(String value) {
+    if (value != null) {
+      return String.format(titleTemplate, value);
+    } else {
+      return titleTemplate;
+    }
+  }
+  
   public ExoSocialActivity getActivity(ExoSocialActivity a, String value1, String value2) {
     if (value1 != null && value2 != null) {
       a.setTitle(String.format(titleTemplate, value1, value2));
     }
     
     return a;
+  }
+  
+  public String getTitle(String value1, String value2) {
+    if (value1 != null && value2 != null) {
+      return String.format(titleTemplate, value1, value2);
+    }
+    
+    return titleTemplate;
   }
 }

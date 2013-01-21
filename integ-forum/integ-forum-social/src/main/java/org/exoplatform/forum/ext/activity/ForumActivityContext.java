@@ -16,6 +16,10 @@
  */
 package org.exoplatform.forum.ext.activity;
 
+import java.beans.PropertyChangeEvent;
+import java.util.List;
+
+import org.exoplatform.commons.utils.PropertyChangeSupport;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 
@@ -51,6 +55,8 @@ public class ForumActivityContext {
   private String[] removeActivities;
   
   private Topic splitedTopic;
+  
+  private PropertyChangeSupport pcs;
   
   /** create ForumActivityContext for create new topic case*/
   public static ForumActivityContext makeContextForAddTopic(Topic topic) {
@@ -196,4 +202,13 @@ public class ForumActivityContext {
   public Topic getSplitedTopic() {
     return splitedTopic;
   }
+
+  public PropertyChangeSupport getPcs() {
+    return pcs;
+  }
+
+  public void setPcs(PropertyChangeSupport pcs) {
+    this.pcs = pcs;
+  }
+  
 }
