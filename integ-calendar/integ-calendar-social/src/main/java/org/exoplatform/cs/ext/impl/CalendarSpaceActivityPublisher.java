@@ -108,7 +108,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   private static final String[] TASK_CALENDAR_UPDATED = {"task_CalendarId_updated", "Task's calendar is now: $value."};
   private static final String[] TASK_ATTACH_UPDATED = {"task_attachment_updated", "Attachment(s) has been added to the task.", "TASK_ATTACH_UPDATED"};
   private static final String[] TASK_NEED_ACTION = {CalendarEvent.NEEDS_ACTION, "Task needs action.", "TASK_NEED_ACTION"};
-  private static final String[] TASK_IN_PROCESS_ACTION = {CalendarEvent.IN_PROCESS, "Task is in process.", "TASK_IN_PROCESS_ACTION"};
+  private static final String[] TASK_IN_PROCESS_ACTION = {CalendarEvent.IN_PROCESS, "Task is in progress.", "TASK_IN_PROCESS_ACTION"};
   private static final String[] TASK_COMPLETED_ACTION = {CalendarEvent.COMPLETED, "Task has been completed.", "TASK_COMPLETED_ACTION"};
   private static final String[] TASK_CANCELLED_ACTION = {CalendarEvent.CANCELLED, "Task has been cancelled.", "TASK_CANCELLED_ACTION"};
 
@@ -333,11 +333,14 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         if(newEvent.getDescription() != null && !newEvent.getDescription().equals(oldEvent.getDescription())) {
           messagesParams.put(NOTE_UPDATED[0],new String[]{NOTE_UPDATED[1].replace("$value", newEvent.getDescription()),newEvent.getDescription(),NOTE_UPDATED[2]}) ;
         }
-        if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
-          messagesParams.put(FROM_UPDATED[0],new String[]{FROM_UPDATED[1].replace("$value",  dformat.format(newEvent.getFromDateTime())), dformat.format(newEvent.getFromDateTime()), FROM_UPDATED[2]});
-        }
-        if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
-          messagesParams.put(TO_UPDATED[0],new String[]{TO_UPDATED[1].replace("$value",  dformat.format(newEvent.getToDateTime())), dformat.format(newEvent.getToDateTime()), TO_UPDATED[2]}); 
+        
+        if (!isAllDayEvent(newEvent)) {
+          if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
+            messagesParams.put(FROM_UPDATED[0],new String[]{FROM_UPDATED[1].replace("$value",  dformat.format(newEvent.getFromDateTime())), dformat.format(newEvent.getFromDateTime()), FROM_UPDATED[2]});
+          }
+          if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
+            messagesParams.put(TO_UPDATED[0],new String[]{TO_UPDATED[1].replace("$value",  dformat.format(newEvent.getToDateTime())), dformat.format(newEvent.getToDateTime()), TO_UPDATED[2]}); 
+          }
         }
         if(newEvent.getPriority()!= null && !newEvent.getPriority().equals(oldEvent.getPriority())) {
           messagesParams.put(PRIORITY_UPDATED[0],new String[]{PRIORITY_UPDATED[1].replace("$value", newEvent.getPriority()),newEvent.getPriority(), PRIORITY_UPDATED[2]}) ;
@@ -369,14 +372,14 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   private boolean isAllDayEvent(CalendarEvent eventCalendar) {
     try {
       TimeZone tz = getUserTimeZone() ;
-      Calendar cal1 = GregorianCalendar.getInstance(tz);
-      Calendar cal2 = cal1 ;
+      Calendar cal1 = new GregorianCalendar(tz) ;
+      Calendar cal2 = new GregorianCalendar(tz) ;
       cal1.setLenient(false);
       cal1.setTime(eventCalendar.getFromDateTime()) ;
-      cal1.setTimeZone(tz);
+      //cal1.setTimeZone(tz);
       cal2.setLenient(false);
       cal2.setTime(eventCalendar.getToDateTime()) ;
-      cal2.setTimeZone(tz);
+      //cal2.setTimeZone(tz);
       return (cal1.get(Calendar.HOUR_OF_DAY) == 0  && 
           cal1.get(Calendar.MINUTE) == 0 &&
           cal2.get(Calendar.HOUR_OF_DAY) == cal2.getActualMaximum(Calendar.HOUR_OF_DAY)&& 
