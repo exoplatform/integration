@@ -70,33 +70,39 @@ public class ContentUIActivity extends BaseUIActivity {
 
   private static final String NEW_DATE_FORMAT = "hh:mm:ss MMM d, yyyy";
 
-  private static final Log   LOG           = ExoLogger.getLogger(ContentUIActivity.class);
+  private static final Log   LOG              = ExoLogger.getLogger(ContentUIActivity.class);
 
-  public static final String ACTIVITY_TYPE = "CONTENT_ACTIVITY";
+  public static final String ACTIVITY_TYPE     = "CONTENT_ACTIVITY";
 
-  public static final String ID            = "id";
+  public static final String ID                = "id";
 
-  public static final String CONTENT_LINK  = "contenLink";
+  public static final String CONTENT_LINK      = "contenLink";
 
-  public static final String MESSAGE       = "message";
+  public static final String MESSAGE           = "message";
 
-  public static final String REPOSITORY    = "repository";
+  public static final String REPOSITORY        = "repository";
 
-  public static final String WORKSPACE     = "workspace";
+  public static final String WORKSPACE         = "workspace";
 
-  public static final String CONTENT_NAME  = "contentName";
+  public static final String CONTENT_NAME      = "contentName";
 
-  public static final String IMAGE_PATH    = "imagePath";
+  public static final String IMAGE_PATH        = "imagePath";
 
-  public static final String MIME_TYPE     = "mimeType";
+  public static final String MIME_TYPE         = "mimeType";
 
-  public static final String STATE         = "state";
+  public static final String STATE             = "state";
 
-  public static final String AUTHOR        = "author";
+  public static final String AUTHOR            = "author";
 
-  public static final String DATE_CREATED  = "dateCreated";
+  public static final String DATE_CREATED      = "dateCreated";
 
-  public static final String LAST_MODIFIED = "lastModified";
+  public static final String LAST_MODIFIED     = "lastModified";
+
+  public static final String IS_SYSTEM_COMMENT = "isSystemComment";
+  
+  public static final String SYSTEM_COMMENT    = "systemComment";
+  
+  
 
   private String             contentLink;
 
@@ -189,7 +195,7 @@ public class ContentUIActivity extends BaseUIActivity {
   public void setAuthor(String author) {
     this.author = author;
   }
-  
+
   private String convertDateFormat(String strDate, String strOldFormat, String strNewFormat) throws ParseException {
     if (strDate == null || strDate.length() <= 0) {
       return "";
@@ -256,21 +262,21 @@ public class ContentUIActivity extends BaseUIActivity {
       if (LOG.isWarnEnabled())
         LOG.warn("RepositoryException: ", re);
     }
-    
+
     return desc;
   }
 
   public String getUserFullName(String userId) {
     ExoContainer container = ExoContainerContext.getCurrentContainer();
     IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
-    
+
     return identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, true).getProfile().getFullName();
   }
 
   public String getUserProfileUri(String userId) {
     ExoContainer container = ExoContainerContext.getCurrentContainer();
     IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
-    
+
     return identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, true).getProfile().getUrl();
   }
 
@@ -304,9 +310,9 @@ public class ContentUIActivity extends BaseUIActivity {
     this.mimeType = activityParams.get(ContentUIActivity.MIME_TYPE);
     this.imagePath = activityParams.get(ContentUIActivity.IMAGE_PATH);
   }
-  
-  
-  
+
+
+
   /**
    * Gets the webdav url.
    * 
@@ -339,6 +345,27 @@ public class ContentUIActivity extends BaseUIActivity {
     }
 
     return friendlyService.getFriendlyUri(link);
+  }
+
+  public String getSystemCommentBundle(Map<String, String> activityParams) {
+    if (activityParams==null) return null;
+    String tmp = activityParams.get(ContentUIActivity.IS_SYSTEM_COMMENT);
+    String commentMessage;
+    if (tmp==null) return null;
+    try {
+      if (Boolean.parseBoolean(tmp)) {
+        commentMessage  = activityParams.get(ContentUIActivity.MESSAGE);
+        tmp =  activityParams.get(ContentUIActivity.SYSTEM_COMMENT);
+        return commentMessage.replace("{0}", tmp);
+      } else return null;
+    }catch (Exception e) {
+      return null;
+    }
+  }
+  
+  public String getSystemCommentTitle(Map<String, String> activityParams) {
+    if (activityParams==null) return null;
+    return activityParams.get(ContentUIActivity.SYSTEM_COMMENT);
   }
   
   public static class ViewDocumentActionListener extends EventListener<ContentUIActivity> {

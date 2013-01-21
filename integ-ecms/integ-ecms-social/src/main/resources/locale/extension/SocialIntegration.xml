@@ -6,6 +6,22 @@
 			<editedBy>was edited by</editedBy>
 			<system>the system</system>
 			<readmore>...Read More.</readmore>
+			<editTitle>Title has been updated to: {0}</editTitle>
+			<editSummary>Summary has been updated to: {0}</editSummary>
+			<editContent>Content has been updated.</editContent>
+			<attachmentAdded>File(s) has been attached.</attachmentAdded>
+			<attachmentRemoved>File(s) has been removed.</attachmentRemoved>
+			<categoryAdded>Category: {0} has been added.</categoryAdded>
+			<categoryRemoved>Category: {0} has been removed.</categoryRemoved>
+			<commentAdded>comment is added to the activity</commentAdded>
+			<stateChange>
+  			<pending>Publication status is now pending.</pending>
+  			<approved>Publication has been approved.</approved>
+  			<staged>Publication has been staged.</staged>
+  			<published>Publication has been published.</published>
+  		</stateChange>
+  		<contentMoved>Publication has been moved to: {0}</contentMoved>
+  		<revisionChanged>Publication has been restored to version: {0}</revisionChanged>
 		</messages>
 		<publicationStates>
 			<archived>Archived</archived>

@@ -417,7 +417,18 @@
       def id = Utils.getIdentityManager().getIdentity(it.userId);
       commenterFullName = id.profile.fullName;
       commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-      commentMessage = it.title;
+      //VinhNT, new spec for ActivityTypes
+      def activityParams = it.getTemplateParams();
+      def systemComment = uicomponent.getSystemCommentBundle(activityParams);
+      def systemCommentTite ; 
+      if (systemComment!=null) {
+        systemCommentTite = uicomponent.getSystemCommentTitle(activityParams);
+        commentMessage = _ctx.appRes(systemComment);
+        commentMessage = commentMessage.replace("{0}", systemCommentTite);
+      } else {
+        commentMessage = it.title;
+      }
+      
       commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
       commenterAvatarImgSrc = id.profile.avatarUrl;
       if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;

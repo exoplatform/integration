@@ -6,6 +6,22 @@
       <editedBy>a été édité par</editedBy>
       <system>le système</system>
       <readmore>...Lire la suite.</readmore>
+      <editTitle>Le titre a été mis à jour: {0}</editTitle>
+      <editSummary>Le sommaire a été mis à jour: {0}</editSummary>
+      <editContent>Le contenu a été mis à jour.</editContent>
+      <attachmentAdded>Des fichiers ont été attachés.</attachmentAdded>
+      <attachmentRemoved>Des fichiers on été supprimés.</attachmentRemoved>
+      <categoryAdded>La catégorie: {0} a été ajoutée.</categoryAdded>
+      <categoryRemoved>La catégorie: {0} a été supprimée.</categoryRemoved>
+      <commentAdded>Un commentaire est ajouté à l'activitée</commentAdded>
+      <stateChange>
+        <pending>La publication est maintenant en attente.</pending>
+        <approved>La publication a été approuvée.</approved>
+        <staged>La publication est prête.</staged>
+        <published>La publication est publiée.</published>
+      </stateChange>
+      <contentMoved>La publication a été déplacé: {0}</contentMoved>
+      <revisionChanged>La publication a été restauré à la version: {0}</revisionChanged>
     </messages>
     <publicationStates>
       <archived>Archivé</archived>

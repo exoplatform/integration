@@ -26,9 +26,9 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
@@ -80,8 +80,13 @@ public class Utils {
    * @return Map the mapped data
    */
   public static Map<String, String> populateActivityData(Node node,
-                                                         String activityOwnerId,
-                                                         String activityMsgBundleKey) throws Exception {
+          String activityOwnerId,
+          String activityMsgBundleKey) throws Exception {
+	  return populateActivityData(node, activityOwnerId, activityMsgBundleKey, false, null);
+  }
+  public static Map<String, String> populateActivityData(Node node,
+                                                         String activityOwnerId, String activityMsgBundleKey, 
+                                                         boolean isSystemComment, String systemComment) throws Exception {
     /** The date formatter. */
     DateFormat dateFormatter = null;
     dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
@@ -127,18 +132,31 @@ public class Utils {
     activityParams.put(ContentUIActivity.MIME_TYPE, getMimeType(node));
     activityParams.put(ContentUIActivity.IMAGE_PATH, illustrationImg);
     activityParams.put(ContentUIActivity.IMAGE_PATH, illustrationImg);
-
+    if (isSystemComment) {
+      activityParams.put(ContentUIActivity.IS_SYSTEM_COMMENT, String.valueOf(isSystemComment));
+    	activityParams.put(ContentUIActivity.SYSTEM_COMMENT, systemComment);
+    }
     return activityParams;
   }
 
   /**
-   * post activity to the activity stream
-   * 
-   * @param String the activity invoker
-   * @param node the node
-   * @return void
+   * @Method postActivity postActivity(Node node, String activityMsgBundleKey)
+   * see the postActivity(Node node, String activityMsgBundleKey, Boolean isSystemComment, String systemComment)
    */
   public static void postActivity(Node node, String activityMsgBundleKey) throws Exception {
+    postActivity(node, activityMsgBundleKey, false, false, null);
+  }
+  /**
+   * 
+   * @param node : activity raised from this source
+   * @param activityMsgBundleKey
+   * @param isSystemComment
+   * @param systemComment the new value of System Posted activity, 
+   *        if (isSystemComment) systemComment can not be set to null, set to empty string instead of.
+   * @throws Exception
+   */
+  public static void postActivity(Node node, String activityMsgBundleKey, boolean needUpdate, 
+                                  boolean isSystemComment, String systemComment) throws Exception {
     Object isSkipRaiseAct = DocumentContext.getCurrent()
                                            .getAttributes()
                                            .get(DocumentContext.IS_SKIP_RAISE_ACT);
@@ -161,42 +179,51 @@ public class Utils {
 
     // get owner
     String activityOwnerId = getActivityOwnerId();
-
+    
     ExoSocialActivity activity = createActivity(identityManager,
                                                 activityOwnerId,
                                                 node,
-                                                activityMsgBundleKey);
-    String spaceName = getSpaceName(node);
-
-    if (spaceName != null && spaceName.length() > 0
-        && spaceService.getSpaceByPrettyName(spaceName) != null) {
-      // post activity to space stream
-      Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,
-                                                                   spaceName,
-                                                                   true);
-      activityManager.saveActivityNoReturn(spaceIdentity, activity);
-    } else if (activityOwnerId != null && activityOwnerId.length() > 0) {
-      // post activity to user status stream
-      Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
-                                                                   activityOwnerId,
-                                                                   true);
-      activityManager.saveActivityNoReturn(ownerIdentity, activity);
-    } else {
-      return;
+                                                activityMsgBundleKey, isSystemComment, systemComment);
+    String nodeActivityID = StringUtils.EMPTY;
+    ExoSocialActivity exa =null;
+    if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
+      try {
+        nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
+        exa =  activityManager.getActivity(nodeActivityID);
+      }catch (Exception e){
+        //Not activity is deleted, return no related activity
+      }
     }
+    
+    if (exa!=null) {
+      if (needUpdate) {
+        activityManager.updateActivity(exa);
+      }
+      activityManager.saveComment(exa, activity);
+    }else {
+      String spaceName = getSpaceName(node);
 
-    // TODO: At the moment, we are waiting for social team to support a
-    // mechanism for extending the social streams.
-    // (we want add one more stream named Document to manage the change of
-    // documents)
-    // //save with DocumentIdentity
-    // String workspace = node.getSession().getWorkspace().getName();
-    // String nodeUUID = node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ?
-    // node.getUUID() : "";
-    // Identity docIdentity =
-    // identityManager.getOrCreateIdentity(DocumentIdentityProvider.NAME,
-    // workspace + ":/" + nodeUUID, true);
-    // activityManager.saveActivityNoReturn(docIdentity, activity);
+      if (spaceName != null && spaceName.length() > 0
+          && spaceService.getSpaceByPrettyName(spaceName) != null) {
+        // post activity to space stream
+        Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,
+            spaceName,
+            true);
+        activityManager.saveActivityNoReturn(spaceIdentity, activity);
+      } else if (activityOwnerId != null && activityOwnerId.length() > 0) {
+        // post activity to user status stream
+        Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+            activityOwnerId,
+            true);
+        activityManager.saveActivityNoReturn(ownerIdentity, activity);
+      } else {
+        return;
+      }
+      String activityId = activity.getId();
+      if (!StringUtils.isEmpty(activityId)) {
+        ActivityTypeUtils.attachActivityId(node, activityId);
+      }
+    }
   }
 
   /**
@@ -227,12 +254,7 @@ public class Utils {
    * @throws Exception
    */
   private static void refineNode(Node currentNode) throws Exception {
-    Session session = currentNode.getSession();
-    String nodePath = currentNode.getPath();
-    currentNode.getSession().save();
-
     if (currentNode instanceof NodeImpl && !((NodeImpl) currentNode).isValid()) {
-      currentNode = (Node) session.getItem(nodePath);
       ExoContainer container = ExoContainerContext.getCurrentContainer();
       LinkManager linkManager = (LinkManager) container.getComponentInstanceOfType(LinkManager.class);
       if (linkManager.isLink(currentNode)) {
@@ -304,14 +326,17 @@ public class Utils {
    * @throws Exception the activity storage exception
    */
   public static ExoSocialActivity createActivity(IdentityManager identityManager,
-                                                 String activityOwnerId,
-                                                 Node node,
+                                                 String activityOwnerId, Node node,
                                                  String activityMsgBundleKey) throws Exception {
-
-    // Populate activity data
-    Map<String, String> activityParams = populateActivityData(node,
-                                                              activityOwnerId,
-                                                              activityMsgBundleKey);
+	  return createActivity(identityManager, activityOwnerId, node, activityMsgBundleKey, false, null);
+  }
+  public static ExoSocialActivity createActivity(IdentityManager identityManager,
+                                                 String activityOwnerId,
+                                                 Node node, String activityMsgBundleKey, 
+                                                 boolean isSystemComment,  String systemComment) throws Exception {
+		// Populate activity data
+	Map<String, String> activityParams = populateActivityData(node, activityOwnerId, activityMsgBundleKey, isSystemComment, systemComment);
+	
     String title = node.hasProperty(NodetypeConstant.EXO_TITLE) ? node.getProperty(NodetypeConstant.EXO_TITLE)
                                                                       .getString()
                                                                : StringUtils.EMPTY;    

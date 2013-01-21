@@ -18,7 +18,6 @@ package org.exoplatform.wcm.ext.component.activity.listener;
 
 import javax.jcr.Node;
 
-import org.exoplatform.services.cms.CmsService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 
@@ -26,19 +25,40 @@ import org.exoplatform.services.listener.Listener;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
  * 15, 2011
  */
-public class ContentUpdateActivityListener extends Listener<CmsService, Node> {
+public class ContentUpdateActivityListener extends Listener<Node, String> {
 
-  private static final String RESOURCE_BUNDLE_KEY_EDITED_BY = "SocialIntegration.messages.editedBy";
-  
+  private String[]  editedField     = {"exo:title", "exo:summary", "exo:text"};
+  private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
+                                       "SocialIntegration.messages.editSummary",		
+                                       "SocialIntegration.messages.editContent"};
+  private boolean[] needUpdate      = {true, true, false};
+  private int consideredFieldCount = editedField.length;
   /**
    * Instantiates a new post edit content event listener.
    */
   public ContentUpdateActivityListener() {
+	  
   }
 
   @Override
-  public void onEvent(Event<CmsService, Node> event) throws Exception {
-    Node currentNode = event.getData();
-    Utils.postActivity(currentNode, RESOURCE_BUNDLE_KEY_EDITED_BY);
+  public void onEvent(Event<Node, String> event) throws Exception {
+    Node currentNode = event.getSource();
+    String propertyName = event.getData();
+    String newValue;
+    try {
+      if (propertyName.equals(editedField[consideredFieldCount-1])) {
+        newValue ="";
+      } else {
+        newValue= currentNode.getProperty(propertyName).getString();
+      }
+    }catch (Exception e) {
+      newValue = "";
+    }
+    for (int i=0; i< consideredFieldCount; i++) {
+      if (propertyName.equals(editedField[i])) {
+        Utils.postActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
+        break;
+      }
+    }
   }
 }
