@@ -69,7 +69,7 @@ public class ForumActivityBuilder {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     String body = getThreeFirstLines(post);
 
-    activity.setUserId(post.getOwner());
+    //activity.setUserId(post.getOwner());
     String title = StringEscapeUtils.unescapeHtml(post.getMessage());
     activity.setTitle(title);
     activity.setBody(body);
@@ -97,7 +97,7 @@ public class ForumActivityBuilder {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     String body = getThreeFirstLines(topic);
     
-    activity.setUserId(topic.getOwner());
+    //activity.setUserId(topic.getOwner());
     String title = StringEscapeUtils.unescapeHtml(topic.getTopicName());
     activity.setTitle(title);
     activity.setBody(body);
@@ -108,19 +108,21 @@ public class ForumActivityBuilder {
   }
   
   public static String getThreeFirstLines(Topic topic) {
-    return StringEscapeUtils.escapeHtml(topic.getDescription());
+    return topic.getDescription();
   }
   
   public static String getThreeFirstLines(Post post) {
-    return StringEscapeUtils.escapeHtml(post.getMessage());
+    return post.getMessage();
   }
   
   public static ExoSocialActivity createActivity(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     String body = getThreeFirstLines(topic);
     
-    //Identity author = ForumActivityUtils.getIdentity(topic.getOwner());
-    activity.setUserId(topic.getOwner());
+    
+    //processing in execute of task.
+    //avoid get Identity here to write UT
+    //activity.setUserId(topic.getOwner());
     String title = StringEscapeUtils.unescapeHtml(topic.getTopicName());
     activity.setTitle(title);
     activity.setBody(body);

@@ -72,6 +72,33 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     assertEquals(true, a.isHidden());
   }
   
+  public void testUpdateTopicPropertiesWithJob() throws Exception {
+    Topic topic = createdTopic("demo");
+    topic = updateTopicTitle(topic, "edited to new title for topic.");
+    topic = updateTopicContent(topic, "edited to new content for topic.");
+    assertEquals(2, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_NAME, topic.getChangeEvent()[0].getPropertyName());
+    assertEquals(Topic.TOPIC_CONTENT, topic.getChangeEvent()[1].getPropertyName());
+    
+    //
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    ctx.setPcs(topic.getPcs());
+    
+    //
+    TopicActivityTask task = TopicActivityTask.UPDATE_TOPIC_PROPERTIES;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertNumberOfReplies(a, 0);
+    assertVoteRate(a, topic.getVoteRating());
+    assertEquals(a.getTitle(), "Title has been updated to: edited to new title for topic.\nContent has been edited.");
+    
+    //comment
+    ExoSocialActivity newComment = task.processComment(ctx);
+    assertEquals(newComment.getTitle(), "Title has been updated to: edited to new title for topic.\nContent has been edited.");
+  }
+  
   public void testUpdateTopicTitle() throws Exception {
     Topic topic = createdTopic("demo");
     topic = updateTopicTitle(topic, "edited to new title for topic.");

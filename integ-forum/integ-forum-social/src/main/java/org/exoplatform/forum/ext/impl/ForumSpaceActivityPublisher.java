@@ -17,8 +17,6 @@
 package org.exoplatform.forum.ext.impl;
 
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.exoplatform.commons.utils.PropertyChangeSupport;
 import org.exoplatform.forum.ext.activity.ActivityExecutor;
@@ -31,6 +29,7 @@ import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.ForumEventListener;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice Lamarque</a>
@@ -46,11 +45,16 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void saveForum(Forum forum) {
   }
   
+ 
+  
   @Override
   public void addPost(Post post) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     PostActivityTask task = PostActivityTask.ADD_POST;
-    ActivityExecutor.execute(task, ctx);
+    ExoSocialActivity comment = ActivityExecutor.execute(task, ctx);
+    
+    //
+    ForumActivityUtils.takeCommentBack(post, comment);
   }
   
   @Override
@@ -65,7 +69,10 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void addTopic(Topic topic) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);
     TopicActivityTask task = TopicActivityTask.ADD_TOPIC;
-    ActivityExecutor.execute(task, ctx);
+    ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
+    
+    //
+    ForumActivityUtils.takeActivityBack(topic, got);
   }
   
   @Override
@@ -133,8 +140,10 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
     /** 2. Call add topic*/
     ForumActivityContext ctx = ForumActivityContext.makeContextForSplitTopic(newTopic, splitedTopic, removeActivityId);
     TopicActivityTask task = TopicActivityTask.SPLIT_TOPIC;
-    ActivityExecutor.execute(task, ctx);
+    ExoSocialActivity activity = ActivityExecutor.execute(task, ctx);
     
+    //
+    ForumActivityUtils.takeActivityBack(newTopic, activity);
   }
  
   @Override
@@ -169,6 +178,16 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
       } else {
         got = TopicActivityTask.UNLOCK_TOPIC;
       }
+   } else if (Topic.TOPIC_STATUS_APPROVED.equals(event.getPropertyName())) {
+      
+      //
+      boolean isLock = (Boolean) event.getNewValue();
+      if (isLock) {
+        got = TopicActivityTask.APPROVED_TOPIC;
+      } else {
+        got = TopicActivityTask.UNAPPROVED_TOPIC;
+      }
+    
     } else if (Topic.TOPIC_STATUS_ACTIVE.equals(event.getPropertyName())) {
       
       //

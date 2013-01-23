@@ -24,6 +24,7 @@ import org.exoplatform.forum.service.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.ActivityManager;
 
 /**
@@ -49,8 +50,6 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
     return processTitle(comment); 
   }
   
-  
-  
   public static PostActivityTask ADD_POST = new PostActivityTask() {
 
     @Override
@@ -72,28 +71,25 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
         Topic topic = ForumActivityUtils.getTopic(ctx);
         ctx.setTopic(topic);
         
-        ForumService fs = ForumActivityUtils.getForumService();
+        //FORUM_33 case: update topic activity's number of reply 
+        ExoSocialActivity topicActivity = ForumActivityUtils.getActivityOfTopic(ctx);
         
-        String activityId = fs.getActivityIdForOwnerPath(topic.getPath());
+        Map<String, String> templateParams = topicActivity.getTemplateParams();
+        templateParams.put(ForumActivityBuilder.TOPIC_POST_COUNT_KEY, "" + topic.getPostCount());
+        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        
-        //
-        if (Utils.isEmpty(activityId)) {
-          LOG.error("Can not get Activity for topic " + ctx.getTopicId());
-          return null;
-        }
-        
-        ////FORUM_33 case: update topic activity's number of reply 
-        ExoSocialActivity topicActivity = am.getActivity(activityId);
         am.updateActivity(topicActivity);
         
         //add new comment with title: first 3 lines
         ExoSocialActivity newComment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
         newComment = processComment(ctx, newComment);
-        am.saveComment(topicActivity, newComment);
         
         //
-        fs.saveActivityIdForOwnerPath(ctx.getPost().getPath(), newComment.getId());
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getPost().getOwner());
+        newComment.setUserId(poster.getId());
+        
+        //
+        am.saveComment(topicActivity, newComment);
         
         return newComment;
       } catch (Exception e) {
@@ -120,27 +116,22 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        ForumService fs = ForumActivityUtils.getForumService();
-        Topic topic = fs.getTopic(ctx.getCategoryId(), ctx.getForumId(), ctx.getTopicId(), null);   
+        Topic topic = ForumActivityUtils.getTopic(ctx);
         ctx.setTopic(topic);
         
-        //
-        String activityId = fs.getActivityIdForOwnerPath(topic.getPath());
-        
-        //
-        if (Utils.isEmpty(activityId)) {
-          LOG.error("Can not get Activity for topic " + ctx.getTopicId());
-          return null;
-        }
+        //FORUM_34 case: update activity's title
+        //add comment for updated post 
+        ExoSocialActivity topicActivity = ForumActivityUtils.getActivityOfTopic(ctx);
         
         //
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity topicActivity = am.getActivity(activityId);
         ExoSocialActivity newComment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
         newComment = processComment(ctx, newComment);
-          
-        //FORUM_34 case: update activity's title
-        //add comment for updated post
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getPost().getOwner());
+        newComment.setUserId(poster.getId());
+        
         am.saveComment(topicActivity, newComment);
           
         return topicActivity;

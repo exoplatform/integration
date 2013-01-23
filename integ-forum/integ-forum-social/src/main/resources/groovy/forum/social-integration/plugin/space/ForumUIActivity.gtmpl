@@ -160,7 +160,14 @@
         <%}%>
       </div>
       <div class="CommentBox QuoterBox">
-        <p class="QuoterClose">$activity.body</p>
+        <div class="QuoterClose">$activity.body</div>
+     </div>
+     <div class="NumberOfReliesBlock TextBold">
+        <%
+          def numberOfReplies = uicomponent.getNumberOfReplies();
+          def rate = uicomponent.getRate();
+        %>
+        <div>$numberOfReplies &nbsp;| &nbsp; $rate</div>
      </div>
       <div class="DefaultActivityIcon ForumActivityIcon">
         <% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>

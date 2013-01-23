@@ -32,6 +32,8 @@ public enum ForumActivityType {
   OPEN_TOPIC("Topic has been opened."),
   LOCK_TOPIC("Topic has been locked."),
   UNLOCK_TOPIC("Topic has been unlocked."),
+  APPROVED_TOPIC("Topic has been approved."),
+  UNAPPROVED_TOPIC("Topic has been unapproved."),
   MERGE_TOPICS("%s"),
   SPLIT_TOPIC("%s"),
   MOVE_TOPIC("Topic have been moved to: %s>%s"),

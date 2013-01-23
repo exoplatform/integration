@@ -23,6 +23,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.Utils;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
@@ -82,10 +83,69 @@ public class ForumActivityUtils {
   }
   
   public static Topic getTopic(ForumActivityContext ctx) throws Exception {
-    return ForumActivityUtils.getForumService().getTopic(ctx.getCategoryId(),
-                                                         ctx.getForumId(),
-                                                         ctx.getTopicId(),
+    Post p = ctx.getPost();
+    return ForumActivityUtils.getForumService().getTopic(p.getCategoryId(),
+                                                         p.getForumId(),
+                                                         p.getTopicId(),
                                                          "");
+  }
+  
+  public static void takeActivityBack(Topic topic, ExoSocialActivity activity) {
+    ForumActivityUtils.getForumService().saveActivityIdForOwnerPath(topic.getPath(), activity.getId());
+  }
+  
+  public static void takeCommentBack(Post post, ExoSocialActivity comment) {
+    ForumActivityUtils.getForumService().saveActivityIdForOwnerPath(post.getPath(), comment.getId());
+  }
+  
+  /**
+   * Gets ActivityId from existing Topic in Context.
+   * If is NULL, create new Activity for Topic.
+   * @param ctx
+   * @return
+   */
+  public static String getActivityId(ForumActivityContext ctx) {
+    ForumService fs = ForumActivityUtils.getForumService();
+    String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
+    
+    //
+    if (Utils.isEmpty(activityId)) {
+      TopicActivityTask task = TopicActivityTask.ADD_TOPIC;
+      ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
+      
+      //
+      ForumActivityUtils.takeActivityBack(ctx.getTopic(), got);
+      activityId = got.getId();
+    }
+    
+    return activityId;
+  }
+  
+  /**
+   * Gets ActivityId from existing Topic in Context.
+   * If is NULL, create new Activity for Topic.
+   * @param ctx
+   * @return
+   */
+  public static ExoSocialActivity getActivityOfTopic(ForumActivityContext ctx) {
+    ForumService fs = ForumActivityUtils.getForumService();
+    String activityId = fs.getActivityIdForOwnerId(ctx.getTopic().getId());
+    ExoSocialActivity got = null;
+    //
+    if (Utils.isEmpty(activityId)) {
+      TopicActivityTask task = TopicActivityTask.ADD_TOPIC;
+      got = ActivityExecutor.execute(task, ctx);
+      
+      //
+      ForumActivityUtils.takeActivityBack(ctx.getTopic(), got);
+      
+    } else {
+      ActivityManager am = ForumActivityUtils.getActivityManager();
+      got = am.getActivity(activityId);
+    }
+    
+    
+    return got;
   }
   
   /**

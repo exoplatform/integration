@@ -63,6 +63,11 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       if (ctx.getTopic().getIsWaiting()) {
         activity.isHidden(true);
       }
+      
+      //unapprove status, lock topic's activity in stream
+      if (ctx.getTopic().getIsApproved() == false) {
+        activity.isLocked(true);
+      }
       return processTitle(ctx, activity); 
     }
 
@@ -77,6 +82,9 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         ExoSocialActivity newActivity = ForumActivityBuilder.createActivity(ctx.getTopic(), ctx);
         newActivity = processActivity(ctx, newActivity);
         
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getOwner());
+        newActivity.setUserId(poster.getId());
         
         am.saveActivityNoReturn(streamOwner, newActivity);
         
@@ -94,6 +102,26 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
       return activity;
+    }
+    
+    protected ExoSocialActivity processComment(ForumActivityContext ctx) {
+      ExoSocialActivity newComment = ForumActivityBuilder.createActivityComment(ctx.getTopic(), ctx);
+      PropertyChangeSupport newPcs = ctx.getPcs();
+      Topic topic = ctx.getTopic();
+      StringBuilder sb = new StringBuilder();
+      
+      //
+      if (newPcs.hasPropertyName(Topic.TOPIC_NAME)) {
+        sb.append(ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(topic.getTopicName())).append("\n");
+      }
+      
+      if (newPcs.hasPropertyName(Topic.TOPIC_CONTENT)) {
+        sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(topic.getDescription()));
+      }
+      
+      newComment.setTitle(sb.toString());
+      
+      return newComment;
     }
     
     @Override
@@ -119,12 +147,9 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
         
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
         
         //
         a = processActivity(ctx, a);
@@ -132,6 +157,11 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         //FORUM_12 case: update topic's title
         ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
+        
         //
         am.saveComment(a, newComment);
         
@@ -162,12 +192,9 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
         
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
         
         //
         a = processActivity(ctx, a);
@@ -175,6 +202,10 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         //FORUM_12 case: update topic's title
         ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
         //
         am.saveComment(a, newComment);
         
@@ -206,16 +237,18 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       try {
         
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
         
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
+        
         a = processActivity(ctx, a);
         am.updateActivity(a);
 
         //FORUM_13 case: update topic's content
         ExoSocialActivity newComment = processComment(ctx);
         
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
         //
         am.saveComment(a, newComment);
         
@@ -250,15 +283,17 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       try {
         
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
         
-        ExoSocialActivity a = am.getActivity(activityId);
         a = processActivity(ctx, a);
         am.updateActivity(a);
 
         //FORUM_13 case: update topic's content
         ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
         
         //
         am.saveComment(a, newComment);
@@ -290,17 +325,20 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
         
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
         
         //FORUM_15 case: close topic
         a = processActivity(ctx, a);
         am.updateActivity(a);
         
         ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
+        
+        //
         am.saveComment(a, newComment);
         
         return newComment;
@@ -329,18 +367,20 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
         
         //FORUM_xx case: open topic
         a = processActivity(ctx, a);
         am.updateActivity(a);
         
         ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
+        
+        //
         am.saveComment(a, newComment);
         
         return newComment;
@@ -369,17 +409,22 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
+        
+        //
         a = processActivity(ctx, a);
         
         //FORUM_16 case: lock topic
         am.updateActivity(a);
         
         ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
+        
+        //
         am.saveComment(a, newComment);
         
         return newComment;
@@ -409,23 +454,116 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
         
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
         
+        //
         a = processActivity(ctx, a);
         
         //FORUM_17 case: unlock topic
         am.updateActivity(a);
         
         ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
+        
+        //
         am.saveComment(a, newComment);
         
         return newComment;
       } catch (Exception e) {
         LOG.error("Can not record Comment for when unlock topic " + ctx.getTopic().getId(), e);
+      }
+      return null;
+    }
+  };
+  
+  public static TopicActivityTask APPROVED_TOPIC = new TopicActivityTask() {
+
+    @Override
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return ForumActivityType.APPROVED_TOPIC.getActivity(activity, null);
+    }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      
+      activity.isLocked(false);
+      
+      return activity;
+    };
+
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
+        
+        //
+        a = processActivity(ctx, a);
+        
+        //FORUM_xx case: approved topic
+        am.updateActivity(a);
+        
+        ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
+        
+        //
+        am.saveComment(a, newComment);
+        
+        return newComment;
+      } catch (Exception e) {
+        LOG.error("Can not record Comment for when approved topic " + ctx.getTopic().getId(), e);
+      }
+      return null;
+    }
+  };
+  
+  public static TopicActivityTask UNAPPROVED_TOPIC = new TopicActivityTask() {
+
+    @Override
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return ForumActivityType.UNAPPROVED_TOPIC.getActivity(activity, null);
+    }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+     
+      activity.isLocked(true);
+      
+      return activity;
+    };
+
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+        
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
+        
+        //
+        a = processActivity(ctx, a);
+        
+        //FORUM_xx case: unapproved topic
+        am.updateActivity(a);
+        
+        ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
+        
+        //
+        am.saveComment(a, newComment);
+        
+        return newComment;
+      } catch (Exception e) {
+        LOG.error("Can not record Comment for when unapproved topic " + ctx.getTopic().getId(), e);
       }
       return null;
     }
@@ -449,11 +587,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
 
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
         
 
         //FORUM_25: hidding into a topic
@@ -484,12 +619,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
 
         //FORUM_24 case: censoring topic
         a = processActivity(ctx, a);
@@ -519,12 +650,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
 
         //FORUM_xx case: unscensoring topic
         a = processActivity(ctx, a);
@@ -554,12 +681,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-        
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
 
         //FORUM_26: showing into a topic
         a = processActivity(ctx, a);
@@ -588,16 +711,19 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        ForumService fs = ForumActivityUtils.getForumService();
-        String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
-
-        //
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity a = am.getActivity(activityId);
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
 
         ////FORUM_22 case: move topic
         ExoSocialActivity newComment = processComment(ctx);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        newComment.setUserId(poster.getId());
+        
+        //
         am.saveComment(a, newComment);
+        
         return newComment;
       } catch (Exception e) {
         LOG.error("Can not record Comment for when moves topic " + ctx.getTopic().getId(), e);
@@ -630,6 +756,11 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         ////FORUM_21 case: merge topic
         ExoSocialActivity newActivity = ForumActivityBuilder.createActivity(ctx.getTopic(), ctx);
         newActivity = processActivity(ctx, newActivity);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getOwner());
+        newActivity.setUserId(poster.getId());
+        
         am.saveActivityNoReturn(streamOwner, newActivity);
         
         return newActivity;
@@ -664,6 +795,12 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         ////FORUM_01 case: creates topic
         ExoSocialActivity newActivity = ForumActivityBuilder.createActivity(ctx.getTopic(), ctx);
         newActivity = processActivity(ctx, newActivity);
+        
+        //
+        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getOwner());
+        newActivity.setUserId(poster.getId());
+        
+        //
         am.saveActivityNoReturn(streamOwner, newActivity);
         
         return newActivity;
@@ -684,10 +821,12 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   protected Identity getOwnerStream(ForumActivityContext ctx) {
     Identity ownerStream = null;
     ForumService fs = ForumActivityUtils.getForumService();
-
+    
+    Identity userIdentity = ForumActivityUtils.getIdentity(ctx.getTopic().getOwner());
+    
     try {
-      Identity userIdentity = ForumActivityUtils.getIdentity(ctx.getPost().getOwner());
-      Topic topic = ForumActivityUtils.getTopic(ctx);
+      
+      Topic topic = ctx.getTopic();
       
       if (ForumActivityUtils.isTopicPublic(topic)) {
         if (ForumActivityUtils.hasSpace(ctx.getForumId())) {
@@ -705,6 +844,6 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       LOG.error("Can not get OwnerStream for topic " + ctx.getTopic().getId(), e);
     }
 
-    return null;
+    return userIdentity;
   }
 }

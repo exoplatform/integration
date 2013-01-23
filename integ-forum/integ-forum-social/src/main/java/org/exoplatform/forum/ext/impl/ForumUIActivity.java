@@ -1,10 +1,13 @@
 package org.exoplatform.forum.ext.impl;
 
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -46,23 +49,41 @@ public class ForumUIActivity extends BaseKSActivity {
     String viewLink = getActivityParamValue(ForumActivityBuilder.TOPIC_LINK_KEY);
     return String.format(tagLink, viewLink, nameLink);
   }
+  
+  public String getViewLink() {
+    String link = getActivityParamValue(ForumActivityBuilder.TOPIC_LINK_KEY);
+    return link;
+  }
 
   /*
    * used by Template, line 160 ForumUIActivity.gtmpl
    */
   @SuppressWarnings("unused")
   private String getActivityContentTitle(WebuiBindingContext _ctx, String herf) throws Exception {
-    String title = "", linkTag = "";
+    String title = getActivity().getTitle();
+    String linkTag = "";
     try {
       linkTag = getLink(herf, getActivityParamValue(ForumActivityBuilder.TOPIC_NAME_KEY));
     } catch (Exception e) { // WebUIBindingContext
       LOG.debug("Failed to get activity content and title ", e);
     }
-    if (!Utils.isEmpty(title)) {
-      title = StringUtils.replace(title, "{0}", getUriOfAuthor());
-      title = StringUtils.replace(title, "{1}", linkTag);
-    }
-    return title;
+    return linkTag;
+  }
+  
+  public String getNumberOfReplies() {
+    ExoSocialActivity activity = getActivity();
+    Map<String, String> templateParams = activity.getTemplateParams();
+    
+    String got = templateParams.get(ForumActivityBuilder.TOPIC_POST_COUNT_KEY);
+    return String.format("%s Replies", got);
+  }
+  
+  public String getRate() {
+    ExoSocialActivity activity = getActivity();
+    Map<String, String> templateParams = activity.getTemplateParams();
+    
+    String got = templateParams.get(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY);
+    return String.format("Rate: %s", got);
   }
 
 }
