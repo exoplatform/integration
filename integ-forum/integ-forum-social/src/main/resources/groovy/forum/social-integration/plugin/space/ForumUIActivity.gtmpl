@@ -38,6 +38,7 @@
   def activity = uicomponent.getActivity();
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
+  def activityCommentable = uicomponent.isActivityCommentable();
   def streamOwner = activity.getStreamOwner();
 %>
 
@@ -184,21 +185,23 @@
       <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
          def commentLink = "";
       %>
-     <% if (activityCommentAndLikable) { %>
+     <% if (activityCommentable) { %>
         <a class="$commentLink" onclick="$toggleDisplayCommentAction" id="CommentLink${activity.id}" href="#comment">
           $labelComment
         </a>
-      <% if (uicomponent.isLiked()) { %>
-        | <a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="#unlike">
-          $labelUnlike
-        </a>
-      <% } else { %>
-        |
-        <a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">
-          $labelLike
-        </a>
+        | 
       <% }%>
-      |
+      <% if (activityCommentAndLikable) { %>
+        <% if (uicomponent.isLiked()) { %>
+          <a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="#unlike">
+            $labelUnlike
+          </a>
+        <% } else { %>
+          <a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">
+            $labelLike
+          </a>
+        <% }%>
+         |
      <% }%>
          <a href="${uicomponent.getReplyLink()}" id="ReplyLink${activity.id}">
            <%= _ctx.appRes("ForumUIActivity.label.reply")%>
@@ -312,19 +315,21 @@
       def currentCommenterName = currentCommenterIdentity.profile.fullName;
       if (!currentCommenterAvatar) currentCommenterAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
     %>
-    <% if (commentList.size() == 0) { %>
-      <div class="CommentBox InputArea CommentFormBoxNone ClearFix" id="CommentFormBlock${activity.id}">
-    <% } else { %>
+    <%if (activityCommentable) {%>
+      <% if (commentList.size() == 0) { %>
+        <div class="CommentBox InputArea CommentFormBoxNone ClearFix" id="CommentFormBlock${activity.id}">
+      <% } else { %>
       <div class="CommentBox InputArea CommentFormBox ClearFix" id="CommentFormBlock${activity.id}">
-    <% } %>
-        <a class="AvatarCM" title="$currentCommenterName" href="$currentCommenterUri">
-          <img src="$currentCommenterAvatar">
-          <span class="BorderTopCM"></span>
-          <span class="BorderBottomCM"></span>
-        </a>
-        <div class="CommentInputBox"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
-        <input type="button" onclick="<%= uicomponent.event("PostComment") %>" value="$labelComment" class="CommentButton DisplayNone" id="CommentButton${activity.id}" />
-      </div>
+      <% } %>
+          <a class="AvatarCM" title="$currentCommenterName" href="$currentCommenterUri">
+            <img src="$currentCommenterAvatar">
+            <span class="BorderTopCM"></span>
+            <span class="BorderBottomCM"></span>
+          </a>
+          <div class="CommentInputBox"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
+          <input type="button" onclick="<%= uicomponent.event("PostComment") %>" value="$labelComment" class="CommentButton DisplayNone" id="CommentButton${activity.id}" />
+        </div>
+      <%} %>
     </div>
    </div>
   </div>

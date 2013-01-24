@@ -130,24 +130,36 @@ public class ForumActivityUtils {
   public static ExoSocialActivity getActivityOfTopic(ForumActivityContext ctx) {
     ForumService fs = ForumActivityUtils.getForumService();
     String activityId = fs.getActivityIdForOwnerId(ctx.getTopic().getId());
-    ExoSocialActivity got = null;
+    
+    ActivityManager am = ForumActivityUtils.getActivityManager();
+    
     //
     if (Utils.isEmpty(activityId)) {
-      TopicActivityTask task = TopicActivityTask.ADD_TOPIC;
-      got = ActivityExecutor.execute(task, ctx);
+      return makeActivity(ctx);
+    }
+    
+    //
+    ExoSocialActivity got = am.getActivity(activityId);
+    
+    //
+    if (got == null) {
+      got = makeActivity(ctx);
       
-      //
-      ForumActivityUtils.takeActivityBack(ctx.getTopic(), got);
-      
-    } else {
-      ActivityManager am = ForumActivityUtils.getActivityManager();
-      got = am.getActivity(activityId);
     }
     
     
     return got;
   }
   
+  private static ExoSocialActivity makeActivity(ForumActivityContext ctx) {
+    TopicActivityTask task = TopicActivityTask.ADD_TOPIC;
+    ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
+    
+    //
+    ForumActivityUtils.takeActivityBack(ctx.getTopic(), got);
+    
+    return got;
+  }
   /**
    * Deletes Activities
    * 

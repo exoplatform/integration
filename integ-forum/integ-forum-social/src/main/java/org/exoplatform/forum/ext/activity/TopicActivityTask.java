@@ -490,7 +490,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
       
-      activity.isLocked(false);
+      activity.isHidden(true);
       
       return activity;
     };
@@ -534,7 +534,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
      
-      activity.isLocked(true);
+      activity.isHidden(true);
       
       return activity;
     };
@@ -822,24 +822,22 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     Identity ownerStream = null;
     ForumService fs = ForumActivityUtils.getForumService();
     
-    Identity userIdentity = ForumActivityUtils.getIdentity(ctx.getTopic().getOwner());
+    Topic topic = ctx.getTopic();
+    Identity userIdentity = ForumActivityUtils.getIdentity(topic.getOwner());
     
     try {
-      
-      Topic topic = ctx.getTopic();
-      
-      if (ForumActivityUtils.isTopicPublic(topic)) {
-        if (ForumActivityUtils.hasSpace(ctx.getForumId())) {
-          // publish the activity in the space stream.
-          ownerStream = ForumActivityUtils.getSpaceIdentity(ctx.getForumId());
-        }
-        if (ownerStream == null
-            && ForumActivityUtils.isCategoryPublic(fs.getCategory(ctx.getCategoryId()))
-            && ForumActivityUtils.isForumPublic(fs.getForum(ctx.getCategoryId(), ctx.getForumId()))) {
-          ownerStream = userIdentity;
-        }
-        return ownerStream;
+
+      //if (ForumActivityUtils.isTopicPublic(topic)) {
+      if (ForumActivityUtils.hasSpace(topic.getForumId())) {
+        // publish the activity in the space stream.
+        ownerStream = ForumActivityUtils.getSpaceIdentity(topic.getForumId());
       }
+      if (ownerStream == null
+          && ForumActivityUtils.isCategoryPublic(fs.getCategory(topic.getCategoryId()))
+          && ForumActivityUtils.isForumPublic(fs.getForum(topic.getCategoryId(), topic.getForumId()))) {
+        ownerStream = userIdentity;
+       }
+       return ownerStream;
     } catch (Exception e) { // ForumService
       LOG.error("Can not get OwnerStream for topic " + ctx.getTopic().getId(), e);
     }
