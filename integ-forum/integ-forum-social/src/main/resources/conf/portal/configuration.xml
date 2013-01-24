@@ -1,6 +1,35 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
+  <external-component-plugins>
+   <target-component>org.exoplatform.social.core.processor.I18NActivityProcessor</target-component>
+   <component-plugin>
+     <name>poll:spaces</name> <!-- activity type -->
+     <set-method>addActivityResourceBundlePlugin</set-method>
+     <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
+     <init-params>
+       <object-param>
+         <name>locale.forum.integration.integration</name> <!-- resource bundle key file -->
+         <description>activity key type resource bundle mapping for poll:activity</description>
+         <object type="org.exoplatform.social.core.processor.ActivityResourceBundlePlugin">
+           <field name="activityKeyTypeMapping">
+             <map type="java.util.HashMap">
+               <entry>
+                 <key><string>vote_poll</string></key>
+                 <value><string>PollUIActivity.label.vote_poll</string></value>
+               </entry><entry>
+                 <key><string>vote_again_poll</string></key>
+                 <value><string>PollUIActivity.label.vote_again_poll</string></value>
+               </entry>
+               
+             </map>
+           </field>
+         </object>
+       </object-param>
+     </init-params>
+   </component-plugin>
+  </external-component-plugins>
+
  <!-- Social integration -->
    <external-component-plugins>
     <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
@@ -26,6 +55,17 @@
 				</value-param>
 			</init-params>
     </component-plugin>
+    <component-plugin>
+      <name>PollDataInitialize</name>
+      <set-method>addSpaceListener</set-method>
+      <type>org.exoplatform.forum.ext.impl.PollDataInitialize</type>
+      <init-params>
+        <value-param>
+          <name>portletName</name>
+          <value>PollPortlet</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
   </external-component-plugins>
 	
    <external-component-plugins>
@@ -45,6 +85,15 @@
       <type>org.exoplatform.forum.ext.impl.AnswersSpaceActivityPublisher</type>
     </component-plugin>
   </external-component-plugins>
+  
+  <external-component-plugins>
+    <target-component>org.exoplatform.poll.service.PollService</target-component>
+    <component-plugin>
+      <name>PollEventListener</name>
+      <set-method>addListenerPlugin</set-method>
+      <type>org.exoplatform.forum.ext.impl.PollSpaceActivityPublisher</type>
+    </component-plugin>
+  </external-component-plugins>
 
   <external-component-plugins>
     <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
@@ -58,6 +107,7 @@
           <value>ForumPortlet</value>
           <value>AnswersPortlet</value>
           <value>FAQPortlet</value>
+          <value>PollPortlet</value>
         </values-param>
       </init-params>
     </component-plugin>
@@ -94,6 +144,22 @@
             <field name="name"><string>ks-answer:spaces</string></field>
             <field name="component"><string>org.exoplatform.forum.ext.impl.AnswerUIActivity</string></field>
             <field name="activityBuiderClass"><string>org.exoplatform.forum.ext.impl.AnswerSpaceUIActivityBuilder</string></field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>add.poll.activity.plugin</name>
+      <set-method>registerUIExtensionPlugin</set-method>
+      <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+      <init-params>
+        <object-param>
+          <name>Poll Space Activity</name>
+          <object type="org.exoplatform.social.webui.activity.UIActivityExtension">
+            <field name="type"><string>org.exoplatform.social.webui.activity.BaseUIActivity</string></field>
+            <field name="name"><string>ks-poll:spaces</string></field>
+            <field name="component"><string>org.exoplatform.forum.ext.impl.PollUIActivity</string></field>
+            <field name="activityBuiderClass"><string>org.exoplatform.forum.ext.impl.PollSpaceUIActivityBuilder</string></field>
           </object>
         </object-param>
       </init-params>
