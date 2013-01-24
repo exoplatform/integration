@@ -1,23 +1,18 @@
 package org.exoplatform.forum.ext.impl;
 
 import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.FAQService;
+import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.service.ForumService;
-import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -25,15 +20,12 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.space.SpaceException;
-import org.exoplatform.social.core.storage.ActivityStorageException;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
-import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 
@@ -46,38 +38,34 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
     @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment"),
     @EventConfig(listeners = AnswerUIActivity.PostCommentActionListener.class) })
 public class AnswerUIActivity extends BaseKSActivity {
-  private static final Log LOG = ExoLogger.getLogger(AnswerUIActivity.class);
 
   public AnswerUIActivity() {
   }
-
-  @Override
-  protected void refresh() throws ActivityStorageException {
-    super.refresh();
-    // try to access "comments" field of BaseUIActivity
-    if (isQuestionActivity()) {
-      List<ExoSocialActivity> comments = getAllComments();
-      String questionId = getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID_KEY);
-      if (!CommonUtils.isEmpty(questionId)) {
-        try {
-          FAQService faqService = (FAQService) ExoContainerContext.getCurrentContainer()
-                                                                  .getComponentInstanceOfType(FAQService.class);
-          Comment[] commentObjs = faqService.getComments(questionId);
-          for (Comment comment : commentObjs) {
-            ExoSocialActivity act = toActivity(comment);
-            if (act != null) {
-              comments.add(act);
-            }
-          }
-        } catch (Exception e) { // FQAService
-          if (LOG.isWarnEnabled()) {
-            LOG.warn(String.format("Failed to get comments of question: %s",
-                                   getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID_KEY)),
-                     e);
-          }
-        }
-      }
-    }
+  
+  @SuppressWarnings("unused")
+  private String[] getQuestionDetail(String questionDetail) {
+    String[] tab = questionDetail.split("\\|");
+    return tab;
+  }
+  
+  @SuppressWarnings("unused")
+  private String getLink() {
+    return getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY);
+  }
+  
+  @SuppressWarnings("unused")
+  private String getNumberOfAnswers() {
+    return getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_ANSWERS);
+  }
+  
+  @SuppressWarnings("unused")
+  private String getRating() {
+    return getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_RATING);
+  }
+  
+  @SuppressWarnings("unused")
+  private String getNumberOfComments() {
+    return getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS);
   }
 
   private ExoSocialActivity toActivity(Comment comment) {
@@ -96,47 +84,6 @@ public class AnswerUIActivity extends BaseKSActivity {
 
     }
     return activity;
-  }
-
-  /*
-   * used by template, line 158 AnswerUIActivity.gtmpl
-   */
-  @SuppressWarnings("unused")
-  private String getTitle(WebuiBindingContext _ctx) throws Exception {
-    String title = "";
-    if (getActivityParamValue(AnswersSpaceActivityPublisher.ACTIVITY_TYPE_KEY).equalsIgnoreCase(AnswersSpaceActivityPublisher.QUESTION_ADD)) {
-      title = _ctx.appRes("AnswerUIActivity.label.question-add");
-    } else if (getActivityParamValue(AnswersSpaceActivityPublisher.ACTIVITY_TYPE_KEY).equalsIgnoreCase(AnswersSpaceActivityPublisher.QUESTION_UPDATE)) {
-      title = _ctx.appRes("AnswerUIActivity.label.question-update");
-    } else if (getActivityParamValue(AnswersSpaceActivityPublisher.ACTIVITY_TYPE_KEY).equalsIgnoreCase(AnswersSpaceActivityPublisher.ANSWER_ADD)) {
-      title = _ctx.appRes("AnswerUIActivity.label.answer-add");
-    } else if (getActivityParamValue(AnswersSpaceActivityPublisher.ACTIVITY_TYPE_KEY).equalsIgnoreCase(AnswersSpaceActivityPublisher.ANSWER_UPDATE)) {
-      title = _ctx.appRes("AnswerUIActivity.label.answer-update");
-    }
-    title = StringUtils.replaceOnce(title, "{0}", getUriOfAuthor());
-    title = StringUtils.replaceOnce(title,
-                                    "{1}",
-                                    new StringBuffer().append("<a href=")
-                                                      .append(getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY))
-                                                      .append(">")
-                                                      .append(getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_NAME_KEY))
-                                                      .append("</a>")
-                                                      .toString());
-    return title;
-  }
-
-  @Override
-  public boolean isCommentDeletable(String activityUserId) throws SpaceException {
-    // do not allow users to remove comments in the question activity.
-    return !isQuestionActivity() && super.isCommentDeletable(activityUserId);
-  }
-
-  public boolean isQuestionActivity() {
-    String value = getActivityParamValue(AnswersSpaceActivityPublisher.ACTIVITY_TYPE_KEY);
-    if (value.indexOf(AnswersSpaceActivityPublisher.QUESTION) >= 0) {
-      return true;
-    }
-    return false;
   }
 
   public String getActivityIconStatus() {
@@ -179,10 +126,6 @@ public class AnswerUIActivity extends BaseKSActivity {
     @Override
     public void execute(Event<BaseUIActivity> event) throws Exception {
       AnswerUIActivity uiActivity = (AnswerUIActivity) event.getSource();
-      if (!uiActivity.isQuestionActivity()) {
-        super.execute(event);
-        return;
-      }
       WebuiRequestContext context = event.getRequestContext();
       UIFormTextAreaInput uiFormComment = uiActivity.getChild(UIFormTextAreaInput.class);
       String message = uiFormComment.getValue();
@@ -204,60 +147,62 @@ public class AnswerUIActivity extends BaseKSActivity {
       comment.setDateComment(new Date());
       // add new corresponding post to forum.
       String topicId = question.getTopicIdDiscuss();
-      if (topicId != null && topicId.length() > 0) {
-        ForumService forumService = (ForumService) ExoContainerContext.getCurrentContainer()
-                                                                      .getComponentInstanceOfType(ForumService.class);
-        Topic topic = (Topic) forumService.getObjectNameById(topicId,
-                                                             org.exoplatform.forum.service.Utils.TOPIC);
-        if (topic != null) {
-          String remoteAddr = WebUIUtils.getRemoteIP();
-          String[] ids = topic.getPath().split("/");
-          int t = ids.length;
-          String linkForum = getLinkDiscuss(topicId);
-          String postId = comment.getPostId();
-          if (postId == null || postId.length() == 0) {
-            Post post = new Post();
-            post.setOwner(context.getRemoteUser());
-            post.setIcon("ViewIcon");
-            post.setName("Re: " + question.getQuestion());
-            post.setMessage(comment.getComments());
-            post.setLink(linkForum);
-            post.setIsApproved(!topic.getIsModeratePost());
-            post.setRemoteAddr(remoteAddr);
-            forumService.savePost(ids[t - 3], ids[t - 2], topicId, post, true, new MessageBuilder());
-            comment.setPostId(post.getId());
-          } else {
-            Post post = forumService.getPost(ids[t - 3], ids[t - 2], topicId, postId);
-            boolean isNew = false;
-            if (post == null) {
-              post = new Post();
-              isNew = true;
+      if (topicId != null) {
+        if (topicId.length() > 0) {
+          ForumService forumService = (ForumService) ExoContainerContext.getCurrentContainer()
+                                                                        .getComponentInstanceOfType(ForumService.class);
+          Topic topic = (Topic) forumService.getObjectNameById(topicId,
+                                                               org.exoplatform.forum.service.Utils.TOPIC);
+          if (topic != null) {
+            String remoteAddr = WebUIUtils.getRemoteIP();
+            String[] ids = topic.getPath().split("/");
+            int t = ids.length;
+            String linkForum = getLinkDiscuss(topicId);
+            String postId = comment.getPostId();
+            if (postId == null || postId.length() == 0) {
+              Post post = new Post();
               post.setOwner(context.getRemoteUser());
               post.setIcon("ViewIcon");
               post.setName("Re: " + question.getQuestion());
-              comment.setPostId(post.getId());
+              post.setMessage(comment.getComments());
               post.setLink(linkForum);
+              post.setIsApproved(!topic.getIsModeratePost());
               post.setRemoteAddr(remoteAddr);
+              forumService.savePost(ids[t - 3], ids[t - 2], topicId, post, true, new MessageBuilder());
+              comment.setPostId(post.getId());
             } else {
-              post.setModifiedBy(context.getRemoteUser());
+              Post post = forumService.getPost(ids[t - 3], ids[t - 2], topicId, postId);
+              boolean isNew = false;
+              if (post == null) {
+                post = new Post();
+                isNew = true;
+                post.setOwner(context.getRemoteUser());
+                post.setIcon("ViewIcon");
+                post.setName("Re: " + question.getQuestion());
+                comment.setPostId(post.getId());
+                post.setLink(linkForum);
+                post.setRemoteAddr(remoteAddr);
+              } else {
+                post.setModifiedBy(context.getRemoteUser());
+              }
+              post.setIsApproved(!topic.getIsModeratePost());
+              post.setMessage(comment.getComments());
+              forumService.savePost(ids[t - 3],
+                                    ids[t - 2],
+                                    topicId,
+                                    post,
+                                    isNew,
+                                    new MessageBuilder());
             }
-            post.setIsApproved(!topic.getIsModeratePost());
-            post.setMessage(comment.getComments());
-            forumService.savePost(ids[t - 3],
-                                  ids[t - 2],
-                                  topicId,
-                                  post,
-                                  isNew,
-                                  new MessageBuilder());
+  
           }
-
         }
       } // end adding post to forum.
 
       faqService.saveComment(question.getPath(),
                              comment,
                              uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.LANGUAGE_KEY));
-      // cache question's comment
+      /*// cache question's comment
       ExoSocialActivity act = uiActivity.toActivity(comment);
       if (act != null)
         uiActivity.getAllComments().add(act);
@@ -265,7 +210,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       uiActivity.setCommentFormFocused(true);
       context.addUIComponentToUpdateByAjax(uiActivity);
 
-      uiActivity.getParent().broadcast(event, event.getExecutionPhase());
+      uiActivity.getParent().broadcast(event, event.getExecutionPhase());*/
     }
 
   }
