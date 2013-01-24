@@ -23,15 +23,6 @@
   def rcontext = _ctx.getRequestContext();
       
   def selectFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.Select_File");
-  
-  def jsManager = rcontext.getJavascriptManager();
-  //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
-  def requireJS = jsManager.getRequireJS();
-  requireJS.require("SHARED/social-ui-activity-composer", "composer");
-    
-  def currentActivityComposer = uicomponent.getActivityComposerManager().getCurrentActivityComposer();
-  def isReady = currentActivityComposer.isReadyForPostingActivity();  
-  if (isReady) requireJS.addScripts("composer.handleShareButton($isReady);");
 %>
 <div id="<%=uicomponent.id%>">
   <%
