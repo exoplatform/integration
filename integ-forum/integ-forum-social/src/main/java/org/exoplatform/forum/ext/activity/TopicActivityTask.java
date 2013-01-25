@@ -184,8 +184,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
       activity.setTitle(ctx.getTopic().getTopicName());
-      processTitle(ctx, activity);
-      
+
       return activity;
     };
 
@@ -227,8 +226,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.getTemplateParams();
-      processTitle(ctx, activity);
+      activity.setBody(ForumActivityBuilder.getThreeFirstLines(ctx.getTopic()));
       return activity;
     };
 

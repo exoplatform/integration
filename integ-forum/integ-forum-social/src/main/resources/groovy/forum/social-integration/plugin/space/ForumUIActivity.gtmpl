@@ -33,7 +33,6 @@
   
   def jsManager = pcontext.getJavascriptManager();
   //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
-
   def labelActivityHasBeenDeleted = _ctx.appRes("UIActivity.label.Activity_Has_Been_Deleted");
   def activity = uicomponent.getActivity();
   def activityDeletable = uicomponent.isActivityDeletable();

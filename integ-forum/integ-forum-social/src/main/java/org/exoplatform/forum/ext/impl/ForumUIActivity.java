@@ -74,7 +74,7 @@ public class ForumUIActivity extends BaseKSActivity {
     String title = getActivity().getTitle();
     String linkTag = "";
     try {
-      linkTag = getLink(herf, getActivityParamValue(ForumActivityBuilder.TOPIC_NAME_KEY));
+      linkTag = getLink(herf, title);
     } catch (Exception e) { // WebUIBindingContext
       LOG.debug("Failed to get activity content and title ", e);
     }
