@@ -22,6 +22,7 @@
 %>
 <%
   import org.exoplatform.portal.webui.util.Util;
+  import org.exoplatform.social.core.activity.model.ExoSocialActivity;
   import org.exoplatform.webui.form.UIFormTextAreaInput;
   import org.exoplatform.social.core.service.LinkProvider;
   import org.exoplatform.social.core.space.model.Space;
@@ -59,10 +60,23 @@
 
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
-
-  def commentList = uicomponent.getComments();
-  def allComments = uicomponent.getAllComments();
-  if (allComments) {
+  def originalCommentList = uicomponent.getComments();
+  def originalAllComments = uicomponent.getAllComments();
+  def commentList = new ArrayList<ExoSocialActivity>();
+  def allComments = new ArrayList<ExoSocialActivity>();;
+  
+  originalCommentList.each() {
+    if(!it.title.equals("")) {
+      commentList.add(it);
+    }
+  }
+  originalAllComments.each(){
+    if(!it.title.equals("")) {
+      allComments.add(it);
+    }
+  }
+  
+  if (allComments.size() > 0) {
     labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
     labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
 
@@ -307,6 +321,7 @@
     def commentCounter = 0;
     commentList.each({
       commentCounter++;
+      
       if (first & !uicomponent.commentListToggleable()) {
         commentContentClass = "CommentContent";
         first = false;
@@ -317,7 +332,8 @@
       def id = Utils.getIdentityManager().getIdentity(it.userId);
       commenterFullName = id.profile.fullName;
       commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-      commentMessage = it.title;
+      //commentMessage = it.title;
+      commentMessage = uicomponent.buildComment(it);
       commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
       commenterAvatarImgSrc = id.profile.avatarUrl;
       if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;

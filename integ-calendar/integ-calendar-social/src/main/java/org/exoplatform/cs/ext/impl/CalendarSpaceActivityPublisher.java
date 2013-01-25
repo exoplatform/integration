@@ -87,30 +87,31 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 
   public static final String INVITATION_DETAIL     = "/invitation/detail/";
 
+  public static final String CALENDAR_FIELDS_CHANGED = "CALENDAR_FIELDS_CHANGED";
 
 
-  private static final String[] SUMMARY_UPDATED = {"summary_updated", "Summary has been updated to: $value.", "SUMMARY_UPDATED"};
-  private static final String[] DESCRIPTION_UPDATED = {"description_updated", "Description has been updated to: $value.", "DESCRIPTION_UPDATED"};
-  private static final String[] FROM_UPDATED = {"fromDateTime_updated", "Start date has been updated to: $value.", "FROM_UPDATED"};
-  private static final String[] TO_UPDATED = {"toDateTime_updated", "End date has been updated to: $value.", "TO_UPDATED"};
-  private static final String[] LOCALTE_UPDATED = {"location_updated", "Location has been updated to: $value.", "LOCALTE_UPDATED"};
-  private static final String[] ALLDAY_UPDATED = {"allDay_updated", "Event is now an all day event.", "ALLDAY_UPDATED"};
-  private static final String[] REPEAT_UPDATED = {"repeatType_updated", "Event will be repeated each: $value.", "REPEAT_UPDATED"};
-  private static final String[] ATTACH_UPDATED = {"attachment_updated", "Attachment(s) has been added to the event.", "ATTACH_UPDATED"};
-  private static final String[] CATEGORY_UPDATED = {"eventCategoryName_updated", "Event's category is now: $value.", "CATEGORY_UPDATED"};
-  private static final String[] CALENDAR_UPDATED = {"calendarId_updated", "Event's calendar is now: $value.", "CALENDAR_UPDATED"};
-  private static final String[] PRIORITY_UPDATED = {"priority_updated", "Priority is now: $value.", "PRIORITY_UPDATED"};
+  private static final String SUMMARY_UPDATED = "summary_updated";
+  private static final String DESCRIPTION_UPDATED = "description_updated";
+  private static final String FROM_UPDATED = "fromDateTime_updated";
+  private static final String TO_UPDATED = "toDateTime_updated";
+  private static final String LOCATION_UPDATED = "location_updated";
+  private static final String ALLDAY_UPDATED = "allDay_updated";
+  private static final String REPEAT_UPDATED = "repeatType_updated";
+  private static final String ATTACH_UPDATED = "attachment_updated";
+  private static final String CATEGORY_UPDATED = "eventCategoryName_updated";
+  private static final String CALENDAR_UPDATED = "calendarId_updated";
+  private static final String PRIORITY_UPDATED = "priority_updated";
 
 
-  private static final String[] NAME_UPDATED = {"name_updated", "Name has been updated to: $value.", "NAME_UPDATED"};
-  private static final String[] NOTE_UPDATED = {"note_updated", "Note has been updated to: $value.", "NOTE_UPDATED"};
-  private static final String[] TASK_CATEGORY_UPDATED = {"taskCategoryName_updated", "Task's category is now: $value."};
-  private static final String[] TASK_CALENDAR_UPDATED = {"task_CalendarId_updated", "Task's calendar is now: $value."};
-  private static final String[] TASK_ATTACH_UPDATED = {"task_attachment_updated", "Attachment(s) has been added to the task.", "TASK_ATTACH_UPDATED"};
-  private static final String[] TASK_NEED_ACTION = {CalendarEvent.NEEDS_ACTION, "Task needs action.", "TASK_NEED_ACTION"};
-  private static final String[] TASK_IN_PROCESS_ACTION = {CalendarEvent.IN_PROCESS, "Task is in progress.", "TASK_IN_PROCESS_ACTION"};
-  private static final String[] TASK_COMPLETED_ACTION = {CalendarEvent.COMPLETED, "Task has been completed.", "TASK_COMPLETED_ACTION"};
-  private static final String[] TASK_CANCELLED_ACTION = {CalendarEvent.CANCELLED, "Task has been cancelled.", "TASK_CANCELLED_ACTION"};
+  private static final String NAME_UPDATED = "name_updated";
+  private static final String NOTE_UPDATED = "note_updated";
+  private static final String TASK_CATEGORY_UPDATED = "taskCategoryName_updated";
+  private static final String TASK_CALENDAR_UPDATED = "task_CalendarId_updated";
+  private static final String TASK_ATTACH_UPDATED = "task_attachment_updated";
+  private static final String TASK_NEED_ACTION = CalendarEvent.NEEDS_ACTION;
+  private static final String TASK_IN_PROCESS_ACTION = CalendarEvent.IN_PROCESS;
+  private static final String TASK_COMPLETED_ACTION = CalendarEvent.COMPLETED;
+  private static final String TASK_CANCELLED_ACTION = CalendarEvent.CANCELLED;
 
   private static final SimpleDateFormat dformat = new SimpleDateFormat("EEEEE, MMMMM dd, yyyy HH:mm a");
   private CalendarService calService_ ;
@@ -191,81 +192,93 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         LOG.error("Can not record Activity for space when event added ", e);
     }
   }
-
-  private void commnetToActivity(CalendarEvent event, String calendarId, String eventType) {
-
-  }
-
-  private void updateToActivity(CalendarEvent event, String calendarId, String eventType, Map<String, String[]> messagesParams){
-    try {
-      Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
-    } catch (ClassNotFoundException e) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("eXo Social components not found!", e);
-      }
-      return;
-    }
-    if (calendarId == null || calendarId.indexOf(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX) < 0) {
-      return;
-    }
-    try{
-      IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
-      ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
-      SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
-      String spacePrettyName = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
-      Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
-      if (space != null && event.getActivityId() != null) {
-        String userId = ConversationState.getCurrent().getIdentity().getUserId();
-        Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
-        Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
-        ExoSocialActivity activity = activityM.getActivity(event.getActivityId()) ;
-        if(activity == null){ activity = new ExoSocialActivityImpl() ;
-        event.setActivityId(activity.getId());
-        activity.setUserId(userIdentity.getId());
-        activity.setTitle(event.getSummary());
-        activity.setBody(event.getDescription());
-        activity.setType("cs-calendar:spaces");
-        activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
-        activityM.saveActivityNoReturn(spaceIdentity, activity);
-        for(String key : messagesParams.keySet()) {
-          String[] dataChanges = messagesParams.get(key);
-          ExoSocialActivity newComment = new ExoSocialActivityImpl();
-          newComment.setUserId(userIdentity.getId());
-          newComment.setType("CALENDAR_ACTIVITY");
-          newComment.setTitleId(key);
-          Map<String, String> data = new LinkedHashMap<String, String>(); 
-          data.put(dataChanges[2], dataChanges[1]);
-          data.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, dataChanges[2]);
-          newComment.setTemplateParams(data);
-          newComment.setTitle(dataChanges[0]);
+  /**
+   * adds comment to activity of a calendar event each time it's updated
+   * @param event
+   * @param calendarId
+   * @param eventType
+   * @param messagesParams
+   */
+  private void updateToActivity(CalendarEvent event, String calendarId, String eventType, Map<String, String> messagesParams){
+	  try {
+		  Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
+	  } catch (ClassNotFoundException e) {
+		  if (LOG.isDebugEnabled()) {
+			  LOG.debug("eXo Social components not found!", e);
+		  }
+		  return;
+	  }
+	  if (calendarId == null || calendarId.indexOf(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX) < 0) {
+		  return;
+	  }
+	  try{
+		  IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
+		  ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
+		  SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+		  String spacePrettyName = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
+		  Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
+		  if (space != null && event.getActivityId() != null) {
+			  String userId = ConversationState.getCurrent().getIdentity().getUserId();
+			  Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
+			  Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
+			  ExoSocialActivity activity = activityM.getActivity(event.getActivityId()) ;
+			  // if the activity was deleted, create new activity and add comment
+			  if(activity == null) {
+			    activity = new ExoSocialActivityImpl() ;
+			    event.setActivityId(activity.getId());
+			    activity.setUserId(userIdentity.getId());
+			    activity.setTitle(event.getSummary());
+			    activity.setBody(event.getDescription());
+			    activity.setType("cs-calendar:spaces");
+			    activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
+			    activityM.saveActivityNoReturn(spaceIdentity, activity);
+			    ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
           activityM.saveComment(activity, newComment);
-        } 
-        } else {
-          activity.setTitle(event.getSummary());
-          activity.setBody(event.getDescription());
-          activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
-          activityM.updateActivity(activity);
-          for(String key : messagesParams.keySet()) {
-            String[] dataChanges = messagesParams.get(key);
-            ExoSocialActivity newComment = new ExoSocialActivityImpl();
-            newComment.setUserId(userIdentity.getId());
-            newComment.setType("CALENDAR_ACTIVITY");
-            newComment.setTitleId(key);
-            Map<String, String> data = new LinkedHashMap<String, String>(); 
-            data.put(dataChanges[2], dataChanges[1]);
-            data.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, dataChanges[2]);
-            newComment.setTemplateParams(data);
-            newComment.setTitle(dataChanges[0]);
-            activityM.saveComment(activity, newComment);
-          } 
-        }
-      }
-    } catch (ExoSocialException e){  
-      if (LOG.isDebugEnabled())
-        LOG.error("Can not update Activity for space when event modified ", e);
-    }
-  }
+          LOG.info("[CALENDAR] successfully added comment to deleted calendar activity");
+			  } else {
+			    activity.setTitle(event.getSummary());
+			    activity.setBody(event.getDescription());
+			    activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
+	        activityM.updateActivity(activity);
+	        ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
+	        activityM.saveComment(activity, newComment);
+	        LOG.info("[CALENDAR] successfully added comment to calendar activity");  
+			  }
+			  
+		  }
 
+	  } catch (ExoSocialException e){  
+		  if (LOG.isDebugEnabled())
+			  LOG.error("Can not update Activity for space when event modified ", e);
+	  }
+  }
+  /**
+   * creates a comment associated to updated fields
+   * @param userId
+   * @param messagesParams
+   * @return a comment object
+   * @since activity-type
+   */
+  private ExoSocialActivity createComment(String userId, Map<String,String> messagesParams) {
+    ExoSocialActivity newComment = new ExoSocialActivityImpl();
+    newComment.isComment(true);
+    newComment.setUserId(userId);
+    newComment.setType("CALENDAR_ACTIVITY");
+    StringBuilder fields = new StringBuilder();
+    Map<String, String> data = new LinkedHashMap<String, String>(); 
+
+    for(String field : messagesParams.keySet()) {
+      String value = messagesParams.get(field);
+      data.put(field, value); // store field changed and its new value
+      fields.append("," + field);
+    }
+    String fieldsChanged = fields.toString().substring(1); // remove the first ","
+    data.put(CALENDAR_FIELDS_CHANGED, fieldsChanged);
+    newComment.setTitleId(fieldsChanged);
+    newComment.setTemplateParams(data);
+//    newComment.setTitle(title.toString());
+    return newComment;
+  }
   private void deleteActivity(CalendarEvent event, String calendarId, String eventType){
     try {
       Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
@@ -291,74 +304,74 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         LOG.error("Can not delete Activity for space when event deleted ", e);
     }
   }
-  private Map<String, String[]> buildParams(CalendarEvent oldEvent, CalendarEvent newEvent){
+  private Map<String, String> buildParams(CalendarEvent oldEvent, CalendarEvent newEvent){
     dformat.setTimeZone(getUserTimeZone());
-    Map<String, String[]> messagesParams = new LinkedHashMap<String, String[]>();
+    Map<String, String> messagesParams = new LinkedHashMap<String, String>();
     try {
       if(CalendarEvent.TYPE_EVENT.equals(newEvent.getEventType())) {
         if(!oldEvent.getSummary().equals(newEvent.getSummary())) {
-          messagesParams.put(SUMMARY_UPDATED[0],new String[]{SUMMARY_UPDATED[1].replace("$value", newEvent.getSummary()),newEvent.getSummary(), SUMMARY_UPDATED[2]}) ;
+          messagesParams.put(SUMMARY_UPDATED,newEvent.getSummary()) ;
         }
         if(newEvent.getDescription() != null && !newEvent.getDescription().equals(oldEvent.getDescription())) {
-          messagesParams.put(DESCRIPTION_UPDATED[0],new String[]{DESCRIPTION_UPDATED[1].replace("$value", newEvent.getDescription()),newEvent.getDescription(), DESCRIPTION_UPDATED[2]}) ;
+          messagesParams.put(DESCRIPTION_UPDATED,newEvent.getDescription()) ;
         }
         if(newEvent.getLocation()!= null && !newEvent.getLocation().equals(oldEvent.getLocation())) {
-          messagesParams.put(LOCALTE_UPDATED[0],new String[]{LOCALTE_UPDATED[1].replace("$value", newEvent.getLocation()),newEvent.getLocation(),LOCALTE_UPDATED[2]}) ;
+          messagesParams.put(LOCATION_UPDATED,newEvent.getLocation()) ;
         }
         if(newEvent.getPriority()!= null && !newEvent.getPriority().equals(oldEvent.getPriority())) {
-          messagesParams.put(PRIORITY_UPDATED[0],new String[]{PRIORITY_UPDATED[1].replace("$value", newEvent.getPriority()),newEvent.getPriority(), PRIORITY_UPDATED[2]}) ;
+          messagesParams.put(PRIORITY_UPDATED,newEvent.getPriority()) ;
         }
         if(newEvent.getAttachment() != null) if(oldEvent.getAttachment() == null ){
-          messagesParams.put(ATTACH_UPDATED[0],new String[]{ATTACH_UPDATED[1], ATTACH_UPDATED[1], ATTACH_UPDATED[2]}) ;
+          messagesParams.put(ATTACH_UPDATED,"") ;
         } else if(newEvent.getAttachment().size() != oldEvent.getAttachment().size()) {
-          messagesParams.put(ATTACH_UPDATED[0],new String[]{ATTACH_UPDATED[1], ATTACH_UPDATED[1], ATTACH_UPDATED[2]}) ;
+          messagesParams.put(ATTACH_UPDATED,"") ;
         }
         if(isAllDayEvent(newEvent) && !isAllDayEvent(oldEvent)) {
-          messagesParams.put(ALLDAY_UPDATED[0],new String[]{ALLDAY_UPDATED[1], ALLDAY_UPDATED[1], ALLDAY_UPDATED[2]}) ;
+          messagesParams.put(ALLDAY_UPDATED,"") ;
         } else if (!isAllDayEvent(newEvent)) {
           if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
-            messagesParams.put(FROM_UPDATED[0],new String[]{FROM_UPDATED[1].replace("$value",  dformat.format(newEvent.getFromDateTime())), dformat.format(newEvent.getFromDateTime()), FROM_UPDATED[2]}) ;
+            messagesParams.put(FROM_UPDATED,dformat.format(newEvent.getFromDateTime())) ;
           }
           if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
-            messagesParams.put(TO_UPDATED[0],new String[]{TO_UPDATED[1].replace("$value",  dformat.format(newEvent.getToDateTime())), dformat.format(newEvent.getToDateTime()), TO_UPDATED[2]}) ; 
+            messagesParams.put(TO_UPDATED,dformat.format(newEvent.getToDateTime())) ; 
           }
         }
         if(!newEvent.getRepeatType().equals(oldEvent.getRepeatType())) {
-          messagesParams.put(REPEAT_UPDATED[0],new String[]{REPEAT_UPDATED[1].replace("$value", newEvent.getRepeatType()),newEvent.getRepeatType(), REPEAT_UPDATED[2]}) ;
+          messagesParams.put(REPEAT_UPDATED,newEvent.getRepeatType()) ;
         }
       } else {
         if(!oldEvent.getSummary().equals(newEvent.getSummary())) {
-          messagesParams.put(NAME_UPDATED[0],new String[]{NAME_UPDATED[1].replace("$value", newEvent.getSummary()),newEvent.getSummary(), NAME_UPDATED[2]}) ;
+          messagesParams.put(NAME_UPDATED,newEvent.getSummary()) ;
         }
         if(newEvent.getDescription() != null && !newEvent.getDescription().equals(oldEvent.getDescription())) {
-          messagesParams.put(NOTE_UPDATED[0],new String[]{NOTE_UPDATED[1].replace("$value", newEvent.getDescription()),newEvent.getDescription(),NOTE_UPDATED[2]}) ;
+          messagesParams.put(NOTE_UPDATED,newEvent.getDescription()) ;
         }
         
         if (!isAllDayEvent(newEvent)) {
           if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
-            messagesParams.put(FROM_UPDATED[0],new String[]{FROM_UPDATED[1].replace("$value",  dformat.format(newEvent.getFromDateTime())), dformat.format(newEvent.getFromDateTime()), FROM_UPDATED[2]});
+            messagesParams.put(FROM_UPDATED, dformat.format(newEvent.getFromDateTime()));
           }
           if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
-            messagesParams.put(TO_UPDATED[0],new String[]{TO_UPDATED[1].replace("$value",  dformat.format(newEvent.getToDateTime())), dformat.format(newEvent.getToDateTime()), TO_UPDATED[2]}); 
+            messagesParams.put(TO_UPDATED, dformat.format(newEvent.getToDateTime())); 
           }
         }
         if(newEvent.getPriority()!= null && !newEvent.getPriority().equals(oldEvent.getPriority())) {
-          messagesParams.put(PRIORITY_UPDATED[0],new String[]{PRIORITY_UPDATED[1].replace("$value", newEvent.getPriority()),newEvent.getPriority(), PRIORITY_UPDATED[2]}) ;
+          messagesParams.put(PRIORITY_UPDATED,newEvent.getPriority()) ;
         }
         if(newEvent.getAttachment() != null) if(oldEvent.getAttachment() == null ){
-          messagesParams.put(TASK_ATTACH_UPDATED[0],new String[]{TASK_ATTACH_UPDATED[1], TASK_ATTACH_UPDATED[1], TASK_ATTACH_UPDATED[2]}) ;
+          messagesParams.put(TASK_ATTACH_UPDATED,"") ;
         } else if(newEvent.getAttachment().size() != oldEvent.getAttachment().size()) {
-          messagesParams.put(TASK_ATTACH_UPDATED[0],new String[]{TASK_ATTACH_UPDATED[1], TASK_ATTACH_UPDATED[1], TASK_ATTACH_UPDATED[2]}) ;
+          messagesParams.put(TASK_ATTACH_UPDATED,"") ;
         }
         if(newEvent.getEventState() != null && !newEvent.getEventState().equals(oldEvent.getEventState())) {
           if(CalendarEvent.NEEDS_ACTION.equals(newEvent.getEventState())) {
-            messagesParams.put(TASK_NEED_ACTION[0],new String[]{TASK_NEED_ACTION[1].replace("$value", newEvent.getEventState()),newEvent.getEventState(),TASK_NEED_ACTION[2]}) ;
+            messagesParams.put(TASK_NEED_ACTION, newEvent.getEventState()) ;
           } else if(CalendarEvent.IN_PROCESS.equals(newEvent.getEventState())) {
-            messagesParams.put(TASK_IN_PROCESS_ACTION[0],new String[]{TASK_IN_PROCESS_ACTION[1].replace("$value", newEvent.getEventState()),newEvent.getEventState(), TASK_IN_PROCESS_ACTION[2]}) ;
+            messagesParams.put(TASK_IN_PROCESS_ACTION, newEvent.getEventState()) ;
           } else if(CalendarEvent.COMPLETED.equals(newEvent.getEventState())) {
-            messagesParams.put(TASK_COMPLETED_ACTION[0],new String[]{TASK_COMPLETED_ACTION[1].replace("$value", newEvent.getEventState()),newEvent.getEventState(),TASK_COMPLETED_ACTION[2]}) ;
+            messagesParams.put(TASK_COMPLETED_ACTION, newEvent.getEventState()) ;
           } else if(CalendarEvent.CANCELLED.equals(newEvent.getEventState())) {
-            messagesParams.put(TASK_CANCELLED_ACTION[0],new String[]{TASK_CANCELLED_ACTION[1].replace("$value", newEvent.getEventState()),newEvent.getEventState(), TASK_CANCELLED_ACTION[2]}) ;
+            messagesParams.put(TASK_CANCELLED_ACTION, newEvent.getEventState()) ;
           }
         }
       }
@@ -409,13 +422,9 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     publishActivity(event, calendarId, eventType);
   }
 
-  public void updatePublicEvent(CalendarEvent event, String calendarId) {}
-
-
   public void updatePublicEvent(CalendarEvent oldEvent, CalendarEvent newEvent, String calendarId) {
     String eventType = newEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
-    Map<String, String[]> messagesParams = buildParams(oldEvent, newEvent);
-    if(newEvent.getActivityId() == null) newEvent.setActivityId(oldEvent.getActivityId());
+    Map<String, String> messagesParams = buildParams(oldEvent, newEvent);
     updateToActivity(newEvent, calendarId, eventType, messagesParams);
   }
 
