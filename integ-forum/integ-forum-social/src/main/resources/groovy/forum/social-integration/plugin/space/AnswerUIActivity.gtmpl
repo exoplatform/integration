@@ -156,7 +156,7 @@
       <%}%>
       </h5>
       <div class="Content">
-        <div class="PollQuestion">
+        <div class="QuestionName">
           <a class="Text" href="${uicomponent.getLink()}">
             $activity.title
           </a>

@@ -1,12 +1,13 @@
 package org.exoplatform.forum.ext.impl;
 
 import java.util.Date;
+import java.util.Locale;
+
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.faq.service.Question;
-import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
@@ -20,6 +21,7 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
@@ -40,12 +42,6 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
 public class AnswerUIActivity extends BaseKSActivity {
 
   public AnswerUIActivity() {
-  }
-  
-  @SuppressWarnings("unused")
-  private String[] getQuestionDetail(String questionDetail) {
-    String[] tab = questionDetail.split("\\|");
-    return tab;
   }
   
   @SuppressWarnings("unused")
@@ -84,11 +80,6 @@ public class AnswerUIActivity extends BaseKSActivity {
 
     }
     return activity;
-  }
-
-  public String getActivityIconStatus() {
-    String value = getActivityParamValue(AnswersSpaceActivityPublisher.ACTIVITY_TYPE_KEY);
-    return CommonUtils.isEmpty(value) ? "DefaultActivityIcon" : value + AnswersSpaceActivityPublisher.ICON;
   }
 
   static public String getFullName(String userName) throws Exception {
@@ -138,7 +129,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       }
       FAQService faqService = (FAQService) ExoContainerContext.getCurrentContainer()
                                                               .getComponentInstanceOfType(FAQService.class);
-      Question question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID_KEY));
+      Question question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
       Comment comment = new Comment();
       comment.setNew(true);
       comment.setCommentBy(context.getRemoteUser());
@@ -202,7 +193,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       faqService.saveComment(question.getPath(),
                              comment,
                              uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.LANGUAGE_KEY));
-      /*// cache question's comment
+      // cache question's comment
       ExoSocialActivity act = uiActivity.toActivity(comment);
       if (act != null)
         uiActivity.getAllComments().add(act);
@@ -210,8 +201,19 @@ public class AnswerUIActivity extends BaseKSActivity {
       uiActivity.setCommentFormFocused(true);
       context.addUIComponentToUpdateByAjax(uiActivity);
 
-      uiActivity.getParent().broadcast(event, event.getExecutionPhase());*/
+      uiActivity.getParent().broadcast(event, event.getExecutionPhase());
     }
 
+  }
+  
+  @Override
+  protected ExoSocialActivity getI18N(ExoSocialActivity activity) {
+    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+    I18NActivityProcessor i18NActivityProcessor = getApplicationComponent(I18NActivityProcessor.class);
+    if (activity.getTitleId() != null) {
+      Locale userLocale = requestContext.getLocale();
+      activity = i18NActivityProcessor.processKeys(activity, userLocale);
+    }
+    return activity;
   }
 }
