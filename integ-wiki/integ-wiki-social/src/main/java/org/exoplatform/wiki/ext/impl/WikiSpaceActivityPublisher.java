@@ -91,15 +91,11 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
         String nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
         activity = activityManager.getActivity(nodeActivityID);
       } catch (Exception e) {
-        if (!page.isMinorEdit() || MOVE_PAGE_TYPE.equals(activityType)) {
-          // Create new empty activity
-          activity = createNewActivity(ownerIdentity.getId());
-        } else {
-          // If the activity should not be published, the return null
-          return null;
-        }
+        activity = createNewActivity(ownerIdentity.getId());
       }
-    } else {
+    }
+    
+    if (activity == null) {
       activity = createNewActivity(ownerIdentity.getId());
     }
     
@@ -136,6 +132,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
       String verName = ((PageImpl) page).getVersionableMixin().getBaseVersion().getName();
       templateParams.put(VIEW_CHANGE_URL_KEY, Utils.getURL(page.getURL(), verName));
       
+      
       if (EDIT_PAGE_TITLE_TYPE.equals(activityType) && !page.isMinorEdit()) {
         createAndSaveComment(activity, res.getString("WikiUIActivity.msg.update-page-title") + page.getTitle(), ownerIdentity.getId());
       } else if (EDIT_PAGE_CONTENT_TYPE.equals(activityType) && !page.isMinorEdit()) {
@@ -145,6 +142,19 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
         } else {
           createAndSaveComment(activity, comment, ownerIdentity.getId());
         }
+      } else if (EDIT_PAGE_CONTENT_AND_TITLE_TYPE.equals(activityType) && !page.isMinorEdit()) {
+        StringBuffer commentContent = new StringBuffer();
+        commentContent.append(res.getString("WikiUIActivity.msg.update-page-title"));
+        commentContent.append(page.getTitle());
+        commentContent.append("<br>");
+        
+        String comment = page.getComment();
+        if (StringUtils.isEmpty(comment)) {
+          commentContent.append(res.getString("WikiUIActivity.msg.update-page-content"));
+        } else {
+          commentContent.append(comment);
+        }
+        createAndSaveComment(activity, commentContent.toString(), ownerIdentity.getId());
       } else if (MOVE_PAGE_TYPE.equals(activityType)) {
         WikiService wikiService = (WikiService) PortalContainer.getInstance().getComponentInstanceOfType(WikiService.class);
         List<BreadcrumbData> breadcrumbDatas = wikiService.getBreadcumb(wikiType, wikiOwner, pageId);
@@ -221,7 +231,6 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     
     String username = ConversationState.getCurrent().getIdentity().getUserId();
     IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
-    ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
     Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username, false);
     
     Identity ownerStream = null, authorActivity = userIdentity;
@@ -287,7 +296,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
 
   @Override
   public void postUpdatePage(String wikiType, String wikiOwner, String pageId, Page page, String wikiUpdateType) throws Exception {
-    if(page != null) {
+    if((page != null) && !page.isMinorEdit()) {
       saveActivity(wikiType, wikiOwner, pageId, page, wikiUpdateType);
     }
   }
