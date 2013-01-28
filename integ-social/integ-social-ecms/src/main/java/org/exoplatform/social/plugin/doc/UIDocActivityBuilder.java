@@ -19,13 +19,10 @@ package org.exoplatform.social.plugin.doc;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.Node;
-
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.utils.text.Text;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.storage.ActivityStorageException;
@@ -73,11 +70,12 @@ public class UIDocActivityBuilder extends BaseUIActivityBuilder {
       }
 
     }
+    
+    docActivity.repository = repository;
+    docActivity.workspace = workspace;
+    
     //escape node name for special characters
     docActivity.docPath = escapeIllegalJcrCharsOnNodeName(docActivity.docPath);
-    NodeLocation nodeLocation = new NodeLocation(repository, workspace, docActivity.docPath);
-    final Node docNode = NodeLocation.getNodeByLocation(nodeLocation);
-    docActivity.setDocNode(docNode);
   }
 
   /**

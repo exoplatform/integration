@@ -19,17 +19,19 @@ package org.exoplatform.social.plugin.doc;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFormatException;
-import javax.portlet.PortletRequest;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.ecm.jcr.model.VersionNode;
+import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
-import org.exoplatform.wcm.webui.Utils;
-import org.exoplatform.webui.application.WebuiRequestContext;
-import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupWindow;
@@ -50,7 +52,6 @@ import org.exoplatform.webui.event.EventListener;
    events = {
      @EventConfig(listeners = UIDocActivity.DownloadDocumentActionListener.class),
      @EventConfig(listeners = UIDocActivity.ViewDocumentActionListener.class),
-     @EventConfig(listeners = UIDocActivity.GotoFolderActionListener.class),
      @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class),
      @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
      @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
@@ -80,41 +81,19 @@ public class UIDocActivity extends BaseUIActivity {
   public String message;
   public String docName;
   public String docPath;
-  private Node docNode;
+  public String repository;
+  public String workspace;
 
   public UIDocActivity() {
   }
 
-  public void setDocNode(Node docNode) {
-    this.docNode = docNode;
-  }
-
-  public Node getDocNode() {
-    return docNode;
-  }
-
-
   protected boolean isPreviewable() {
-    String mimeType = "";    
-      try {
-        mimeType = docNode.getNode("jcr:content").getProperty("jcr:mimeType").getString();
-      } catch (ValueFormatException e) {
-        if (LOG.isDebugEnabled())
-          LOG.debug(e);
-        return false;
-      } catch (PathNotFoundException e) {
-        if (LOG.isDebugEnabled())
-          LOG.debug(e);
-        return false;
-      } catch (RepositoryException e) {
-        if (LOG.isDebugEnabled())
-          LOG.debug(e);
-        return false;
-      }
-    
-    return mimeType.endsWith(DOCUMENT_POSTFIX) || mimeType.startsWith(IMAGE_PREFIX);
+    return getMimeType().endsWith(DOCUMENT_POSTFIX);    
   }
   
+  protected boolean isImageFile() {
+    return getMimeType().startsWith(IMAGE_PREFIX);
+  }
   
   protected String getDocThumbnail(){    
     String portalContainerName = PortalContainer.getCurrentPortalContainerName();
@@ -125,6 +104,45 @@ public class UIDocActivity extends BaseUIActivity {
                                append("/").append(UIDocActivityComposer.REPOSITORY).
                                append("/").append(UIDocActivityComposer.WORKSPACE).
                                append(docPath).toString();
+  }
+  
+  protected String getSize() {
+    double size = 0;
+    Node docNode = getDocNode();
+    try {
+      if (docNode.hasNode(Utils.JCR_CONTENT)) {
+        Node contentNode = docNode.getNode(Utils.JCR_CONTENT);
+        if (contentNode.hasProperty(Utils.JCR_DATA)) {
+          size = contentNode.getProperty(Utils.JCR_DATA).getLength();
+        }
+        
+        return FileUtils.byteCountToDisplaySize((long)size);
+      }
+    } catch (PathNotFoundException e) {
+      return StringUtils.EMPTY;
+    } catch (ValueFormatException e) {
+      return StringUtils.EMPTY;
+    } catch (RepositoryException e) {
+      return StringUtils.EMPTY;
+    }
+    return StringUtils.EMPTY;
+  }
+  
+  protected int getVersion() {
+    try {
+      VersionNode rootVersion_ = new VersionNode(NodeLocation.getNodeByLocation(new NodeLocation(repository, workspace, docPath))
+                                     .getVersionHistory()
+                                     .getRootVersion(), getDocNode().getSession());
+      if (rootVersion_ != null) {
+        return rootVersion_.getChildren().size();
+      }
+    } catch (UnsupportedRepositoryOperationException e) {
+      return 0;
+    } catch (RepositoryException e) {
+      return 0;
+    }
+    
+    return 0;
   }
   
   public static class ViewDocumentActionListener extends EventListener<UIDocActivity> {
@@ -139,9 +157,9 @@ public class UIDocActivity extends BaseUIActivity {
       }
       
       UIDocViewer docViewer = popupWindow.createUIComponent(UIDocViewer.class, null, "DocViewer");
-      final Node docNode = docActivity.getDocNode();
-      docViewer.setOriginalNode(docNode);
-      docViewer.setNode(docNode);
+      docViewer.docPath = docActivity.docPath;
+      docViewer.repository = docActivity.repository;
+      docViewer.workspace = docActivity.workspace;
 
       popupWindow.setUIComponent(docViewer);
       popupWindow.setWindowSize(800, 600);
@@ -156,32 +174,77 @@ public class UIDocActivity extends BaseUIActivity {
     @Override
     public void execute(Event<UIDocActivity> event) throws Exception {
       UIDocActivity uiComp = event.getSource() ;
-      String downloadLink = Utils.getDownloadLink(uiComp.getDocNode());
+      String downloadLink = null;
+      if (getRealNode(uiComp.getDocNode()).getPrimaryNodeType().getName().equals(Utils.NT_FILE)) {
+        downloadLink = Utils.getDownloadRestServiceLink(uiComp.getDocNode());
+      }
       event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
+    }
+    
+    private Node getRealNode(Node node) throws Exception {
+      // TODO: Need to add to check symlink node
+      if (node.isNodeType("nt:frozenNode")) {
+        String uuid = node.getProperty("jcr:frozenUuid").getString();
+        return node.getSession().getNodeByUUID(uuid);
+      }
+      return node;
     }
   }
   
-  public static class GotoFolderActionListener extends EventListener<UIDocActivity> {
-    @Override
-    public void execute(Event<UIDocActivity> event) throws Exception {
-      //
-      String folderPath = Utils.getEditLink(event.getSource().getDocNode(), false, false);
-      folderPath = folderPath.substring(0, folderPath.lastIndexOf("&amp;"));
-      folderPath = folderPath.substring(0, folderPath.lastIndexOf("/"));
-      
-      //
-      StringBuilder siteExplorerURL = new StringBuilder();
-      PortletRequestContext portletRequestContext = WebuiRequestContext.getCurrentInstance();
-      PortletRequest portletRequest = portletRequestContext.getRequest();
-      siteExplorerURL.append(portletRequest.getScheme());
-      siteExplorerURL.append("://");
-      siteExplorerURL.append(portletRequest.getServerName());
-      siteExplorerURL.append(":");
-      siteExplorerURL.append(portletRequest.getServerPort());
-      siteExplorerURL.append(folderPath);
-      
-      //
-      event.getRequestContext().getJavascriptManager().addJavascript(";window.location.href='" + siteExplorerURL.toString() +"';");
+  private Node getDocNode() {
+    NodeLocation nodeLocation = new NodeLocation(repository, workspace, docPath);
+    return NodeLocation.getNodeByLocation(nodeLocation);
+  }
+  
+  /**
+   * Gets the summary.
+   * 
+   * @param node the node
+   * @return the summary of Node. Return empty string if catch an exception.
+   */
+  public String getSummary() {
+    String desc = "";
+    Node node = getDocNode();
+    try {
+      if (node != null) {
+        if (node.hasProperty("exo:summary")) {
+          desc = node.getProperty("exo:summary").getValue().getString();
+        } else if (node.hasNode("jcr:content")) {
+          Node content = node.getNode("jcr:content");
+          if (content.hasProperty("dc:description") && content.getProperty("dc:description").getValues().length > 0) {
+            desc = content.getProperty("dc:description").getValues()[0].getString();
+          }
+        }
+      }
+    } catch (RepositoryException re) {
+      if (LOG.isWarnEnabled())
+        LOG.warn("RepositoryException: ", re);
     }
+
+    return desc;
+  }
+  
+  public String getTitle() throws Exception {
+    return Utils.getTitle(getDocNode());
+  }
+  
+  private String getMimeType() {
+    String mimeType = "";    
+      try {
+        mimeType = getDocNode().getNode("jcr:content").getProperty("jcr:mimeType").getString();
+      } catch (ValueFormatException e) {
+        if (LOG.isDebugEnabled())
+          LOG.debug(e);
+        return StringUtils.EMPTY;
+      } catch (PathNotFoundException e) {
+        if (LOG.isDebugEnabled())
+          LOG.debug(e);
+        return StringUtils.EMPTY;
+      } catch (RepositoryException e) {
+        if (LOG.isDebugEnabled())
+          LOG.debug(e);
+        return StringUtils.EMPTY;
+      }
+    return mimeType;
   }
 }

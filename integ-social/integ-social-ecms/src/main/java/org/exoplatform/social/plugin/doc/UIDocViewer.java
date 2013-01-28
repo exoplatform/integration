@@ -33,6 +33,7 @@ import org.exoplatform.services.cms.impl.DMSConfiguration;
 import org.exoplatform.services.cms.templates.TemplateService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.web.application.JavascriptManager;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -65,6 +66,9 @@ public class UIDocViewer extends UIBaseNodePresentation {
    */
   private static final Log LOG = ExoLogger.getLogger(UIDocViewer.class);
   private Node originalNode;
+  public String docPath;
+  public String repository;
+  public String workspace;
 
   /**
    * Sets the original node.
@@ -82,7 +86,8 @@ public class UIDocViewer extends UIBaseNodePresentation {
    * @throws Exception
    */
   public Node getOriginalNode() throws Exception {
-    return originalNode;
+//    return originalNode;
+    return getDocNode();
   }
 
   /**
@@ -96,14 +101,15 @@ public class UIDocViewer extends UIBaseNodePresentation {
 
   @Override
   public Node getNode() throws Exception {
-    return originalNode;
+//    return originalNode;
+    return getDocNode();
   }
 
   public String getTemplate() {
     TemplateService templateService = getApplicationComponent(TemplateService.class);
     String userName = Util.getPortalRequestContext().getRemoteUser() ;
     try {
-      String nodeType = getOriginalNode().getPrimaryNodeType().getName();
+      String nodeType = getDocNode().getPrimaryNodeType().getName();
       if(templateService.isManagedNodeType(nodeType)) {
         return templateService.getTemplatePathByUser(false, nodeType, userName);
       }
@@ -172,10 +178,15 @@ public class UIDocViewer extends UIBaseNodePresentation {
   static  public class DownloadActionListener extends EventListener<UIDocViewer> {
     public void execute(Event<UIDocViewer> event) throws Exception {
       UIDocViewer uiComp = event.getSource();
-      String downloadLink = uiComp.getDownloadLink(org.exoplatform.wcm.webui.Utils.getFileLangNode(uiComp.getNode()));
+      String downloadLink = uiComp.getDownloadLink(org.exoplatform.wcm.webui.Utils.getFileLangNode(uiComp.getDocNode()));
       JavascriptManager jsManager = event.getRequestContext().getJavascriptManager();
       downloadLink = downloadLink.replaceAll("&amp;", "&") ;           
       jsManager.addJavascript("window.location.href = " + downloadLink + ";");
     }
+  }
+  
+  private Node getDocNode() {
+    NodeLocation nodeLocation = new NodeLocation(repository, workspace, docPath);
+    return NodeLocation.getNodeByLocation(nodeLocation);
   }
 }
