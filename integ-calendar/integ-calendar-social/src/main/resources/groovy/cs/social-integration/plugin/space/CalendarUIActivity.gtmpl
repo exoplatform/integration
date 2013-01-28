@@ -60,21 +60,8 @@
 
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
-  def originalCommentList = uicomponent.getComments();
-  def originalAllComments = uicomponent.getAllComments();
-  def commentList = new ArrayList<ExoSocialActivity>();
-  def allComments = new ArrayList<ExoSocialActivity>();;
-  
-  originalCommentList.each() {
-    if(!it.title.equals("")) {
-      commentList.add(it);
-    }
-  }
-  originalAllComments.each(){
-    if(!it.title.equals("")) {
-      allComments.add(it);
-    }
-  }
+  def commentList = uicomponent.getComments();
+  def allComments = uicomponent.getAllComments();
   
   if (allComments.size() > 0) {
     labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
