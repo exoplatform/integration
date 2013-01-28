@@ -17,6 +17,7 @@
 package org.exoplatform.forum.ext.activity;
 
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.processor.I18NActivityUtils;
 
 /**
  * Created by The eXo Platform SAS Author : thanh_vucong
@@ -24,60 +25,59 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
  */
 public enum ForumActivityType {
 
-  ADD_TOPIC("%s"),
-  UPDATE_TOPIC_TITLE("Title has been updated to: %s"),
-  UPDATE_TOPIC_CONTENT("Content has been edited."),
-  UPDATE_TOPIC_RATE("Rated the topic: %s"),
-  CLOSE_TOPIC("Topic has been closed."),
-  OPEN_TOPIC("Topic has been opened."),
-  LOCK_TOPIC("Topic has been locked."),
-  UNLOCK_TOPIC("Topic has been unlocked."),
-  APPROVED_TOPIC("Topic has been approved."),
-  UNAPPROVED_TOPIC("Topic has been unapproved."),
-  MERGE_TOPICS("%s"),
-  SPLIT_TOPIC("%s"),
-  MOVE_TOPIC("Topic have been moved to: %s>%s"),
-  RATE_TOPIC("Rated the topic: %s"),
-  ADD_POST("%s"),
-  UPDATE_POST("Edited his reply to: %s");
+  ADD_TOPIC("forum.add-topic", "%s"),
+  UPDATE_TOPIC_TITLE("forum.update-topic-title", "Title has been updated to: %s"),
+  UPDATE_TOPIC_CONTENT("forum.update-topic-content", "Content has been edited."),
+  UPDATE_TOPIC_RATE("forum.update-topic-rate", "Rated the topic: %s"),
+  CLOSE_TOPIC("forum.closed-topic", "Topic has been closed."),
+  OPEN_TOPIC("forum.opened-topic", "Topic has been opened."),
+  LOCK_TOPIC("forum.locked-topic", "Topic has been locked."),
+  UNLOCK_TOPIC("forum.unlocked-topic", "Topic has been unlocked."),
+  APPROVED_TOPIC("forum.approved-topic", "Topic has been approved."),
+  UNAPPROVED_TOPIC("forum.unapproved-topic", "Topic has been unapproved."),
+  MERGE_TOPICS("forum.merge-topic", "%s"),
+  SPLIT_TOPIC("forum.split-topic", "%s"),
+  MOVE_TOPIC("forum.move-topic", "Topic have been moved to: %s>%s"),
+  ADD_POST("forum.add-post", "%s"),
+  UPDATE_POST("forum.update-post", "Edited his reply to: %s");
 
   private final String titleTemplate;
+  private final String resourceBundleKey;
 
-  private ForumActivityType(String titleTemplate) {
+  private ForumActivityType(String resourceBundleKey, String titleTemplate) {
     this.titleTemplate = titleTemplate;
+    this.resourceBundleKey = resourceBundleKey;
   }
   
-  public ExoSocialActivity getActivity(ExoSocialActivity a, String value) {
+  public String getTitle(ExoSocialActivity a, String value) {
+    String got = titleTemplate;
     if (value != null) {
-      a.setTitle(String.format(titleTemplate, value));
+      got = String.format(titleTemplate, value);
+    }
+    
+    I18NActivityUtils.addResourceKey(a, resourceBundleKey, value);
+    
+    return got;
+  }
+  
+  public ExoSocialActivity getActivity(ExoSocialActivity a, String...values) {
+    if (values != null && values.length > 0) {
+      a.setTitle(String.format(titleTemplate, values));
     } else {
       a.setTitle(titleTemplate);
     }
     
+    I18NActivityUtils.addResourceKey(a, resourceBundleKey, values);
     return a;
   }
   
-  public String getTitle(String value) {
-    if (value != null) {
-      return String.format(titleTemplate, value);
-    } else {
-      return titleTemplate;
-    }
-  }
-  
-  public ExoSocialActivity getActivity(ExoSocialActivity a, String value1, String value2) {
-    if (value1 != null && value2 != null) {
-      a.setTitle(String.format(titleTemplate, value1, value2));
+  public String getTitle(ExoSocialActivity a, String...values) {
+    String got = titleTemplate;
+    if (values != null && values.length > 0) {
+      got = String.format(titleTemplate, values);
     }
     
-    return a;
-  }
-  
-  public String getTitle(String value1, String value2) {
-    if (value1 != null && value2 != null) {
-      return String.format(titleTemplate, value1, value2);
-    }
-    
-    return titleTemplate;
+    I18NActivityUtils.addResourceKey(a, resourceBundleKey, values);
+    return got;
   }
 }

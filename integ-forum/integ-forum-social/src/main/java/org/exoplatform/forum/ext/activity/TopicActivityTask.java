@@ -112,11 +112,11 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       
       //
       if (newPcs.hasPropertyName(Topic.TOPIC_NAME)) {
-        sb.append(ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(topic.getTopicName())).append("\n");
+        sb.append(ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(newComment, topic.getTopicName())).append("\n");
       }
       
       if (newPcs.hasPropertyName(Topic.TOPIC_CONTENT)) {
-        sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(topic.getDescription()));
+        sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(newComment, topic.getDescription()));
       }
       
       newComment.setTitle(sb.toString());
@@ -127,19 +127,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
       activity.setTitle(ctx.getTopic().getTopicName());
-      StringBuilder sb = new StringBuilder();
-      PropertyChangeSupport newPcs = ctx.getPcs();
-      Topic topic = ctx.getTopic();
-      
-      if (newPcs.hasPropertyName(Topic.TOPIC_NAME)) {
-        sb.append(ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(topic.getTopicName())).append("\n");
-      }
-      
-      if (newPcs.hasPropertyName(Topic.TOPIC_CONTENT)) {
-        sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(topic.getDescription()));
-      }
-      
-      activity.setTitle(sb.toString());
+      activity.setBody(ctx.getTopic().getDescription());
       
       return activity;
     };
@@ -184,6 +172,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
       activity.setTitle(ctx.getTopic().getTopicName());
+      //processTitle(ctx, activity);
 
       return activity;
     };
@@ -227,6 +216,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
       activity.setBody(ForumActivityBuilder.getThreeFirstLines(ctx.getTopic()));
+      //processTitle(ctx, activity);
       return activity;
     };
 
@@ -703,6 +693,16 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      Topic topic = ctx.getTopic();
+      
+      //
+      Map<String, String> templateParams = activity.getTemplateParams();
+      templateParams.put(ForumActivityBuilder.TOPIC_OWNER_KEY, topic.getOwner());
+      
+      //
+      templateParams.put(ForumActivityBuilder.FORUM_ID_KEY, topic.getForumId());
+      templateParams.put(ForumActivityBuilder.CATE_ID_KEY, topic.getCategoryId());
+      
       return activity;
     };
 
@@ -711,6 +711,12 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       try {
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
+        
+        //update new streamOwner
+        Identity streamOwner = getOwnerStream(ctx);
+        a.setStreamOwner(streamOwner.getRemoteId());
+        a = processActivity(ctx, a);
+        am.updateActivity(a);
 
         ////FORUM_22 case: move topic
         ExoSocialActivity newComment = processComment(ctx);

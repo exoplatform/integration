@@ -27,7 +27,7 @@ import org.junit.runners.MethodSorters;
  *          thanh_vucong@exoplatform.com
  * Jan 16, 2013  
  */
-@FixMethodOrder(MethodSorters.JVM)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TopicActivityTest extends AbstractActivityTypeTest {
   
   @Override
@@ -92,7 +92,7 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     a = task.processActivity(ctx, a);
     assertNumberOfReplies(a, 0);
     assertVoteRate(a, topic.getVoteRating());
-    assertEquals(a.getTitle(), "Title has been updated to: edited to new title for topic.\nContent has been edited.");
+    assertEquals("edited to new title for topic.", a.getTitle());
     
     //comment
     ExoSocialActivity newComment = task.processComment(ctx);
@@ -126,7 +126,7 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     a = task.processActivity(ctx, a);
     assertNumberOfReplies(a, 0);
     assertVoteRate(a, topic.getVoteRating());
-    assertTopicTitle(a, "Title has been updated to: edited to new title for topic.");
+    assertTopicTitle(a, "edited to new title for topic.");
     assertTopicContent(a, topicContent);
     
     //comment
@@ -162,7 +162,7 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     a = task.processActivity(ctx, a);
     assertNumberOfReplies(a, 0);
     assertVoteRate(a, topic.getVoteRating());
-    assertTopicTitle(a, "Content has been edited.");
+    assertTopicTitle(a, "topic title");
     assertTopicContent(a, "edited to new content for topic.");
     
     //comment

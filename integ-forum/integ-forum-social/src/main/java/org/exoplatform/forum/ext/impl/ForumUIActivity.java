@@ -1,21 +1,51 @@
 package org.exoplatform.forum.ext.impl;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.exoplatform.container.ExoContainer;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
+import org.exoplatform.forum.ext.activity.ForumActivityContext;
+import org.exoplatform.forum.ext.activity.ForumActivityUtils;
+import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.DataStorage;
+import org.exoplatform.forum.service.Forum;
+import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.mop.SiteKey;
+import org.exoplatform.portal.mop.SiteType;
+import org.exoplatform.portal.mop.navigation.NavigationContext;
+import org.exoplatform.portal.mop.navigation.NavigationService;
+import org.exoplatform.portal.mop.navigation.NodeContext;
+import org.exoplatform.portal.mop.navigation.NodeModel;
+import org.exoplatform.portal.mop.navigation.Scope;
+import org.exoplatform.portal.mop.user.UserNavigation;
+import org.exoplatform.portal.mop.user.UserNode;
+import org.exoplatform.portal.mop.user.UserPortal;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.common.RealtimeListAccess;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
+import org.exoplatform.social.core.processor.I18NActivityProcessor;
+import org.exoplatform.social.core.space.SpaceUtils;
+import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.webui.Utils;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
+import org.exoplatform.social.webui.activity.BaseUIActivity.CommentStatus;
+import org.exoplatform.web.application.RequestContext;
+import org.exoplatform.web.url.navigation.NavigationResource;
+import org.exoplatform.web.url.navigation.NodeURL;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -23,6 +53,7 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+
 
 @ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/forum/social-integration/plugin/space/ForumUIActivity.gtmpl", events = {
     @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class),
@@ -35,6 +66,10 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
 public class ForumUIActivity extends BaseKSActivity {
 
   private static final Log LOG = ExoLogger.getLogger(ForumUIActivity.class);
+  
+  private static final String SPACES_GROUP = "spaces";
+  private static final String FORUM_PAGE_NAGVIGATION = "forum";
+  private static final String FORUM_PORTLET_NAME = "ForumPortlet";
 
   public ForumUIActivity() {
     
@@ -45,7 +80,7 @@ public class ForumUIActivity extends BaseKSActivity {
    */
   @SuppressWarnings("unused")
   private String getReplyLink() {
-    String viewLink = getActivityParamValue(ForumActivityBuilder.TOPIC_LINK_KEY);
+    String viewLink = buildLink();
     
     StringBuffer sb = new StringBuffer(viewLink);
     if (sb.lastIndexOf("/") == -1 || sb.lastIndexOf("/") != sb.length() - 1) {
@@ -55,14 +90,113 @@ public class ForumUIActivity extends BaseKSActivity {
     sb.append("false");
     return sb.toString();
   }
+  
+  private String buildLink() {
+    
+    String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
+    String categoryId = getActivityParamValue(ForumActivityBuilder.CATE_ID_KEY);
+    String forumId = getActivityParamValue(ForumActivityBuilder.FORUM_ID_KEY);
+    
+    try {
+      ForumService fs = ForumActivityUtils.getForumService();
+      Category cate = fs.getCategory(categoryId);
+      
+      String link = "";
+      //
+      if (SPACES_GROUP.equals(cate.getCategoryName())) {
+        Forum forum = fs.getForum(categoryId, forumId);
+        String spaceGroupId = forum.getPoster()[0];
+        link = buildTopicLink(spaceGroupId, topicId);
+      } else {
+        PortalRequestContext prc = Util.getPortalRequestContext();
+
+        UserPortal userPortal = prc.getUserPortal();
+        UserNavigation userNav = userPortal.getNavigation(prc.getSiteKey());
+        UserNode userNode = userPortal.getNode(userNav, Scope.ALL, null, null);
+        
+        
+        //
+        UserNode forumNode = userNode.getChild(FORUM_PAGE_NAGVIGATION);
+        
+        //
+        if (forumNode != null) {
+          String forumURI = getNodeURL(forumNode);
+          link = String.format("%s/topic/%s", forumURI, topicId);
+        }
+      }
+
+      //
+      LOG.info("Link " + link);
+      return link;
+    } catch (Exception ex) {
+      return "";
+    }
+  }
 
   private String getLink(String tagLink, String nameLink) {
-    String viewLink = getActivityParamValue(ForumActivityBuilder.TOPIC_LINK_KEY);
-    return String.format(tagLink, viewLink, nameLink);
+    String link = buildLink();
+    return String.format(tagLink, link, nameLink);
+    
+  }
+  
+  private String getNodeURL(UserNode node) {
+    RequestContext ctx = RequestContext.getCurrentInstance();
+    NodeURL nodeURL =  ctx.createURL(NodeURL.TYPE);
+    return nodeURL.setNode(node).toString();
+  }
+  
+  public String buildTopicLink(String spaceGroupId, String topicId) throws Exception{
+    
+    ExoContainer container = ExoContainerContext.getCurrentContainer();
+    NavigationService navService = (NavigationService) container.getComponentInstance(NavigationService.class);
+    NavigationContext nav = navService.loadNavigation(SiteKey.group(spaceGroupId));
+    
+    NodeContext<NodeContext<?>> parentNodeCtx = navService.loadNode(NodeModel.SELF_MODEL, nav, Scope.ALL, null);
+    
+    if(parentNodeCtx.getSize() >= 1) {
+      NodeContext<?> nodeCtx = parentNodeCtx.get(0);
+      Collection<NodeContext<?>> children = (Collection<NodeContext<?>>) nodeCtx.getNodes();
+      Iterator<NodeContext<?>> it = children.iterator();
+      
+      NodeContext<?> child = null;
+      while(it.hasNext()) {
+        child = it.next();
+        if (FORUM_PAGE_NAGVIGATION.equals(child.getName()) || child.getName().indexOf(FORUM_PORTLET_NAME) >= 0) {
+          break;
+        }
+        LOG.info("Node name = " + child.getName());
+      }
+      String spaceLink = getSpaceHomeURL(spaceGroupId);
+      String topicLink = String.format("%s/%s/topic/%s", spaceLink, child.getName(), topicId);
+      
+      return topicLink;
+    }
+   
+    return "";
+  }
+  
+  /**
+   * Gets the space home url of a space.
+   * 
+   * @param space
+   * @return
+   * @since 1.2.1
+   */
+  public static String getSpaceHomeURL(String spaceGroupId) {
+    // work-around for SOC-2366 when rename existing space
+    String permanentSpaceName = spaceGroupId.split("/")[2];
+    
+    RequestContext ctx = RequestContext.getCurrentInstance();
+    NodeURL nodeURL =  ctx.createURL(NodeURL.TYPE);
+    NavigationResource resource = null;
+    resource = new NavigationResource(SiteType.GROUP, SpaceUtils.SPACE_GROUP + "/"
+                                        + permanentSpaceName, permanentSpaceName);
+   
+    return nodeURL.setResource(resource).toString(); 
   }
   
   public String getViewLink() {
-    String link = getActivityParamValue(ForumActivityBuilder.TOPIC_LINK_KEY);
+    String link = buildLink();
     return link;
   }
 
@@ -105,7 +239,7 @@ public class ForumUIActivity extends BaseKSActivity {
     return false;
   }
   
-  public void createPost(String message, WebuiRequestContext requestContext) throws Exception {
+  public Post createPost(String message, WebuiRequestContext requestContext) throws Exception {
     
     DataStorage dataStorage = (DataStorage) PortalContainer.getInstance().getComponentInstanceOfType(DataStorage.class);
     String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
@@ -136,6 +270,8 @@ public class ForumUIActivity extends BaseKSActivity {
     long numberOfReplies = topic.getPostCount() + 1;
     topic.setPostCount(numberOfReplies);
     dataStorage.saveTopic(categoryId, forumId, topic, false, false, new MessageBuilder());
+    
+    return post;
   }
   
   public static class PostCommentActionListener extends BaseUIActivity.PostCommentActionListener {
@@ -153,16 +289,39 @@ public class ForumUIActivity extends BaseKSActivity {
       uiFormComment.reset();
       
       //
-      uiActivity.saveComment(requestContext.getRemoteUser(), message);
-      
-      //
-      uiActivity.createPost(message, requestContext);
+      Post post = uiActivity.createPost(message, requestContext);
+      uiActivity.saveComment(post);
 
       uiActivity.setCommentFormFocused(true);
       requestContext.addUIComponentToUpdateByAjax(uiActivity);
 
       uiActivity.getParent().broadcast(event, event.getExecutionPhase());
     }
+  }
+  
+  /**
+   * Create comment from post
+   * @param post
+   */
+  private void saveComment(Post post) {
+    ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
+    ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(post, ctx);
+    comment.setUserId(Utils.getViewerIdentity().getId());
+    comment.setTitle(post.getMessage());
+    Utils.getActivityManager().saveComment(getActivity(), comment);
+    
+    refresh();
+  }
+  
+  @Override
+  protected ExoSocialActivity getI18N(ExoSocialActivity activity) {
+    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+    I18NActivityProcessor i18NActivityProcessor = getApplicationComponent(I18NActivityProcessor.class);
+    if (activity.getTitleId() != null) {
+      Locale userLocale = requestContext.getLocale();
+      activity = i18NActivityProcessor.processKeys(activity, userLocale);
+    }
+    return activity;
   }
 
 }

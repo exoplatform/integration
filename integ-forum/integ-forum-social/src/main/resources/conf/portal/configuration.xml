@@ -28,6 +28,67 @@
        </object-param>
      </init-params>
    </component-plugin>
+   <component-plugin>
+     <name>ks-forum:spaces</name> <!-- activity type -->
+     <set-method>addActivityResourceBundlePlugin</set-method>
+     <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
+     <init-params>
+       <object-param>
+         <name>locale.forum.integration.integration</name> <!-- resource bundle key file -->
+         <description>activity key type resource bundle mapping for exosocial:spaces</description>
+         <object type="org.exoplatform.social.core.processor.ActivityResourceBundlePlugin">
+           <field name="activityKeyTypeMapping">
+             <map type="java.util.HashMap">
+               <entry>
+                 <key><string>forum.update-topic-title</string></key>
+                 <value><string>ForumUIActivity.forum.update-topic-title</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.update-topic-content</string></key>
+                 <value><string>ForumUIActivity.forum.update-topic-content</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.update-topic-rate</string></key>
+                 <value><string>ForumUIActivity.forum.update-topic-rate</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.closed-topic</string></key>
+                 <value><string>ForumUIActivity.forum.closed-topic</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.opened-topic</string></key>
+                 <value><string>ForumUIActivity.forum.opened-topic</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.locked-topic</string></key>
+                 <value><string>ForumUIActivity.forum.locked-topic</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.unlocked-topic</string></key>
+                 <value><string>ForumUIActivity.forum.unlocked-topic</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.approved-topic</string></key>
+                 <value><string>ForumUIActivity.forum.approved-topic</string></value>
+               </entry>
+                <entry>
+                 <key><string>forum.unapproved-topic</string></key>
+                 <value><string>ForumUIActivity.forum.unapproved-topic</string></value>
+               </entry>
+                <entry>
+                 <key><string>forum.move-topic</string></key>
+                 <value><string>ForumUIActivity.forum.move-topic</string></value>
+               </entry>
+                <entry>
+                 <key><string>forum.update-post</string></key>
+                 <value><string>ForumUIActivity.forum.update-post</string></value>
+               </entry>
+             </map>
+           </field>
+         </object>
+       </object-param>
+     </init-params>
+   </component-plugin>
   </external-component-plugins>
 
  <!-- Social integration -->
