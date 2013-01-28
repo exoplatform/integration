@@ -299,7 +299,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.CLOSE_TOPIC.getActivity(activity, null);
+      return ForumActivityType.CLOSE_TOPIC.getActivity(activity);
     }
     
     @Override
@@ -341,7 +341,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.OPEN_TOPIC.getActivity(activity, null);
+      return ForumActivityType.OPEN_TOPIC.getActivity(activity);
     }
     
     @Override
@@ -383,7 +383,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.LOCK_TOPIC.getActivity(activity, null);
+      return ForumActivityType.LOCK_TOPIC.getActivity(activity);
     }
     
     @Override
@@ -427,7 +427,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.UNLOCK_TOPIC.getActivity(activity, null);
+      return ForumActivityType.UNLOCK_TOPIC.getActivity(activity);
     }
     
     @Override
@@ -472,7 +472,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.APPROVED_TOPIC.getActivity(activity, null);
+      return ForumActivityType.APPROVED_TOPIC.getActivity(activity);
     }
     
     @Override
@@ -516,7 +516,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.UNAPPROVED_TOPIC.getActivity(activity, null);
+      return ForumActivityType.UNAPPROVED_TOPIC.getActivity(activity);
     }
     
     @Override
@@ -806,6 +806,19 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         //
         am.saveActivityNoReturn(streamOwner, newActivity);
+        
+        // Creates activity split
+        ExoSocialActivity splitActivity = ForumActivityBuilder.createActivity(ctx.getSplitedTopic(), ctx);
+        newActivity = processActivity(ctx, splitActivity);
+        
+        //
+        poster = ForumActivityUtils.getIdentity(ctx.getSplitedTopic().getOwner());
+        newActivity.setUserId(poster.getId());
+        
+        //
+        am.saveActivityNoReturn(streamOwner, splitActivity);
+        
+        ForumActivityUtils.takeActivityBack(ctx.getSplitedTopic(), splitActivity);
         
         return newActivity;
       } catch (Exception e) {

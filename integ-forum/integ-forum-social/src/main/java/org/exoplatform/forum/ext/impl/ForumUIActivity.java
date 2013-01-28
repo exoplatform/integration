@@ -21,6 +21,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.forum.service.Utils;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.mop.SiteKey;
 import org.exoplatform.portal.mop.SiteType;
@@ -38,7 +39,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.core.space.SpaceUtils;
-import org.exoplatform.social.webui.Utils;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.web.url.navigation.NavigationResource;
@@ -64,7 +64,7 @@ public class ForumUIActivity extends BaseKSActivity {
 
   private static final Log LOG = ExoLogger.getLogger(ForumUIActivity.class);
   
-  private static final String SPACES_GROUP = "spaces";
+  private static final String SPACES_GROUP = SpaceUtils.SPACE_GROUP.substring(1);
   private static final String FORUM_PAGE_NAGVIGATION = "forum";
   private static final String FORUM_PORTLET_NAME = "ForumPortlet";
 
@@ -75,8 +75,7 @@ public class ForumUIActivity extends BaseKSActivity {
   /*
    * used by template, see line 201 ForumUIActivity.gtmpl
    */
-  @SuppressWarnings("unused")
-  private String getReplyLink() {
+  protected String getReplyLink() {
     String viewLink = buildLink();
     
     StringBuffer sb = new StringBuffer(viewLink);
@@ -102,7 +101,8 @@ public class ForumUIActivity extends BaseKSActivity {
       //
       if (cate.getId().indexOf(SPACES_GROUP) > 0) {
         Forum forum = fs.getForum(categoryId, forumId);
-        String spaceGroupId = forum.getPoster()[0];
+        String prefixId = Utils.FORUM_SPACE_ID_PREFIX;
+        String spaceGroupId = SpaceUtils.SPACE_GROUP.concat("/").concat(forum.getId().replaceFirst(prefixId, ""));
         link = buildTopicLink(spaceGroupId, topicId);
       } else {
         PortalRequestContext prc = Util.getPortalRequestContext();
@@ -181,30 +181,28 @@ public class ForumUIActivity extends BaseKSActivity {
     // work-around for SOC-2366 when rename existing space
     String permanentSpaceName = spaceGroupId.split("/")[2];
     
-    RequestContext ctx = RequestContext.getCurrentInstance();
-    NodeURL nodeURL =  ctx.createURL(NodeURL.TYPE);
-    NavigationResource resource = null;
-    resource = new NavigationResource(SiteType.GROUP, SpaceUtils.SPACE_GROUP + "/"
+    NodeURL nodeURL =  RequestContext.getCurrentInstance().createURL(NodeURL.TYPE);
+    NavigationResource resource = new NavigationResource(SiteType.GROUP, SpaceUtils.SPACE_GROUP + "/"
                                         + permanentSpaceName, permanentSpaceName);
    
     return nodeURL.setResource(resource).toString(); 
   }
   
   public String getViewLink() {
-    String link = buildLink();
-    return link;
+    return buildLink();
   }
   
 
   public String getLastReplyLink() {
-    String viewLink = getViewLink();
-    return viewLink.concat("/lastpost");
+    String viewLink = buildLink();
+    return (Utils.isEmpty(viewLink)) ? StringUtils.EMPTY : viewLink.concat("/lastpost");
   }
 
   protected String getViewPostLink(ExoSocialActivity activity) {
+    String topicView = buildLink();
     Map<String, String> templateParams = activity.getTemplateParams();
-    if(templateParams != null) {
-      return templateParams.get(ForumActivityBuilder.POST_LINK_KEY);
+    if(templateParams != null && templateParams.containsKey(ForumActivityBuilder.POST_ID_KEY)) {
+      return topicView.concat("/").concat(templateParams.get(ForumActivityBuilder.POST_ID_KEY));
     }
     return StringUtils.EMPTY;
   }
@@ -322,10 +320,10 @@ public class ForumUIActivity extends BaseKSActivity {
   private void saveComment(Post post) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
-    comment.setUserId(Utils.getViewerIdentity().getId());
+    comment.setUserId(org.exoplatform.social.webui.Utils.getViewerIdentity().getId());
     comment.setTitle(ForumActivityBuilder.getThreeFirstLines(post));
     comment.setBody(post.getMessage());
-    Utils.getActivityManager().saveComment(getActivity(), comment);
+    org.exoplatform.social.webui.Utils.getActivityManager().saveComment(getActivity(), comment);
     //
     ForumActivityUtils.takeCommentBack(post, comment);
     
