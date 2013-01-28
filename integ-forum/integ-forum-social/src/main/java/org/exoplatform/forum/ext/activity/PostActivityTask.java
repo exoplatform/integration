@@ -18,9 +18,7 @@ package org.exoplatform.forum.ext.activity;
 
 import java.util.Map;
 
-import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Topic;
-import org.exoplatform.forum.service.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;

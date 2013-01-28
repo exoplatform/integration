@@ -194,6 +194,11 @@ public class ForumActivityUtils {
       am.deleteActivity(activityId);
     }
   }
+
+  public static void updateActivities(ExoSocialActivity activity) {
+    ActivityManager am = getActivityManager();
+    am.updateActivity(activity);
+  }
   
   public static ForumService getForumService() {
     if (forumService == null) {

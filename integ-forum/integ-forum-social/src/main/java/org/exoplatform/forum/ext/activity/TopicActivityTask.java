@@ -210,7 +210,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.UPDATE_TOPIC_CONTENT.getActivity(activity, null);
+      return ForumActivityType.UPDATE_TOPIC_CONTENT.getActivity(activity);
     }
     
     @Override

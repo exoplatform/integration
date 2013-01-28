@@ -56,6 +56,8 @@ public class ForumActivityBuilder {
   public static final String TOPIC_POST_COUNT_KEY    = "NumberOfReplies";
   
   public static final String TOPIC_VOTE_RATE_KEY    = "TopicVoteRate";
+
+  private static final int NUMBER_CHAR_IN_LINE    = 70;
   
   private ForumActivityBuilder() {
     
@@ -63,12 +65,11 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivityComment(Post post, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = getThreeFirstLines(post);
+    String title = getThreeFirstLines(post);
 
     //activity.setUserId(post.getOwner());
-    String title = StringEscapeUtils.unescapeHtml(post.getMessage());
     activity.setTitle(title);
-    activity.setBody(body);
+    activity.setBody(post.getMessage());
     activity.isComment(true);
     activity.setType(FORUM_ACTIVITY_TYPE);
     
@@ -78,7 +79,7 @@ public class ForumActivityBuilder {
     Map<String, String> templateParams = new HashMap<String, String>();
     
     templateParams.put(POST_ID_KEY, post.getId());
-    templateParams.put(POST_LINK_KEY, post.getLink());
+    templateParams.put(POST_LINK_KEY, post.getLink() + "/" + post.getId());
     templateParams.put(POST_NAME_KEY, post.getName());
     templateParams.put(POST_OWNER_KEY, post.getOwner());
     //
@@ -104,11 +105,19 @@ public class ForumActivityBuilder {
   }
   
   public static String getThreeFirstLines(Topic topic) {
-    return topic.getDescription();
+    return getNumberFirstLines(topic.getDescription().replaceAll("&nbsp;", ""), 3);
+  }
+
+  public static String getNumberFirstLines(String content, int line) {
+    int maxL = NUMBER_CHAR_IN_LINE * line;
+    if (content.length() > maxL) {
+      return content.substring(0, maxL) + "...";
+    }
+    return content;
   }
   
   public static String getThreeFirstLines(Post post) {
-    return post.getMessage();
+    return getNumberFirstLines(post.getMessage().replaceAll("&nbsp;", ""), 3);
   }
   
   public static ExoSocialActivity createActivity(Topic topic, ForumActivityContext ctx) {

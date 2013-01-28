@@ -207,6 +207,9 @@
          </a> |
          <a href="${uicomponent.getViewLink()}" id="View${activity.id}">
            <%= _ctx.appRes("ForumUIActivity.label.view") %>
+         </a> |
+         <a href="${uicomponent.getLastReplyLink()}" id="LastReply${activity.id}">
+           <%= _ctx.appRes("ForumUIActivity.label.lastReply") %>
          </a>
          </div>
       </div>
@@ -271,7 +274,8 @@
       } else {
         commentContentClass = "";
       }
-
+      
+      def postLink = uicomponent.getViewPostLink(it);
       def id = Utils.getIdentityManager().getIdentity(it.userId);
       commenterFullName = id.profile.fullName;
       commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
@@ -291,7 +295,16 @@
           <span class="BorderBottomCM"></span>
         </a>
         <div class="ContentBox">
-            <h5><a href="$commenterProfileUri">$commenterFullName</a></h5>
+            <h5 style="float:none">
+              <a href="$commenterProfileUri">$commenterFullName</a>
+            <%
+               if(postLink != null && postLink.length() > 0) {
+            %>
+                | <a href="$postLink">View</a>
+            <%
+               }
+            %>
+            </h5>
             <p class="ContentBlock">
               $commentMessage
             </p>

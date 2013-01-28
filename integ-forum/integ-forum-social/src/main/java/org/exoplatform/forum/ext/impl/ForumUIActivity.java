@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
@@ -34,15 +35,11 @@ import org.exoplatform.portal.mop.user.UserPortal;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.social.common.RealtimeListAccess;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.core.space.SpaceUtils;
-import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.webui.Utils;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
-import org.exoplatform.social.webui.activity.BaseUIActivity.CommentStatus;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.web.url.navigation.NavigationResource;
 import org.exoplatform.web.url.navigation.NodeURL;
@@ -103,7 +100,7 @@ public class ForumUIActivity extends BaseKSActivity {
       
       String link = "";
       //
-      if (SPACES_GROUP.equals(cate.getCategoryName())) {
+      if (cate.getId().indexOf(SPACES_GROUP) > 0) {
         Forum forum = fs.getForum(categoryId, forumId);
         String spaceGroupId = forum.getPoster()[0];
         link = buildTopicLink(spaceGroupId, topicId);
@@ -113,7 +110,6 @@ public class ForumUIActivity extends BaseKSActivity {
         UserPortal userPortal = prc.getUserPortal();
         UserNavigation userNav = userPortal.getNavigation(prc.getSiteKey());
         UserNode userNode = userPortal.getNode(userNav, Scope.ALL, null, null);
-        
         
         //
         UserNode forumNode = userNode.getChild(FORUM_PAGE_NAGVIGATION);
@@ -136,7 +132,6 @@ public class ForumUIActivity extends BaseKSActivity {
   private String getLink(String tagLink, String nameLink) {
     String link = buildLink();
     return String.format(tagLink, link, nameLink);
-    
   }
   
   private String getNodeURL(UserNode node) {
@@ -199,6 +194,20 @@ public class ForumUIActivity extends BaseKSActivity {
     String link = buildLink();
     return link;
   }
+  
+
+  public String getLastReplyLink() {
+    String viewLink = getViewLink();
+    return viewLink.concat("/lastpost");
+  }
+
+  protected String getViewPostLink(ExoSocialActivity activity) {
+    Map<String, String> templateParams = activity.getTemplateParams();
+    if(templateParams != null) {
+      return templateParams.get(ForumActivityBuilder.POST_LINK_KEY);
+    }
+    return StringUtils.EMPTY;
+  }
 
   /*
    * used by Template, line 160 ForumUIActivity.gtmpl
@@ -239,39 +248,44 @@ public class ForumUIActivity extends BaseKSActivity {
     return false;
   }
   
-  public Post createPost(String message, WebuiRequestContext requestContext) throws Exception {
-    
-    DataStorage dataStorage = (DataStorage) PortalContainer.getInstance().getComponentInstanceOfType(DataStorage.class);
-    String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
-    String categoryId = getActivityParamValue(ForumActivityBuilder.CATE_ID_KEY);
-    String forumId = getActivityParamValue(ForumActivityBuilder.FORUM_ID_KEY);
-    Topic topic = dataStorage.getTopic(categoryId, forumId, topicId, "");
-    
-    //
-    Post post = new Post();
-    post.setOwner(requestContext.getRemoteUser());
-    post.setIcon("IconsView");
-    post.setName("Re: " + topic.getTopicName());
-    post.setLink(topic.getLink());
-    
-    PortalRequestContext context = Util.getPortalRequestContext();
-    String remoteAddr = ((HttpServletRequest)context.getRequest()).getRemoteAddr() ;
-    
-    //getRemoteAddr()
-    post.setRemoteAddr(remoteAddr);
+  public Post createPost(String message, WebuiRequestContext requestContext) {
+    try {
+      DataStorage dataStorage = (DataStorage) PortalContainer.getInstance().getComponentInstanceOfType(DataStorage.class);
+      String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
+      String categoryId = getActivityParamValue(ForumActivityBuilder.CATE_ID_KEY);
+      String forumId = getActivityParamValue(ForumActivityBuilder.FORUM_ID_KEY);
+      Topic topic = dataStorage.getTopic(categoryId, forumId, topicId, "");
 
-    post.setModifiedBy(requestContext.getRemoteUser());
-    post.setIsApproved(true);
-    post.setMessage(message);
-    
-    dataStorage.savePost(categoryId, forumId, topicId, post, true, new MessageBuilder());
-    
-    //
-    long numberOfReplies = topic.getPostCount() + 1;
-    topic.setPostCount(numberOfReplies);
-    dataStorage.saveTopic(categoryId, forumId, topic, false, false, new MessageBuilder());
-    
-    return post;
+      //
+      Post post = new Post();
+      post.setOwner(requestContext.getRemoteUser());
+      post.setIcon("IconsView");
+      post.setName("Re: " + topic.getTopicName());
+      post.setLink(topic.getLink());
+
+      //
+      PortalRequestContext context = Util.getPortalRequestContext();
+      String remoteAddr = ((HttpServletRequest) context.getRequest()).getRemoteAddr();
+
+      post.setRemoteAddr(remoteAddr);
+
+      post.setModifiedBy(requestContext.getRemoteUser());
+      post.setMessage(message);
+
+      dataStorage.savePost(categoryId, forumId, topicId, post, true, new MessageBuilder());
+
+      //
+      ExoSocialActivity activity = getActivity();
+      Map<String, String> templateParams = activity.getTemplateParams();
+      templateParams.put(ForumActivityBuilder.TOPIC_POST_COUNT_KEY, String.valueOf(topic.getPostCount() + 1));
+
+      activity.setTemplateParams(templateParams);
+      ForumActivityUtils.updateActivities(activity);
+
+      return post;
+    } catch (Exception e) {
+      return null;
+    }
   }
   
   public static class PostCommentActionListener extends BaseUIActivity.PostCommentActionListener {
@@ -290,6 +304,8 @@ public class ForumUIActivity extends BaseKSActivity {
       
       //
       Post post = uiActivity.createPost(message, requestContext);
+
+      //
       uiActivity.saveComment(post);
 
       uiActivity.setCommentFormFocused(true);
@@ -305,10 +321,13 @@ public class ForumUIActivity extends BaseKSActivity {
    */
   private void saveComment(Post post) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
-    ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(post, ctx);
+    ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
     comment.setUserId(Utils.getViewerIdentity().getId());
-    comment.setTitle(post.getMessage());
+    comment.setTitle(ForumActivityBuilder.getThreeFirstLines(post));
+    comment.setBody(post.getMessage());
     Utils.getActivityManager().saveComment(getActivity(), comment);
+    //
+    ForumActivityUtils.takeCommentBack(post, comment);
     
     refresh();
   }
