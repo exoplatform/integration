@@ -34,6 +34,7 @@ import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.cms.BasePath;
+import org.exoplatform.services.cms.jcrext.activity.ActivityCommon;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.context.DocumentContext;
 import org.exoplatform.services.jcr.core.ManageableRepository;
@@ -64,13 +65,16 @@ import org.exoplatform.wcm.ext.component.activity.ContentUIActivity;
  */
 public class Utils {
 
-  private static final Log    LOG                = ExoLogger.getLogger(Utils.class);
+  private static final Log    LOG                 = ExoLogger.getLogger(Utils.class);
 
   /** The Constant Activity Type */
-  private static final String CONTENT_SPACES     = "contents:spaces";
+  private static final String CONTENT_SPACES      = "contents:spaces";
 
   /** the publication:currentState property name */
-  private static final String CURRENT_STATE_PROP = "publication:currentState";
+  private static final String CURRENT_STATE_PROP  = "publication:currentState";
+  
+  private static String MIX_COMMENT                = "exo:activityComment";
+  private static String MIX_COMMENT_ID             = "exo:activityCommentID";
 
   /**
    * Populate activity data with the data from Node
@@ -179,11 +183,6 @@ public class Utils {
 
     // get owner
     String activityOwnerId = getActivityOwnerId();
-    
-    ExoSocialActivity activity = createActivity(identityManager,
-                                                activityOwnerId,
-                                                node,
-                                                activityMsgBundleKey, isSystemComment, systemComment);
     String nodeActivityID = StringUtils.EMPTY;
     ExoSocialActivity exa =null;
     if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
@@ -194,12 +193,41 @@ public class Utils {
         //Not activity is deleted, return no related activity
       }
     }
+    ExoSocialActivity activity = null ;
+    String commentID;
+    boolean commentFlag = false;
+    if (node.isNodeType(MIX_COMMENT)) {
+      commentID = node.getProperty(MIX_COMMENT_ID).getString();
+      activity = activityManager.getActivity(commentID);
+      commentFlag = activity!=null;
+    }
+    if (activity==null) {
+      activity = createActivity(identityManager, activityOwnerId,
+                                node, activityMsgBundleKey, isSystemComment, systemComment);
+    }
     
     if (exa!=null) {
       if (needUpdate) {
         activityManager.updateActivity(exa);
       }
-      activityManager.saveComment(exa, activity);
+      if (commentFlag) {
+        Map<String, String> paramsMap = activity.getTemplateParams();
+        String paramMessage = paramsMap.get(ContentUIActivity.MESSAGE);
+        String paramContent = paramsMap.get(ContentUIActivity.SYSTEM_COMMENT);
+        if (!StringUtils.isEmpty(paramMessage)) {
+          paramMessage += ActivityCommon.VALUE_SEPERATOR + activityMsgBundleKey;
+          paramContent += ActivityCommon.VALUE_SEPERATOR + systemComment;
+        } else {
+          paramMessage = activityMsgBundleKey;
+          paramContent = systemComment;
+        }
+        paramsMap.put(ContentUIActivity.MESSAGE, paramMessage);
+        paramsMap.put(ContentUIActivity.SYSTEM_COMMENT, paramContent);
+        activity.setTemplateParams(paramsMap);
+        activityManager.saveActivityNoReturn(activity);
+        return;
+      } else {
+      }
     }else {
       String spaceName = getSpaceName(node);
 

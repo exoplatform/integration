@@ -224,11 +224,11 @@ public class ContentUIActivity extends BaseUIActivity {
   }
 
   public Node getContentNode() {
-    return contentNode;
+    return NodeLocation.getNodeByLocation(nodeLocation);
   }
 
   public void setContentNode(Node contentNode) {
-    this.contentNode = contentNode;
+    this.nodeLocation = NodeLocation.getNodeLocationByNode(contentNode);
   }
 
   public NodeLocation getNodeLocation() {

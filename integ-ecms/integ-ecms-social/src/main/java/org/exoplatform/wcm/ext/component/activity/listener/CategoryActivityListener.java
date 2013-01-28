@@ -17,7 +17,7 @@ package org.exoplatform.wcm.ext.component.activity.listener;
  */
 import javax.jcr.Node;
 
-import org.exoplatform.services.cms.jcrext.activity.ActivityCommons;
+import org.exoplatform.services.cms.jcrext.activity.ActivityCommon;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 /**
@@ -36,9 +36,9 @@ public class CategoryActivityListener extends Listener<Node, String> {
     Node currentNode = event.getSource();
     String categoryName = event.getData();
     String eventName = event.getEventName();
-    String bundleMessage = eventName.equals(ActivityCommons.CATEGORY_ADDED_ACTIVITY) ?
+    String bundleMessage = eventName.equals(ActivityCommon.CATEGORY_ADDED_ACTIVITY) ?
                            CATEGORY_ADDED_BUNDLE:CATEGORY_REMOVED_BUNDLE;
-    if (eventName.equals(ActivityCommons.CATEGORY_ADDED_ACTIVITY)) {
+    if (eventName.equals(ActivityCommon.CATEGORY_ADDED_ACTIVITY)) {
       Utils.postActivity(currentNode, bundleMessage, false, true, categoryName);
     }
   }

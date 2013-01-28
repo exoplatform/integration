@@ -17,7 +17,7 @@ package org.exoplatform.wcm.ext.component.activity.listener;
  */
 import javax.jcr.Node;
 
-import org.exoplatform.services.cms.jcrext.activity.ActivityCommons;
+import org.exoplatform.services.cms.jcrext.activity.ActivityCommon;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 /**
@@ -35,7 +35,7 @@ public class AttachmentActivityListener extends Listener<Node, Node> {
   @Override
   public void onEvent(Event<Node, Node> event) throws Exception {
     String eventName = event.getEventName(); //Consider the attachment is added or removed
-    String messageBundle = eventName.equals(ActivityCommons.ATTACH_ADDED_ACTIVITY)?ATTACH_ADDED_BUNDLE:ATTACH_REMOVED_BUNDLE;
+    String messageBundle = eventName.equals(ActivityCommon.ATTACH_ADDED_ACTIVITY)?ATTACH_ADDED_BUNDLE:ATTACH_REMOVED_BUNDLE;
     Node currentNode = event.getSource();
     Utils.postActivity(currentNode, messageBundle, false, true, "");
   }
