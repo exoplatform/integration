@@ -13,7 +13,11 @@
       <attachmentRemoved>Des fichiers on été supprimés.</attachmentRemoved>
       <categoryAdded>La catégorie: {0} a été ajoutée.</categoryAdded>
       <categoryRemoved>La catégorie: {0} a été supprimée.</categoryRemoved>
-      <commentAdded>Un commentaire est ajouté à l'activitée</commentAdded>
+      <comment>
+        <commentAdded>Un commentaire est ajouté à l'activitée</commentAdded>
+        <commentModified>comment is updated in the activity</commentModified>
+        <commentRemoved>comment is removed from the activity</commentRemoved>
+      </comment>
       <stateChange>
         <pending>La publication est maintenant en attente.</pending>
         <approved>La publication a été approuvée.</approved>

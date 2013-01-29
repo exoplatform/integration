@@ -32,7 +32,7 @@ import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.webui.util.Util;
-import org.exoplatform.services.cms.jcrext.activity.ActivityCommon;
+import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
@@ -359,8 +359,8 @@ public class ContentUIActivity extends BaseUIActivity {
       if (Boolean.parseBoolean(tmp)) {
         commentMessage  = activityParams.get(ContentUIActivity.MESSAGE);
         if (!StringUtils.isEmpty(commentMessage)) {
-          if (commentMessage.indexOf(ActivityCommon.VALUE_SEPERATOR) >=0) {
-            result = commentMessage.split(ActivityCommon.VALUE_SEPERATOR); 
+          if (commentMessage.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
+            result = commentMessage.split(ActivityCommonService.VALUE_SEPERATOR); 
             return result;
           }else {
             return new String[] {commentMessage};
@@ -379,8 +379,8 @@ public class ContentUIActivity extends BaseUIActivity {
     if (activityParams==null) return null;
     String commentValue = activityParams.get(ContentUIActivity.SYSTEM_COMMENT);
     if (!StringUtils.isEmpty(commentValue)) {
-      if (commentValue.indexOf(ActivityCommon.VALUE_SEPERATOR) >=0) {
-        result = commentValue.split(ActivityCommon.VALUE_SEPERATOR); 
+      if (commentValue.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
+        result = commentValue.split(ActivityCommonService.VALUE_SEPERATOR); 
         return result;
       }else {
         return new String[] {commentValue};

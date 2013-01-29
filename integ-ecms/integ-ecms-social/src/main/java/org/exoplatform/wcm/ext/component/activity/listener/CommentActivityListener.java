@@ -28,11 +28,17 @@ import org.exoplatform.services.listener.Listener;
  * 16 Jan 2013  
  */
 public class CommentActivityListener extends Listener<Node, String> {
-  private static String COMMENT_ADDED_BUNDLE        = "SocialIntegration.messages.commentAdded";
-  
+  private String[] COMMENT_ACTION = {"commentAdded", "commentModified", "commentRemoved"};
+  private String   bundlePrefix = "SocialIntegration.messages.comment.";
   @Override
   public void onEvent(Event<Node, String> event) throws Exception {
     Node currentNode = event.getSource();
-    Utils.postActivity(currentNode, COMMENT_ADDED_BUNDLE, false, true, "");
+    String commentAction = event.getData();
+    for (int i=0; i< COMMENT_ACTION.length; i++) {
+      if (commentAction.equals(COMMENT_ACTION[i])) {
+        Utils.postActivity(currentNode, bundlePrefix + commentAction, false, true, "");
+        break;
+      }
+    }
   }
 }

@@ -96,7 +96,7 @@
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
-      <name>ActivityNotify.event.CommentAdded</name>
+      <name>ActivityNotify.event.CommentAction</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.CommentActivityListener</type>
       <description>this listener will publish an activity when a content has been updated</description>

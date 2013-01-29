@@ -34,7 +34,7 @@ import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.cms.BasePath;
-import org.exoplatform.services.cms.jcrext.activity.ActivityCommon;
+import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.context.DocumentContext;
 import org.exoplatform.services.jcr.core.ManageableRepository;
@@ -209,20 +209,16 @@ public class Utils {
     }
     
     if (exa!=null) {
-      if (needUpdate) {
-        //Check for publication status
-        //Check for title change
-      }
       if (commentFlag) {
         Map<String, String> paramsMap = activity.getTemplateParams();
         String paramMessage = paramsMap.get(ContentUIActivity.MESSAGE);
         String paramContent = paramsMap.get(ContentUIActivity.SYSTEM_COMMENT);
         if (!StringUtils.isEmpty(paramMessage)) {
-          paramMessage += ActivityCommon.VALUE_SEPERATOR + activityMsgBundleKey;
+          paramMessage += ActivityCommonService.VALUE_SEPERATOR + activityMsgBundleKey;
           if (StringUtils.isEmpty(systemComment)) {
-            paramContent += ActivityCommon.VALUE_SEPERATOR + " ";
+            paramContent += ActivityCommonService.VALUE_SEPERATOR + " ";
           }else {
-            paramContent += ActivityCommon.VALUE_SEPERATOR + systemComment;
+            paramContent += ActivityCommonService.VALUE_SEPERATOR + systemComment;
           }
         } else {
           paramMessage = activityMsgBundleKey;
@@ -232,11 +228,6 @@ public class Utils {
         paramsMap.put(ContentUIActivity.SYSTEM_COMMENT, paramContent);
         activity.setTemplateParams(paramsMap);
         activityManager.updateActivity(activity);
-        // For debugging
-        ExoSocialActivity tact = activityManager.getActivity(activity.getId());
-        paramsMap = tact.getTemplateParams();
-        paramMessage = paramsMap.get(ContentUIActivity.MESSAGE);
-        paramContent = paramsMap.get(ContentUIActivity.SYSTEM_COMMENT);
         return;
       } else {
         activityManager.saveComment(exa, activity);
