@@ -32,6 +32,7 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 
@@ -67,13 +68,11 @@ public class PollSpaceActivityPublisher extends PollEventListener{
     try {
       Identity pollOwnerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, poll.getOwner(), false);
       Map<String, String> templateParams = new HashMap<String, String>();
-      ExoSocialActivity activity = activity(pollOwnerIdentity, poll.getQuestion(), Utils.getInfoVote(poll), templateParams);
       String pollPath = poll.getParentPath()+"/"+poll.getId();
       String activityId = pollService.getActivityIdForOwner(pollPath);
       if (activityId != null) {
-        ExoSocialActivity got = getManager().getActivity(activityId);
-        if (got != null) {
-          activity = got;
+        ExoSocialActivity activity = getManager().getActivity(activityId);
+        if (activity != null) {
           poll.setInfoVote();
           activity.setBody(Utils.getInfoVote(poll));
           activity.setTitle(poll.getQuestion());
@@ -102,14 +101,18 @@ public class PollSpaceActivityPublisher extends PollEventListener{
         } else {
           activityId = null;
           poll.setInfoVote();
-          activity.setBody(Utils.getInfoVote(poll));
         }
       }
       if (activityId == null) {
+        Identity spaceIdentity = getSpaceIdentity(poll);
+        if (spaceIdentity != null) {
+          pollOwnerIdentity =  spaceIdentity;
+        }
+        ExoSocialActivity newActivity = activity(pollOwnerIdentity, poll.getQuestion(), Utils.getInfoVote(poll), templateParams);
         templateParams.put(POLL_LINK_KEY, poll.getLink());
-        activity.setTemplateParams(templateParams);
-        getManager().saveActivityNoReturn(pollOwnerIdentity, activity);
-        pollService.saveActivityIdForOwner(pollPath, activity.getId());
+        newActivity.setTemplateParams(templateParams);
+        getManager().saveActivityNoReturn(pollOwnerIdentity, newActivity);
+        pollService.saveActivityIdForOwner(pollPath, newActivity.getId());
       }
     } catch (Exception e) {
       LOG.error("Can not record Activity for space when create poll ", e.getMessage());
@@ -135,6 +138,21 @@ public class PollSpaceActivityPublisher extends PollEventListener{
   
   private ActivityManager getManager() {
     return (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
+  }
+  
+  private Identity getSpaceIdentity(Poll poll) {
+    IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
+    String path = poll.getParentPath();
+    String spaceName = "";
+    if (path.contains("forumCategoryspaces")) {
+      String[] tab = path.split("/");
+      spaceName = tab[tab.length-2].replace("forumSpace", "");
+    }
+    if ("".equals(spaceName)) {
+      return null;
+    } else {
+      return identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, spaceName, false);
+    }
   }
   
 }
