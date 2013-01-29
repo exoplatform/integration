@@ -173,7 +173,7 @@
         
         <div class="BoxGray ClearFix">
           <% 
-            if(uicomponent.isPreviewable()) {
+            if(uicomponent.isPreviewable() || uicomponent.isImageFile()) {
           %>
               <a style="display: block; float: left;" href="<%= uicomponent.event("ViewDocument")%>" title="$dName">      
                 <img src="<%= uicomponent.docThumbnail %>" style="max-height: 300px; max-width: 300px;" />
