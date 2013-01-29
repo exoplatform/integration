@@ -85,18 +85,23 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     // Get activity
     Node node = page.getJCRPageNode();
     ExoSocialActivity activity = null;
+    boolean isNewActivity = false;
     ActivityManager activityManager = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
     if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
       try {
         String nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
         activity = activityManager.getActivity(nodeActivityID);
+        isNewActivity = false;
       } catch (Exception e) {
-        activity = createNewActivity(ownerIdentity.getId());
       }
     }
     
     if (activity == null) {
+      if (page.isMinorEdit()) {
+        return null;
+      }
       activity = createNewActivity(ownerIdentity.getId());
+      isNewActivity = true;
     }
     
     // Add UI params
@@ -123,7 +128,11 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     activity.setTemplateParams(templateParams);
     
     // Save activity
-    activityManager.saveActivityNoReturn(ownerStream, activity);
+    if (isNewActivity) {
+      activityManager.saveActivityNoReturn(ownerStream, activity);
+    } else {
+      activityManager.updateActivity(activity);
+    }
     
     // Check to add comment to activity
     WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
@@ -296,7 +305,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
 
   @Override
   public void postUpdatePage(String wikiType, String wikiOwner, String pageId, Page page, String wikiUpdateType) throws Exception {
-    if((page != null) && !page.isMinorEdit()) {
+    if(page != null) {
       saveActivity(wikiType, wikiOwner, pageId, page, wikiUpdateType);
     }
   }
