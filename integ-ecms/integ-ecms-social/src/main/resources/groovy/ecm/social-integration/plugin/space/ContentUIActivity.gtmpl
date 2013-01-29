@@ -222,7 +222,7 @@
 			  <img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<div class="activityType"><span><i class="uiIconContentMini uiIconWhite"></i></span></div>					
+		<div class="activityType"><span><i class="uiIconSocContentMini uiIconSocWhite"></i></span></div>					
 	</div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
