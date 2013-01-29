@@ -122,6 +122,14 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           if (!commentTitle.toString().equals("")) {
             comment.setTitle(commentTitle.toString());
             activityM.saveComment(activity, comment);
+            String answerContent = formatBody(answer.getResponses());
+            String promotedAnswer = "Comment "+answerContent+" has been promoted as an answer";
+            if (promotedAnswer.equals(commentTitle.toString())) {
+              faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
+            } else {
+              String answerActivityId = faqS.getActivityIdForAnswer(questionId, answer);
+              faqS.saveActivityIdForAnswer(questionId, answer, answerActivityId+","+comment.getId());
+            }
           } else {
             String answerContent = formatBody(answer.getResponses());
             comment.setTitle("Answer has been submitted: "+answerContent);
@@ -315,20 +323,27 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ExoContainer exoContainer = ExoContainerContext.getCurrentContainer();
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Answer answer = faqS.getAnswerById(questionPath, answerId);
-      String answerActivityId = faqS.getActivityIdForAnswer(questionPath, answer);
       String questionActivityId = faqS.getActivityIdForQuestion(questionPath);
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
-      activityM.deleteComment(questionActivityId, answerActivityId);
+      String answerActivityId = faqS.getActivityIdForAnswer(questionPath, answer);
+      for (String id : answerActivityId.split(",")) {
+        ExoSocialActivity activity = activityM.getActivity(id);
+        if (activity != null) {
+          activityM.deleteComment(questionActivityId, id);
+        }
+      }
+      refreshActivity(questionPath, questionActivityId);
     } catch (Exception e) {
       LOG.debug("Fail to remove comment when remove question's answer "+e.getMessage());
     }
   }
   
-  public void removeComment(String questionActivityId, String commentActivityId) {
+  public void removeComment(String questionActivityId, String commentActivityId, String questionPath) {
     try {
       ExoContainer exoContainer = ExoContainerContext.getCurrentContainer();
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       activityM.deleteComment(questionActivityId, commentActivityId);
+      refreshActivity(questionPath, questionActivityId);
     } catch (Exception e) {
       LOG.debug("Fail to remove comment when remove question's comment "+e.getMessage());
     }
@@ -411,6 +426,21 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         I18NActivityUtils.addResourceKey(comment, "answer-disapproved", answerContent);
         return "Answer has been disapproved: "+answerContent+".";
       }
+    }
+  }
+  
+  private void refreshActivity(String questionId, String questionActivityId) {
+    try {
+      ExoContainer exoContainer = ExoContainerContext.getCurrentContainer();
+      FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
+      Question question = faqS.getQuestionById(questionId);
+      ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
+      ExoSocialActivity activity = activityM.getActivity(questionActivityId);
+      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+      activity.setTemplateParams(templateParams);
+      activityM.updateActivity(activity);
+    } catch (Exception e) {
+      LOG.debug("Fail to refresh activity "+e.getMessage());
     }
   }
   
