@@ -197,9 +197,11 @@ public class Utils {
     String commentID;
     boolean commentFlag = false;
     if (node.isNodeType(MIX_COMMENT)) {
-      commentID = node.getProperty(MIX_COMMENT_ID).getString();
-      activity = activityManager.getActivity(commentID);
-      commentFlag = activity!=null;
+      if (node.hasProperty(MIX_COMMENT_ID)) {
+        commentID = node.getProperty(MIX_COMMENT_ID).getString();
+        activity = activityManager.getActivity(commentID);
+        commentFlag = activity!=null;
+      }
     }
     if (activity==null) {
       activity = createActivity(identityManager, activityOwnerId,
@@ -208,7 +210,8 @@ public class Utils {
     
     if (exa!=null) {
       if (needUpdate) {
-        activityManager.updateActivity(exa);
+        //Check for publication status
+        //Check for title change
       }
       if (commentFlag) {
         Map<String, String> paramsMap = activity.getTemplateParams();
@@ -216,7 +219,11 @@ public class Utils {
         String paramContent = paramsMap.get(ContentUIActivity.SYSTEM_COMMENT);
         if (!StringUtils.isEmpty(paramMessage)) {
           paramMessage += ActivityCommon.VALUE_SEPERATOR + activityMsgBundleKey;
-          paramContent += ActivityCommon.VALUE_SEPERATOR + systemComment;
+          if (StringUtils.isEmpty(systemComment)) {
+            paramContent += ActivityCommon.VALUE_SEPERATOR + " ";
+          }else {
+            paramContent += ActivityCommon.VALUE_SEPERATOR + systemComment;
+          }
         } else {
           paramMessage = activityMsgBundleKey;
           paramContent = systemComment;
@@ -224,9 +231,19 @@ public class Utils {
         paramsMap.put(ContentUIActivity.MESSAGE, paramMessage);
         paramsMap.put(ContentUIActivity.SYSTEM_COMMENT, paramContent);
         activity.setTemplateParams(paramsMap);
-        activityManager.saveActivityNoReturn(activity);
+        activityManager.updateActivity(activity);
+        // For debugging
+        ExoSocialActivity tact = activityManager.getActivity(activity.getId());
+        paramsMap = tact.getTemplateParams();
+        paramMessage = paramsMap.get(ContentUIActivity.MESSAGE);
+        paramContent = paramsMap.get(ContentUIActivity.SYSTEM_COMMENT);
         return;
       } else {
+        activityManager.saveComment(exa, activity);
+        if (node.isNodeType(MIX_COMMENT)) {
+          commentID = activity.getId();
+          node.setProperty(MIX_COMMENT_ID, commentID);
+        }
       }
     }else {
       String spaceName = getSpaceName(node);

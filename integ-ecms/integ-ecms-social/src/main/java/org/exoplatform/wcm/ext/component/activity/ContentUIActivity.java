@@ -26,11 +26,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.cms.jcrext.activity.ActivityCommon;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
@@ -321,9 +323,9 @@ public class ContentUIActivity extends BaseUIActivity {
    * @throws Exception the exception
    */
   public String getWebdavURL() throws Exception {
+    contentNode = getContentNode();
     PortletRequestContext portletRequestContext = WebuiRequestContext.getCurrentInstance();
     PortletRequest portletRequest = portletRequestContext.getRequest();
-    NodeLocation nodeLocation = NodeLocation.getNodeLocationByNode(this.contentNode);
     String repository = nodeLocation.getRepository();
     String workspace = nodeLocation.getWorkspace();
     String baseURI = portletRequest.getScheme() + "://" + portletRequest.getServerName() + ":"
@@ -347,7 +349,8 @@ public class ContentUIActivity extends BaseUIActivity {
     return friendlyService.getFriendlyUri(link);
   }
 
-  public String getSystemCommentBundle(Map<String, String> activityParams) {
+  public String[] getSystemCommentBundle(Map<String, String> activityParams) {
+    String[] result;
     if (activityParams==null) return null;
     String tmp = activityParams.get(ContentUIActivity.IS_SYSTEM_COMMENT);
     String commentMessage;
@@ -355,17 +358,35 @@ public class ContentUIActivity extends BaseUIActivity {
     try {
       if (Boolean.parseBoolean(tmp)) {
         commentMessage  = activityParams.get(ContentUIActivity.MESSAGE);
-        tmp =  activityParams.get(ContentUIActivity.SYSTEM_COMMENT);
-        return commentMessage.replace("{0}", tmp);
-      } else return null;
+        if (!StringUtils.isEmpty(commentMessage)) {
+          if (commentMessage.indexOf(ActivityCommon.VALUE_SEPERATOR) >=0) {
+            result = commentMessage.split(ActivityCommon.VALUE_SEPERATOR); 
+            return result;
+          }else {
+            return new String[] {commentMessage};
+          }
+        }
+      } 
     }catch (Exception e) {
+      
       return null;
     }
+    return null;
+    
   }
-  
-  public String getSystemCommentTitle(Map<String, String> activityParams) {
+  public String[] getSystemCommentTitle(Map<String, String> activityParams) {
+    String[] result;
     if (activityParams==null) return null;
-    return activityParams.get(ContentUIActivity.SYSTEM_COMMENT);
+    String commentValue = activityParams.get(ContentUIActivity.SYSTEM_COMMENT);
+    if (!StringUtils.isEmpty(commentValue)) {
+      if (commentValue.indexOf(ActivityCommon.VALUE_SEPERATOR) >=0) {
+        result = commentValue.split(ActivityCommon.VALUE_SEPERATOR); 
+        return result;
+      }else {
+        return new String[] {commentValue};
+      }
+    }
+    return null;
   }
   
   public static class ViewDocumentActionListener extends EventListener<ContentUIActivity> {

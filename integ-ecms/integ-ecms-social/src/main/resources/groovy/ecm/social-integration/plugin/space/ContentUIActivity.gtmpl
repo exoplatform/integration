@@ -420,11 +420,34 @@
       //VinhNT, new spec for ActivityTypes
       def activityParams = it.getTemplateParams();
       def systemComment = uicomponent.getSystemCommentBundle(activityParams);
-      def systemCommentTite ; 
+      def systemCommentTitle ;
+      StringBuffer commentBuffer = new StringBuffer();
       if (systemComment!=null) {
-        systemCommentTite = uicomponent.getSystemCommentTitle(activityParams);
-        commentMessage = _ctx.appRes(systemComment);
-        commentMessage = commentMessage.replace("{0}", systemCommentTite);
+        systemCommentTitle = uicomponent.getSystemCommentTitle(activityParams);
+        if (systemComment!=null) {
+          if (systemComment.length>0) {
+            for (def count=0; count<systemComment.length; count++) {
+              commentMessage = _ctx.appRes(systemComment[count]);
+              if (systemCommentTitle!=null) {
+                if (systemCommentTitle.length>count) {
+                  commentMessage = commentMessage.replace("{0}", systemCommentTitle[count]);
+                }
+              }
+              if (systemComment!=null) {
+                if (systemComment.length>1) {
+                  commentBuffer.append("<p>").append(commentMessage).append("</p>");
+                }else {
+                  commentBuffer.append(commentMessage);
+                }
+              }else {
+                commentBuffer.append(commentMessage);
+              }
+            }
+          }
+          commentMessage = commentBuffer.toString(); 
+        }else {
+          commentMessage = it.title;
+        }
       } else {
         commentMessage = it.title;
       }
