@@ -217,24 +217,31 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 		  SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
 		  String spacePrettyName = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
 		  Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
+		  
 		  if (space != null && event.getActivityId() != null) {
 			  String userId = ConversationState.getCurrent().getIdentity().getUserId();
 			  Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
 			  Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
 			  ExoSocialActivity activity = activityM.getActivity(event.getActivityId()) ;
-			  // if the activity was deleted, create new activity and add comment
+			  // if the activity was deleted, create new activity and add comments
 			  if(activity == null) {
-			    activity = new ExoSocialActivityImpl() ;
-			    event.setActivityId(activity.getId());
-			    activity.setUserId(userIdentity.getId());
-			    activity.setTitle(event.getSummary());
-			    activity.setBody(event.getDescription());
-			    activity.setType("cs-calendar:spaces");
-			    activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
-			    activityM.saveActivityNoReturn(spaceIdentity, activity);
-			    ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
-          activityM.saveComment(activity, newComment);
-          LOG.info("[CALENDAR] successfully added comment to deleted calendar activity");
+	        
+			    // re-create activity
+			    ExoSocialActivity newActivity = new ExoSocialActivityImpl();
+	        newActivity.setUserId(userIdentity.getId());
+	        newActivity.setTitle(event.getSummary());
+	        newActivity.setBody(event.getDescription());
+	        newActivity.setType("cs-calendar:spaces");
+	        newActivity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
+	        activityM.saveActivityNoReturn(spaceIdentity, newActivity);
+	       
+	        // add comments
+	        ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
+          activityM.saveComment(newActivity, newComment);
+          
+          // update activity id for event
+	        event.setActivityId(newActivity.getId());
+          LOG.info(String.format("[CALENDAR] successfully re-created activity for event: %s", event.getSummary()));
 			  } else {
 			    activity.setTitle(event.getSummary());
 			    activity.setBody(event.getDescription());
@@ -242,7 +249,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 	        activityM.updateActivity(activity);
 	        ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
 	        activityM.saveComment(activity, newComment);
-	        LOG.info("[CALENDAR] successfully added comment to calendar activity");  
+	        LOG.info(String.format("[CALENDAR] successfully added comment to activity of event: %s", event.getSummary()));  
 			  }
 			  
 		  }
