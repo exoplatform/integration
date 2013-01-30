@@ -60,6 +60,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.wcm.ext.component.activity.ContentUIActivity;
 
+
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
  * 18, 2011
@@ -414,7 +415,7 @@ public class Utils {
 	
     String title = node.hasProperty(NodetypeConstant.EXO_TITLE) ? node.getProperty(NodetypeConstant.EXO_TITLE)
                                                                       .getString()
-                                                               : StringUtils.EMPTY;    
+                                                               : org.exoplatform.ecm.webui.utils.Utils.getTitle(node);    
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     if(ConversationState.getCurrent() != null)
     {
