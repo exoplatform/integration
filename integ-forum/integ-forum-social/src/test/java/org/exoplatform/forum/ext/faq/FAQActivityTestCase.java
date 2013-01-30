@@ -147,9 +147,10 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     assertEquals(4,comments.size());
     assertEquals("Question has been activated.", comments.get(3).getTitle());
     
-    //update question's language
+    //add new question's language
     question = faqService_.getQuestionById(question.getId());
-    question.setLanguage("French");
+    QuestionLanguage lang = createQuestionLanguage("French");
+    question.setMultiLanguages(new QuestionLanguage[] { lang });
     faqService_.saveQuestion(question, false, faqSetting_);
     activity = getManager().getActivity(activityId);
     comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);

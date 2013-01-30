@@ -81,10 +81,12 @@ public class PollSpaceActivityPublisher extends PollEventListener{
           if (currentName.equals(poll.getOwner())) {
             comment.setUserId(pollOwnerIdentity.getId());
             comment.setTitle(poll.getPollAction().getMessage(Utils.getUserVote(poll, poll.getOwner())));
+            templateParams.put(VOTE_VALUE, Utils.getUserVote(poll, poll.getOwner()));
           } else {
             Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentName, false);
             comment.setUserId(currentIdentity.getId());
             comment.setTitle(poll.getPollAction().getMessage(Utils.getUserVote(poll,currentName)));
+            templateParams.put(VOTE_VALUE, Utils.getUserVote(poll, currentName));
           }
           if (poll.getPollAction().equals(PollAction.Vote_Poll)) {
             comment.setTitleId(VOTE_POLL_TITLE_ID);
@@ -92,7 +94,6 @@ public class PollSpaceActivityPublisher extends PollEventListener{
           if (poll.getPollAction().equals(PollAction.Vote_Again_Poll)) {
             comment.setTitleId(VOTE_AGAIN_POLL_TITLE_ID);
           }
-          templateParams.put(VOTE_VALUE, Utils.getUserVote(poll, poll.getOwner()));
           templateParams.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, VOTE_VALUE);
           comment.setType(POLL_COMMENT_APP_ID);
           comment.setTemplateParams(templateParams);

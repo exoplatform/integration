@@ -183,9 +183,13 @@
         </div>
       </div>
       <div class="DefaultActivityIcon">
+      <a class="Text" href="${uicomponent.getLink()}">
+        Vote
+      </a>
       <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
          def commentLink = "";
       %>
+      <span style="float:right">
      <% if (activityCommentAndLikable) { %>
         <a class="$commentLink" onclick="$toggleDisplayCommentAction" id="CommentLink${activity.id}" href="#comment">
           $labelComment
@@ -200,6 +204,7 @@
         </a> 0
       <% }%>
      <% }%>
+     </span>
         </div>
       </div>
     <% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>
