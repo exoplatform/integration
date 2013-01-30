@@ -38,6 +38,6 @@ public class ContentCreateActivityListener extends Listener<Object, Node> {
   @Override
   public void onEvent(Event<Object, Node> event) throws Exception {
     Node currentNode = event.getData();
-    Utils.postActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY);
+    Utils.postActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY, true, false, "");
   }
 }

@@ -36,6 +36,7 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.cms.BasePath;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.cms.link.LinkManager;
+import org.exoplatform.services.cms.templates.TemplateService;
 import org.exoplatform.services.context.DocumentContext;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
@@ -99,9 +100,7 @@ public class Utils {
     String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration()
                                                                                   .getName();
     String workspace = node.getSession().getWorkspace().getName();
-    String state = node.hasProperty(CURRENT_STATE_PROP) ? node.getProperty(CURRENT_STATE_PROP)
-                                                              .getValue()
-                                                              .getString() : "";
+    
     String illustrationImg = Utils.getIllustrativeImage(node);
     String strDateCreated = "";
     if (node.hasProperty(NodetypeConstant.EXO_DATE_CREATED)) {
@@ -123,7 +122,6 @@ public class Utils {
     // populate data to map object
     Map<String, String> activityParams = new HashMap<String, String>();
     activityParams.put(ContentUIActivity.CONTENT_NAME, node.getName());
-    activityParams.put(ContentUIActivity.STATE, state);
     activityParams.put(ContentUIActivity.AUTHOR, activityOwnerId);
     activityParams.put(ContentUIActivity.DATE_CREATED, strDateCreated);
     activityParams.put(ContentUIActivity.LAST_MODIFIED, strLastModified);
@@ -235,10 +233,12 @@ public class Utils {
           node.setProperty(MIX_COMMENT_ID, commentID);
         }
       }
+      if (needUpdate) {
+        updateMainActivity(activityManager, node, exa);
+      }
       return activity;
     }else {
       String spaceName = getSpaceName(node);
-
       if (spaceName != null && spaceName.length() > 0
           && spaceService.getSpaceByPrettyName(spaceName) != null) {
         // post activity to space stream
@@ -262,7 +262,45 @@ public class Utils {
       return activity;
     }
   }
-
+  private static void updateMainActivity(ActivityManager activityManager, Node contentNode, ExoSocialActivity activity) {
+    Map<String, String> activityParams = activity.getTemplateParams();
+    String state;
+    String nodeTitle;
+    String nodeType = null;
+    String documentTypeLabel;
+    String currentVersion = null;
+    TemplateService templateService = WCMCoreUtils.getService(TemplateService.class);
+    try {
+      nodeType = contentNode.getPrimaryNodeType().getName();
+      documentTypeLabel = templateService.getTemplateLabel(nodeType);
+    }catch (Exception e) {
+      documentTypeLabel = "";
+    }
+    try {
+      nodeTitle = org.exoplatform.ecm.webui.utils.Utils.getTitle(contentNode);
+    } catch (Exception e1) {
+      nodeTitle ="";
+    }
+    try {
+      state = contentNode.hasProperty(CURRENT_STATE_PROP) ? contentNode.getProperty(CURRENT_STATE_PROP)
+          .getValue()
+          .getString() : "";
+    } catch (Exception e) {
+      state="";
+    }
+    try {
+      currentVersion = contentNode.getBaseVersion().getName();
+    }catch (Exception e) {
+      currentVersion ="";
+    }
+    activityParams.put(ContentUIActivity.STATE, state);
+    activityParams.put(ContentUIActivity.DOCUMENT_TYPE_LABEL, documentTypeLabel);
+    activityParams.put(ContentUIActivity.DOCUMENT_TITLE, nodeTitle);
+    activityParams.put(ContentUIActivity.DOCUMENT_VERSION, currentVersion);
+    activityParams.put(ContentUIActivity.DOCUMENT_SUMMARY, getSummary(contentNode));
+    activity.setTemplateParams(activityParams);
+    activityManager.updateActivity(activity);
+  }
   /**
    * check the nodes that we support to post activities
    * 
@@ -467,5 +505,26 @@ public class Utils {
       LOG.error(e.getMessage(), e);
     }
     return "";
+  }
+  
+  public static String getSummary(Node node) {
+    String desc = "";
+    try {
+      if (node != null) {
+        if (node.hasProperty("exo:summary")) {
+          desc = node.getProperty("exo:summary").getValue().getString();
+        } else if (node.hasNode("jcr:content")) {
+          Node content = node.getNode("jcr:content");
+          if (content.hasProperty("dc:description") && content.getProperty("dc:description").getValues().length > 0) {
+            desc = content.getProperty("dc:description").getValues()[0].getString();
+          }
+        }
+      }
+    } catch (RepositoryException re) {
+      if (LOG.isWarnEnabled())
+        LOG.warn("RepositoryException: ", re);
+    }
+
+    return desc;
   }
 }
