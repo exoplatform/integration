@@ -174,7 +174,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             ExoSocialActivityImpl oldComment = (ExoSocialActivityImpl) activityM.getActivity(commentActivityId);
             if (oldComment != null) {
               comment = oldComment;
-              comment.setTitle(cm.getComments());
+              comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(cm.getComments(), (List<String>) Collections.EMPTY_LIST)));
               activityM.updateActivity(comment);
             } else {
               commentActivityId = null;
@@ -383,7 +383,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       I18NActivityUtils.addResourceKey(comment, "question-update-title", question.getQuestion());
       return "Title has been updated to: "+question.getQuestion();
     } else if ("questionDetail".equals(e.getPropertyName())) {
-      I18NActivityUtils.addResourceKey(comment, "question-update-detail", question.getDetail());
+      I18NActivityUtils.addResourceKey(comment, "question-update-detail", formatBody(question.getDetail()));
       return "Details has been edited to: "+formatBody(question.getDetail());
     } else if ("questionActivated".equals(e.getPropertyName())) {
       if (question.isActivated()) {
@@ -397,8 +397,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       I18NActivityUtils.addResourceKey(comment, "question-add-attachment", null);
       return "Attachment(s) has been added.";
     } else { //case of add new language
-      I18NActivityUtils.addResourceKey(comment, "question-add-language", question.getLanguage());
-      return "Question has been added in "+question.getLanguage();
+      int length = question.getMultiLanguages().length;
+      I18NActivityUtils.addResourceKey(comment, "question-add-language", question.getMultiLanguages()[length-1].getLanguage());
+      return "Question has been added in "+question.getMultiLanguages()[length-1].getLanguage();
     }
   }
   

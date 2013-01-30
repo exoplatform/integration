@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
+import org.exoplatform.faq.service.DataStorage;
 import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.faq.service.Question;
@@ -20,6 +21,7 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
@@ -127,8 +129,8 @@ public class AnswerUIActivity extends BaseKSActivity {
                                                   ApplicationMessage.WARNING));
         return;
       }
-      FAQService faqService = (FAQService) ExoContainerContext.getCurrentContainer()
-                                                              .getComponentInstanceOfType(FAQService.class);
+      DataStorage faqService = (DataStorage) ExoContainerContext.getCurrentContainer()
+                                                              .getComponentInstanceOfType(DataStorage.class);
       Question question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
       Comment comment = new Comment();
       comment.setNew(true);
@@ -190,15 +192,13 @@ public class AnswerUIActivity extends BaseKSActivity {
         }
       } // end adding post to forum.
 
-      faqService.saveComment(question.getPath(),
-                             comment,
-                             uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.LANGUAGE_KEY));
-      // cache question's comment
-      ExoSocialActivity act = uiActivity.toActivity(comment);
-      if (act != null)
-        uiActivity.getAllComments().add(act);
-      uiFormComment.reset();
-      uiActivity.setCommentFormFocused(true);
+      faqService.saveComment(question.getPath(), comment,  true);
+      ExoSocialActivity cm = uiActivity.toActivity(comment);
+      ActivityManager activityM = (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
+      ExoSocialActivity activity = activityM.getActivity(faqService.getActivityIdForQuestion(question.getPath()));
+      activityM.saveComment(activity, cm);
+      faqService.saveActivityIdForComment(question.getPath(), comment.getId(), question.getLanguage(), cm.getId());
+      uiActivity.refresh();
       context.addUIComponentToUpdateByAjax(uiActivity);
 
       uiActivity.getParent().broadcast(event, event.getExecutionPhase());
