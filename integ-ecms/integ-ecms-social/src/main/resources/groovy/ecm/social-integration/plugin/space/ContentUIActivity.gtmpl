@@ -112,10 +112,11 @@
   def editLink = uicomponent.getEditLink();
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
+  def commentCount = 0;
   if (allComments) {
+    commentCount = allComments.size();
     labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
     labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
-
   }
   def displayedIdentityLikes = uicomponent.getDisplayedIdentityLikes();
   def identityLikesNum = 0;
@@ -312,11 +313,11 @@
 		<!--ECMS update content of activity END-->
       </p>
       <!--ECMS change icon-->
-      <div class="DocActivityIcon">
-        <div class="viewAction"><a href="$viewLink">View</a></div>
-        <div class="editAction"><a href="$editLink">Edit</a></div>
-        <div class="commentCount">Edit</div>
-        <div class="likeCount">Edit</div>
+      <div class="DocActivityIcon_">
+        <span class="viewAction"><a href="$viewLink">View</a></span>
+        <span class="editAction"><a href="$editLink">Edit</a></span>
+        <span class="commentCount">Comment: $commentCount</span>
+        <span class="likeCount">Like $identityLikesNum</span>
       </div><!--DocActivityIcon END-->
     <% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>
       <div class="ListPeopleLikeBG $listPeopleBGClass">
