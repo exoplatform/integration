@@ -25,6 +25,7 @@
       </stateChange>
       <contentMoved>Publication has been moved to: {0}</contentMoved>
       <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
+      <version>Version: {0}</version>
 		</messages>
 		<publicationStates>
 			<version>Revision</version>

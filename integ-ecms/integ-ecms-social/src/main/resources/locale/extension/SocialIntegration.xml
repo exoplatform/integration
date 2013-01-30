@@ -14,11 +14,9 @@
 			<categoryAdded>Category: {0} has been added.</categoryAdded>
 			<categoryRemoved>Category: {0} has been removed.</categoryRemoved>
 			<tagAdded>Tag: {0} has been added.</tagAdded>
-			<tagsAdded>Tags: {0} has been added.</tagsAdded>
+			<tagsAdded>Tags: {0} have been added.</tagsAdded>
 			<tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} has been removed.</tagsRemoved>
-			<categoryAdded>Tag: {0} has been added.</categoryAdded>
-      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
+      <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
 			<stateChange>
   			<pending>Publication status is now pending.</pending>
   			<approved>Publication has been approved.</approved>
@@ -27,6 +25,7 @@
   		</stateChange>
   		<contentMoved>Publication has been moved to: {0}</contentMoved>
   		<revisionChanged>Publication has been restored to version: {0}</revisionChanged>
+  		<version>Version: {0}</version>
 		</messages>
 		<publicationStates>
 			<archived>Archived</archived>

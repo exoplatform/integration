@@ -107,6 +107,8 @@
   def docTypeName = uicomponent.getDocTypeName();
   def docTitle = uicomponent.getDocTitle();
   def docVersion = uicomponent.getDocVersion();
+  if (docVersion!=null) {
+  }
   def docSummary = uicomponent.getDocSummary();
   def viewLink = uicomponent.getViewLink();
   def editLink = uicomponent.getEditLink();
@@ -317,7 +319,7 @@
         <span class="viewAction"><a href="$viewLink">View</a></span>
         <span class="editAction"><a href="$editLink">Edit</a></span>
         <span class="commentCount">Comment: $commentCount</span>
-        <span class="likeCount">Like $identityLikesNum</span>
+        <span class="likeCount">Like: $identityLikesNum</span>
       </div><!--DocActivityIcon END-->
     <% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>
       <div class="ListPeopleLikeBG $listPeopleBGClass">

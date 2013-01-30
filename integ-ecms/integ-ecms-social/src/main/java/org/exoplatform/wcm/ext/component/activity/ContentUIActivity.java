@@ -403,10 +403,18 @@ public class ContentUIActivity extends BaseUIActivity {
     return null;
   }
   public String getViewLink() {
+    try {
     return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
+    }catch (Exception e) {
+      return "";
+    }
   }
   public String getEditLink() {
-    return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), true, false);
+    try {
+      return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), true, false);
+    }catch (Exception e) {
+      return "";
+    }
   }
   public static class ViewDocumentActionListener extends EventListener<ContentUIActivity> {
     @Override

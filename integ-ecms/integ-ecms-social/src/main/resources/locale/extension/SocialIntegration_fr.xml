@@ -25,6 +25,7 @@
       </stateChange>
       <contentMoved>La publication a été déplacé: {0}</contentMoved>
       <revisionChanged>La publication a été restauré à la version: {0}</revisionChanged>
+      <version>Version: {0}</version>
     </messages>
     <publicationStates>
       <archived>Archivé</archived>
