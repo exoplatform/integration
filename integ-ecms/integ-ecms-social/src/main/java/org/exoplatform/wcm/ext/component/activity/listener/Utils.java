@@ -159,16 +159,16 @@ public class Utils {
    *        if (isSystemComment) systemComment can not be set to null, set to empty string instead of.
    * @throws Exception
    */
-  public static void postActivity(Node node, String activityMsgBundleKey, boolean needUpdate, 
+  public static ExoSocialActivity postActivity(Node node, String activityMsgBundleKey, boolean needUpdate, 
                                   boolean isSystemComment, String systemComment) throws Exception {
     Object isSkipRaiseAct = DocumentContext.getCurrent()
                                            .getAttributes()
                                            .get(DocumentContext.IS_SKIP_RAISE_ACT);
     if (isSkipRaiseAct != null && Boolean.valueOf(isSkipRaiseAct.toString())) {
-      return;
+      return null;
     }
     if (!isSupportedContent(node)) {
-      return;
+      return null;
     }
 
     // get services
@@ -228,7 +228,6 @@ public class Utils {
         paramsMap.put(ContentUIActivity.SYSTEM_COMMENT, paramContent);
         activity.setTemplateParams(paramsMap);
         activityManager.updateActivity(activity);
-        return;
       } else {
         activityManager.saveComment(exa, activity);
         if (node.isNodeType(MIX_COMMENT)) {
@@ -236,6 +235,7 @@ public class Utils {
           node.setProperty(MIX_COMMENT_ID, commentID);
         }
       }
+      return activity;
     }else {
       String spaceName = getSpaceName(node);
 
@@ -253,12 +253,13 @@ public class Utils {
             true);
         activityManager.saveActivityNoReturn(ownerIdentity, activity);
       } else {
-        return;
+        return null;
       }
       String activityId = activity.getId();
       if (!StringUtils.isEmpty(activityId)) {
         ActivityTypeUtils.attachActivityId(node, activityId);
       }
+      return activity;
     }
   }
 
@@ -316,7 +317,7 @@ public class Utils {
     }
     return activityOwnerId;
   }
-
+  
   /**
    * get the space name of node
    * 

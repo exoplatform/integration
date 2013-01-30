@@ -96,10 +96,24 @@
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
-      <name>ActivityNotify.event.CommentAction</name>
+      <name>ActivityNotify.event.CommentAdded</name>
       <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.CommentActivityListener</type>
+      <type>org.exoplatform.wcm.ext.component.activity.listener.CommentAddedActivityListener</type>
       <description>this listener will publish an activity when comment added</description>
+    </component-plugin>
+    
+    <component-plugin profiles="default,all,social">
+      <name>ActivityNotify.event.CommentUpdated</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.wcm.ext.component.activity.listener.CommentUpdatedActivityListener</type>
+      <description>this listener will publish an activity when comment updated</description>
+    </component-plugin>
+    
+    <component-plugin profiles="default,all,social">
+      <name>ActivityNotify.event.CommentRemoved</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.wcm.ext.component.activity.listener.CommentRemovedActivityListener</type>
+      <description>this listener will publish an activity when comment removed</description>
     </component-plugin>
     
     <component-plugin profiles="default,all,social">

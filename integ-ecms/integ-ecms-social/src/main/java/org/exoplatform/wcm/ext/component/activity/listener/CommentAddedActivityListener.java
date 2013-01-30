@@ -17,8 +17,10 @@ package org.exoplatform.wcm.ext.component.activity.listener;
  */
 import javax.jcr.Node;
 
+import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 
 /**
  * Created by The eXo Platform SAS
@@ -27,18 +29,25 @@ import org.exoplatform.services.listener.Listener;
  * Handler Comment Added event
  * 16 Jan 2013  
  */
-public class CommentActivityListener extends Listener<Node, String> {
-  private String[] COMMENT_ACTION = {"commentAdded", "commentModified", "commentRemoved"};
-  private String   bundlePrefix = "SocialIntegration.messages.comment.";
+public class CommentAddedActivityListener extends Listener<Node, Node> {
   @Override
-  public void onEvent(Event<Node, String> event) throws Exception {
+  public void onEvent(Event<Node, Node> event) throws Exception {
     Node currentNode = event.getSource();
-    String commentAction = event.getData();
-    for (int i=0; i< COMMENT_ACTION.length; i++) {
-      if (commentAction.equals(COMMENT_ACTION[i])) {
-        Utils.postActivity(currentNode, bundlePrefix + commentAction, false, true, "");
-        break;
+    Node commentNode = event.getData();
+    String commentContent = "";
+    if (commentNode.hasProperty("exo:commentContent")) {
+      try {
+        commentContent = commentNode.getProperty("exo:commentContent").getValue().getString();
+      }catch (Exception e) {
+        commentContent =null;
       }
+    }
+    if (commentContent==null) return;
+    ExoSocialActivity commentActivity = Utils.postActivity(currentNode, "{0}", false, true, commentContent);
+    if (commentActivity!=null) {
+      ActivityTypeUtils.attachActivityId(commentNode, commentActivity.getId());
+      commentNode.save();
+      commentNode.getSession().save();
     }
   }
 }

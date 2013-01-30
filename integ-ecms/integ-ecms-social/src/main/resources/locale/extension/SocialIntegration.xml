@@ -19,11 +19,6 @@
       <tagsRemoved>Tags: {0} has been removed.</tagsRemoved>
 			<categoryAdded>Tag: {0} has been added.</categoryAdded>
       <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
-			<comment>
-        <commentAdded>comment is added to the activity</commentAdded>
-        <commentModified>comment is updated in the activity</commentModified>
-        <commentRemoved>comment is removed from the activity</commentRemoved>
-      </comment>
 			<stateChange>
   			<pending>Publication status is now pending.</pending>
   			<approved>Publication has been approved.</approved>

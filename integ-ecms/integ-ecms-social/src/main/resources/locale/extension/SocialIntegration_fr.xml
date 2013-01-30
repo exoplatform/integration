@@ -17,11 +17,6 @@
       <tagsAdded>Tags: {0} has been added.</tagsAdded>
       <tagRemoved>Tag: {0} has been removed.</tagRemoved>
       <tagsRemoved>Tags: {0} has been removed.</tagsRemoved>
-      <comment>
-        <commentAdded>Un commentaire est ajouté à l'activitée</commentAdded>
-        <commentModified>comment is updated in the activity</commentModified>
-        <commentRemoved>comment is removed from the activity</commentRemoved>
-      </comment>
       <stateChange>
         <pending>La publication est maintenant en attente.</pending>
         <approved>La publication a été approuvée.</approved>
