@@ -19,6 +19,8 @@
     <module>integ-wiki</module>
     <module>integ-forum</module>
     <module>integ-social</module>
+    <module>integ-search-service</module>
+    <module>integ-search-portlet</module>
   </modules>
   <scm>
     <connection>scm:git:git://github.com/exoplatform/integration.git</connection>
@@ -48,6 +50,7 @@
     <org.exoplatform.wiki.version>4.0.0.Alpha1-SNAPSHOT</org.exoplatform.wiki.version>
     <org.gatein.portal.version>3.5.0.Final</org.gatein.portal.version>
     <org.gatein.shindig.version>2.0.2.Final-gatein-3</org.gatein.shindig.version>
+    <org.juzu.version>0.6.0-beta5</org.juzu.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -543,6 +546,26 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-core</artifactId>
+        <version>${org.juzu.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-bom-core</artifactId>
+        <version>${org.juzu.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-plugins-portlet</artifactId>
+        <version>${org.juzu.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-plugins-less</artifactId>
+        <version>${org.juzu.version}</version>
+      </dependency>     
     </dependencies>
   </dependencyManagement>
 </project>
