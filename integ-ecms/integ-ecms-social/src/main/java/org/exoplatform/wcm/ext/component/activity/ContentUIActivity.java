@@ -388,25 +388,25 @@ public class ContentUIActivity extends BaseUIActivity {
     }
     return null;
   }
-  
   public static class ViewDocumentActionListener extends EventListener<ContentUIActivity> {
     @Override
     public void execute(Event<ContentUIActivity> event) throws Exception {
       final ContentUIActivity docActivity = event.getSource();
-      final UIActivitiesContainer activitiesContainer = docActivity.getParent();
-      final UIPopupWindow popupWindow = activitiesContainer.getPopupWindow();
-
-      UIDocViewer docViewer = popupWindow.createUIComponent(UIDocViewer.class, null, "DocViewer");
+//      final UIActivitiesContainer activitiesContainer = docActivity.getParent();
+//      final UIPopupWindow popupWindow = activitiesContainer.getPopupWindow();
+//
+//      UIDocViewer docViewer = popupWindow.createUIComponent(UIDocViewer.class, null, "DocViewer");
       final Node docNode = docActivity.getContentNode();
-      docViewer.setOriginalNode(docNode);
-      docViewer.setNode(docNode);
-
-      popupWindow.setUIComponent(docViewer);
-      popupWindow.setWindowSize(800, 600);
-      popupWindow.setShow(true);
-      popupWindow.setResizable(true);
-
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupWindow);
+//      docViewer.setOriginalNode(docNode);
+//      docViewer.setNode(docNode);
+//
+//      popupWindow.setUIComponent(docViewer);
+//      popupWindow.setWindowSize(800, 600);
+//      popupWindow.setShow(true);
+//      popupWindow.setResizable(true);
+//
+//      event.getRequestContext().addUIComponentToUpdateByAjax(popupWindow);
+      String link = org.exoplatform.wcm.webui.Utils.getEditLink(docNode, false, false);
     }
   }
 }

@@ -57,49 +57,49 @@
       <name>ActivityNotify.event.AttachmentAdded</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.AttachmentActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
+      <description>this listener will publish an activity when an attachment added</description>
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
       <name>ActivityNotify.event.AttachmentRemoved</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.AttachmentActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
+      <description>this listener will publish an activity when an attachment removed</description>
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
       <name>ActivityNotify.event.CategoryAdded</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.CategoryActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
+      <description>this listener will publish an activity when a Category added</description>
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
       <name>ActivityNotify.event.CategoryRemoved</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.CategoryActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
+      <description>this listener will publish an activity when a Category removed</description>
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
       <name>ActivityNotify.event.TagAdded</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.TagActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
+      <description>this listener will publish an activity when tags added</description>
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
       <name>ActivityNotify.event.TagRemoved</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.TagActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
+      <description>this listener will publish an activity when tags removed</description>
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
       <name>ActivityNotify.event.CommentAction</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.CommentActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
+      <description>this listener will publish an activity when comment added</description>
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
@@ -113,7 +113,7 @@
       <name>ActivityNotify.event.RevisionChanged</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.ContentRevisionActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
+      <description>this listener will publish an activity when content revision changed</description>
     </component-plugin>
 	</external-component-plugins>
 	

@@ -13,6 +13,10 @@
       <attachmentRemoved>Des fichiers on été supprimés.</attachmentRemoved>
       <categoryAdded>La catégorie: {0} a été ajoutée.</categoryAdded>
       <categoryRemoved>La catégorie: {0} a été supprimée.</categoryRemoved>
+      <tagAdded>Tag: {0} has been added.</tagAdded>
+      <tagsAdded>Tags: {0} has been added.</tagsAdded>
+      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
+      <tagsRemoved>Tags: {0} has been removed.</tagsRemoved>
       <comment>
         <commentAdded>Un commentaire est ajouté à l'activitée</commentAdded>
         <commentModified>comment is updated in the activity</commentModified>

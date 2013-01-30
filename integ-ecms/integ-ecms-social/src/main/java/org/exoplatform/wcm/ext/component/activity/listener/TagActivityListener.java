@@ -25,17 +25,25 @@ public class TagActivityListener extends Listener<Node, String>{
   
   private static String TAG_ADDED_BUNDLE        = "SocialIntegration.messages.tagAdded";
   private static String TAG_REMOVED_BUNDLE      = "SocialIntegration.messages.tagRemoved";
+  private static String TAGS_ADDED_BUNDLE       = "SocialIntegration.messages.tagsAdded";
+  private static String TAGS_REMOVED_BUNDLE     = "SocialIntegration.messages.tagsRemoved";
   
   @Override
   public void onEvent(Event<Node, String> event) throws Exception {
     String eventName = event.getEventName();
+    if(! (eventName.equals(ActivityCommonService.TAG_ADDED_ACTIVITY) || eventName.equals(ActivityCommonService.TAG_REMOVED_ACTIVITY)) ){
+      return;
+    }
     Node currentNode = event.getSource();
     String tagValue = event.getData();
-    String bundleMessage = ActivityCommonService.TAG_ADDED_ACTIVITY.equals(eventName)?TAG_ADDED_BUNDLE:TAG_REMOVED_BUNDLE;
-    if (eventName.equals(ActivityCommonService.CATEGORY_ADDED_ACTIVITY)) {
-      Utils.postActivity(currentNode, bundleMessage, false, true, tagValue);
+    int tagSepIndex = tagValue.indexOf(",");
+    boolean isMultiple = tagSepIndex>0 && !tagValue.endsWith(",");
+    String bundleMessage ;
+    if (isMultiple) {
+      bundleMessage = ActivityCommonService.TAG_ADDED_ACTIVITY.equals(eventName)?TAGS_ADDED_BUNDLE:TAGS_REMOVED_BUNDLE;
+    }else {
+      bundleMessage = ActivityCommonService.TAG_ADDED_ACTIVITY.equals(eventName)?TAG_ADDED_BUNDLE:TAG_REMOVED_BUNDLE;
     }
-    
+    Utils.postActivity(currentNode, bundleMessage, false, true, tagValue);
   }
-
 }

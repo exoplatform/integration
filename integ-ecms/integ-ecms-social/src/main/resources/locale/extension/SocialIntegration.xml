@@ -13,6 +13,12 @@
 			<attachmentRemoved>File(s) has been removed.</attachmentRemoved>
 			<categoryAdded>Category: {0} has been added.</categoryAdded>
 			<categoryRemoved>Category: {0} has been removed.</categoryRemoved>
+			<tagAdded>Tag: {0} has been added.</tagAdded>
+			<tagsAdded>Tags: {0} has been added.</tagsAdded>
+			<tagRemoved>Tag: {0} has been removed.</tagRemoved>
+      <tagsRemoved>Tags: {0} has been removed.</tagsRemoved>
+			<categoryAdded>Tag: {0} has been added.</categoryAdded>
+      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
 			<comment>
         <commentAdded>comment is added to the activity</commentAdded>
         <commentModified>comment is updated in the activity</commentModified>
