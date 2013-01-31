@@ -31,7 +31,7 @@
       jsManager.require("SHARED/social-ui-activity-composer", "composer")
                .addScripts("composer.activeShareButton();");
       %>
-	  
+
       <span class="TopInputLink"></span>
       <div class="InputDoc">
         <span class="BrowsedDocument"><%=uicomponent.getDocumentName()%></span>
