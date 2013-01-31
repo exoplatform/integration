@@ -40,6 +40,13 @@
 		</component-plugin>
 		
 		<component-plugin profiles="default,all,social">
+			<name>ActivityNotify.event.FileCreated</name>
+			<set-method>addListener</set-method>
+			<type>org.exoplatform.wcm.ext.component.activity.listener.FileCreateActivityListener</type>
+			<description>this listener will publish an activity when a file has been	created and initiated state</description>
+		</component-plugin>
+		
+		<component-plugin profiles="default,all,social">
 			<name>ActivityNotify.event.StateChanged</name>
 			<set-method>addListener</set-method>
 			<type>org.exoplatform.wcm.ext.component.activity.listener.PublicationStateActivityListener</type>
@@ -152,6 +159,34 @@
 						</field>
 						<field name="activityBuiderClass">
 							<string>org.exoplatform.wcm.ext.component.activity.ContentUIActivityBuilder</string>
+						</field>
+					</object>
+				</object-param>
+			</init-params>
+		</component-plugin>
+	</external-component-plugins>
+	
+	<external-component-plugins>
+		<target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
+		<component-plugin profiles="default,all,social">
+			<name>add.action</name>
+			<set-method>registerUIExtensionPlugin</set-method>
+			<type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+			<init-params>
+				<object-param>
+					<name>File Activity</name>
+					<object	type="org.exoplatform.social.webui.activity.UIActivityExtension">
+						<field name="type">
+							<string>org.exoplatform.social.webui.activity.BaseUIActivity</string>
+						</field>
+						<field name="name">
+							<string>files:spaces</string>
+						</field>
+						<field name="component">
+							<string>org.exoplatform.wcm.ext.component.activity.FileUIActivity</string>
+						</field>
+						<field name="activityBuiderClass">
+							<string>org.exoplatform.wcm.ext.component.activity.FileUIActivityBuilder</string>
 						</field>
 					</object>
 				</object-param>
