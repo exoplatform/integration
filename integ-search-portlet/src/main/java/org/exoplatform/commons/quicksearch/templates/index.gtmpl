@@ -77,7 +77,6 @@
 
     <script>
       //*** Global variables ***
-      var PATH_TO_SEARCH_PAGE = "/portal/intranet/search";
       var CONNECTORS;
       var SEARCH_TYPES;
       var QUICKSEARCH_SETTING;
@@ -176,7 +175,8 @@
           var width = Math.min($("#quickSearchResult").width(), $(window).width() - $("#txtQuickSearchQuery").offset().left - 20);
           $("#quickSearchResult").width(width);
           $("#quickSearchResult").show();
-          $("#seeAll").attr("href", PATH_TO_SEARCH_PAGE+"?q="+query+"&types="+types+"&currentSite="+parent.eXo.env.portal.portalName);
+          var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
+          $("#seeAll").attr("href", searchPage +"?q="+query+"&types="+types);
         });
       }
 
