@@ -78,6 +78,7 @@ public class Utils {
   
   private static String MIX_COMMENT                = "exo:activityComment";
   private static String MIX_COMMENT_ID             = "exo:activityCommentID";
+  private static int    MAX_SUMMARY_LINES_COUNT    = 4;
 
   /**
    * Populate activity data with the data from Node
@@ -425,10 +426,11 @@ public class Utils {
     activityParams.put(ContentUIActivity.DOCUMENT_TITLE, nodeTitle);
     activityParams.put(ContentUIActivity.DOCUMENT_VERSION, currentVersion);
     String summary = getSummary(contentNode);
-    summary = summary.replaceAll("\\<.*?>\n", "\n");
-    summary = summary.replaceAll("\\<.*?>", "");
-    System.out.println(summary);
-    activityParams.put(ContentUIActivity.DOCUMENT_SUMMARY, getSummary(contentNode));
+    summary =getFirstSummaryLines(summary, MAX_SUMMARY_LINES_COUNT);
+//    summary = summary.replaceAll("\\<.*?>\n", "\n");
+//    summary = summary.replaceAll("\\<.*?>", "");
+//    System.out.println(summary);
+    activityParams.put(ContentUIActivity.DOCUMENT_SUMMARY, summary);
     activity.setTemplateParams(activityParams);
     activityManager.updateActivity(activity);
   }
@@ -655,8 +657,32 @@ public class Utils {
       if (LOG.isWarnEnabled())
         LOG.warn("RepositoryException: ", re);
     }
-
     return desc;
   }
-  
+  public static String getFirstSummaryLines(String source) {
+    return getFirstSummaryLines(source, MAX_SUMMARY_LINES_COUNT);
+  }
+  // Silly function to convert HTML content to plain text
+  public static String getFirstSummaryLines(String source, int linesCount) {
+    String result =  source;
+    result = result.replaceAll("(?i)<head>.*</head>", "");
+    result = result.replaceAll("(?i)<script.*>.*</script>", "");
+    result = result.replaceAll("(?i)<style.*>.*</style>", "");
+    result = result.replaceAll("<([a-z\"]+) *[^/]*?>", "");
+    result = result.replaceAll("</([a-z]+) *[^/]*?>", "<br>");
+    result = result.replaceAll("([\n\t])+", "<br>");
+    result = result.replaceAll("(<br>[ \t\n]+<br>)", "<br>");
+    result = result.replaceAll("(<br>)+", "<br>");
+    int i = 0;
+    int index = -1;
+    while (true) {
+      index = result.indexOf("<br>", index+1);
+      if (index<0) break;
+      i++;
+      if (i>linesCount) break;
+    }
+    if (index <0) return result;
+    result = result.substring(0, index) + "<br>...";
+    return result;
+  }
 }

@@ -56,6 +56,7 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
     }
     for (int i=0; i< consideredFieldCount; i++) {
       if (propertyName.equals(editedField[i])) {
+        if (propertyName.equals("exo:summary")) newValue = Utils.getFirstSummaryLines(newValue);
         Utils.postActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
         break;
       }
