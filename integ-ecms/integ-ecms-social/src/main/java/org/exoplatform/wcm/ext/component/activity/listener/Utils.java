@@ -271,6 +271,7 @@ public class Utils {
       if (!StringUtils.isEmpty(activityId)) {
         ActivityTypeUtils.attachActivityId(node, activityId);
       }
+      updateMainActivity(activityManager, node, activity);
       return activity;
     }
   }
@@ -423,6 +424,10 @@ public class Utils {
     activityParams.put(ContentUIActivity.DOCUMENT_TYPE_LABEL, documentTypeLabel);
     activityParams.put(ContentUIActivity.DOCUMENT_TITLE, nodeTitle);
     activityParams.put(ContentUIActivity.DOCUMENT_VERSION, currentVersion);
+    String summary = getSummary(contentNode);
+    summary = summary.replaceAll("\\<.*?>\n", "\n");
+    summary = summary.replaceAll("\\<.*?>", "");
+    System.out.println(summary);
     activityParams.put(ContentUIActivity.DOCUMENT_SUMMARY, getSummary(contentNode));
     activity.setTemplateParams(activityParams);
     activityManager.updateActivity(activity);
@@ -653,4 +658,5 @@ public class Utils {
 
     return desc;
   }
+  
 }
