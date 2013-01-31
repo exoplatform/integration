@@ -20,22 +20,18 @@
     <dependency>
       <groupId>org.juzu</groupId>
       <artifactId>juzu-core</artifactId>
-      <version>${org.juzu.version}</version>
     </dependency>
     <dependency>
       <groupId>org.juzu</groupId>
       <artifactId>juzu-bom-core</artifactId>
-      <version>${org.juzu.version}</version>
     </dependency>
     <dependency>
       <groupId>org.juzu</groupId>
       <artifactId>juzu-plugins-portlet</artifactId>
-      <version>${org.juzu.version}</version>
     </dependency>
     <dependency>
       <groupId>org.juzu</groupId>
       <artifactId>juzu-plugins-less</artifactId>
-      <version>${org.juzu.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -60,7 +56,7 @@
         <configuration>
           <attach>true</attach>
         </configuration>
-        <executions>
+        <!--<executions>
           <execution>
             <goals>
               <goal>single</goal>
@@ -73,7 +69,7 @@
               </descriptorRefs>
             </configuration>
           </execution>
-        </executions>
+        </executions> -->
       </plugin>
     </plugins>
   </build>
