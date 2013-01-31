@@ -18,8 +18,9 @@
 @Application
 @Portlet
 @Assets(
-        scripts =  @Script(id = "jquery", src = "jquery-1.7.1.min.js", location = AssetLocation.CLASSPATH)
-) package org.exoplatform.commons.searchadministration;
+    scripts = @Script(id = "jquery", src = "jquery-1.7.1.min.js", location = AssetLocation.CLASSPATH)
+)
+package org.exoplatform.commons.searchadministration;
 
 import juzu.Application;
 import juzu.asset.AssetLocation;

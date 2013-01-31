@@ -13,17 +13,42 @@
   <description>Integration search portlet</description>
   <dependencies>
     <dependency>
-      <groupId>javax.portlet</groupId>
-      <artifactId>portlet-api</artifactId>
-      <scope>provided</scope>
+      <groupId>org.juzu</groupId>
+      <artifactId>juzu-bom-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-ext</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.juzu</groupId>
       <artifactId>juzu-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.juzu</groupId>
-      <artifactId>juzu-bom-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.juzu</groupId>
@@ -33,30 +58,27 @@
       <groupId>org.juzu</groupId>
       <artifactId>juzu-plugins-less</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.portlet</groupId>
+      <artifactId>portlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <compilerArguments>
-            <sourcepath>${project.basedir}/src/main/java</sourcepath>
-          </compilerArguments>
-        </configuration>
-      </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <dependencies>
           <dependency>
             <groupId>org.exoplatform.commons</groupId>
-            <artifactId>commons-juzu-packaging</artifactId>
-            <version>${project.version}</version>
+            <artifactId>commons-juzu</artifactId>
+            <version>${org.exoplatform.commons.version}</version>
           </dependency>
         </dependencies>
         <configuration>
           <attach>true</attach>
         </configuration>
-        <!--<executions>
+        <executions>
           <execution>
             <goals>
               <goal>single</goal>
@@ -65,11 +87,11 @@
             <configuration>
               <appendAssemblyId>false</appendAssemblyId>
               <descriptorRefs>
-                <descriptorRef>platform-spring</descriptorRef>
+                <descriptorRef>platform-juzu</descriptorRef>
               </descriptorRefs>
             </configuration>
           </execution>
-        </executions> -->
+        </executions>
       </plugin>
     </plugins>
   </build>
