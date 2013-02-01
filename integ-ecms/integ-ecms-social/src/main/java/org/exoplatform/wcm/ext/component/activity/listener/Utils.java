@@ -397,6 +397,7 @@ public class Utils {
     String state;
     String nodeTitle;
     String nodeType = null;
+    String nodeIconName = null;
     String documentTypeLabel;
     String currentVersion = null;
     TemplateService templateService = WCMCoreUtils.getService(TemplateService.class);

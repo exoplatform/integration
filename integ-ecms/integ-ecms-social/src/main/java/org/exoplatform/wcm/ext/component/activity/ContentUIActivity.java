@@ -223,6 +223,7 @@ public class ContentUIActivity extends BaseUIActivity {
   public String getDocSummary() {
     return docSummary;
   }
+  
   private String convertDateFormat(String strDate, String strOldFormat, String strNewFormat) throws ParseException {
     if (strDate == null || strDate.length() <= 0) {
       return "";

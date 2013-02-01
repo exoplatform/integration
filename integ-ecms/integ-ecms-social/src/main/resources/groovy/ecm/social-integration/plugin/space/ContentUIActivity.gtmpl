@@ -277,9 +277,9 @@
       <p class="Content">
       <!--ECMS update content of activity BEGIN-->
         <div id="ActivityDetail">
-          <div class="defaultIcon {$docTypeName}Icon"></div>
+          <div class="defaultIcon <%=docTypeName%>Icon"></div>
           <div class="docTitle">$docTitle</div>
-          <div class="docSummary {$docTypeName}Icon">$docSummary</div>
+          <div class="docSummary <%=docTypeName%>Icon">$docSummary</div>
           <div class="activityFooter">$docTypeName - $docVersion - $state</div>
         </div>
 		<%if (mimeType != null && mimeType.length() > 0){

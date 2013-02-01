@@ -20,7 +20,6 @@ import javax.jcr.Node;
 
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
-import org.exoplatform.services.wcm.core.NodetypeConstant;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
