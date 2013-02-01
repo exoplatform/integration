@@ -7,6 +7,7 @@
 			<system>the system</system>
 			<readmore>...Read More.</readmore>
 			<editTitle>Title has been updated to: {0}</editTitle>
+			<editDescription>Description has been updated to: {0}</editDescription>
       <editSummary>Summary has been updated to: {0}</editSummary>
       <editContent>Content has been updated.</editContent>
       <attachmentAdded>File(s) has been attached.</attachmentAdded>
@@ -24,6 +25,7 @@
         <published>Publication has been published.</published>
       </stateChange>
       <contentMoved>Publication has been moved to: {0}</contentMoved>
+      <fileMoved>File has been moved to: {0}</fileMoved>
       <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
       <version>Version: {0}</version>
 		</messages>

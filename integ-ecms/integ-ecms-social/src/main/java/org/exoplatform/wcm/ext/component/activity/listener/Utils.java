@@ -633,7 +633,6 @@ public class Utils {
   public static String getMimeType(Node node) {
     try {
       if (node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
-
         if (node.hasNode(NodetypeConstant.JCR_CONTENT))
           return node.getNode(NodetypeConstant.JCR_CONTENT)
                      .getProperty(NodetypeConstant.JCR_MIME_TYPE)
