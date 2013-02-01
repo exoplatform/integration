@@ -32,6 +32,6 @@ public class ContentRevisionActivityListener extends Listener<Node, String>{
   public void onEvent(Event<Node, String> event) throws Exception {
     Node currentNode = event.getSource();
     String versionName = event.getData();
-    Utils.postActivity(currentNode, REVISION_CHANGED_BUNDLE, false, true, versionName);
+    Utils.postActivity(currentNode, REVISION_CHANGED_BUNDLE, true, true, versionName);
   }
 }

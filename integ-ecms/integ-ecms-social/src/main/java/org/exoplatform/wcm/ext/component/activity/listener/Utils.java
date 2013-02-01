@@ -421,6 +421,8 @@ public class Utils {
     }
     try {
       currentVersion = contentNode.getBaseVersion().getName();
+      //TODO Must improve this hardcode later, need specification
+      if (currentVersion.contains("jcr:rootVersion")) currentVersion = "0";
     }catch (Exception e) {
       currentVersion ="";
     }

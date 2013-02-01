@@ -106,9 +106,9 @@
   
   def docTypeName = uicomponent.getDocTypeName();
   def docTitle = uicomponent.getDocTitle();
-  def docVersion = uicomponent.getDocVersion();
-  if (docVersion!=null) {
-  }
+  def docVersionNo = uicomponent.getDocVersion();
+  def docVersion = _ctx.appRes("SocialIntegration.messages.version");
+  docVersion = docVersion.replace("{0}", docVersionNo);
   def docSummary = uicomponent.getDocSummary();
   def viewLink = uicomponent.getViewLink();
   def editLink = uicomponent.getEditLink();
@@ -315,7 +315,7 @@
 		<!--ECMS update content of activity END-->
       </p>
       <!--ECMS change icon-->
-      <div class="DocActivityIcon_">
+      <div class="DocActivityIcon">
         <span class="viewAction"><a href="$viewLink">View</a></span>
         <span class="editAction"><a href="$editLink">Edit</a></span>
         <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
@@ -467,7 +467,7 @@
       def currentCommenterName = currentCommenterIdentity.profile.fullName;
       if (!currentCommenterAvatar) currentCommenterAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
     %>
-    <% if (commentCounter == 0) { %>
+    <% if (commentList.size() == 0) { %>
       <div class="CommentBox InputArea CommentFormBoxNone ClearFix" id="CommentFormBlock${activity.id}">
     <% } else { %>
       <div class="CommentBox InputArea CommentFormBox ClearFix" id="CommentFormBlock${activity.id}">
