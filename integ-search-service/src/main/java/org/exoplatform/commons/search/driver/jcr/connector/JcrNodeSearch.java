@@ -68,7 +68,7 @@ public class JcrNodeSearch extends SearchServiceConnector {
     for(JcrSearchResult jcrResult: jcrResults) {
       try {
         String nodeUrl = jcrResult.getRepository() + "/" + jcrResult.getWorkspace() + jcrResult.getPath();
-        SearchResult result = new SearchResult("/rest/jcr/" + nodeUrl, jcrResult.getScore());
+        SearchResult result = new SearchResult("/rest/jcr/" + nodeUrl, "", "", "", "", 0, jcrResult.getScore());
         String score = String.valueOf(jcrResult.getScore());
         result.setTitle(nodeUrl + " (score = " + score + ")");
         result.setExcerpt(jcrResult.getExcerpt());
@@ -131,7 +131,7 @@ public class JcrNodeSearch extends SearchServiceConnector {
             }
 
             long score = row.getValue("jcr:score").getLong();
-            SearchResult resultItem = new SearchResult("/rest/jcr/" + collection + path, score);
+            SearchResult resultItem = new SearchResult("/rest/jcr/" + collection + path, "", "", "", "", 0, score);
             resultItem.setTitle(collection + path + " (score = " + score + ")");
             Value excerpt = row.getValue("rep:excerpt()");
             resultItem.setExcerpt(null!=excerpt?excerpt.getString():"");

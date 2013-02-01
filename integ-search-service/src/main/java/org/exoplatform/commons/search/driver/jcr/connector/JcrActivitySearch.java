@@ -59,7 +59,7 @@ public class JcrActivitySearch extends SearchServiceConnector {
         String activityId = (String) jcrResult.getProperty("jcr:uuid");        
         ExoSocialActivity activity = activityManager.getActivity(activityId);                       
 
-        SearchResult result = new SearchResult(activity.getStreamUrl(), jcrResult.getScore());
+        SearchResult result = new SearchResult(activity.getStreamUrl(), "", "", "", "", 0, jcrResult.getScore());
         result.setTitle(activity.getTitle());
         result.setExcerpt(jcrResult.getExcerpt());
         StringBuffer buf = new StringBuffer();

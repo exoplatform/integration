@@ -79,7 +79,7 @@ public class JcrForumSearch extends SearchServiceConnector  {
         Forum forum = (Forum)forumService.getForum(category, forumId);        
 
         ///Forum forum = (Forum)forumService.getObjectNameByPath(path.substring(path.indexOf(Utils.CATEGORY), path.lastIndexOf("/")));
-        SearchResult result = new SearchResult(topic.getLink(), jcrResult.getScore());
+        SearchResult result = new SearchResult(topic.getLink(), "", "", "", "", 0, jcrResult.getScore());
         result.setTitle(topic.getTopicName());
         result.setExcerpt(topic.getDescription());
         StringBuffer buf = new StringBuffer();

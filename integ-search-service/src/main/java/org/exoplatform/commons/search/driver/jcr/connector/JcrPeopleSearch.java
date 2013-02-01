@@ -63,7 +63,7 @@ public class JcrPeopleSearch extends SearchServiceConnector {
         Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username, true);
         Profile profile = identity.getProfile();
 
-        SearchResult result = new SearchResult(profile.getUrl(), jcrResult.getScore());
+        SearchResult result = new SearchResult(profile.getUrl(), "", "", "", "", 0, jcrResult.getScore());
         result.setTitle(profile.getFullName());
         String position = profile.getPosition();
         if(null == position) position = "";

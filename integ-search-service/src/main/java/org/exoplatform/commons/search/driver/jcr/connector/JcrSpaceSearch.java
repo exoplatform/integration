@@ -51,7 +51,7 @@ public class JcrSpaceSearch extends SearchServiceConnector {
         String spaceUrl = (String) jcrResult.getProperty("soc:url");        
         Space space = spaceSvc.getSpaceByUrl(spaceUrl);
 
-        SearchResult result = new SearchResult(spaceUrl, jcrResult.getScore());
+        SearchResult result = new SearchResult(spaceUrl, "", "", "", "", 0, jcrResult.getScore());
         result.setTitle(space.getDisplayName());
         result.setExcerpt(space.getDescription());
         result.setDetail(space.getDisplayName() + " - " + String.valueOf(space.getMembers().length) + " - " + space.getVisibility());
