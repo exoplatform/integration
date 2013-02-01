@@ -29,14 +29,15 @@ import org.exoplatform.services.wcm.core.NodetypeConstant;
  */
 public class ContentMovedActivityListener extends Listener<Node, String>{
   private static final String CONTENT_MOVED_BUNDLE = "SocialIntegration.messages.contentMoved";
+  private static final String FILE_MOVED_BUNDLE    = "SocialIntegration.messages.fileMoved";
   @Override
   public void onEvent(Event<Node, String> event) throws Exception {
     Node currentNode = event.getSource();
     String target = event.getData();
-    if(!currentNode.isNodeType(NodetypeConstant.NT_FILE))
+    if(!currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE))
       Utils.postActivity(currentNode, CONTENT_MOVED_BUNDLE, false, true, target);
     else 
-    	Utils.postFileActivity(currentNode, CONTENT_MOVED_BUNDLE, false, true, target);
+    	Utils.postFileActivity(currentNode, FILE_MOVED_BUNDLE, false, true, target);
   }
 
 }

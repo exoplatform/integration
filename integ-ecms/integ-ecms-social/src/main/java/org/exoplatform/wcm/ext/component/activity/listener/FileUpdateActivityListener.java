@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
+import javax.jcr.Value;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
@@ -28,11 +29,12 @@ import org.exoplatform.services.wcm.core.NodetypeConstant;
  */
 public class FileUpdateActivityListener extends Listener<Node, String> {
 
-  private String[]  editedField     = {"exo:title", "exo:summary", "dc:title", "dc:description", "exo:text"};
+  private String[]  editedField     = {"exo:title", "exo:summary", "dc:title", "dc:description", "dc:creator", "exo:text"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editSummary",
                                        "SocialIntegration.messages.editTitle",
-                                       "SocialIntegration.messages.editSummary",
+                                       "SocialIntegration.messages.editDescription",
+                                       "SocialIntegration.messages.addCreator",
                                        "SocialIntegration.messages.editContent"};
   private boolean[] needUpdate      = {true, true, true, true, false};
   private int consideredFieldCount = editedField.length;
@@ -47,12 +49,20 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
   public void onEvent(Event<Node, String> event) throws Exception {
     Node currentNode = event.getSource();
     String propertyName = event.getData();
-    String newValue;
+    String newValue = "";
     try {
       if (propertyName.equals(editedField[consideredFieldCount-1])) {
         newValue ="";
       } else {
-        newValue= currentNode.getProperty(propertyName).getString();
+      	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
+      		Value[] values = currentNode.getProperty(propertyName).getValues();
+      		if(values != null) {
+      			for (Value value : values) {
+							newValue += value.getString() + ", ";
+						}
+      			newValue = newValue.substring(0, newValue.length()-2);
+      		}
+      	} else newValue= currentNode.getProperty(propertyName).getString();
       }
     }catch (Exception e) {
       newValue = "";
