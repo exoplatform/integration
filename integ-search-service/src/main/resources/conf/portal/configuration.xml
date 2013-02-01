@@ -59,9 +59,9 @@
       </component-plugin>
             
       <component-plugin>
-        <name>JcrEventSearch</name>
+        <name>EventSearchConnector</name>
         <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrEventSearch</type>
+        <type>org.exoplatform.calendar.service.impl.EventSearchConnector</type>
         <description>eXo Calendar events</description>
         <init-params>
           <properties-param>
@@ -87,9 +87,9 @@
       </component-plugin>
       
       <component-plugin>
-        <name>JcrWikiSearch</name>
+        <name>WikiSearchServiceConnector</name>
         <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrWikiSearch</type>
+        <type>org.exoplatform.wiki.service.impl.WikiSearchServiceConnector</type>
         <description>eXo Wiki articles</description>      
         <init-params>
           <properties-param>
@@ -129,9 +129,9 @@
       </component-plugin>
       
       <component-plugin>
-        <name>JcrTaskSearch</name>
+        <name>TaskSearchConnector</name>
         <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrTaskSearch</type>
+        <type>org.exoplatform.calendar.service.impl.TaskSearchConnector</type>
         <description>eXo Calendar tasks</description>
         <init-params>
           <properties-param>
