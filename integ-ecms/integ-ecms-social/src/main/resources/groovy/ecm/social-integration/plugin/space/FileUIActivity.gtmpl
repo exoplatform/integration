@@ -355,8 +355,8 @@
 		<!--ECMS update content of activity END-->
       </p>
       <!--ECMS change icon-->
-      <div class="DocActivityIcon_">
-        <span class="viewAction"><a href="$viewLink">View</a></span>
+      <div class="DocActivityIcon">
+        <span class="viewAction"><a href="$contentActivityUri">View</a></span>
         <span class="editAction"><a href="$editLink">Edit</a></span>
         <span class="commentCount">Comment: $commentCount</span>
         <span class="likeCount">Like: $identityLikesNum</span>
@@ -426,7 +426,7 @@
       def id = Utils.getIdentityManager().getIdentity(it.userId);
       commenterFullName = id.profile.fullName;
       commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-      //VinhNT, new spec for ActivityTypes
+
       def activityParams = it.getTemplateParams();
       def systemComment = uicomponent.getSystemCommentBundle(activityParams);
       def systemCommentTitle ;

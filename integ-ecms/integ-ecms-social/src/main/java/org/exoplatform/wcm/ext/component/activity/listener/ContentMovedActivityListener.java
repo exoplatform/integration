@@ -19,6 +19,7 @@ package org.exoplatform.wcm.ext.component.activity.listener;
 import javax.jcr.Node;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
 /**
  * Created by The eXo Platform SAS
  * Author : Nguyen The Vinh From ECM Of eXoPlatform
@@ -32,8 +33,10 @@ public class ContentMovedActivityListener extends Listener<Node, String>{
   public void onEvent(Event<Node, String> event) throws Exception {
     Node currentNode = event.getSource();
     String target = event.getData();
-    System.out.println(event.getSource());
-    Utils.postActivity(currentNode, CONTENT_MOVED_BUNDLE, false, true, target);
+    if(!currentNode.isNodeType(NodetypeConstant.NT_FILE))
+      Utils.postActivity(currentNode, CONTENT_MOVED_BUNDLE, false, true, target);
+    else 
+    	Utils.postFileActivity(currentNode, CONTENT_MOVED_BUNDLE, false, true, target);
   }
 
 }

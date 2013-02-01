@@ -26,7 +26,7 @@ import org.exoplatform.services.wcm.core.NodetypeConstant;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
  * 15, 2011
  */
-public class ContentUpdateActivityListener extends Listener<Node, String> {
+public class FileUpdateActivityListener extends Listener<Node, String> {
 
   private String[]  editedField     = {"exo:title", "exo:summary", "dc:title", "dc:description", "exo:text"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
@@ -39,7 +39,7 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
   /**
    * Instantiates a new post edit content event listener.
    */
-  public ContentUpdateActivityListener() {
+  public FileUpdateActivityListener() {
 	  
   }
 
@@ -57,10 +57,10 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
     }catch (Exception e) {
       newValue = "";
     }
+    if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
     for (int i=0; i< consideredFieldCount; i++) {
       if (propertyName.equals(editedField[i])) {
-        if (propertyName.equals("exo:summary")) newValue = Utils.getFirstSummaryLines(newValue);
-        Utils.postActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
+      	Utils.postFileActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
         break;
       }
     }

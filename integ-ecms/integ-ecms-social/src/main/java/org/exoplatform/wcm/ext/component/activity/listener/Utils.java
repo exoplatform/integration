@@ -360,6 +360,7 @@ public class Utils {
         if (node.isNodeType(MIX_COMMENT)) {
           commentID = activity.getId();
           node.setProperty(MIX_COMMENT_ID, commentID);
+          node.getSession().save();
         }
       }      
       return activity;
@@ -384,6 +385,7 @@ public class Utils {
       String activityId = activity.getId();
       if (!StringUtils.isEmpty(activityId)) {
         ActivityTypeUtils.attachActivityId(node, activityId);
+        node.getSession().save();
       }
       return activity;
     }
@@ -554,7 +556,7 @@ public class Utils {
       Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, 
         ConversationState.getCurrent().getIdentity().getUserId(), false);
       activity.setUserId(identity.getId());
-    }
+    }    
     activity.setType(activityType);
     activity.setUrl(node.getPath());
     activity.setTitle(title);
