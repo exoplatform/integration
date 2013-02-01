@@ -310,32 +310,33 @@
         setWaitingStatus(true);
 
         $.getJSON(restUrl, function(resultMap){
-          var resultTypes = "| ";
-          var result = "";
+          var resultTypesHtml = "| ";
+          var resultHtml = "";
 
           $.each(SEARCH_TYPES, function(i, searchType){
-            results = resultMap[searchType];
+            var results = resultMap[searchType];
+            if(results) results.map(function(result){result.type = searchType;});
             if(0!=$(results).size()) {
               var typeDisplayName = isSqlMode() ? searchType + " (" + $(results).size() + ")" : CONNECTORS[searchType].displayName;
-              resultTypes = resultTypes + "<span class='Clickable ResultType' type='" + searchType + "' offset=0 numEntries=" + $(results).size() + ">" + typeDisplayName + "</span>" + " | ";
-              result = result + "<div class='SearchResultType' id='" + searchType + "-type'>";
+              resultTypesHtml = resultTypesHtml + "<span class='Clickable ResultType' type='" + searchType + "' offset=0 numEntries=" + $(results).size() + ">" + typeDisplayName + "</span>" + " | ";
+              resultHtml = resultHtml + "<div class='SearchResultType' id='" + searchType + "-type'>";
 
-              $.each(results, function(i, entry){
-                result = result + renderSearchResult(entry);
+              $.each(results, function(i, result){
+                resultHtml = resultHtml + renderSearchResult(result);
               });
-              result = result + "</div>"; //type div
+              resultHtml = resultHtml + "</div>"; //type div
             }
           });
 
-          if(""==result) {
+          if(""==resultHtml) {
             clearResultPage("No result for <strong>" + (isSqlMode()?sql:$("#txtQuery").val()) + "<strong>");
             return;
           }
 
-          $("#resultTypes").html(resultTypes+"<hr style='color: lightgray'/>");
+          $("#resultTypes").html(resultTypesHtml+"<hr style='color: lightgray'/>");
           $("#resultTypes").show();
 
-          $("#result").html(result);
+          $("#result").html(resultHtml);
           $("#result").show();
           $("#resultSort").show();
           setWaitingStatus(false);
@@ -347,6 +348,7 @@
 
 
       function renderSearchResult(result) {
+        //console.log(result.type);
         var template = SEARCH_RESULT_TEMPLATE;
         var query = $("#txtQuery").val();
         var terms = query.split(/\\s+/g);
@@ -386,32 +388,32 @@
 
         setWaitingStatus(true);
 
-        $.getJSON(restUrl, function(entryMap){
-          var result = "";
-          var entries = entryMap[type];
-
-          $.each(entries, function(i, entry){
-            result = result + renderSearchResult(entry);
+        $.getJSON(restUrl, function(resultMap){
+          var resultHtml = "";
+          var results = resultMap[type];
+          results.map(function(result){result.type = type;});
+          $.each(results, function(i, result){
+            resultHtml = resultHtml + renderSearchResult(result);
           });
 
-          var resultHeader = (0==entries.length) ? "No more result" : "Results 1 to " + (offset+entries.length);
+          var resultHeader = (0==results.length) ? "No more result" : "Results 1 to " + (offset+results.length);
           resultHeader = resultHeader + " for <strong>" + (isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>";
           $("#resultHeader").html(resultHeader);
-          if(entries.length==LIMIT) $("#showMore").show(); else $("#showMore").hide();
+          if(results.length==LIMIT) $("#showMore").show(); else $("#showMore").hide();
 
           $("#"+type+"-type").show();
 
           if(0==offsetIncrement) {
-            $("#"+type+"-type").html(result);
+            $("#"+type+"-type").html(resultHtml);
           } else {
-            $("#"+type+"-type").append(result);
+            $("#"+type+"-type").append(resultHtml);
             $("#searchPage").animate({ scrollTop: $("#resultPage")[0].scrollHeight}, "slow");
           }
 
           setWaitingStatus(false);
 
           $viewingType.attr("offset", offset);
-          $viewingType.attr("numEntries", entries.length);
+          $viewingType.attr("numEntries", results.length);
         });
       }
 
@@ -608,6 +610,7 @@
         $.getJSON(restUrl, function(resultMap){
           RESULT_CACHE = [];
           $.each(resultMap, function(searchType, results){
+            results.map(function(result){result.type = searchType;});
             RESULT_CACHE.push.apply(RESULT_CACHE, results);
           });
 

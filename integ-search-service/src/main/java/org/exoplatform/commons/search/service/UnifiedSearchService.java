@@ -36,6 +36,7 @@ public class UnifiedSearchService implements ResourceContainer {
   private static List<String> ENABLED_SEARCHTYPES = Arrays.asList("file", "document", "wiki", "page", "discussion", "people", "space", "event", "task", "question", "activity", "jcrNode");
   
   private static SearchSetting defaultSearchSetting = new SearchSetting(10, Arrays.asList("all"), false, false, false);
+  private static SearchSetting anonymousSearchSetting = new SearchSetting(10, Arrays.asList("page", "file", "document", "discussion", "jcrNode"), true, false, true);
   private static SearchSetting defaultQuicksearchSetting = new SearchSetting(5, Arrays.asList("all"), true, true, true);
   
   private final static Log LOG = ExoLogger.getLogger(UnifiedSearchService.class);
@@ -46,6 +47,8 @@ public class UnifiedSearchService implements ResourceContainer {
     cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
+    
+    SEARCH_SETTINGS.put("__anonim", anonymousSearchSetting); //search setting for anonymous user
   }
 
   public static List<String> getEnabledSearchTypes(){
