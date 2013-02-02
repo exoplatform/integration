@@ -21,6 +21,7 @@
 */
 %>
 <%
+  import java.text.SimpleDateFormat;
   import org.exoplatform.portal.webui.util.Util;
   import org.exoplatform.webui.form.UIFormTextAreaInput;
   import org.exoplatform.social.core.service.LinkProvider;
@@ -197,16 +198,23 @@
 				<div class="uiBox roundedBottom introBox CalendarShare">
 					<div class="clearfix">
 						<%
+							SimpleDateFormat sdf = new SimpleDateFormat("MMM");   
 							if (uicomponent.getTypeOfEvent().contains("Task")) {
 						%>
 						<div class="pull-left statusTask"><i class="<%=event.getEventState()%>Icon"  ></i></div>
-						<%} else { %> <!-- check if is event-->
+						<%} else { 
+						
+						def month = sdf.format(event.getFromDateTime());    
+						sdf = new SimpleDateFormat("dd");    
+						def day = (sdf.format(event.getFromDateTime())) ;
+						
+						%> <!-- check if is event-->
 						  <div class="pull-left calendarBox">
 							<div class="heading">
-								Feb<!--hackcode-->
+								$month 
 							</div>
 							<div class="content">
-								22<!--hackcode-->
+								$day
 							</div>
 						  </div>
 						<% } %>	
@@ -223,10 +231,15 @@
 								<p><%= uicomponent.getDescription();%> </p>
 								<%
 									if (uicomponent.getTypeOfEvent().contains("Task")) {
+									sdf = new SimpleDateFormat("EEEEE, MMMMMMMM dd, yyyy K:mm a") ;  
+									def fullTask = (sdf.format(event.getToDateTime())) ;
 								%>
-									<span class="dateTime">Due for: <%= uicomponent.getEventEndTime(_ctx);%></span> 
-								<% } else {%>  
-									<span class="dateTime"><%= uicomponent.getEventStartTime(_ctx);%></span><br/>
+									<span class="dateTime">Due for: $fullTask</span> 
+								<% } else {
+									sdf = new SimpleDateFormat("EEEEE, MMMMMMMM dd, yyyy K:mm a") ;    
+									def full = (sdf.format(event.getFromDateTime())) ;
+								%>  
+									<span class="dateTime">$full</span><br/>
 									<span class="location"><%= uicomponent.getLocation();%> <br></span>	
 									<%}%>
 								<% } %>  
