@@ -9,7 +9,12 @@
 			<editTitle>Title has been updated to: {0}</editTitle>
 			<editDescription>Description has been updated to: {0}</editDescription>
 			<singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are (0)</multiCreator>
+      <multiCreator>Creators are {0}</multiCreator>
+      <removeTitle>Title has been removed.</removeTitle>
+      <removeSummary>Summary has been removed.</removeSummary>
+      <removeDescription>Description has been removed.</removeDescription>
+      <remmoveCreator>Creator has been removed.</remmoveCreator>
+      <removeContent>Content has been removed.</removeContent>
       <editSummary>Summary has been updated to: {0}</editSummary>
       <editContent>Content has been updated.</editContent>
       <attachmentAdded>File(s) has been attached.</attachmentAdded>

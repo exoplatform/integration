@@ -34,9 +34,16 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
                                        "SocialIntegration.messages.editSummary",
                                        "SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editDescription",
-                                       "SocialIntegration.messages.addCreator",
+                                       "SocialIntegration.messages.singleCreator",
                                        "SocialIntegration.messages.editContent"};
-  private boolean[] needUpdate      = {true, true, true, true, false};
+  private String[]  bundleRemoveMessage = {"SocialIntegration.messages.removeTitle",
+      																 	   "SocialIntegration.messages.removeSummary",
+                                           "SocialIntegration.messages.removeTitle",
+                                           "SocialIntegration.messages.removeDescription",
+                                           "SocialIntegration.messages.remmoveCreator",
+                                           "SocialIntegration.messages.removeContent"};
+  
+  private boolean[] needUpdate      = {true, true, true, true, false, false};
   private int consideredFieldCount = editedField.length;
   /**
    * Instantiates a new post edit content event listener.
@@ -67,11 +74,19 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     }catch (Exception e) {
       newValue = "";
     }
+    newValue = newValue.trim();
     if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
     for (int i=0; i< consideredFieldCount; i++) {
       if (propertyName.equals(editedField[i])) {
-      	Utils.postFileActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
+      	if(newValue.length() > 0) {
+      	  if(propertyName.equals(NodetypeConstant.DC_CREATOR) && newValue.split(",").length > 1)
+      		  Utils.postFileActivity(currentNode, "SocialIntegration.messages.multiCreator", needUpdate[i], true, newValue);
+      	  else Utils.postFileActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
+      	} else { //Remove the property
+      		Utils.postFileActivity(currentNode, bundleRemoveMessage[i], needUpdate[i], true, newValue);
+      	}
         break;
+        
       }
     }
   }
