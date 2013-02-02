@@ -248,6 +248,14 @@
 	.ReadMoreLink { 
 	  text-align: right;
 	}
+	
+	.BoxGray .ContentDetail .PlayerContent {
+    padding: 7px;
+    display: block;
+    float: left;
+    height: 200px;
+    width: 350px;
+  }
 	  
 	.MediaPlayerDisplay{
 	  display:block;
@@ -314,8 +322,8 @@
             def title = uicomponent.getTitle(currentNode);
             dName = (title != StringUtils.EMPTY || title.length != 0) ? title : dName; 
           %>
-          <div style="float:right; margin-left:20px; width:218px;">
-             <div style="color: blue; margin: 10px 0px 10px;"><strong>$dName</strong></div>
+          <div style="float:right; width:255px;">
+             <div style="color: blue; margin: 5px 0px 10px;"><strong>$dName</strong></div>
           <% 
             def description = uicomponent.getSummary(currentNode); 
           %>
@@ -331,7 +339,7 @@
             $size
             </div>
           </div>
-          <div style="margin-right: 225px;">         
+          <div style="margin-right: 260px;">         
           
           	<%if (mimeType != null && mimeType.length() > 0){
 		           if(mimeType.startsWith("image")  && currentNode != null){%>

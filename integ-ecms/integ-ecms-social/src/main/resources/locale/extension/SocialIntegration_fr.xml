@@ -8,6 +8,8 @@
       <readmore>...Lire la suite.</readmore>
       <editTitle>Le titre a été mis à jour: {0}</editTitle>
       <editDescription>Description has been updated to: {0}</editDescription>
+      <singleCreator>Creator is {0}</singleCreator>
+      <multiCreator>Creators are (0)</multiCreator>
       <editSummary>Le sommaire a été mis à jour: {0}</editSummary>
       <editContent>Le contenu a été mis à jour.</editContent>
       <attachmentAdded>Des fichiers ont été attachés.</attachmentAdded>
