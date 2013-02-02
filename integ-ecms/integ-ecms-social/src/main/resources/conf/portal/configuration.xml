@@ -61,10 +61,17 @@
 		</component-plugin>
 		
 		<component-plugin profiles="default,all,social">
+			<name>FileActivityNotify.event.PropertyAdded</name>
+			<set-method>addListener</set-method>
+			<type>org.exoplatform.wcm.ext.component.activity.listener.FileAddPropertyActivityListener</type>
+			<description>this listener will create a new comment when a property has been	added</description>
+		</component-plugin>
+		
+		<component-plugin profiles="default,all,social">
 			<name>FileActivityNotify.event.PropertyUpdated</name>
 			<set-method>addListener</set-method>
 			<type>org.exoplatform.wcm.ext.component.activity.listener.FileUpdateActivityListener</type>
-			<description>this listener will publish an activity when a content has been	updated</description>
+			<description>this listener will create a new comment when a property has been	updated</description>
 		</component-plugin>
 		
 		<component-plugin profiles="default,all,social">

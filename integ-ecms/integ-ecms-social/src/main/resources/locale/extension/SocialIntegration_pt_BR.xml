@@ -8,6 +8,8 @@
       <readmore>...Ler mais.</readmore>
       <editTitle>Title has been updated to: {0}</editTitle>
       <editDescription>Description has been updated to: {0}</editDescription>
+      <singleCreator>Creator is {0}</singleCreator>
+      <multiCreator>Creators are (0)</multiCreator>
       <editSummary>Summary has been updated to: {0}</editSummary>
       <editContent>Content has been updated.</editContent>
       <attachmentAdded>File(s) has been attached.</attachmentAdded>
