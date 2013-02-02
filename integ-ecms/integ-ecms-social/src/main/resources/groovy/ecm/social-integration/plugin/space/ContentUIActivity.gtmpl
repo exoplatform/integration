@@ -143,7 +143,6 @@
       commentFormFocused: '${uicomponent.isCommentFormFocused()}'
     } """
   //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
-  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
   
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
@@ -277,7 +276,7 @@
       <p class="Content">
       <!--ECMS update content of activity BEGIN-->
         <div id="ActivityDetail">
-          <div class="defaultIcon <%=docTypeName%>Icon"></div>
+          <div class="default70x80Icon <%=uicomponent.getDocIconClass();%>70x80Icon"></div>
           <div class="docTitle">$docTitle</div>
           <div class="docSummary <%=docTypeName%>Icon">$docSummary</div>
           <div class="activityFooter">$docTypeName - $docVersion - $state</div>
@@ -487,4 +486,6 @@
 </div>
 <% } else { %> <!-- activity deleted -->
 <div class="UIActivity Deleted">$labelActivityHasBeenDeleted</div>
-<% }%>
+<% }
+  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
+%>

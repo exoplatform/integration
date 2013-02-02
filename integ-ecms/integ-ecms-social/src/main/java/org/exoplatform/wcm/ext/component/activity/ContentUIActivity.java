@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -309,6 +310,16 @@ public class ContentUIActivity extends BaseUIActivity {
       LOG.warn("Failed to getSpaceById: " + spaceIdentityId, e);
     }
     return null;
+  }
+  public String getDocIconClass() {
+    if (contentNode!=null) {
+      try {
+        return contentNode.getPrimaryNodeType().getName().replaceAll(":", "_");
+      } catch (RepositoryException e) {
+        
+      }
+    }
+    return "";
   }
 
   public void setUIActivityData(Map<String, String> activityParams) {
