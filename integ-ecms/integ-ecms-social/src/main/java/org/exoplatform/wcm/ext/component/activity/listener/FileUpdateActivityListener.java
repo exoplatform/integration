@@ -18,6 +18,7 @@ package org.exoplatform.wcm.ext.component.activity.listener;
 
 import javax.jcr.Node;
 
+import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
@@ -29,21 +30,23 @@ import javax.jcr.Value;
  */
 public class FileUpdateActivityListener extends Listener<Node, String> {
 
-  private String[]  editedField     = {"exo:title", "exo:summary", "dc:title", "dc:description", "dc:creator", "exo:text"};
+  private String[]  editedField     = {"exo:title", "exo:summary", "dc:title", "dc:description", "dc:creator", "dc:source", "exo:text"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editSummary",
                                        "SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editDescription",
                                        "SocialIntegration.messages.singleCreator",
+                                       "SocialIntegration.messages.singleSource",
                                        "SocialIntegration.messages.editContent"};
   private String[]  bundleRemoveMessage = {"SocialIntegration.messages.removeTitle",
       																 	   "SocialIntegration.messages.removeSummary",
                                            "SocialIntegration.messages.removeTitle",
                                            "SocialIntegration.messages.removeDescription",
-                                           "SocialIntegration.messages.remmoveCreator",
+                                           "SocialIntegration.messages.removeCreator",
+                                           "SocialIntegration.messages.removeSource",
                                            "SocialIntegration.messages.removeContent"};
   
-  private boolean[] needUpdate      = {true, true, true, true, false, false};
+  private boolean[] needUpdate      = {true, true, true, true, false, false, false};
   private int consideredFieldCount = editedField.length;
   /**
    * Instantiates a new post edit content event listener.
@@ -76,18 +79,33 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     }
     newValue = newValue.trim();
     if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
+    String resourceBundle = "";
+    boolean hit = false;
     for (int i=0; i< consideredFieldCount; i++) {
       if (propertyName.equals(editedField[i])) {
+      	hit = true;
       	if(newValue.length() > 0) {
+      		resourceBundle = bundleMessage[i];
       	  if(propertyName.equals(NodetypeConstant.DC_CREATOR) && newValue.split(",").length > 1)
-      		  Utils.postFileActivity(currentNode, "SocialIntegration.messages.multiCreator", needUpdate[i], true, newValue);
-      	  else Utils.postFileActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
+      	  	resourceBundle = "SocialIntegration.messages.multiCreator";
+      	  else if(propertyName.equals(NodetypeConstant.DC_SOURCE) && newValue.split(",").length > 1) 
+      	  	resourceBundle = "SocialIntegration.messages.multiSource";
       	} else { //Remove the property
-      		Utils.postFileActivity(currentNode, bundleRemoveMessage[i], needUpdate[i], true, newValue);
+      		resourceBundle = bundleRemoveMessage[i];
       	}
-        break;
-        
+      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
+        break;        
       }
+    }
+    if(!hit && propertyName.startsWith("dc:") && !propertyName.equals("dc:date")) {
+    	if(newValue.length() > 0) {
+    		resourceBundle = "SocialIntegration.messages.updateMetadata";
+    		newValue = propertyName + ActivityCommonService.VALUE_SEPERATOR + newValue;
+    	}	else {
+    		resourceBundle = "SocialIntegration.messages.removeMetadata";
+    		newValue = propertyName;
+    	}
+    	Utils.postFileActivity(currentNode, resourceBundle, false, true, newValue);
     }
   }
 }

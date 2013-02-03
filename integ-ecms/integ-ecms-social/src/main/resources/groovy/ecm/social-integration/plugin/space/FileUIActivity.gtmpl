@@ -256,6 +256,14 @@
     height: 200px;
     width: 350px;
   }
+
+  .BoxGray .video {
+    padding: 7px;
+    display: block;
+    float: left;
+    height: 255px;
+    width: 350px;
+  }
 	  
 	.MediaPlayerDisplay{
 	  display:block;
@@ -462,7 +470,10 @@
               commentMessage = _ctx.appRes(systemComment[count]);
               if (systemCommentTitle!=null) {
                 if (systemCommentTitle.length>count) {
-                  commentMessage = commentMessage.replace("{0}", systemCommentTitle[count]);
+                  //commentMessage = commentMessage.replace("{0}", "<strong>" + systemCommentTitle[count] + "</strong>");
+                  for(def i = 0; i<systemCommentTitle.length; i++) {
+                    commentMessage = commentMessage.replace("{"+i+"}", "<strong>" + systemCommentTitle[i] + "</strong>");
+                  }
                 }
               }
               if (systemComment!=null) {

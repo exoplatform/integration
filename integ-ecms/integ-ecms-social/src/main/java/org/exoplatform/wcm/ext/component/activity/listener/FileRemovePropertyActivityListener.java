@@ -18,7 +18,6 @@ package org.exoplatform.wcm.ext.component.activity.listener;
 
 import javax.jcr.Node;
 
-import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
@@ -28,20 +27,19 @@ import javax.jcr.Value;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
  * 15, 2011
  */
-public class FileAddPropertyActivityListener extends Listener<Node, String> {
+public class FileRemovePropertyActivityListener extends Listener<Node, String> {
 
   private String[]  editedField     = {"dc:title", "dc:description", "dc:creator", "dc:source"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editDescription",
                                        "SocialIntegration.messages.singleCreator",
-                                       "SocialIntegration.messages.singleSource",
-                                       "SocialIntegration.messages.updateMetadata"};
-  private boolean[] needUpdate      = {false, false, false, false,false};
+                                       "SocialIntegration.messages.singleSource"};
+  private boolean[] needUpdate      = {true, true, false};
   private int consideredFieldCount = editedField.length;
   /**
    * Instantiates a new post edit content event listener.
    */
-  public FileAddPropertyActivityListener() {
+  public FileRemovePropertyActivityListener() {
 	  
   }
 
@@ -67,7 +65,6 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
     if(newValue != null && newValue.length() > 0) {
 	    if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
 	    String resourceBundle = "";
-	    boolean hit = false;
 	    for (int i=0; i< consideredFieldCount; i++) {
 	      if (propertyName.equals(editedField[i])) {
 	      	resourceBundle = bundleMessage[i];
@@ -76,14 +73,8 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 	      	else if(propertyName.equals(NodetypeConstant.DC_SOURCE) && newValue.split(",").length > 1)
 	      		resourceBundle = "SocialIntegration.messages.multiSource";	      	
 	      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
-	      	hit = true;
 	        break;
 	      }
-	    }
-	    if(!hit && propertyName.startsWith("dc:") && !propertyName.equals("dc:date")) {
-	    	resourceBundle = "SocialIntegration.messages.updateMetadata";
-	    	newValue = propertyName + ActivityCommonService.VALUE_SEPERATOR + newValue;
-	    	Utils.postFileActivity(currentNode, resourceBundle, false, true, newValue);
 	    }
     }
   }

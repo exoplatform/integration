@@ -566,6 +566,26 @@ public class Utils {
     activity.setTemplateParams(activityParams);
     return activity;
   }
+  
+  public static void deleteFileActivity(Node node) throws RepositoryException {
+    // get services
+    ExoContainer container = ExoContainerContext.getCurrentContainer();
+    ActivityManager activityManager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
+    IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
+    
+    // get owner
+    String activityOwnerId = getActivityOwnerId();
+    String nodeActivityID = StringUtils.EMPTY;
+    ExoSocialActivity exa =null;
+    if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
+      try {
+        nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
+        activityManager.deleteActivity(nodeActivityID);
+      }catch (Exception e){
+        //Not activity is deleted, return no related activity
+      }
+    }    
+  }
 
   /**
    * Gets the illustrative image.

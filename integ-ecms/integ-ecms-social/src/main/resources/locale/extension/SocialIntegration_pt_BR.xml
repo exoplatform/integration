@@ -10,10 +10,14 @@
       <editDescription>Description has been updated to: {0}</editDescription>
       <singleCreator>Creator is {0}</singleCreator>
       <multiCreator>Creators are {0}</multiCreator>
+      <singleSource>Source is {0}.</singleSource>
+      <multiSource>Sources are {0}.</multiSource>
+      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
+      <removeMetadata>Metadata {0} has been to removed.</removeMetadata>  
       <removeTitle>Title has been removed.</removeTitle>
       <removeSummary>Summary has been removed.</removeSummary>
       <removeDescription>Description has been removed.</removeDescription>
-      <remmoveCreator>Creator has been removed.</remmoveCreator>
+      <removeCreator>Creator has been removed.</removeCreator>
       <removeContent>Content has been removed.</removeContent>
       <editSummary>Summary has been updated to: {0}</editSummary>
       <editContent>Content has been updated.</editContent>
