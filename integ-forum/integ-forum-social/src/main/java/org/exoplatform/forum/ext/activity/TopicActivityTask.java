@@ -215,7 +215,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.setBody(ForumActivityBuilder.getThreeFirstLines(ctx.getTopic()));
+      activity.setBody(ForumActivityBuilder.getFourFirstLines(ctx.getTopic()));
       //processTitle(ctx, activity);
       return activity;
     };
@@ -261,7 +261,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       Map<String, String> templateParams = activity.getTemplateParams();
       templateParams.put(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY, "" + ctx.getTopic().getVoteRating());
       
-      processTitle(ctx, activity);
+      //processTitle(ctx, activity);
       
       return activity;
     };
@@ -712,12 +712,22 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
         
-        //update new streamOwner
         Identity streamOwner = getOwnerStream(ctx);
+        
+        //Update new streamOwner of poll
+        if (ctx.getTopic().getIsPoll()) {
+          ExoSocialActivity aPoll = ForumActivityUtils.getActivityOfPollTopic(ctx);
+          if (aPoll != null) {
+            aPoll.setStreamOwner(streamOwner.getRemoteId());
+            am.updateActivity(aPoll);
+          }
+        }
+        
+        //update new streamOwner
         a.setStreamOwner(streamOwner.getRemoteId());
         a = processActivity(ctx, a);
         am.updateActivity(a);
-
+        
         ////FORUM_22 case: move topic
         ExoSocialActivity newComment = processComment(ctx);
         
@@ -809,11 +819,11 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         // Creates activity split
         ExoSocialActivity splitActivity = ForumActivityBuilder.createActivity(ctx.getSplitedTopic(), ctx);
-        newActivity = processActivity(ctx, splitActivity);
+        splitActivity = processActivity(ctx, splitActivity);
         
         //
         poster = ForumActivityUtils.getIdentity(ctx.getSplitedTopic().getOwner());
-        newActivity.setUserId(poster.getId());
+        splitActivity.setUserId(poster.getId());
         
         //
         am.saveActivityNoReturn(streamOwner, splitActivity);

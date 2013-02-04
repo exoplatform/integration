@@ -1,12 +1,13 @@
 package org.exoplatform.forum.ext.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.DataStorage;
-import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.forum.common.webui.WebUIUtils;
@@ -44,6 +45,17 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
 public class AnswerUIActivity extends BaseKSActivity {
 
   public AnswerUIActivity() {
+  }
+  
+  @SuppressWarnings("unused")
+  private String getViewCommentLink(ExoSocialActivity comment) {
+    String value = null;
+    String key = AnswersSpaceActivityPublisher.LINK_KEY;
+    Map<String, String> params = comment.getTemplateParams();
+    if (params != null) {
+      value = params.get(key);
+    }
+    return value != null ? value : "";
   }
   
   @SuppressWarnings("unused")
@@ -196,6 +208,9 @@ public class AnswerUIActivity extends BaseKSActivity {
       ExoSocialActivity cm = uiActivity.toActivity(comment);
       ActivityManager activityM = (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
       ExoSocialActivity activity = activityM.getActivity(faqService.getActivityIdForQuestion(question.getPath()));
+      Map<String, String> commentTemplateParams = new HashMap<String, String>();
+      commentTemplateParams.put(AnswersSpaceActivityPublisher.LINK_KEY, question.getLink());
+      cm.setTemplateParams(commentTemplateParams);
       activityM.saveComment(activity, cm);
       faqService.saveActivityIdForComment(question.getPath(), comment.getId(), question.getLanguage(), cm.getId());
       uiActivity.refresh();

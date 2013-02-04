@@ -125,13 +125,12 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
         ActivityManager am = ForumActivityUtils.getActivityManager();
         ExoSocialActivity newComment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
         newComment = processComment(ctx, newComment);
-        
+      
         //
         Identity poster = ForumActivityUtils.getIdentity(ctx.getPost().getOwner());
         newComment.setUserId(poster.getId());
         
         am.saveComment(topicActivity, newComment);
-          
         return topicActivity;
       } catch (Exception e) {
         LOG.error("Can not record Comment when updates post " + ctx.getPost().getId(), e);

@@ -149,6 +149,27 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     
   }
   
+  public void testUpdateTopicContentWith4Lines() throws Exception {
+    Topic topic = createdTopic("demo");
+    topic = updateTopicContent(topic, "1\n2\n3\n4\n5");
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_CONTENT, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    assertTopicContent(a, "1\n2\n3\n4");
+    
+    topic = updateTopicContent(topic, "1<br/>2<br/>3<br/>4<br/>5");
+    ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    a = ForumActivityBuilder.createActivity(topic, ctx);
+    assertTopicContent(a, "1\n2\n3\n4");
+    
+    topic = updateTopicContent(topic, "<p>1</p><br/><p>2</p><br/><p>3</p><br/><p>4</p><br/><p>5</p>");
+    ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    a = ForumActivityBuilder.createActivity(topic, ctx);
+    assertTopicContent(a, "1\n2\n3\n4");
+  }
+  
   public void testUpdateTopicContentWithJob() throws Exception {
     Topic topic = createdTopic("demo");
     topic = updateTopicContent(topic, "edited to new content for topic.");
@@ -188,7 +209,7 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     
     //activity
     a = task.processActivity(ctx, a);
-    assertTopicTitle(a, "Rated the topic: 1.5");
+    assertTopicTitle(a, "topic title");
     
     //comment
     ExoSocialActivity newComment = task.processComment(ctx);

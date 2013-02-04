@@ -17,9 +17,14 @@
                <entry>
                  <key><string>vote_poll</string></key>
                  <value><string>PollUIActivity.label.vote_poll</string></value>
-               </entry><entry>
+               </entry>
+               <entry>
                  <key><string>vote_again_poll</string></key>
                  <value><string>PollUIActivity.label.vote_again_poll</string></value>
+               </entry>
+               <entry>
+                 <key><string>update_poll</string></key>
+                 <value><string>PollUIActivity.label.update_poll</string></value>
                </entry>
              </map>
            </field>
@@ -150,6 +155,22 @@
                 <entry>
                  <key><string>forum.update-post</string></key>
                  <value><string>ForumUIActivity.forum.update-post</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.add-poll</string></key>
+                 <value><string>ForumUIActivity.forum.add-poll</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.update-poll</string></key>
+                 <value><string>ForumUIActivity.forum.update-poll</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.close-poll</string></key>
+                 <value><string>ForumUIActivity.forum.close-poll</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.remove-poll</string></key>
+                 <value><string>ForumUIActivity.forum.remove-poll</string></value>
                </entry>
              </map>
            </field>

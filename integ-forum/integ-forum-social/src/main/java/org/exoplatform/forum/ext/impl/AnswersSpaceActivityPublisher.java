@@ -121,15 +121,16 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           comment.setType(ANSWER_APP_ID);
           if (!commentTitle.toString().equals("")) {
             comment.setTitle(commentTitle.toString());
-            activityM.saveComment(activity, comment);
             String answerContent = formatBody(answer.getResponses());
             String promotedAnswer = "Comment "+answerContent+" has been promoted as an answer";
             if (promotedAnswer.equals(commentTitle.toString())) {
               faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
+              updateCommentTemplateParms(comment, question.getLink());
             } else {
               String answerActivityId = faqS.getActivityIdForAnswer(questionId, answer);
               faqS.saveActivityIdForAnswer(questionId, answer, answerActivityId+","+comment.getId());
             }
+            activityM.saveComment(activity, comment);
           } else {
             String answerContent = formatBody(answer.getResponses());
             comment.setTitle("Answer has been submitted: "+answerContent);
@@ -138,6 +139,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             activity.setTemplateParams(activityTemplateParams);
             activity.setBody(formatBody(question.getDetail()));
             activityM.updateActivity(activity);
+            updateCommentTemplateParms(comment, question.getLink());
             activityM.saveComment(activity, comment);
             faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
           }
@@ -170,17 +172,21 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           ExoSocialActivity activity = activityM.getActivity(activityId);
           ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
           String commentActivityId = faqS.getActivityIdForComment(questionId, cm.getId(), language);
+          Map<String, String> commentTemplateParams = new HashMap<String, String>();
+          commentTemplateParams.put(LINK_KEY, question.getLink());
           if (commentActivityId != null) {
             ExoSocialActivityImpl oldComment = (ExoSocialActivityImpl) activityM.getActivity(commentActivityId);
             if (oldComment != null) {
               comment = oldComment;
               comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(cm.getComments(), (List<String>) Collections.EMPTY_LIST)));
+              comment.setTemplateParams(commentTemplateParams);
               activityM.updateActivity(comment);
             } else {
               commentActivityId = null;
             }
           }
           if (commentActivityId == null) {
+            comment.setTemplateParams(commentTemplateParams);
             comment.setTitle(cm.getComments());
             comment.setUserId(userIdentity.getId());
             Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), questionId, getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
@@ -253,7 +259,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         if (streamOwner == null) {
           streamOwner = userIdentity;
         }
-        ExoSocialActivity activity = newActivity(streamOwner,question.getQuestion(),formatBody(question.getDetail()),templateParams);
+        ExoSocialActivity activity = newActivity(userIdentity,question.getQuestion(),formatBody(question.getDetail()),templateParams);
         activityM.saveActivityNoReturn(streamOwner, activity);
         faqS.saveActivityIdForQuestion(question.getId(),activity.getId());
       }
@@ -443,6 +449,14 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     } catch (Exception e) {
       LOG.debug("Fail to refresh activity "+e.getMessage());
     }
+  }
+  
+  private void updateCommentTemplateParms(ExoSocialActivity comment, String link) {
+    Map<String, String> commentTemplateParams = comment.getTemplateParams();
+    if (commentTemplateParams == null) 
+      commentTemplateParams = new HashMap<String, String>();
+    commentTemplateParams.put(LINK_KEY, link);
+    comment.setTemplateParams(commentTemplateParams);
   }
   
 }

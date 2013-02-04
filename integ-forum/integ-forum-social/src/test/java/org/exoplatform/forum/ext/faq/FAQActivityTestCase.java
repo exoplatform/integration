@@ -147,16 +147,6 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     assertEquals(4,comments.size());
     assertEquals("Question has been activated.", comments.get(3).getTitle());
     
-    //add new question's language
-    question = faqService_.getQuestionById(question.getId());
-    QuestionLanguage lang = createQuestionLanguage("French");
-    question.setMultiLanguages(new QuestionLanguage[] { lang });
-    faqService_.saveQuestion(question, false, faqSetting_);
-    activity = getManager().getActivity(activityId);
-    comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
-    assertEquals(5,comments.size());
-    assertEquals("Question has been added in French", comments.get(4).getTitle());
-    
     //add a attachment
     question = faqService_.getQuestionById(question.getId());
     faqService_.saveUserAvatar(USER_ROOT, createUserAvatar("defaultAvatar.jpg"));
@@ -166,8 +156,18 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     faqService_.saveQuestion(question, false, faqSetting_);
     activity = getManager().getActivity(activityId);
     comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
+    assertEquals(5,comments.size());
+    assertEquals("Attachment(s) has been added.", comments.get(4).getTitle());
+    
+    //add new question's language
+    question = faqService_.getQuestionById(question.getId());
+    QuestionLanguage lang = createQuestionLanguage("French");
+    question.setMultiLanguages(new QuestionLanguage[] { lang });
+    faqService_.saveQuestion(question, false, faqSetting_);
+    activity = getManager().getActivity(activityId);
+    comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
     assertEquals(6,comments.size());
-    assertEquals("Attachment(s) has been added.", comments.get(5).getTitle());
+    assertEquals("Question has been added in French", comments.get(5).getTitle());
     
     //delete question will delete the activity
     faqService_.removeQuestion(questionPath);

@@ -82,6 +82,7 @@ public class PollServiceTestCase extends BaseTestCase {
     pollTopic.setOwner(rootIdentity.getRemoteId());
     pollTopic.setParentPath(topicPath);
     pollTopic.setPollAction(PollAction.Create_Poll);
+    pollTopic.setInTopic(false);
 
     // When create poll, an activity will be save
     pollService.savePoll(pollTopic, true, false);

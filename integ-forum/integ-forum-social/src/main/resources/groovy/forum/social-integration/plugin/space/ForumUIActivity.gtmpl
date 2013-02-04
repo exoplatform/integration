@@ -202,9 +202,11 @@
         <% }%>
          |
      <% }%>
+        <% if (activityCommentable) { %>
          <a href="${uicomponent.getReplyLink()}" id="ReplyLink${activity.id}">
            <%= _ctx.appRes("ForumUIActivity.label.reply")%>
          </a> |
+        <% }%>
          <a href="${uicomponent.getViewLink()}" id="View${activity.id}">
            <%= _ctx.appRes("ForumUIActivity.label.view") %>
          </a> |

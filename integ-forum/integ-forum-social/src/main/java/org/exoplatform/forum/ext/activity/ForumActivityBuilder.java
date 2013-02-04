@@ -16,10 +16,13 @@
  */
 package org.exoplatform.forum.ext.activity;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -92,7 +95,7 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivityComment(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = getThreeFirstLines(topic);
+    String body = getFourFirstLines(topic);
     
     //activity.setUserId(topic.getOwner());
     String title = StringEscapeUtils.unescapeHtml(topic.getTopicName());
@@ -104,16 +107,27 @@ public class ForumActivityBuilder {
     return activity;
   }
   
-  public static String getThreeFirstLines(Topic topic) {
-    return getNumberFirstLines(topic.getDescription().replaceAll("&nbsp;", ""), 3);
+  public static String getFourFirstLines(Topic topic) {
+    return getNumberFirstLines(topic.getDescription().replaceAll("&nbsp;", ""), 4);
   }
 
   public static String getNumberFirstLines(String content, int line) {
-    int maxL = NUMBER_CHAR_IN_LINE * line;
+    String[] tab = TransformHTML.getPlainText(content).split("\\r?\\n");
+    int length = tab.length;
+    if (length > line) length = line;
+    StringBuilder sb = new StringBuilder();
+    String prefix = "";
+    for (int i=0; i<length; i++) {
+      sb.append(prefix);
+      prefix = "\n";
+      sb.append(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(tab[i], (List<String>) Collections.EMPTY_LIST)));
+    }
+    return sb.toString();
+    /*int maxL = NUMBER_CHAR_IN_LINE * line;
     if (content.length() > maxL) {
       return content.substring(0, maxL) + "...";
     }
-    return content;
+    return content;*/
   }
   
   public static String getThreeFirstLines(Post post) {
@@ -122,7 +136,7 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivity(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = getThreeFirstLines(topic);
+    String body = getFourFirstLines(topic);
     
     
     //processing in execute of task.

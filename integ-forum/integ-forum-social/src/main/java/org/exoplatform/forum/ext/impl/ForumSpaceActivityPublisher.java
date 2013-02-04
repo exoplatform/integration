@@ -130,8 +130,10 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void mergeTopic(Topic newTopic, String removeActivityId1, String removeActivityId2) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForMergeTopic(newTopic, removeActivityId1, removeActivityId2);
     TopicActivityTask task = TopicActivityTask.MERGE_TOPIC;
-    ActivityExecutor.execute(task, ctx);
+    ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
     
+    //
+    ForumActivityUtils.takeActivityBack(ctx.getTopic(), got);
   }
 
   @Override
@@ -149,6 +151,11 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   @Override
   public void removeActivity(String activityId) {
     ForumActivityUtils.removeActivities(activityId);
+  }
+  
+  @Override
+  public void removeComment(String activityId, String commentId) {
+    ForumActivityUtils.removeComment(activityId, commentId);
   }
   
   private TopicActivityTask getTaskFromUpdateTopic(PropertyChangeEvent event) {

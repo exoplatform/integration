@@ -35,6 +35,7 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.processor.I18NActivityUtils;
 
 public class PollSpaceActivityPublisher extends PollEventListener{
 
@@ -45,6 +46,8 @@ public class PollSpaceActivityPublisher extends PollEventListener{
   private static final Log   LOG                  = ExoLogger.getExoLogger(PollSpaceActivityPublisher.class);
 
   public static final String POLL_LINK_KEY        = "PollLink";
+  
+  public static final String UPDATE_POLL_TITLE_ID   = "update_poll";
   
   public static final String VOTE_POLL_TITLE_ID   = "vote_poll";
   
@@ -88,6 +91,9 @@ public class PollSpaceActivityPublisher extends PollEventListener{
             comment.setTitle(poll.getPollAction().getMessage(Utils.getUserVote(poll,currentName)));
             templateParams.put(VOTE_VALUE, Utils.getUserVote(poll, currentName));
           }
+          if (poll.getPollAction().equals(PollAction.Update_Poll)) {
+            comment.setTitleId(UPDATE_POLL_TITLE_ID);
+          }
           if (poll.getPollAction().equals(PollAction.Vote_Poll)) {
             comment.setTitleId(VOTE_POLL_TITLE_ID);
           } 
@@ -99,20 +105,30 @@ public class PollSpaceActivityPublisher extends PollEventListener{
           comment.setTemplateParams(templateParams);
           getManager().updateActivity(activity);
           getManager().saveComment(activity, comment);
+          if (PollAction.Update_Poll.equals(poll.getPollAction())) {
+            saveCommentToTopicActivity(poll, comment.getTitle(), "forum.update-poll");
+          }
         } else {
           activityId = null;
           poll.setInfoVote();
         }
       }
       if (activityId == null) {
+        ExoSocialActivity newActivity = activity(pollOwnerIdentity, poll.getQuestion(), Utils.getInfoVote(poll), templateParams);
+        
+        //set stream owner
         Identity spaceIdentity = getSpaceIdentity(poll);
         if (spaceIdentity != null) {
           pollOwnerIdentity =  spaceIdentity;
         }
-        ExoSocialActivity newActivity = activity(pollOwnerIdentity, poll.getQuestion(), Utils.getInfoVote(poll), templateParams);
         templateParams.put(POLL_LINK_KEY, poll.getLink());
-        newActivity.setTemplateParams(templateParams);
         getManager().saveActivityNoReturn(pollOwnerIdentity, newActivity);
+        
+        newActivity.setTemplateParams(templateParams);
+        
+        if (pollService.getActivityIdForOwner(pollPath) == null) {
+          saveCommentToTopicActivity(poll, "A poll has been added to the topic.", "forum.add-poll");
+        }
         pollService.saveActivityIdForOwner(pollPath, newActivity.getId());
       }
     } catch (Exception e) {
@@ -120,8 +136,30 @@ public class PollSpaceActivityPublisher extends PollEventListener{
     }
   }
   
+  public void saveCommentToTopicActivity(Poll poll, String title, String titleId) {
+    PollService pollService = (PollService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PollService.class);
+    IdentityManager identityManager = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
+    String topicActivityId = pollService.getActivityIdForOwner(poll.getParentPath());
+    if (topicActivityId != null) {
+      ExoSocialActivity topicActivity = getManager().getActivity(topicActivityId);
+      if (poll.isInTopic() && topicActivity != null) {
+        ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
+        Identity pollOwnerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, poll.getOwner(), false);
+        comment.setUserId(pollOwnerIdentity.getId());
+        comment.setType("ks-forum:spaces");
+        comment.setTitle(title);
+        I18NActivityUtils.addResourceKey(comment, titleId, null);
+        getManager().saveComment(topicActivity, comment);
+      }
+    }
+  }
+  
   public void savePoll(Poll poll) {
     savePollForActivity(poll);
+  }
+  
+  public void closePoll(Poll poll) {
+    saveCommentToTopicActivity(poll, "Poll has been closed.", "forum.close-poll");
   }
   
   public void pollRemove(String pollId) {
@@ -132,6 +170,7 @@ public class PollSpaceActivityPublisher extends PollEventListener{
       String activityId = pollService.getActivityIdForOwner(pollPath);
       ExoSocialActivity activity = getManager().getActivity(activityId);
       getManager().deleteActivity(activity);
+      saveCommentToTopicActivity(poll, "Poll has been removed.", "forum.remove-poll");
     } catch (Exception e) {
       LOG.error("Fail to remove poll "+e.getMessage());
     }

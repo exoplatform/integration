@@ -194,6 +194,17 @@ public class ForumActivityUtils {
       am.deleteActivity(activityId);
     }
   }
+  
+  /**
+   * Deletes comment
+   * 
+   * @param activityId
+   * @param commentId
+   */
+  public static void removeComment(String activityId, String commentId) {
+    ActivityManager am = getActivityManager();
+    am.deleteComment(activityId, commentId);
+  }
 
   public static void updateActivities(ExoSocialActivity activity) {
     ActivityManager am = getActivityManager();
@@ -233,5 +244,21 @@ public class ForumActivityUtils {
     return getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteId, false);
   }
   
+  /**
+   * Gets ActivityId of poll from existing Topic in Context.
+   * @param ctx
+   * @return
+   */
+  public static ExoSocialActivity getActivityOfPollTopic(ForumActivityContext ctx) {
+    ForumService fs = ForumActivityUtils.getForumService();
+    String path = ctx.getTopic().getPath().concat("/").concat(ctx.getTopic().getId().replace(Utils.TOPIC, Utils.POLL));
+    String pollActivityId = fs.getActivityIdForOwnerPath(path);
+    
+    ActivityManager am = ForumActivityUtils.getActivityManager();
+    
+    ExoSocialActivity got = am.getActivity(pollActivityId);
+    
+    return got;
+  }
   
 }

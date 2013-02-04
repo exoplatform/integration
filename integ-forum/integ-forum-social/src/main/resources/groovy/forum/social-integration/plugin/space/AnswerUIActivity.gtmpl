@@ -260,7 +260,8 @@
       } else {
         commentContentClass = "";
       }
-
+      
+      def viewCommentLink = uicomponent.getViewCommentLink(it);
       def id = Utils.getIdentityManager().getIdentity(it.userId);
       commenterFullName = id.profile.fullName;
       commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
@@ -281,9 +282,15 @@
         </a>
         <div class="ContentBox">
             <h5><a href="$commenterProfileUri">$commenterFullName</a></h5> $commentPostedTime
+            <%
+               if(viewCommentLink != null && viewCommentLink.length() > 0) {
+            %>
             <span style="float:right">
-              <a class="ViewItem" href="${uicomponent.getLink()}">View</a>
+              <a class="ViewItem" href="$viewCommentLink">View</a>
             </span>
+            <%
+               }
+            %>
             <p class="ContentBlock">
               $commentMessage
             </p>
