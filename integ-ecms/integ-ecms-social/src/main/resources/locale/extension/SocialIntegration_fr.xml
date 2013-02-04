@@ -18,6 +18,7 @@
       <removeSummary>Summary has been removed.</removeSummary>
       <removeDescription>Description has been removed.</removeDescription>
       <removeCreator>Creator has been removed.</removeCreator>
+      <removeSource>Source has been removed.</removeSource>
       <removeContent>Content has been removed.</removeContent>
       <editSummary>Le sommaire a été mis à jour: {0}</editSummary>
       <editContent>Le contenu a été mis à jour.</editContent>
