@@ -28,11 +28,10 @@
 
       .QuickSearchResult .Avatar {
         float: left;
-        padding-top: 0px;
+        padding-top: 3px;
       }
 
       .QuickSearchResult .Avatar img {
-        padding-top: 3px;
         width: 20px;
         height: 24px;
       }
@@ -62,6 +61,30 @@
       #quickSearchPortlet input:focus, #quickSearchPortlet textarea:focus {
           outline: none;
       }
+
+
+      .calendarBox {
+          font-family: "Helvetica Neue Bold",Helvetica,Lucida,Arial,sans-serif;
+          font-weight: bold;
+          text-align: center;
+      }
+      .calendarBox .heading {
+          background-color: #567AB6;
+          background-image: -moz-linear-gradient(center top , #638ACD, #426393);
+          background-repeat: repeat-x;
+          border: 1px solid #224886;
+          border-radius: 4px 4px 0 0;
+          color: #FFFFFF;
+          margin: 0;
+          padding: 2px 0;
+      }
+      .calendarBox .content {
+          border: 1px solid #C3C3C3;
+          border-radius: 0 0 4px 4px;
+          color: #316399;
+          font-size: 24px;
+          padding: 8px;
+      }
     </style>
 
 
@@ -83,9 +106,9 @@
       var QUICKSEARCH_LIMIT;
 
       var QUICKSEARCH_RESULT_TEMPLATE= " \
-        <div class='QuickSearchResult'> \
+        <div class='QuickSearchResult %{type}'> \
           <div class='Avatar Clickable'> \
-            <img title='%{title}' src='%{avatar}' alt='[+]'> \
+            %{avatar} \
           </div> \
           <div class='Content'> \
             <div class='Title Ellipsis'><a href='%{url}'>%{title}</a></div> \
@@ -162,6 +185,7 @@
           $.each(SEARCH_TYPES, function(i, searchType){
             results = resultMap[searchType];
             if(results && 0!=$(results).size()) {
+              results.map(function(result){result.type = searchType;});
               var cell = [];
               $.each(results, function(i, result){
                 cell.push(renderQuickSearchResult(result));
@@ -186,10 +210,31 @@
         var query = $("#txtQuickSearchQuery").val();
         var terms = query.split(/\\s+/g);
 
-        var html = template.replace(/%{url}/g, result.url).replace(/%{title}/g, result.title.highlight(terms)).replace(/%{avatar}/g, result.imageUrl);
-        //if(!isQuickSearch) html = html.replace(/%{excerpt}/g, result.excerpt).replace(/%{detail}/g, result.detail);
-        html = html.replace(/%{excerpt}/g, result.excerpt.highlight(terms)).replace(/%{detail}/g, result.detail.highlight(terms));
-        return html;
+        var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
+
+        if("event"==result.type || "task"==result.type) {
+          result.url = "/portal/intranet/calendar" + result.url;
+        }
+
+        if("event"==result.type) {
+          var date = new Date(result.date).toUTCString().split(/\\s+/g);
+          avatar = " \
+            <div class='calendarBox'> \
+              <div class='heading' style='font-size: 8px; padding: 0px; border-width: 0px; height: 10px;'>" + date[2] + "</div> \
+              <div class='content' style='font-size: 10px; padding: 0px 2px; border-top-width: 0px; height: 13px;'>" + date[1] + "</div> \
+            </div> \
+          ";
+        }
+
+        var html = template.
+          replace(/%{type}/g, result.type).
+          replace(/%{url}/g, result.url).
+          replace(/%{title}/g, result.title.highlight(terms)).
+          replace(/%{excerpt}/g, result.excerpt.highlight(terms)).
+          replace(/%{detail}/g, result.detail.highlight(terms)).
+          replace(/%{avatar}/g, avatar);
+
+       return html;
       }
 
 

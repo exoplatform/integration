@@ -39,11 +39,10 @@
 
       .SearchResult .Avatar {
         float: left;
-        padding-top: 0px;
+        padding-top: 3px;
       }
 
       .SearchResult .Avatar img {
-        padding-top: 3px;
         width: 48px;
         height: 48px;
       }
@@ -117,6 +116,30 @@
       #searchPortlet input:focus, #searchPortlet textarea:focus {
           outline: none;
       }
+
+
+      .calendarBox {
+          font-family: "Helvetica Neue Bold",Helvetica,Lucida,Arial,sans-serif;
+          font-weight: bold;
+          text-align: center;
+      }
+      .calendarBox .heading {
+          background-color: #567AB6;
+          background-image: -moz-linear-gradient(center top , #638ACD, #426393);
+          background-repeat: repeat-x;
+          border: 1px solid #224886;
+          border-radius: 4px 4px 0 0;
+          color: #FFFFFF;
+          margin: 0;
+          padding: 2px 0;
+      }
+      .calendarBox .content {
+          border: 1px solid #C3C3C3;
+          border-radius: 0 0 4px 4px;
+          color: #316399;
+          font-size: 24px;
+          padding: 8px;
+      }
     </style>
 
 
@@ -157,7 +180,7 @@
               Sort By: <select id="lstSortBy"></select><span id="sortType" class="Desc Clickable">&nbsp;</span>
             </span>
           </div>
-          <div id="result" style="display: none;"></div>
+          <div id="result"></div>
           <div id="showMore" style="display: none; text-align: center; margin-bottom: 20px; margin-top: 40px;"><input type="button" id="btnShowMore" value="Show More Results"/></div>
         </div>
 
@@ -180,9 +203,9 @@
       var search; //the main search function
 
       var SEARCH_RESULT_TEMPLATE = " \
-        <div class='SearchResult '> \
+        <div class='SearchResult %{type}'> \
           <div class='Avatar Clickable'> \
-            <img title='%{title}' src='%{avatar}' alt='[+]'> \
+            %{avatar} \
           </div> \
           <div class='Content'> \
             <div class='Title Ellipsis'><a href='%{url}'>%{title}</a></div> \
@@ -348,14 +371,36 @@
 
 
       function renderSearchResult(result) {
-        //console.log(result.type);
         var template = SEARCH_RESULT_TEMPLATE;
         var query = $("#txtQuery").val();
         var terms = query.split(/\\s+/g);
 
-        var html = template.replace(/%{url}/g, result.url).replace(/%{title}/g, result.title.highlight(terms)).replace(/%{avatar}/g, result.imageUrl);
-        html = html.replace(/%{excerpt}/g, result.excerpt.highlight(terms)).replace(/%{detail}/g, result.detail.highlight(terms));
-        return html;
+        var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
+
+        if("event"==result.type || "task"==result.type) {
+          result.url = "/portal/intranet/calendar" + result.url;
+        }
+
+        if("event"==result.type) {
+          var date = new Date(result.date).toUTCString().split(/\\s+/g);
+          avatar = " \
+            <div class='calendarBox'> \
+              <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[2] + "</div> \
+              <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[1] + "</div> \
+            </div> \
+          ";
+        }
+
+        var html = template.
+          replace(/%{type}/g, result.type).
+          replace(/%{url}/g, result.url).
+          replace(/%{title}/g, result.title.highlight(terms)).
+          replace(/%{excerpt}/g, result.excerpt.highlight(terms)).
+          replace(/%{detail}/g, result.detail.highlight(terms)).
+          replace(/%{avatar}/g, avatar);
+
+        if(IS_CATEGORIZED) return html;
+        $("#result").append(html);
       }
 
 
@@ -586,9 +631,7 @@
         NUM_RESULTS_RENDERED = 0;
 
         getFromServer(function(){
-          $("#result").show();
-          $("#resultSort").show();
-          $("#result").html(renderCachedResults());
+          renderCachedResults();
         });
       }
 
@@ -626,22 +669,22 @@
       }
 
 
-      function renderCachedResults() {
-        var html = "";
+      function renderCachedResults(append) {
         var current = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);
-        $.each(current, function(i, result){
-          html = html + renderSearchResult(result);
-        });
-
-        if(""==html) {
+        if(0==current.length) {
           clearResultPage("No result for <strong>" + (isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>");
           return;
         }
+
         NUM_RESULTS_RENDERED = NUM_RESULTS_RENDERED + current.length;
         var resultHeader = "Results " + 1 + " to " + NUM_RESULTS_RENDERED + " for <strong>" + (isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>";
         $("#resultHeader").html(resultHeader);
+        $("#resultSort").show();
 
-        return html;
+        if(!append) $("#result").html("");
+        $.each(current, function(i, result){
+          renderSearchResult(result);
+        });
       }
 
 
@@ -678,12 +721,12 @@
             SERVER_OFFSET = SERVER_OFFSET + LIMIT;
             getFromServer(function(){
               RESULT_CACHE = remaining.concat(RESULT_CACHE);
-              $("#result").append(renderCachedResults());
+              renderCachedResults(true);
               $("#searchPage").animate({ scrollTop: $("#resultPage")[0].scrollHeight}, "slow");
             });
             return;
           }
-          $("#result").append(renderCachedResults());
+          renderCachedResults(true);
           $("#searchPage").animate({ scrollTop: $("#resultPage")[0].scrollHeight}, "slow");
         });
 
@@ -691,7 +734,7 @@
           SERVER_OFFSET = 0;
           NUM_RESULTS_RENDERED = 0;
           getFromServer(function(){
-            $("#result").html(renderCachedResults());
+            renderCachedResults();
           });
         });
 
@@ -700,7 +743,7 @@
           SERVER_OFFSET = 0;
           NUM_RESULTS_RENDERED = 0;
           getFromServer(function(){
-            $("#result").html(renderCachedResults());
+            renderCachedResults();
           });
         });
 
