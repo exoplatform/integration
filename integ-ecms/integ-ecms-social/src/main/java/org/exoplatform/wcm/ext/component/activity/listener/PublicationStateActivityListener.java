@@ -20,6 +20,7 @@ import javax.jcr.Node;
 
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
 
 /**
  * Created by The eXo Platform SAS
@@ -34,8 +35,11 @@ public class PublicationStateActivityListener extends Listener<Node, String> {
   public void onEvent(Event<Node, String> event) throws Exception {
     String stateName = event.getData();
     Node currentNode = event.getSource();
+    Node parent = currentNode.getParent();
     for (int i=0; i< handledState.length; i++) {
       if (handledState[i].equals(stateName)) {
+      	if(!currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE) || 
+      			(currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE) && Utils.isDocumentNodeType(parent)))
         Utils.postActivity(currentNode, bundlePrefix + handledState[i], true, true, "");
       }
     }

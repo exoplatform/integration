@@ -11,6 +11,7 @@
 			<singleCreator>Creator is {0}</singleCreator>
       <multiCreator>Creators are {0}</multiCreator>
 			<editSummary>Summary has been updated to: {0}</editSummary>
+			<editLanguage>Language has been updated to: {0}</editLanguage>
 			<editContent>Content has been updated.</editContent>
 			<singleSource>Source is {0}.</singleSource>
       <multiSource>Sources are {0}.</multiSource>
@@ -21,6 +22,7 @@
       <removeDescription>Description has been removed.</removeDescription>
       <removeCreator>Creator has been removed.</removeCreator>
       <removeSource>Source has been removed.</removeSource>
+      <removeLanguage>Language has been removed.</removeLanguage>
       <removeContent>Content has been removed.</removeContent>
 			<attachmentAdded>File(s) has been attached.</attachmentAdded>
 			<attachmentRemoved>File(s) has been removed.</attachmentRemoved>

@@ -311,7 +311,7 @@ public class Utils {
     // get owner
     String activityOwnerId = getActivityOwnerId();
     String nodeActivityID = StringUtils.EMPTY;
-    ExoSocialActivity exa =null;
+    ExoSocialActivity exa =null;    
     if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
       try {
         nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
@@ -708,5 +708,10 @@ public class Utils {
     if (index <0) return result;
     result = result.substring(0, index) + "<br>...";
     return result;
+  }
+  
+  public static boolean isDocumentNodeType(Node node) throws Exception {
+    TemplateService templateService = WCMCoreUtils.getService(TemplateService.class);
+    return templateService.isManagedNodeType(node.getPrimaryNodeType().getName());
   }
 }

@@ -20,7 +20,9 @@
       <removeCreator>Creator has been removed.</removeCreator>
       <removeSource>Source has been removed.</removeSource>
       <removeContent>Content has been removed.</removeContent>
+      <removeLanguage>Language has been removed.</removeLanguage>
       <editSummary>Le sommaire a été mis à jour: {0}</editSummary>
+      <editLanguage>Language has been updated to: {0}</editLanguage>
       <editContent>Le contenu a été mis à jour.</editContent>
       <attachmentAdded>Des fichiers ont été attachés.</attachmentAdded>
       <attachmentRemoved>Des fichiers on été supprimés.</attachmentRemoved>

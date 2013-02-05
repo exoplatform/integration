@@ -107,9 +107,9 @@
   
   def docTypeName = uicomponent.getDocTypeName();
   def docTitle = uicomponent.getDocTitle();
-  def docVersion = uicomponent.getDocVersion();
-  if (docVersion!=null) {
-  }
+  def docVersionNo = uicomponent.getDocVersion();
+  def docVersion = _ctx.appRes("SocialIntegration.messages.version");
+  //docVersion = docVersion.replace("{0}", docVersionNo);
   def docSummary = uicomponent.getDocSummary();
   def viewLink = uicomponent.getViewLink();
   def editLink = uicomponent.getEditLink();
@@ -143,8 +143,8 @@
       allCommentSize: '${allComments.size()}',
       commentFormFocused: '${uicomponent.isCommentFormFocused()}'
     } """
+  //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
   jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
-  
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
   def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
@@ -193,37 +193,19 @@
 %>
 
 <div class="UIActivity">
-  <script type="text/javascript">    
+<script type="text/javascript">    
 	  
-	//javascript function added by ECMS - BEGIN
-	function changeStyleForMediaComponent (mediaContentDivId) {
-	  var mediaContentDiv = document.getElementById(mediaContentDivId);
-	  if (mediaContentDiv == null) return;
-	  
-	  var playerContentDiv = mediaContentDiv.getElementsByClassName('PlayerContent')[0];
-	  if (playerContentDiv == null) return;
-	  
-	  playerContentDiv.removeAttribute("style");
-	  playerContentDiv.className = "MediaPlayerDisplay";
-	}
-	
-	function loadImageOnError(obj){
-		var grandParent = obj.parentNode.parentNode;
-		grandParent.style.display = "none";
-		
-		var wcborder = getAncesstorByClass(obj, "WebContentBorder");		
-		if (wcborder.getElementsByTagName("span")[0] == null) {
-			grandParent.parentNode.style.display = "none";
-		}
-	}
-	function getAncesstorByClass(obj, className) {
-	  var parent = obj.parentNode;
-	  while (parent!=null && parent.className==className ) parent = parent.parentNode;
-	  return parent;
-	}
-	//javascript function added by ECMS - END
+		function changeStyleForMediaComponent (mediaContentDivId) {
+		  var mediaContentDiv = document.getElementById(mediaContentDivId);
+		  if (mediaContentDiv == null) return;
+		  
+		  var playerContentDiv = mediaContentDiv.getElementsByClassName('PlayerContent')[0];
+		  if (playerContentDiv == null) return;
+		  
+		  playerContentDiv.removeAttribute("style");
+		  playerContentDiv.className = "MediaPlayerDisplay";
+		}	
   </script>
-  <!--ECMS stylesheet BEGIN-->
   <style>
 	.MediaContent { 
 	  margin: 10px 3px; 
@@ -244,24 +226,21 @@
 	  overflow: auto;
 	}
 	  
-	.ReadMoreLink { 
-	  text-align: right;
-	}
-	
+		
 	.BoxGray .ContentDetail .PlayerContent {
     padding: 7px;
     display: block;
     float: left;
     height: 200px;
-    width: 350px;
+    width: 330px;
   }
 
-  .BoxGray .video {
+  .BoxGray .videoContent {
     padding: 7px;
     display: block;
     float: left;
     height: 255px;
-    width: 350px;
+    width: 330px;
   }
 	  
 	.MediaPlayerDisplay{
@@ -273,8 +252,6 @@
     }
     
   </style>
-  <!--ECMS stylesheet END-->
-
   <% uiform.begin() %>
   <div class="NormalBox ClearFix">
     <a class="Avatar" title="$ownerName" href="$ownerUri">
@@ -291,10 +268,8 @@
       <%}%>
       </h5>
       
-      
-      
-      
-      <p class="Content">
+
+       <p class="Content">
       <!--ECMS update content of activity BEGIN-->
         <div id="ActivityDetail" style="margin: 8px 0;">
         <%if (currentNode) {%>
@@ -319,9 +294,6 @@
 		  
 		<!--ECMS update content of activity END-->
       </p>
-      
-      
-      
       
       
       <div class="BoxGray ClearFix">         
@@ -362,7 +334,7 @@
 		               String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
 		               %><a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder" style="max-height: 300px; max-width: 300px;" /></a></div><%
 		            } else if(fileComponent != null) {
-			      	  jsManager.addOnLoadJavascript("changeStyleForMediaComponent('" + "MediaContent" + activity.id + "')");
+			      	  //jsManager.addOnLoadJavascript("changeStyleForMediaComponent('" + "MediaContent" + activity.id + "')");
 		              uicontentpresentation.renderUIComponent(fileComponent);
 		            }
 		        }%>
@@ -371,26 +343,44 @@
           
           </div>
       </div>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+
       <!--ECMS change icon-->
+      
+
+
+			<!--DocActivityIcon BEGIN-->
       <div class="DocActivityIcon">
-        <span class="viewAction"><a href="$contentActivityUri">View</a></span>
-        <span class="editAction"><a href="$editLink">Edit</a></span>
+        <% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
+             Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
+             def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+             def spaceName = spaceSource.displayName;
+             activityPostedTimeInSpace = uicomponent.getPostedTimeInSpaceString(_ctx, activity.postedTime);
+        %>
+          <span class="DateTime">$activityPostedTimeInSpace <b><a class="Text" title="$spaceName" href="$spaceSourceURI">$spaceName</a></b> *</span>
+        <%} else {%>
+          <span class="DateTime">$activityPostedTime *</span>
+        <% } %>
+        <span class="viewAction"><a href="$contentActivityUri">View</a></span> |
+        <span class="editAction"><a href="$editLink">Edit</a></span> |
+        <% 
+          def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
+          def commentLink = "";
+	        if (activityCommentAndLikable) { %>
+	          <a class="$commentLink" onclick="$toggleDisplayCommentAction" id="CommentLink${activity.id}" href="#comment">$labelComment</a> |
+	          <% if (uicomponent.isLiked()) { %>
+	               <a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="#unlike">$labelUnlike</a> |
+	          <%} else {%>
+	               <a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">$labelLike</a> |
+	          <%}%>
+	        <%}%>
+	        
+	        
         <span class="commentCount">Comment: $commentCount</span>
         <span class="likeCount">Like: $identityLikesNum</span>
-      </div><!--DocActivityIcon END-->
+      </div>
+      <!--DocActivityIcon END-->
+
+
     <% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>
       <div class="ListPeopleLikeBG $listPeopleBGClass">
           <div class="ListPeopleContent">
@@ -416,7 +406,10 @@
           </div>
       </div>
     <%}%>
-    
+   </div>
+   
+   
+   
    <div id="CommentBlockBound${activity.id}">
     
       <% if (uicomponent.commentListToggleable()) {
@@ -469,7 +462,6 @@
               commentMessage = _ctx.appRes(systemComment[count]);
               if (systemCommentTitle!=null) {
                 if (systemCommentTitle.length>count) {
-                  //commentMessage = commentMessage.replace("{0}", "<strong>" + systemCommentTitle[count] + "</strong>");
                   for(def i = 0; i<systemCommentTitle.length; i++) {
                     commentMessage = commentMessage.replace("{"+i+"}", "<strong>" + systemCommentTitle[i] + "</strong>");
                   }
@@ -550,6 +542,6 @@
   </div>
   <% uiform.end() %>
 </div>
-<% } else { %> <!-- activity deleted -->
+<% } else { %> <!-- activity deleted line 48-->
 <div class="UIActivity Deleted">$labelActivityHasBeenDeleted</div>
-<% }%>
+<% } %>

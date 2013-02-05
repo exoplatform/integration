@@ -72,6 +72,13 @@
 			<set-method>addListener</set-method>
 			<type>org.exoplatform.wcm.ext.component.activity.listener.FileRemovePropertyActivityListener</type>
 			<description>this listener will create a new comment/activity when a property has been removed</description>
+		</component-plugin>		
+		
+		<component-plugin profiles="default,all,social">
+			<name>FileActivityNotify.event.FileRemoved</name>
+			<set-method>addListener</set-method>
+			<type>org.exoplatform.wcm.ext.component.activity.listener.FileRemoveActivityListener</type>
+			<description>this listener will create a new comment/activity when a property has been removed</description>
 		</component-plugin>
 		
 		<component-plugin profiles="default,all,social">
