@@ -1,289 +1,56 @@
-    <style>
-      .SearchBox {
-          background: url("/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/SearchIcon.png") no-repeat scroll 4px center white;
-          border: solid 1px lightgray;
-          border-radius: 12px;
-          height: 18px;
-          padding-left: 20px;
-          width: 120px;
-      }
 
-      .Clickable {
-        cursor: pointer;
-      }
-
-      .Ellipsis {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        -o-text-overflow: ellipsis;
-        -ms-text-overflow: ellipsis;
-      }
-
-      .QuickSearchResult {
-        margin-left: 0px;
-        padding-top: 0px;
-        height: 30px;
-      }
-
-      .QuickSearchResult .Avatar {
-        float: left;
-        padding-top: 3px;
-      }
-
-      .QuickSearchResult .Avatar img {
-        width: 20px;
-        height: 24px;
-      }
-
-      .QuickSearchResult .Content {
-        padding-left: 5px;
-        overflow: hidden;
-      }
-
-      .QuickSearchResult .Content .Excerpt div {
-        font-size: xx-small; color: grey;
-      }
-
-      #quickSearchResult {
-        position: absolute;
-        background: white;
-        width: 315px;
-        margin-top: 6px;
-        margin-left: 3px;
-        display:none;
-      }
-
-      #quickSearchResult table, #quickSearchResult th, #quickSearchResult td {
-        border: 1px solid lightgray;
-      }
-
-      #quickSearchPortlet input:focus, #quickSearchPortlet textarea:focus {
-          outline: none;
-      }
-
-
-      .calendarBox {
-          font-family: "Helvetica Neue Bold",Helvetica,Lucida,Arial,sans-serif;
-          font-weight: bold;
-          text-align: center;
-      }
-      .calendarBox .heading {
-          background-color: #567AB6;
-          background-image: -moz-linear-gradient(center top , #638ACD, #426393);
-          background-repeat: repeat-x;
-          border: 1px solid #224886;
-          border-radius: 4px 4px 0 0;
-          color: #FFFFFF;
-          margin: 0;
-          padding: 2px 0;
-      }
-      .calendarBox .content {
-          border: 1px solid #C3C3C3;
-          border-radius: 0 0 4px 4px;
-          color: #316399;
-          font-size: 24px;
-          padding: 8px;
-      }
-    </style>
-
-
-    <div id="quickSearchPortlet">
-      <div id="quickSearch">
-        <div style="padding-top: 5px;" id="quickSearchForm">
-          <input type="text" id="txtQuickSearchQuery" class="SearchBox">
-        </div>
-        <div id="quickSearchResult" style="z-index: 1001;">
-        </div>
-      </div>
+<div id="quickSearchPortlet">
+  <div id="quickSearch">
+    <div style="padding-top: 5px;" id="quickSearchForm">
+      <input type="text" id="txtQuickSearchQuery" class="SearchBox">
     </div>
+    <div id="quickSearchResult" style="z-index: 1001;">
+    </div>
+  </div>
+</div>
 
-    <script>
-      //*** Global variables ***
-      var CONNECTORS;
-      var SEARCH_TYPES;
-      var QUICKSEARCH_SETTING;
-      var QUICKSEARCH_LIMIT;
+<script>
+  var quickSearch;
+  //*** Event handlers - Quick search ***
 
-      var QUICKSEARCH_RESULT_TEMPLATE= " \
-        <div class='QuickSearchResult %{type}'> \
-          <div class='Avatar Clickable'> \
-            %{avatar} \
-          </div> \
-          <div class='Content'> \
-            <div class='Title Ellipsis'><a href='%{url}'>%{title}</a></div> \
-            <div class='Excerpt Ellipsis'>%{excerpt}</div> \
-          </div> \
-        </div> \
-      ";
-
-      var QUICKSEARCH_TABLE_TEMPLATE=" \
-            <table style='table-layout: fixed;'> \
-              <col width='30%'> \
-              <col width='70%'> \
-              %{resultRows} \
-              <tr> \
-                <th colspan='2' style='padding: 10px; font-weight: normal;'> \
-                  <a id='seeAll' class='Clickable' href='#'>%{message}</a> \
-                </th> \
-              </tr> \
-            </table> \
-          ";
-
-      var QUICKSEARCH_TABLE_ROW_TEMPLATE=" \
-            <tr> \
-              <th> \
-                <div style='margin-top: 8px; color: gray;'>%{type}</div> \
-              </th> \
-              <td style='padding: 2px;'> \
-                <div style='margin-left: 3px;'>%{results}</div> \
-              </td> \
-            </tr> \
-          ";
+  $("#seeAll").live("click", function(){
+    window.location.href = $(this).attr("href");
+    $("#quickSearchResult").hide();
+  });
 
 
-      //*** Utility functions ***
+  $("#txtQuickSearchQuery").keyup(function(e){
+    if(""==$(this).val()) {
+      $("#quickSearchResult").hide();
+      return;
+    }
 
-      String.prototype.toProperCase = function() {
-        return this.replace(/\\w\\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-      };
-
-
-      String.prototype.highlight = function(words) {
-        var str = this;
-        for(var i=0; i<words.length; i++) {
-          if(""==words[i]) continue;
-          var regex = new RegExp("(" + words[i] + ")", "gi");
-          str = str.replace(regex, "<strong>$1</strong>");
-        }
-        return str;
-      };
+    if(13==e.keyCode) {
+      $("#seeAll").click();
+    } else {
+      quickSearch.search();
+    }
+  });
 
 
-      function getRegistry(callback) {
-        $.getJSON("/rest/search/registry", function(registry){
-          if(callback) callback(registry);
-        });
-      }
+  $("#txtQuickSearchQuery").focus(function(){
+    if(""!=$("#txtQuickSearchQuery").val()) {
+      quickSearch.search();
+    }
+  });
 
 
-      function getQuicksearchSetting(callback) {
-        $.getJSON("/rest/search/setting/quicksearch", function(setting){
-          if(callback) callback(setting);
-        });
-      }
+  $("#txtQuickSearchQuery").blur(function(){
+    setTimeout(function(){$("#quickSearchResult").hide();}, 200);
+  });
 
 
-      function quickSearch() {
-        var query = $("#txtQuickSearchQuery").val();
-        var sites = QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all";
-        var types = QUICKSEARCH_SETTING.searchTypes.join(",");
-        var restUrl = "/rest/search?q=" + query+"&sites="+sites+"&types="+types+"&offset=0"+"&limit="+QUICKSEARCH_LIMIT+"&sort="+"&order=desc";
-
-        $.getJSON(restUrl, function(resultMap){
-          var rows = [];
-          $.each(SEARCH_TYPES, function(i, searchType){
-            results = resultMap[searchType];
-            if(results && 0!=$(results).size()) {
-              results.map(function(result){result.type = searchType;});
-              var cell = [];
-              $.each(results, function(i, result){
-                cell.push(renderQuickSearchResult(result));
-              });
-              var row = QUICKSEARCH_TABLE_ROW_TEMPLATE.replace(/%{type}/g, CONNECTORS[searchType].displayName).replace(/%{results}/g, cell.join(""));
-              rows.push(row);
-            }
-          });
-          var message = rows.length==0 ? "No result for <strong>" + query + "<strong>" : "See All Search Results";
-          $("#quickSearchResult").html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{message}/g, message));
-          var width = Math.min($("#quickSearchResult").width(), $(window).width() - $("#txtQuickSearchQuery").offset().left - 20);
-          $("#quickSearchResult").width(width);
-          $("#quickSearchResult").show();
-          var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
-          $("#seeAll").attr("href", searchPage +"?q="+query+"&types="+types);
-        });
-      }
-
-
-      function renderQuickSearchResult(result) {
-        var template = QUICKSEARCH_RESULT_TEMPLATE;
-        var query = $("#txtQuickSearchQuery").val();
-        var terms = query.split(/\\s+/g);
-
-        var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
-
-        if("event"==result.type || "task"==result.type) {
-          result.url = "/portal/intranet/calendar" + result.url;
-        }
-
-        if("event"==result.type) {
-          var date = new Date(result.date).toUTCString().split(/\\s+/g);
-          avatar = " \
-            <div class='calendarBox'> \
-              <div class='heading' style='font-size: 8px; padding: 0px; border-width: 0px; height: 10px;'>" + date[2] + "</div> \
-              <div class='content' style='font-size: 10px; padding: 0px 2px; border-top-width: 0px; height: 13px;'>" + date[1] + "</div> \
-            </div> \
-          ";
-        }
-
-        var html = template.
-          replace(/%{type}/g, result.type).
-          replace(/%{url}/g, result.url).
-          replace(/%{title}/g, result.title.highlight(terms)).
-          replace(/%{excerpt}/g, result.excerpt.highlight(terms)).
-          replace(/%{detail}/g, result.detail.highlight(terms)).
-          replace(/%{avatar}/g, avatar);
-
-       return html;
-      }
-
-
-      //*** Event handlers - Quick search ***
-
-      $("#seeAll").live("click", function(){
-        window.location.href = $(this).attr("href");
-        $("#quickSearchResult").hide();
+  //*** The entry point ***
+  (function(){
+    $.getJSON("/rest/search/registry", function(registry){
+      $.getJSON("/rest/search/setting/quicksearch", function(setting){
+        quickSearch = new QuickSearch(registry, setting);
       });
-
-
-      $("#txtQuickSearchQuery").keyup(function(e){
-        if(""==$(this).val()) {
-          $("#quickSearchResult").hide();
-          return;
-        }
-
-        if(13==e.keyCode) {
-          $("#seeAll").click();
-        } else {
-          quickSearch();
-        }
-      });
-
-
-      $("#txtQuickSearchQuery").focus(function(){
-        if(""!=$("#txtQuickSearchQuery").val()) {
-          quickSearch();
-        }
-      });
-
-
-      $("#txtQuickSearchQuery").blur(function(){
-        setTimeout(function(){$("#quickSearchResult").hide();}, 200);
-      });
-
-
-      //*** The entry point ***
-      (function(){
-        getRegistry(function(registry){
-          CONNECTORS = registry[0];
-          SEARCH_TYPES = registry[1];
-
-          getQuicksearchSetting(function(setting){
-            QUICKSEARCH_SETTING = setting;
-            QUICKSEARCH_LIMIT = setting.resultsPerPage;
-          });
-
-        });
-      })();
-
-    </script>
+    });
+  })();
+</script>

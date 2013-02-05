@@ -1,0 +1,91 @@
+
+.SearchBox {
+    background: url("/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/SearchIcon.png") no-repeat scroll 4px center white;
+    border: solid 1px lightgray;
+    border-radius: 12px;
+    height: 18px;
+    padding-left: 20px;
+    width: 120px;
+}
+
+.Clickable {
+  cursor: pointer;
+}
+
+.Ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
+}
+
+
+.QuickSearchResult {
+  margin-left: 0px;
+  padding-top: 0px;
+  height: 30px;
+}
+
+.QuickSearchResult .Avatar {
+  float: left;
+  padding-top: 3px;
+}
+
+.QuickSearchResult .Avatar img {
+  width: 20px;
+  height: 24px;
+}
+
+.QuickSearchResult .Content {
+  padding-left: 5px;
+  overflow: hidden;
+}
+
+.QuickSearchResult .Content .Excerpt div {
+  font-size: xx-small; color: grey;
+}
+
+
+#quickSearchResult {
+  position: absolute;
+  background: white;
+  width: 315px;
+  margin-top: 6px;
+  margin-left: 3px;
+  display:none;
+}
+
+#quickSearchResult table, #quickSearchResult th, #quickSearchResult td {
+  border: 1px solid lightgray;
+}
+
+#quickSearchPortlet input:focus, #quickSearchPortlet textarea:focus {
+    outline: none;
+}
+
+
+.calendarBox {
+    font-family: "Helvetica Neue Bold",Helvetica,Lucida,Arial,sans-serif;
+    font-weight: bold;
+    text-align: center;
+}
+
+.calendarBox .heading {
+    background-color: #567AB6;
+    background-image: -moz-linear-gradient(center top , #638ACD, #426393);
+    background-repeat: repeat-x;
+    border: 1px solid #224886;
+    border-radius: 4px 4px 0 0;
+    color: #FFFFFF;
+    margin: 0;
+    padding: 2px 0;
+}
+
+.calendarBox .content {
+    border: 1px solid #C3C3C3;
+    border-radius: 0 0 4px 4px;
+    color: #316399;
+    font-size: 24px;
+    padding: 8px;
+}

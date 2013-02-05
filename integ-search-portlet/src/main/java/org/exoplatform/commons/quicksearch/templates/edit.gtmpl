@@ -1,18 +1,5 @@
-<style>
-  #quickSearchSetting div {
-    margin-top: 10px;
-  }
 
-  #quickSearchSetting table tr {
-    height: 30px;
-  }
-
-  #quickSearchSetting table td:first-child {
-    width: 110px;
-  }
-</style>
-
-<div id="quickSearchSetting" style="height: 600px;">
+<div id="quickSearchSetting">
   <h3 style="margin-left: 3px;">Quick Search Settings</h3>
   <hr>
   <div style="margin-left: 10px; margin-bottom: 40px;">
@@ -26,7 +13,7 @@
           <td><span>Search in</span></td>
           <td>
             <input type="text" id="txtSearchIn" value="Everything" readonly/>
-            <ul id="lstSearchInOptions" style="display: none; border: 1px dotted; border-top:none; overflow-x: hidden; padding-bottom: 10px;"></ul>
+            <ul id="lstSearchInOptions"></ul>
           </td>
         </tr>
       </table>
@@ -42,38 +29,12 @@
 </div>
 
 <script>
-  var CONNECTORS;
-
-  function updateTxtSearchIn() {
-    var searchIn = [];
-    if($(":checkbox[name='searchInOption'][value='all']").is(":checked")) {
-      $("#txtSearchIn").val("Everything");
-    } else {
-      $.each($(":checkbox[name='searchInOption'][value!='all']:checked"), function(){
-        searchIn.push(CONNECTORS[this.value].displayName);
-      });
-      $("#txtSearchIn").val(searchIn.join(", "));
-    }
-  }
-
-
-  function getSelectedTypes() {
-    var searchIn = [];
-    if($(":checkbox[name='searchInOption'][value='all']").is(":checked")) {
-      return "all";
-    } else {
-      $.each($(":checkbox[name='searchInOption'][value!='all']:checked"), function(){
-        searchIn.push(this.value);
-      });
-      return searchIn.join(",");
-    }
-  }
-
+  var quickSearchSetting;
 
   $("#btnSave").click(function(){
     var jqxhr = $.post("/rest/search/setting/quicksearch", {
       resultsPerPage:$("#resultsPerPage").val(),
-      searchTypes:getSelectedTypes(),
+      searchTypes:QuickSearchSetting.getSelectedTypes(),
       searchCurrentSiteOnly:$("#searchCurrentSiteOnly").is(":checked")
     });
 
@@ -86,7 +47,6 @@
   $("#txtSearchIn").click(function(){
     $("#lstSearchInOptions").toggle();
     if($("#lstSearchInOptions").is(":visible")) {
-      $("#lstSearchInOptions").offset({left:$("#txtSearchIn").offset().left+3, top:$("#txtSearchIn").offset().top+$("#txtSearchIn").height()+8});
       $("#lstSearchInOptions").width($("#txtSearchIn").width());
       $(":checkbox[name='searchInOption'][value!='all']").css("margin-left", "25px");
     }
@@ -104,7 +64,7 @@
       $(":checkbox[name='searchInOption'][value='all']").attr('checked', false); //uncheck All Sites
     }
 
-    updateTxtSearchIn();
+    quickSearchSetting.updateTxtSearchIn();
   });
 
 
@@ -114,27 +74,8 @@
   }
 
   $.getJSON("/rest/search/registry", function(registry){
-    CONNECTORS = registry[0];
-    var searchInOpts=[];
-    searchInOpts.push("<li><label><input type='checkbox' name='searchInOption' value='all'>Everything</label></li>");
-    $.each(registry[1], function(i, type){
-      if(CONNECTORS[type]) searchInOpts.push("<li><label><input type='checkbox' name='searchInOption' value='" + type + "'>" + CONNECTORS[type].displayName + "</label></li>");
-    });
-    $("#lstSearchInOptions").html(searchInOpts.join(""));
-
     $.getJSON("/rest/search/setting/quicksearch", function(setting){
-      $(":checkbox[name='searchInOption']").attr('checked', false);
-      $.each($(":checkbox[name='searchInOption']"), function(){
-        if(-1 != $.inArray(this.value, setting.searchTypes)) {
-          $(this).attr('checked', true);
-        }
-      });
-
-      $("#resultsPerPage").val(setting.resultsPerPage);
-      updateTxtSearchIn();
-      $("#searchCurrentSiteOnly").attr('checked', setting.searchCurrentSiteOnly);
+      quickSearchSetting = new QuickSearchSetting(registry, setting);
     });
-
   });
-
 </script>
