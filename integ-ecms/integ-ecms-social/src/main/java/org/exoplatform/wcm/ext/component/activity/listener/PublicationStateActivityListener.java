@@ -18,9 +18,11 @@ package org.exoplatform.wcm.ext.component.activity.listener;
 
 import javax.jcr.Node;
 
+import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
+import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 
 /**
  * Created by The eXo Platform SAS
@@ -34,12 +36,14 @@ public class PublicationStateActivityListener extends Listener<Node, String> {
   @Override
   public void onEvent(Event<Node, String> event) throws Exception {
     String stateName = event.getData();
+    ActivityCommonService activityService = WCMCoreUtils.getService(ActivityCommonService.class);
     Node currentNode = event.getSource();
     Node parent = currentNode.getParent();
     for (int i=0; i< handledState.length; i++) {
       if (handledState[i].equals(stateName)) {
       	if(!currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE) || 
-      			(currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE) && Utils.isDocumentNodeType(parent)))
+      			(currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE) && 
+      					activityService.isBroadcastNTFileEvents(currentNode)))
         Utils.postActivity(currentNode, bundlePrefix + handledState[i], true, true, "");
       }
     }
