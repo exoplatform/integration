@@ -17,6 +17,7 @@
 package org.exoplatform.wcm.ext.component.activity.listener;
 
 import javax.jcr.Node;
+import javax.jcr.Value;
 
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
@@ -38,10 +39,6 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
   /**
    * Instantiates a new post edit content event listener.
    */
-  public ContentUpdateActivityListener() {
-	  
-  }
-
   @Override
   public void onEvent(Event<Node, String> event) throws Exception {
     Node currentNode = event.getSource();
@@ -51,7 +48,22 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
       if (propertyName.equals(editedField[consideredFieldCount-1])) {
         newValue ="";
       } else {
-        newValue= currentNode.getProperty(propertyName).getString();
+        if (!currentNode.hasProperty(propertyName)) return;
+        if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
+          StringBuffer sb = new StringBuffer();
+          Value[] values = currentNode.getProperty(propertyName).getValues();
+          for (int i=0; i<values.length; i++) {
+            if (i==0) {
+              sb.append(values[i].getString());
+            }else {
+              sb.append(", ").append(values[i].getString());
+            }
+          }
+          newValue = sb.toString();
+        }else {
+          newValue= currentNode.getProperty(propertyName).getString();
+          if (newValue==null) newValue =""; 
+        }
       }
     }catch (Exception e) {
       newValue = "";
