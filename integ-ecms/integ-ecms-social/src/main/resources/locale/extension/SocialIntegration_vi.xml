@@ -24,6 +24,7 @@
       <editSummary>Summary has been updated to: {0}</editSummary>
       <editLanguage>Language has been updated to: {0}</editLanguage>
       <editContent>Content has been updated.</editContent>
+      <editFile>File has been updated.</editFile>
       <attachmentAdded>File(s) has been attached.</attachmentAdded>
       <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
       <categoryAdded>Category: {0} has been added.</categoryAdded>

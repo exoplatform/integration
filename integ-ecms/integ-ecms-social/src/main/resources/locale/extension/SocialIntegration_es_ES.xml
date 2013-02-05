@@ -11,6 +11,7 @@
       <editSummary>Summary has been updated to: {0}</editSummary>
       <editLanguage>Language has been updated to: {0}</editLanguage>
       <editContent>Content has been updated.</editContent>
+      <editFile>File has been updated.</editFile>
       <singleCreator>Creator is {0}.</singleCreator>
       <multiCreator>Creators are {0}.</multiCreator>      
       <singleSource>Source is {0}.</singleSource>

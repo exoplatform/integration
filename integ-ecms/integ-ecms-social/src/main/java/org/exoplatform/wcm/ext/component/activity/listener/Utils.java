@@ -708,10 +708,5 @@ public class Utils {
     if (index <0) return result;
     result = result.substring(0, index) + "<br>...";
     return result;
-  }
-  
-  public static boolean isDocumentNodeType(Node node) throws Exception {
-    TemplateService templateService = WCMCoreUtils.getService(TemplateService.class);
-    return templateService.isManagedNodeType(node.getPrimaryNodeType().getName());
-  }
+  }  
 }
