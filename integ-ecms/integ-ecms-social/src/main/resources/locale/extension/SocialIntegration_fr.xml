@@ -7,31 +7,31 @@
       <system>le système</system>
       <readmore>...Lire la suite.</readmore>
       <editTitle>Le titre a été mis à jour: {0}</editTitle>
-      <editDescription>Description has been updated to: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <singleSource>Source is {0}.</singleSource>
-      <multiSource>Sources are {0}.</multiSource>
-      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} has been to removed.</removeMetadata>   
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator has been removed.</removeCreator>
-      <removeSource>Source has been removed.</removeSource>
-      <removeContent>Content has been removed.</removeContent>
-      <removeLanguage>Language has been removed.</removeLanguage>
+      <editDescription>La description a été mise à jour: {0}</editDescription>
+      <singleCreator>Le créateur est {0}</singleCreator>
+      <multiCreator>Les Créateurs sont {0}</multiCreator>
+      <singleSource>la source est {0}.</singleSource>
+      <multiSource>Les sources sont {0}.</multiSource>
+      <updateMetadata>La Metadonnée {0} a été mis à jour par: {1}</updateMetadata>
+      <removeMetadata>La Metadonnée {0} a été supprimée.</removeMetadata>   
+      <removeTitle>Le titre a été supprimé.</removeTitle>
+      <removeSummary>Le sommaire a été supprimé.</removeSummary>
+      <removeDescription>La description a été supprimé.</removeDescription>
+      <removeCreator>Un createur a été supprimé.</removeCreator>
+      <removeSource>Une source a été supprimée.</removeSource>
+      <removeContent>Le contenu a été supprimé.</removeContent>
+      <removeLanguage>Un language a été supprimé.</removeLanguage>
       <editSummary>Le sommaire a été mis à jour: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
+      <editLanguage>Le language a été mis à jour: {0}</editLanguage>
       <editContent>Le contenu a été mis à jour.</editContent>
       <attachmentAdded>Des fichiers ont été attachés.</attachmentAdded>
       <attachmentRemoved>Des fichiers on été supprimés.</attachmentRemoved>
       <categoryAdded>La catégorie: {0} a été ajoutée.</categoryAdded>
       <categoryRemoved>La catégorie: {0} a été supprimée.</categoryRemoved>
-      <tagAdded>Tag: {0} has been added.</tagAdded>
-      <tagsAdded>Tags: {0} has been added.</tagsAdded>
-      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} has been removed.</tagsRemoved>
+      <tagAdded>Tag: {0} a été ajouté.</tagAdded>
+      <tagsAdded>Tags: {0} ont été ajoutés.</tagsAdded>
+      <tagRemoved>Tag: {0} a été supprimé.</tagRemoved>
+      <tagsRemoved>Tags: {0} ont été supprimés.</tagsRemoved>
       <stateChange>
         <pending>La publication est maintenant en attente.</pending>
         <approved>La publication a été approuvée.</approved>
@@ -39,7 +39,7 @@
         <published>La publication est publiée.</published>
       </stateChange>
       <contentMoved>La publication a été déplacé: {0}</contentMoved>
-      <fileMoved>File has been moved to: {0}</fileMoved>
+      <fileMoved>Le fichier a été déplacé: {0}</fileMoved>
       <revisionChanged>La publication a été restauré à la version: {0}</revisionChanged>
       <version>Version: {0}</version>
     </messages>
