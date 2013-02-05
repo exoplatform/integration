@@ -30,7 +30,7 @@ import javax.jcr.Value;
  */
 public class FileUpdateActivityListener extends Listener<Node, String> {
 
-  private String[]  editedField     = {"exo:title", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "exo:text"};
+  private String[]  editedField     = {"exo:title", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "jcr:data", "exo:text"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editSummary",
                                        "SocialIntegration.messages.editLanguage",
@@ -38,6 +38,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
                                        "SocialIntegration.messages.editDescription",
                                        "SocialIntegration.messages.singleCreator",
                                        "SocialIntegration.messages.singleSource",
+                                       "SocialIntegration.messages.editFile",
                                        "SocialIntegration.messages.editContent"};
   private String[]  bundleRemoveMessage = {"SocialIntegration.messages.removeTitle",
       																 	   "SocialIntegration.messages.removeSummary",
@@ -46,6 +47,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
                                            "SocialIntegration.messages.removeDescription",
                                            "SocialIntegration.messages.removeCreator",
                                            "SocialIntegration.messages.removeSource",
+                                           "SocialIntegration.messages.editFile",
                                            "SocialIntegration.messages.removeContent"};
   
   private boolean[] needUpdate      = {true, true, false, true, true, false, false, false};

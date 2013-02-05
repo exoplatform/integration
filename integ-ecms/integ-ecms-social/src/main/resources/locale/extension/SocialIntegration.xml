@@ -13,6 +13,7 @@
 			<editSummary>Summary has been updated to: {0}</editSummary>
 			<editLanguage>Language has been updated to: {0}</editLanguage>
 			<editContent>Content has been updated.</editContent>
+			<editFile>File has been updated.</editFile>
 			<singleSource>Source is {0}.</singleSource>
       <multiSource>Sources are {0}.</multiSource>
       <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
