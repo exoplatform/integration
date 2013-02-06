@@ -30,7 +30,7 @@ import javax.jcr.Value;
  */
 public class FileUpdateActivityListener extends Listener<Node, String> {
 
-  private String[]  editedField     = {"exo:title", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "jcr:data", "exo:text"};
+  private String[]  editedField     = {"exo:title", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "jcr:data"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editSummary",
                                        "SocialIntegration.messages.editLanguage",
@@ -64,24 +64,21 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     Node currentNode = event.getSource();
     String propertyName = event.getData();
     String newValue = "";
-    try {
-      if (propertyName.equals(editedField[consideredFieldCount-1])) {
-        newValue ="";
-      } else {
-      	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
-      		Value[] values = currentNode.getProperty(propertyName).getValues();
-      		if(values != null) {
-      			for (Value value : values) {
-							newValue += value.getString() + ", ";
-						}
-      			newValue = newValue.substring(0, newValue.length()-2);
-      		}
-      	} else newValue= currentNode.getProperty(propertyName).getString();
-      }
+    try {      
+    	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
+    		Value[] values = currentNode.getProperty(propertyName).getValues();
+    		if(values != null) {
+    			for (Value value : values) {
+						newValue += value.getString() + ", ";
+					}
+    			newValue = newValue.substring(0, newValue.length()-2);
+    		}
+    	} else newValue= currentNode.getProperty(propertyName).getString();      
     }catch (Exception e) {
       newValue = "";
     }
     newValue = newValue.trim();
+    
     if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
     String resourceBundle = "";
     boolean hit = false;

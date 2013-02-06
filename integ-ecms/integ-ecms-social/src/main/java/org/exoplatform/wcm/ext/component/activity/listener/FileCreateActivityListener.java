@@ -38,6 +38,6 @@ public class FileCreateActivityListener extends Listener<Object, Node> {
   @Override
   public void onEvent(Event<Object, Node> event) throws Exception {
     Node currentNode = event.getData();
-    Utils.postFileActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY);
+    Utils.postFileActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY, true, false, "");
   }
 }
