@@ -238,6 +238,11 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
       return;
     }
     
+    // Not raise the activity in case of user space or the page is not public
+    if (PortalConfig.USER_TYPE.equals(wikiType) || !isPublic(page)) {
+      return;
+    }
+    
     String username = ConversationState.getCurrent().getIdentity().getUserId();
     IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
     Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username, false);
@@ -263,7 +268,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
       }
     }
     
-    if (ownerStream == null && isPublic(page)) {
+    if (ownerStream == null) {
       // if the page is public, publishing the activity in the user stream.
       ownerStream = userIdentity;
     }
