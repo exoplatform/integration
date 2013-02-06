@@ -247,11 +247,10 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     String spaceUrl = null;
     if (PortalConfig.GROUP_TYPE.equals(wikiType)) {
       /* checking whether the page is in a space */
-      String groupId = "/" + wikiOwner;
       SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
       Space space = null;
       try {
-        space = spaceService.getSpaceByGroupId(groupId);
+        space = spaceService.getSpaceByGroupId(wikiOwner);
         if (space != null) {
           if (!isPublicInSpace(page, space)) return;
           ownerStream = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
@@ -259,7 +258,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
         }
       } catch (SpaceStorageException e) {
         if (LOG.isDebugEnabled()) {
-          LOG.debug(String.format("Space %s not existed", groupId), e);
+          LOG.debug(String.format("Space %s not existed", wikiOwner), e);
         }
       }
     }
