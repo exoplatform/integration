@@ -10,47 +10,5 @@
 </div>
 
 <script>
-  var quickSearch;
-  //*** Event handlers - Quick search ***
-
-  $("#seeAll").live("click", function(){
-    window.location.href = $(this).attr("href");
-    $("#quickSearchResult").hide();
-  });
-
-
-  $("#txtQuickSearchQuery").keyup(function(e){
-    if(""==$(this).val()) {
-      $("#quickSearchResult").hide();
-      return;
-    }
-
-    if(13==e.keyCode) {
-      $("#seeAll").click();
-    } else {
-      quickSearch.search();
-    }
-  });
-
-
-  $("#txtQuickSearchQuery").focus(function(){
-    if(""!=$("#txtQuickSearchQuery").val()) {
-      quickSearch.search();
-    }
-  });
-
-
-  $("#txtQuickSearchQuery").blur(function(){
-    setTimeout(function(){$("#quickSearchResult").hide();}, 200);
-  });
-
-
-  //*** The entry point ***
-  (function(){
-    $.getJSON("/rest/search/registry", function(registry){
-      $.getJSON("/rest/search/setting/quicksearch", function(setting){
-        quickSearch = new QuickSearch(registry, setting);
-      });
-    });
-  })();
+  initQuickSearch();
 </script>

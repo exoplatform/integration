@@ -31,57 +31,5 @@
 </div>
 
 <script>
-  var searchSetting;
-
-  $("#btnSave").click(function(){
-    var jqxhr = $.post("/rest/search/setting", {
-      resultsPerPage:$("#resultsPerPage").val(),
-      searchTypes:SearchSetting.getSelectedTypes(),
-      searchCurrentSiteOnly:$("#searchCurrentSiteOnly").is(":checked"),
-      hideSearchForm:$("#hideSearchForm").is(":checked"),
-      hideFacetsFilter:$("#hideFacetsFilter").is(":checked")
-    });
-
-    jqxhr.complete(function(data) {
-      alert("ok"==data.responseText?"Your setting has been saved.":"Problem occurred when saving your setting: "+data.responseText);
-    });
-  });
-
-
-  $("#txtSearchIn").click(function(){
-    $("#lstSearchInOptions").toggle();
-    if($("#lstSearchInOptions").is(":visible")) {
-      $("#lstSearchInOptions").width($("#txtSearchIn").width());
-      $(":checkbox[name='searchInOption'][value!='all']").css("margin-left", "25px");
-    }
-  });
-
-
-  $(":checkbox[name='searchInOption']").live("click", function(){
-    if("all"==this.value){ //Everything checked
-      if($(this).is(":checked")) { // check/uncheck all
-        $(":checkbox[name='searchInOption']").attr('checked', true);
-      } else {
-        $(":checkbox[name='searchInOption']").attr('checked', false);
-      }
-    } else {
-      $(":checkbox[name='searchInOption'][value='all']").attr('checked', false); //uncheck All Sites
-    }
-
-    searchSetting.updateTxtSearchIn();
-  });
-
-
-  var options = [5,10,20,50,100];
-  $("#resultsPerPage").html("");
-  for(var i=0; i<options.length; i++) {
-    $("#resultsPerPage").append("<option>"+options[i]+"</option>");
-  }
-
-  $.getJSON("/rest/search/registry", function(registry){
-    $.getJSON("/rest/search/setting", function(setting){
-      searchSetting = new SearchSetting(registry, setting);
-    });
-  });
-
+  initSearchSetting();
 </script>

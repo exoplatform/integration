@@ -1,418 +1,628 @@
 
-function Search(registry, setting) {
-  var _this = this;
-  this.connectors = registry[0];
-  this.searchTypes = registry[1];
-  this.setting = setting;
+function initSearch() {
+  //*** Global variables ***
+  var CONNECTORS;
+  var SEARCH_TYPES;
+  var SEARCH_SETTING;
+  var LIMIT;
+  var VIEWING_TYPE;
 
-  //var search; //the main search function
+  var RESULT_CACHE, CACHE_OFFSET, SERVER_OFFSET, NUM_RESULTS_RENDERED; //for uncategoried search
 
-  this.VIEWING_TYPE = undefined;
-  this.RESULT_CACHE = [];
-  this.CACHE_OFFSET = 0;
-  this.SERVER_OFFSET = 0;
-  this.NUM_RESULTS_RENDERED = 0;
+  var IS_CATEGORIZED = false;
 
-  this.loadContentFilter();
-  this.loadSiteFilter(function(){
-    var sites = Search.getUrlParam("sites");
-    if(sites) {
-      $.each($(":checkbox[name='site']"), function(){
-        $(this).attr('checked', -1!=sites.indexOf(this.value) || -1!=sites.indexOf("all"));
-      });
+  var search; //the main search function
+
+  var SEARCH_RESULT_TEMPLATE = " \
+    <div class='SearchResult %{type}'> \
+      <div class='Avatar Clickable'> \
+        %{avatar} \
+      </div> \
+      <div class='Content'> \
+        <div class='Title Ellipsis'><a href='%{url}'>%{title}</a></div> \
+        <div class='Excerpt Ellipsis'>%{excerpt}</div> \
+        <div class='Detail'>%{detail}</div> \
+      </div> \
+    </div> \
+  ";
+
+
+  //*** Utility functions ***
+
+  String.prototype.toProperCase = function() {
+    return this.replace(/\\w\\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+  };
+
+
+  String.prototype.highlight = function(words) {
+    var str = this;
+    for(var i=0; i<words.length; i++) {
+      if(""==words[i]) continue;
+      var regex = new RegExp("(" + words[i] + ")", "gi");
+      str = str.replace(regex, "<strong>$1</strong>");
+    }
+    return str;
+  };
+
+
+  function setWaitingStatus(status) {
+    if(status) {
+      $("body").css("cursor", "wait");
+      $("#searchPortlet").css({"pointer-events":"none"});
     } else {
-      $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
+      $("body").css("cursor", "auto");
+      $("#searchPortlet").css({"pointer-events":"auto"});
     }
-
-    if(query && !setting.searchCurrentSiteOnly) Search.search();
-  });
-
-  if(setting.hideFacetsFilter) {
-    $("#facetsFilter").hide();
-  }
-
-  if(setting.hideSearchForm) {
-    $("#searchForm").hide();
-  } else {
-    $("#txtQuery").focus();
   }
 
 
-  var query = Search.getUrlParam("q");
-  $("#txtQuery").val(query);
-
-  var types = Search.getUrlParam("types");
-  if(types) {
-    $.each($(":checkbox[name='contentType']"), function(){
-      $(this).attr('checked', -1!=types.indexOf(this.value) || -1!=types.indexOf("all"));
-    });
-  } else {
-    $(":checkbox[name='contentType']").attr('checked', true); //check all types by default
+  function getUrlParam(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\\+/g, ' '));
   }
 
-  $("#lstSortBy").val(Search.getUrlParam("sort")||"relevancy");
-  var order = Search.getUrlParam("order");
-  $("#sortType").removeClass("Asc Desc").addClass(order && order.toUpperCase()=="ASC" ? "Asc" : "Desc");
 
-  var limit = Search.getUrlParam("limit");
-  this.limit = limit && !isNaN(parseInt(limit)) ? parseInt(limit) : setting.resultsPerPage;
-
-  $("#txtQuery").focus();
-
-  if(query && setting.searchCurrentSiteOnly) Search.search();
-
-}
-
-
-Search.RESULT_TEMPLATE = " \
-  <div class='SearchResult %{type}'> \
-    <div class='Avatar Clickable'> \
-      %{avatar} \
-    </div> \
-    <div class='Content'> \
-      <div class='Title Ellipsis'><a href='%{url}'>%{title}</a></div> \
-      <div class='Excerpt Ellipsis'>%{excerpt}</div> \
-      <div class='Detail'>%{detail}</div> \
-    </div> \
-  </div> \
-";
-
-
-Search.setWaitingStatus = function(status) {
-  if(status) {
-    $("body").css("cursor", "wait");
-    $("#searchPortlet").css({"pointer-events":"none"});
-  } else {
-    $("body").css("cursor", "auto");
-    $("#searchPortlet").css({"pointer-events":"auto"});
-  }
-}
-
-
-Search.getUrlParam = function(name) {
-  var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
-  return match && decodeURIComponent(match[1].replace(/\\+/g, ' '));
-}
-
-
-Search.prototype.loadContentFilter = function() {
-  var _this = this;
-  var contentTypes = [];
-  $.each(_this.searchTypes, function(i, searchType){
-    var connector = _this.connectors[searchType];
-    // Show only the types user selected in setting
-    if(connector && (-1 != $.inArray("all", _this.setting.searchTypes) || -1 != $.inArray(searchType, _this.setting.searchTypes))) {
-      contentTypes.push("<li><label><input type='checkbox' name='contentType' value='" + connector.searchType + "'>" + connector.displayName + "</label></li>");
-    }
-  });
-  if(0!=contentTypes.length) {
-    $("#lstContentTypes").html(contentTypes.join(""));
-  } else {
-    $(":checkbox[name='contentType'][value='all']").attr("checked", false).attr("disabled", "disabled");
-  }
-}
-
-
-Search.prototype.loadSiteFilter = function(callback) {
-  if(this.setting.searchCurrentSiteOnly) {
-    $("#siteFilter").hide();
-  } else {
-    $.getJSON("/rest/search/sites", function(sites){
-      var siteNames = [];
-      $.each(sites, function(i, site){
-        siteNames.push("<li><label><input type='checkbox' name='site' value='" + site + "'>" + site.toProperCase() + "</label></li>");
-      });
-      $("#lstSites").html(siteNames.join(""));
-      if(callback) callback();
+  function getRegistry(callback) {
+    $.getJSON("/rest/search/registry", function(registry){
+      if(callback) callback(registry);
     });
   }
-}
 
 
-Search.getSelectedTypes = function(){
-  var selectedTypes = [];
-  $.each($(":checkbox[name='contentType'][value!='all']:checked"), function(){
-    selectedTypes.push(this.value);
-  });
-  return selectedTypes.join(",");
-}
-
-
-Search.prototype.getSelectedSites = function() {
-  if(this.setting.searchCurrentSiteOnly) return Search.getUrlParam("currentSite") || parent.eXo.env.portal.portalName;
-  var selectedSites = [];
-  $.each($(":checkbox[name='site'][value!='all']:checked"), function(){
-    selectedSites.push(this.value);
-  });
-  return selectedSites.join(",");
-}
-
-
-Search.prototype.categorizedSearch = function(callback) {
-  var _this = this;
-  var query = $("#txtQuery").val();
-  var sql = $("#txtSql").val().replace(/%query%/g, query);
-  if(!Search.isSqlMode() && ""==query) {
-    Search.clearResultPage();
-    return;
+  function getSearchSetting(callback) {
+    $.getJSON("/rest/search/setting", function(setting){
+      if(callback) callback(setting);
+    });
   }
 
-  var sort = $("#lstSortBy").val();
-  var order = $("#sortType").hasClass("Asc") ? "asc" : "desc";
 
-  var restUrl = "/rest/search?q=" + (Search.isSqlMode()?sql:query+"&sites="+this.getSelectedSites()+"&types="+Search.getSelectedTypes()+"&offset=0"+"&limit="+_this.limit+"&sort="+sort+"&order="+order);
-
-  Search.setWaitingStatus(true);
-
-  $.getJSON(restUrl, function(resultMap){
-    var resultTypesHtml = "| ";
-    var resultHtml = "";
-
-    $.each(_this.searchTypes, function(i, searchType){
-      var results = resultMap[searchType];
-      if(results) results.map(function(result){result.type = searchType;});
-      if(0!=$(results).size()) {
-        var typeDisplayName = Search.isSqlMode() ? searchType + " (" + $(results).size() + ")" : _this.connectors[searchType].displayName;
-        resultTypesHtml = resultTypesHtml + "<span class='Clickable ResultType' type='" + searchType + "' offset=0 numEntries=" + $(results).size() + ">" + typeDisplayName + "</span>" + " | ";
-        resultHtml = resultHtml + "<div class='SearchResultType' id='" + searchType + "-type'>";
-
-        $.each(results, function(i, result){
-          resultHtml = resultHtml + Search.renderSearchResult(result);
-        });
-        resultHtml = resultHtml + "</div>"; //type div
+  function loadContentFilter(connectors, searchSetting) {
+    var contentTypes = [];
+    $.each(SEARCH_TYPES, function(i, searchType){
+      var connector = connectors[searchType];
+      // Show only the types user selected in setting
+      if(connector && (-1 != $.inArray("all", searchSetting.searchTypes) || -1 != $.inArray(searchType, searchSetting.searchTypes))) {
+        contentTypes.push("<li><label><input type='checkbox' name='contentType' value='" + connector.searchType + "'>" + connector.displayName + "</label></li>");
       }
     });
+    if(0!=contentTypes.length) {
+      $("#lstContentTypes").html(contentTypes.join(""));
+    } else {
+      $(":checkbox[name='contentType'][value='all']").attr("checked", false).attr("disabled", "disabled");
+    }
+  }
 
-    if(""==resultHtml) {
-      Search.clearResultPage("No result for <strong>" + (Search.isSqlMode()?sql:$("#txtQuery").val()) + "<strong>");
+
+  function loadSiteFilter(searchSetting, callback) {
+    if(searchSetting.searchCurrentSiteOnly) {
+      $("#siteFilter").hide();
+    } else {
+      $.getJSON("/rest/search/sites", function(sites){
+        var siteNames = [];
+        $.each(sites, function(i, site){
+          siteNames.push("<li><label><input type='checkbox' name='site' value='" + site + "'>" + site.toProperCase() + "</label></li>");
+        });
+        $("#lstSites").html(siteNames.join(""));
+        if(callback) callback();
+      });
+    }
+  }
+
+
+  function getSelectedTypes(){
+    var selectedTypes = [];
+    $.each($(":checkbox[name='contentType'][value!='all']:checked"), function(){
+      selectedTypes.push(this.value);
+    });
+    return selectedTypes.join(",");
+  }
+
+
+  function getSelectedSites(){
+    if(SEARCH_SETTING.searchCurrentSiteOnly) return getUrlParam("currentSite") || parent.eXo.env.portal.portalName;
+    var selectedSites = [];
+    $.each($(":checkbox[name='site'][value!='all']:checked"), function(){
+      selectedSites.push(this.value);
+    });
+    return selectedSites.join(",");
+  }
+
+
+  function categorizedSearch(callback) {
+    var query = $("#txtQuery").val();
+    var sql = $("#txtSql").val().replace(/%query%/g, query);
+    if(!isSqlMode() && ""==query) {
+      clearResultPage();
       return;
     }
 
-    $("#resultTypes").html(resultTypesHtml+"<hr style='color: lightgray'/>");
-    $("#resultTypes").show();
+    var sort = $("#lstSortBy").val();
+    var order = $("#sortType").hasClass("Asc") ? "asc" : "desc";
 
-    $("#result").html(resultHtml);
-    $("#result").show();
-    $("#resultSort").show();
-    Search.setWaitingStatus(false);
+    var restUrl = "/rest/search?q=" + (isSqlMode()?sql:query+"&sites="+getSelectedSites()+"&types="+getSelectedTypes()+"&offset=0"+"&limit="+LIMIT+"&sort="+sort+"&order="+order);
 
-    if(callback) callback();
-    (_this.VIEWING_TYPE && $(".ResultType[type='" + _this.VIEWING_TYPE + "']").get(0) ? $(".ResultType[type='" + _this.VIEWING_TYPE + "']").get(0) : $(".ResultType").first()).click();
-  });
-}
+    setWaitingStatus(true);
 
+    $.getJSON(restUrl, function(resultMap){
+      var resultTypesHtml = "| ";
+      var resultHtml = "";
 
-Search.renderSearchResult = function(result) {
-  var template = Search.RESULT_TEMPLATE;
-  var query = $("#txtQuery").val();
-  var terms = query.split(/\\s+/g);
+      $.each(SEARCH_TYPES, function(i, searchType){
+        var results = resultMap[searchType];
+        if(results) results.map(function(result){result.type = searchType;});
+        if(0!=$(results).size()) {
+          var typeDisplayName = isSqlMode() ? searchType + " (" + $(results).size() + ")" : CONNECTORS[searchType].displayName;
+          resultTypesHtml = resultTypesHtml + "<span class='Clickable ResultType' type='" + searchType + "' offset=0 numEntries=" + $(results).size() + ">" + typeDisplayName + "</span>" + " | ";
+          resultHtml = resultHtml + "<div class='SearchResultType' id='" + searchType + "-type'>";
 
-  var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
+          $.each(results, function(i, result){
+            resultHtml = resultHtml + renderSearchResult(result);
+          });
+          resultHtml = resultHtml + "</div>"; //type div
+        }
+      });
 
-  if("event"==result.type || "task"==result.type) {
-    result.url = "/portal/intranet/calendar" + result.url;
-  }
+      if(""==resultHtml) {
+        clearResultPage("No result for <strong>" + (isSqlMode()?sql:$("#txtQuery").val()) + "<strong>");
+        return;
+      }
 
-  if("event"==result.type) {
-    var date = new Date(result.date).toUTCString().split(/\\s+/g);
-    avatar = " \
-      <div class='calendarBox'> \
-        <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[2] + "</div> \
-        <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[1] + "</div> \
-      </div> \
-    ";
-  }
+      $("#resultTypes").html(resultTypesHtml+"<hr style='color: lightgray'/>");
+      $("#resultTypes").show();
 
-  var html = template.
-    replace(/%{type}/g, result.type).
-    replace(/%{url}/g, result.url).
-    replace(/%{title}/g, result.title.highlight(terms)).
-    replace(/%{excerpt}/g, result.excerpt.highlight(terms)).
-    replace(/%{detail}/g, result.detail.highlight(terms)).
-    replace(/%{avatar}/g, avatar);
+      $("#result").html(resultHtml);
+      $("#result").show();
+      $("#resultSort").show();
+      setWaitingStatus(false);
 
-  if(IS_CATEGORIZED) return html;
-  $("#result").append(html);
-}
-
-
-Search.clearResultPage = function(message){
-  $("#resultTypes").html("");
-  $("#result").html("");
-  $("#resultHeader").html(message?message:"");
-  $("#resultSort").hide();
-  $("#showMore").hide();
-  Search.setWaitingStatus(false);
-  return;
-}
-
-
-Search.prototype.showMore = function(offsetIncrement) {
-  var _this = this;
-  if(Search.isSqlMode()) return;
-  var query = $("#txtQuery").val();
-  if(""==query) {
-    Search.clearResultPage();
-    return;
-  }
-
-  var $viewingType = $(".ResultType.Selected");
-  var type = $viewingType.attr("type");
-  var offset = offsetIncrement!=0 ? parseInt($viewingType.attr("offset"))+offsetIncrement : 0; //if sorting then start from begining
-  var sortBy = $("#lstSortBy").val();
-  var sortType = $("#sortType").hasClass("Asc") ? "asc" : "desc";
-
-  var restUrl = "/rest/search?q="+query+"&sites="+this.getSelectedSites()+"&types="+type+"&offset="+offset+"&limit="+_this.limit+"&sort="+sortBy+"&order="+sortType;
-
-  Search.setWaitingStatus(true);
-
-  $.getJSON(restUrl, function(resultMap){
-    var resultHtml = "";
-    var results = resultMap[type];
-    results.map(function(result){result.type = type;});
-    $.each(results, function(i, result){
-      resultHtml = resultHtml + Search.renderSearchResult(result);
+      if(callback) callback();
+      (VIEWING_TYPE && $(".ResultType[type='" + VIEWING_TYPE + "']").get(0) ? $(".ResultType[type='" + VIEWING_TYPE + "']").get(0) : $(".ResultType").first()).click();
     });
+  }
 
-    var resultHeader = (0==results.length) ? "No more result" : "Results 1 to " + (offset+results.length);
-    resultHeader = resultHeader + " for <strong>" + (Search.isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>";
-    $("#resultHeader").html(resultHeader);
-    if(results.length==_this.limit) $("#showMore").show(); else $("#showMore").hide();
 
-    $("#"+type+"-type").show();
+  function renderSearchResult(result) {
+    var query = $("#txtQuery").val();
+    var terms = query.split(/\\s+/g);
 
-    if(0==offsetIncrement) {
-      $("#"+type+"-type").html(resultHtml);
-    } else {
-      $("#"+type+"-type").append(resultHtml);
-      $("#searchPage").animate({ scrollTop: $("#resultPage")[0].scrollHeight}, "slow");
+    var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
+
+    if("event"==result.type || "task"==result.type) {
+      result.url = "/portal/intranet/calendar" + result.url;
     }
 
-    Search.setWaitingStatus(false);
+    if("event"==result.type) {
+      var date = new Date(result.date).toUTCString().split(/\\s+/g);
+      avatar = " \
+        <div class='calendarBox'> \
+          <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[2] + "</div> \
+          <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[1] + "</div> \
+        </div> \
+      ";
+    }
 
-    $viewingType.attr("offset", offset);
-    $viewingType.attr("numEntries", results.length);
-  });
-}
+    var html = SEARCH_RESULT_TEMPLATE.
+      replace(/%{type}/g, result.type).
+      replace(/%{url}/g, result.url).
+      replace(/%{title}/g, result.title.highlight(terms)).
+      replace(/%{excerpt}/g, result.excerpt.highlight(terms)).
+      replace(/%{detail}/g, result.detail.highlight(terms)).
+      replace(/%{avatar}/g, avatar);
 
-
-Search.isSqlMode = function() {
-  return $("#sqlExec").is(":visible");
-}
-
-
-/*** Uncategorized search***/
-
-// Client-side sort functions
-function byRelevancyASC(a,b) {
-  if (a.relevancy < b.relevancy)
-    return -1;
-  if (a.relevancy > b.relevancy)
-    return 1;
-  return 0;
-}
-function byRelevancyDESC(b,a) {
-  if (a.relevancy < b.relevancy)
-    return -1;
-  if (a.relevancy > b.relevancy)
-    return 1;
-  return 0;
-}
-
-function byDateASC(a,b) {
-  if (a.date < b.date)
-    return -1;
-  if (a.date > b.date)
-    return 1;
-  return 0;
-}
-function byDateDESC(b,a) {
-  if (a.date < b.date)
-    return -1;
-  if (a.date > b.date)
-    return 1;
-  return 0;
-}
-
-function byTitleASC(a,b) {
-  if (a.title < b.title)
-    return -1;
-  if (a.title > b.title)
-    return 1;
-  return 0;
-}
-function byTitleDESC(b,a) {
-  if (a.title < b.title)
-    return -1;
-  if (a.title > b.title)
-    return 1;
-  return 0;
-}
+    if(IS_CATEGORIZED) return html;
+    $("#result").append(html);
+  }
 
 
-Search.prototype.uncategorizedSearch = function(callback) {
-  var _this = this;
-  _this.SERVER_OFFSET = 0;
-  _this.NUM_RESULTS_RENDERED = 0;
-
-  this.getFromServer(function(){
-    _this.renderCachedResults();
-  });
-}
-
-
-Search.prototype.getFromServer = function(callback) {
-  var _this = this;
-  var query = $("#txtQuery").val();
-  var sql = $("#txtSql").val().replace(/%query%/g, query);
-  if(!Search.isSqlMode() && ""==query) {
-    Search.clearResultPage();
+  function clearResultPage(message){
+    $("#resultTypes").html("");
+    $("#result").html("");
+    $("#resultHeader").html(message?message:"");
+    $("#resultSort").hide();
+    $("#showMore").hide();
+    setWaitingStatus(false);
     return;
   }
 
-  var sort = $("#lstSortBy").val();
-  var order = $("#sortType").hasClass("Asc") ? "asc" : "desc";
 
-  Search.setWaitingStatus(true);
+  function showMore(offsetIncrement) {
+    if(isSqlMode()) return;
+    var query = $("#txtQuery").val();
+    if(""==query) {
+      clearResultPage();
+      return;
+    }
 
-  var restUrl = "/rest/search?q="+ (Search.isSqlMode() ? sql : query+"&sites="+_this.getSelectedSites()+"&types="+Search.getSelectedTypes()+"&offset="+_this.SERVER_OFFSET+"&limit="+_this.limit+"&sort="+sort+"&order="+order);
-  $.getJSON(restUrl, function(resultMap){
-    _this.RESULT_CACHE = [];
-    $.each(resultMap, function(searchType, results){
-      results.map(function(result){result.type = searchType;});
-      _this.RESULT_CACHE.push.apply(_this.RESULT_CACHE, results);
+    var $viewingType = $(".ResultType.Selected");
+    var type = $viewingType.attr("type");
+    var offset = offsetIncrement!=0 ? parseInt($viewingType.attr("offset"))+offsetIncrement : 0; //if sorting then start from begining
+    var sortBy = $("#lstSortBy").val();
+    var sortType = $("#sortType").hasClass("Asc") ? "asc" : "desc";
+
+    var restUrl = "/rest/search?q="+query+"&sites="+getSelectedSites()+"&types="+type+"&offset="+offset+"&limit="+LIMIT+"&sort="+sortBy+"&order="+sortType;
+
+    setWaitingStatus(true);
+
+    $.getJSON(restUrl, function(resultMap){
+      var resultHtml = "";
+      var results = resultMap[type];
+      results.map(function(result){result.type = type;});
+      $.each(results, function(i, result){
+        resultHtml = resultHtml + renderSearchResult(result);
+      });
+
+      var resultHeader = (0==results.length) ? "No more result" : "Results 1 to " + (offset+results.length);
+      resultHeader = resultHeader + " for <strong>" + (isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>";
+      $("#resultHeader").html(resultHeader);
+      if(results.length==LIMIT) $("#showMore").show(); else $("#showMore").hide();
+
+      $("#"+type+"-type").show();
+
+      if(0==offsetIncrement) {
+        $("#"+type+"-type").html(resultHtml);
+      } else {
+        $("#"+type+"-type").append(resultHtml);
+        $("#searchPage").animate({ scrollTop: $("#resultPage")[0].scrollHeight}, "slow");
+      }
+
+      setWaitingStatus(false);
+
+      $viewingType.attr("offset", offset);
+      $viewingType.attr("numEntries", results.length);
+    });
+  }
+
+
+  function isSqlMode() {
+    return $("#sqlExec").is(":visible");
+  }
+
+
+  //*** Event handlers - Search page ***
+
+  $(".ResultType").live("click", function(){
+    $(".Selected").toggleClass("Selected");
+    $(this).toggleClass("Selected");
+
+    var offset = parseInt($(this).attr("offset"));
+    var numEntries = parseInt($(this).attr("numEntries"));
+
+    var resultHeader = (0==numEntries) ? "No more result" : "Results 1 to " + (offset+numEntries);
+    resultHeader = resultHeader + " for <strong>" + (isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>";
+    $("#resultHeader").html(resultHeader);
+    if(numEntries==LIMIT) $("#showMore").show(); else $("#showMore").hide();
+
+    var type=$(this).attr("type");
+    //type = type.replace(/(:|\\.)/g,'\\\\$1').replace(/\\s/g, "_"); //for jcr nodetype
+    type = type.replace(/(:|\\.)/g,'\\\\$1'); //for jcr nodetype
+    $(".SearchResultType").hide(); //hide all other types
+    $("#"+type+"-type").show();
+
+    var $viewingType = $(".ResultType.Selected");
+    $("#lstSortBy").val($viewingType.attr("sortBy")||"relevancy").attr("selected",true);
+    $("#sortType").removeClass("Asc Desc").addClass($viewingType.attr("sortType")||"Desc");
+  });
+
+
+  $(".SearchResult .Avatar img").live("click", function(){
+    var url = $(this).parents("div.SearchResult").find(".Content > .Title > a").attr("href");
+
+    //get jcr node properties
+    if(0 == url.indexOf("/rest/jcr/")) {
+      $.getJSON("/rest/search/jcr/props?node=" + url.replace("/rest/jcr/", ""), function(props){
+        var sProps = "";
+        $.each(props, function(key, value){
+          sProps = sProps + key + " = " + value + "\\n";
+        });
+        console.log(props);
+        alert(sProps);
+      });
+    }
+  });
+
+
+  $(":checkbox[name='contentType']").live("click", function(){
+    if("all"==this.value){ //All Content Types checked
+      if($(this).is(":checked")) { // check/uncheck all
+        $(":checkbox[name='contentType']").attr('checked', true);
+      } else {
+        $(":checkbox[name='contentType']").attr('checked', false);
+      }
+    } else {
+      $(":checkbox[name='contentType'][value='all']").attr('checked', false); //uncheck All Content Types
+    }
+
+    if(!isSqlMode()) {
+      VIEWING_TYPE = $(".ResultType.Selected").attr("type"); //save the current view before performing search
+      var checkedType = $(this).is(":checked") ? this.value : undefined;
+      search(function(){
+        if(checkedType && $(".ResultType[type='" + checkedType + "']").get(0)) VIEWING_TYPE = checkedType;
+      });
+    }
+  });
+
+
+  $(":checkbox[name='site']").live("click", function(){
+    if("all"==this.value){ //All Sites checked
+      if($(this).is(":checked")) { // check/uncheck all
+        $(":checkbox[name='site']").attr('checked', true);
+      } else {
+        $(":checkbox[name='site']").attr('checked', false);
+      }
+    } else {
+      $(":checkbox[name='site'][value='all']").attr('checked', false); //uncheck All Sites
+    }
+
+    if(!isSqlMode()) {
+      VIEWING_TYPE = $(".ResultType.Selected").attr("type"); //save the current view before performing search
+      search();
+    }
+  });
+
+
+  $("#btnSearch").click(function(){
+    search();
+  });
+
+
+  $("#txtQuery").focus(function(){
+    VIEWING_TYPE = $(".ResultType.Selected").attr("type"); //save the current view before performing search
+  });
+
+
+  $("#txtQuery").keyup(function(e){
+    var keyCode = e.keyCode || e.which,
+        arrow = {up: 38, down: 40 };
+
+    switch (keyCode) {
+      case arrow.up:
+        $("#sqlExec").hide();
+        break;
+      case arrow.down:
+        $("#sqlExec").show();
+        break;
+      case 13:
+        search();
+    }
+  });
+
+
+  /*** Uncategorized search***/
+
+  // Client-side sort functions
+  function byRelevancyASC(a,b) {
+    if (a.relevancy < b.relevancy)
+      return -1;
+    if (a.relevancy > b.relevancy)
+      return 1;
+    return 0;
+  }
+  function byRelevancyDESC(b,a) {
+    if (a.relevancy < b.relevancy)
+      return -1;
+    if (a.relevancy > b.relevancy)
+      return 1;
+    return 0;
+  }
+
+  function byDateASC(a,b) {
+    if (a.date < b.date)
+      return -1;
+    if (a.date > b.date)
+      return 1;
+    return 0;
+  }
+  function byDateDESC(b,a) {
+    if (a.date < b.date)
+      return -1;
+    if (a.date > b.date)
+      return 1;
+    return 0;
+  }
+
+  function byTitleASC(a,b) {
+    if (a.title < b.title)
+      return -1;
+    if (a.title > b.title)
+      return 1;
+    return 0;
+  }
+  function byTitleDESC(b,a) {
+    if (a.title < b.title)
+      return -1;
+    if (a.title > b.title)
+      return 1;
+    return 0;
+  }
+
+
+  function uncategorizedSearch(callback) {
+    SERVER_OFFSET = 0;
+    NUM_RESULTS_RENDERED = 0;
+
+    getFromServer(function(){
+      renderCachedResults();
+    });
+  }
+
+
+  function getFromServer(callback){
+    var query = $("#txtQuery").val();
+    var sql = $("#txtSql").val().replace(/%query%/g, query);
+    if(!isSqlMode() && ""==query) {
+      clearResultPage();
+      return;
+    }
+
+    var sort = $("#lstSortBy").val();
+    var order = $("#sortType").hasClass("Asc") ? "asc" : "desc";
+
+    setWaitingStatus(true);
+
+    var restUrl = "/rest/search?q="+ (isSqlMode() ? sql : query+"&sites="+getSelectedSites()+"&types="+getSelectedTypes()+"&offset="+SERVER_OFFSET+"&limit="+LIMIT+"&sort="+sort+"&order="+order);
+    $.getJSON(restUrl, function(resultMap){
+      RESULT_CACHE = [];
+      $.each(resultMap, function(searchType, results){
+        results.map(function(result){result.type = searchType;});
+        RESULT_CACHE.push.apply(RESULT_CACHE, results);
+      });
+
+      var sortFuncName = "by" + sort.toProperCase() + order.toUpperCase();
+      RESULT_CACHE = RESULT_CACHE.sort(window[sortFuncName]); //sort the result set
+
+      CACHE_OFFSET = 0; //reset the local offset
+
+      if(callback) callback();
+      if(RESULT_CACHE.length < LIMIT) $("#showMore").hide(); else $("#showMore").show();
+      setWaitingStatus(false);
+    });
+  }
+
+
+  function renderCachedResults(append) {
+    var current = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);
+    if(0==current.length) {
+      clearResultPage("No result for <strong>" + (isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>");
+      return;
+    }
+
+    NUM_RESULTS_RENDERED = NUM_RESULTS_RENDERED + current.length;
+    var resultHeader = "Results " + 1 + " to " + NUM_RESULTS_RENDERED + " for <strong>" + (isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>";
+    $("#resultHeader").html(resultHeader);
+    $("#resultSort").show();
+
+    if(!append) $("#result").html("");
+    $.each(current, function(i, result){
+      renderSearchResult(result);
+    });
+  }
+
+
+  if(IS_CATEGORIZED) {
+    search = function(callback) {
+      categorizedSearch(callback);
+    };
+
+    $("#btnShowMore").click(function(){
+      showMore(LIMIT);
     });
 
-    var sortFuncName = "by" + sort.toProperCase() + order.toUpperCase();
-    _this.RESULT_CACHE = _this.RESULT_CACHE.sort(window[sortFuncName]); //sort the result set
+    $("#lstSortBy").change(function(){
+      $(".ResultType.Selected").attr("sortBy", $(this).val());
+      showMore(0);
+    });
 
-    _this.CACHE_OFFSET = 0; //reset the local offset
+    $("#sortType").live("click", function(){
+      $(this).toggleClass("Asc Desc");
+      $(".ResultType.Selected").attr("sortType", $(this).hasClass("Asc") ? "Asc" : "Desc");
+      showMore(0);
+    });
 
-    if(callback) callback();
-    if(_this.RESULT_CACHE.length < _this.limit) $("#showMore").hide(); else $("#showMore").show();
-    Search.setWaitingStatus(false);
-  });
-}
+  } else {
+    search = function(callback) {
+      uncategorizedSearch(callback);
+    };
 
+    $("#btnShowMore").click(function(){
+      CACHE_OFFSET = CACHE_OFFSET + LIMIT;
+      var remaining = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);
 
-Search.prototype.renderCachedResults = function(append) {
-  var _this = this;
-  var current = _this.RESULT_CACHE.slice(_this.CACHE_OFFSET, _this.CACHE_OFFSET+this.limit);
-  if(0==current.length) {
-    Search.clearResultPage("No result for <strong>" + (Search.isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>");
-    return;
+      if(remaining.length < LIMIT) {
+        SERVER_OFFSET = SERVER_OFFSET + LIMIT;
+        getFromServer(function(){
+          RESULT_CACHE = remaining.concat(RESULT_CACHE);
+          renderCachedResults(true);
+          $("#searchPage").animate({ scrollTop: $("#resultPage")[0].scrollHeight}, "slow");
+        });
+        return;
+      }
+      renderCachedResults(true);
+      $("#searchPage").animate({ scrollTop: $("#resultPage")[0].scrollHeight}, "slow");
+    });
+
+    $("#lstSortBy").change(function(){
+      SERVER_OFFSET = 0;
+      NUM_RESULTS_RENDERED = 0;
+      getFromServer(function(){
+        renderCachedResults();
+      });
+    });
+
+    $("#sortType").live("click", function(){
+      $(this).toggleClass("Asc Desc");
+      SERVER_OFFSET = 0;
+      NUM_RESULTS_RENDERED = 0;
+      getFromServer(function(){
+        renderCachedResults();
+      });
+    });
+
   }
 
-  _this.NUM_RESULTS_RENDERED = _this.NUM_RESULTS_RENDERED + current.length;
-  var resultHeader = "Results " + 1 + " to " + _this.NUM_RESULTS_RENDERED + " for <strong>" + (Search.isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>";
-  $("#resultHeader").html(resultHeader);
-  $("#resultSort").show();
 
-  if(!append) $("#result").html("");
-  $.each(current, function(i, result){
-    Search.renderSearchResult(result);
+  //*** The entry point ***
+  getRegistry(function(registry){
+    CONNECTORS = registry[0];
+    SEARCH_TYPES = registry[1];
+    getSearchSetting(function(setting){
+      SEARCH_SETTING = setting;
+
+      loadContentFilter(CONNECTORS, setting);
+      loadSiteFilter(setting, function(){
+        var sites = getUrlParam("sites");
+        if(sites) {
+          $.each($(":checkbox[name='site']"), function(){
+            $(this).attr('checked', -1!=sites.indexOf(this.value) || -1!=sites.indexOf("all"));
+          });
+        } else {
+          $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
+        }
+
+        if(query && !setting.searchCurrentSiteOnly) search();
+      });
+
+      if(setting.hideFacetsFilter) {
+        $("#facetsFilter").hide();
+      }
+
+      if(setting.hideSearchForm) {
+        $("#searchForm").hide();
+      } else {
+        $("#txtQuery").focus();
+      }
+
+
+      var query = getUrlParam("q");
+      $("#txtQuery").val(query);
+
+      var types = getUrlParam("types");
+      if(types) {
+        $.each($(":checkbox[name='contentType']"), function(){
+          $(this).attr('checked', -1!=types.indexOf(this.value) || -1!=types.indexOf("all"));
+        });
+      } else {
+        $(":checkbox[name='contentType']").attr('checked', true); //check all types by default
+      }
+
+      $("#lstSortBy").val(getUrlParam("sort")||"relevancy");
+      var order = getUrlParam("order");
+      $("#sortType").removeClass("Asc Desc").addClass(order && order.toUpperCase()=="ASC" ? "Asc" : "Desc");
+
+      var limit = getUrlParam("limit");
+      LIMIT = limit && !isNaN(parseInt(limit)) ? parseInt(limit) : setting.resultsPerPage;
+
+      $("#txtQuery").focus();
+
+      if(query && setting.searchCurrentSiteOnly) search();
+
+    });
   });
+
+  var sortBy = [];
+  var sortFields = ["relevancy", "date", "title"];
+  $.each(sortFields, function(i, field){
+    sortBy.push("<option value='" + field + "'>" + field.toProperCase() + "</option>")
+  });
+  $("#lstSortBy").html(sortBy.join(""));
+
 }
-
-
-
