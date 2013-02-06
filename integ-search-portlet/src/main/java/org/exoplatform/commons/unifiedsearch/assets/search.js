@@ -199,7 +199,15 @@ function initSearch() {
           <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[1] + "</div> \
         </div> \
       ";
-    }
+    }    
+    
+    if ("task"==result.type){	  
+  	  avatar = "\
+  	  		<div class='statusTask'> \
+  	  			<i class='"+result.imageUrl+"Icon'></i> \
+  			</div>\
+  	  		";
+    }    
 
     var html = SEARCH_RESULT_TEMPLATE.
       replace(/%{type}/g, result.type).

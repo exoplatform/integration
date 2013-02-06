@@ -141,3 +141,25 @@
   padding: 8px;
 }
 
+.statusTask i {
+    background: url("/unified-search/public/images/status-task.png") repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 38px;
+    margin-top: 1px;
+    width: 38px;
+}
+
+.statusTask i.needs-actionIcon {
+    background-position: 0 0;
+}
+.statusTask i.in-processIcon {
+    background-position: -60px 0;
+}
+.statusTask i.completedIcon {
+    background-position: -120px 0;
+}
+.statusTask i.canceledIcon {
+    background-position: -180px 0;
+}
+
+
