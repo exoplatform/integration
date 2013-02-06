@@ -219,6 +219,16 @@
       </p>
       <!--ECMS change icon-->
       <div class="DocActivityIcon">
+        <% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
+             Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
+             def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+             def spaceName = spaceSource.displayName;
+             activityPostedTimeInSpace = uicomponent.getPostedTimeInSpaceString(_ctx, activity.postedTime);
+        %>
+          <span class="DateTime">$activityPostedTimeInSpace <b><a class="Text" title="$spaceName" href="$spaceSourceURI">$spaceName</a></b> *</span>
+        <%} else {%>
+          <span class="DateTime">$activityPostedTime *</span>
+        <% } %>
         <a href="$viewLink">View</a>
         <a href="$editLink">Edit</a>
         <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
