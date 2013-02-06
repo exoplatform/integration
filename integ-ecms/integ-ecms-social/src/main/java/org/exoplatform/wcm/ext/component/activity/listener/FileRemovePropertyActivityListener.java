@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
-import javax.jcr.Value;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
@@ -29,13 +28,14 @@ import javax.jcr.Value;
  */
 public class FileRemovePropertyActivityListener extends Listener<Node, String> {
 
-  private String[]  editedField     = {"dc:title", "dc:description", "dc:creator", "dc:source"};
-  private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
-                                       "SocialIntegration.messages.editDescription",
-                                       "SocialIntegration.messages.singleCreator",
-                                       "SocialIntegration.messages.singleSource"};
-  private boolean[] needUpdate      = {true, true, false};
-  private int consideredFieldCount = editedField.length;
+  private String[]  removedField     = {"exo:title", "dc:title", "dc:description", "dc:creator", "dc:source"};
+  private String[]  bundleMessage    = {"SocialIntegration.messages.removeName",
+  																		 "SocialIntegration.messages.removeTitle",
+                                       "SocialIntegration.messages.removeDescription",
+                                       "SocialIntegration.messages.removeCreator",
+                                       "SocialIntegration.messages.removeSource"};
+  private boolean[] needUpdate       = {true, true, false, false, false};
+  private int consideredFieldCount   = removedField.length;
   /**
    * Instantiates a new post edit content event listener.
    */
@@ -47,35 +47,17 @@ public class FileRemovePropertyActivityListener extends Listener<Node, String> {
   public void onEvent(Event<Node, String> event) throws Exception {
     Node currentNode = event.getSource();
     String propertyName = event.getData();
-    String newValue = "";
-    try {      
-    	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
-    		Value[] values = currentNode.getProperty(propertyName).getValues();
-    		if(values != null) {
-    			for (Value value : values) {
-						newValue += value.getString() + ", ";
-					}
-    			newValue = newValue.substring(0, newValue.length()-2);
-    		}
-    	} else newValue= currentNode.getProperty(propertyName).getString();      
-    }catch (Exception e) {
-      newValue = "";
+    
+    if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
+    
+    String resourceBundle = "";
+    for (int i=0; i< consideredFieldCount; i++) {
+      if (propertyName.equals(removedField[i])) {
+      	resourceBundle = bundleMessage[i];      	      	
+      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, "");
+        break;
+      }
     }
-    newValue = newValue.trim();
-    if(newValue != null && newValue.length() > 0) {
-	    if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
-	    String resourceBundle = "";
-	    for (int i=0; i< consideredFieldCount; i++) {
-	      if (propertyName.equals(editedField[i])) {
-	      	resourceBundle = bundleMessage[i];
-	      	if(propertyName.equals(NodetypeConstant.DC_CREATOR) && newValue.split(",").length > 1)
-	      		resourceBundle = "SocialIntegration.messages.multiCreator";	      			
-	      	else if(propertyName.equals(NodetypeConstant.DC_SOURCE) && newValue.split(",").length > 1)
-	      		resourceBundle = "SocialIntegration.messages.multiSource";	      	
-	      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
-	        break;
-	      }
-	    }
-    }
+    
   }
 }

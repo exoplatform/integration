@@ -31,7 +31,7 @@ import javax.jcr.Value;
 public class FileUpdateActivityListener extends Listener<Node, String> {
 
   private String[]  editedField     = {"exo:title", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "jcr:data"};
-  private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
+  private String[]  bundleMessage   = {"SocialIntegration.messages.editFileTitle",
                                        "SocialIntegration.messages.editSummary",
                                        "SocialIntegration.messages.editLanguage",
                                        "SocialIntegration.messages.editTitle",
@@ -40,7 +40,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
                                        "SocialIntegration.messages.singleSource",
                                        "SocialIntegration.messages.editFile",
                                        "SocialIntegration.messages.editContent"};
-  private String[]  bundleRemoveMessage = {"SocialIntegration.messages.removeTitle",
+  private String[]  bundleRemoveMessage = {"SocialIntegration.messages.removeName",
       																 	   "SocialIntegration.messages.removeSummary",
       																 	  "SocialIntegration.messages.removeLanguage",
                                            "SocialIntegration.messages.removeTitle",

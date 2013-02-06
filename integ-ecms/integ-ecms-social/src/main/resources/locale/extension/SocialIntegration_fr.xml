@@ -7,14 +7,16 @@
       <system>le système</system>
       <readmore>...Lire la suite.</readmore>
       <editTitle>Le titre a été mis à jour: {0}</editTitle>
+      <editFileTitle>Le nom a été mis à jour: {0}</editFileTitle>
       <editDescription>La description a été mise à jour: {0}</editDescription>
       <singleCreator>Le créateur est {0}</singleCreator>
       <multiCreator>Les Créateurs sont {0}</multiCreator>
       <singleSource>la source est {0}.</singleSource>
       <multiSource>Les sources sont {0}.</multiSource>
       <updateMetadata>La Metadonnée {0} a été mis à jour par: {1}</updateMetadata>
-      <removeMetadata>La Metadonnée {0} a été supprimée.</removeMetadata>   
-      <removeTitle>Le titre a été supprimé.</removeTitle>
+      <removeMetadata>La Metadonnée {0} a été supprimée.</removeMetadata>
+      <removeName>Le titre a été supprimé.</removeName>
+      <removeTitle>Le nom a été supprimé.</removeTitle>
       <removeSummary>Le sommaire a été supprimé.</removeSummary>
       <removeDescription>La description a été supprimé.</removeDescription>
       <removeCreator>Un createur a été supprimé.</removeCreator>

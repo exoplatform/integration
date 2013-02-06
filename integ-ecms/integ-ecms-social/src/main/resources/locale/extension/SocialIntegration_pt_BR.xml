@@ -7,6 +7,7 @@
       <system>o sistema</system>
       <readmore>...Ler mais.</readmore>
       <editTitle>Title has been updated to: {0}</editTitle>
+      <editFileTitle>Name has been updated to: {0}</editFileTitle>
       <editDescription>Description has been updated to: {0}</editDescription>
       <singleCreator>Creator is {0}</singleCreator>
       <multiCreator>Creators are {0}</multiCreator>
@@ -15,6 +16,7 @@
       <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
       <removeMetadata>Metadata {0} has been to removed.</removeMetadata>  
       <removeTitle>Title has been removed.</removeTitle>
+      <removeName>Name has been removed.</removeName>
       <removeSummary>Summary has been removed.</removeSummary>
       <removeDescription>Description has been removed.</removeDescription>
       <removeCreator>Creator has been removed.</removeCreator>
