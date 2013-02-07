@@ -37,14 +37,8 @@ function initSearchAdmin() {
     }
 
     var enabledTypes = [];
-//    $.each($(".ContentType"), function(){
-//      if("Disable"==this.value) enabledTypes.push(this.id);
-//    });
-
-    // To maintain the search types order. TODO: use the table for this (by ordering its rows)
-    var order = ["file", "document", "wiki", "page", "discussion", "people", "space", "event", "task", "question", "activity", "jcrNode"];
-    $.each(order, function(i, type){
-      if("Disable"==$(".ContentType#"+type).val()) enabledTypes.push(type);
+    $.each($(".ContentType"), function(){
+      if("Disable"==this.value) enabledTypes.push(this.id);
     });
 
     var jqxhr = $.post("/rest/search/enabled-searchtypes", {

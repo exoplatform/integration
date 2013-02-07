@@ -31,15 +31,15 @@
     <type>org.exoplatform.commons.search.driver.jcr.JcrSearchDriver</type>
     <component-plugins>
       <component-plugin>
-        <name>JcrNodeSearch</name>
+        <name>WikiSearchServiceConnector</name>
         <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrNodeSearch</type>
-        <description>For development and testing only</description>
+        <type>org.exoplatform.wiki.service.impl.WikiSearchServiceConnector</type>
+        <description>eXo Wiki articles</description>      
         <init-params>
           <properties-param>
              <name>constructor.params</name>
-             <property name="searchType" value="jcrNode"/>
-             <property name="displayName" value="JCR nodes"/>
+             <property name="searchType" value="wiki"/>
+             <property name="displayName" value="Wikis"/>
           </properties-param>
         </init-params>      
       </component-plugin>
@@ -59,15 +59,15 @@
       </component-plugin>
             
       <component-plugin>
-        <name>EventSearchConnector</name>
+        <name>JcrPeopleSearch</name>
         <set-method>addConnector</set-method>
-        <type>org.exoplatform.calendar.service.impl.EventSearchConnector</type>
-        <description>eXo Calendar events</description>
+        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrPeopleSearch</type>
+        <description>eXo People</description>
         <init-params>
           <properties-param>
-             <name>constructor.params</name>
-             <property name="searchType" value="event"/>
-             <property name="displayName" value="Events"/>
+            <name>constructor.params</name>
+            <property name="searchType" value="people"/>
+            <property name="displayName" value="People"/>
           </properties-param>
         </init-params>      
       </component-plugin>
@@ -87,43 +87,15 @@
       </component-plugin>
       
       <component-plugin>
-        <name>WikiSearchServiceConnector</name>
+        <name>EventSearchConnector</name>
         <set-method>addConnector</set-method>
-        <type>org.exoplatform.wiki.service.impl.WikiSearchServiceConnector</type>
-        <description>eXo Wiki articles</description>      
+        <type>org.exoplatform.calendar.service.impl.EventSearchConnector</type>
+        <description>eXo Calendar events</description>
         <init-params>
           <properties-param>
              <name>constructor.params</name>
-             <property name="searchType" value="wiki"/>
-             <property name="displayName" value="Wikis"/>
-          </properties-param>
-        </init-params>      
-      </component-plugin>
-
-      <component-plugin>
-        <name>JcrPeopleSearch</name>
-        <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrPeopleSearch</type>
-        <description>eXo People</description>
-        <init-params>
-          <properties-param>
-            <name>constructor.params</name>
-            <property name="searchType" value="people"/>
-            <property name="displayName" value="People"/>
-          </properties-param>
-        </init-params>      
-      </component-plugin>
-	    
-      <component-plugin>
-        <name>JcrActivitySearch</name>
-        <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrActivitySearch</type>
-        <description>eXo Social activities</description>
-        <init-params>
-          <properties-param>
-             <name>constructor.params</name>
-             <property name="searchType" value="activity"/>
-             <property name="displayName" value="Activities"/>
+             <property name="searchType" value="event"/>
+             <property name="displayName" value="Events"/>
           </properties-param>
         </init-params>      
       </component-plugin>
@@ -142,6 +114,34 @@
         </init-params>      
       </component-plugin>
       
+      <component-plugin>
+        <name>JcrActivitySearch</name>
+        <set-method>addConnector</set-method>
+        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrActivitySearch</type>
+        <description>eXo Social activities</description>
+        <init-params>
+          <properties-param>
+             <name>constructor.params</name>
+             <property name="searchType" value="activity"/>
+             <property name="displayName" value="Activities"/>
+          </properties-param>
+        </init-params>      
+      </component-plugin>
+      
+      <component-plugin>
+        <name>JcrNodeSearch</name>
+        <set-method>addConnector</set-method>
+        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrNodeSearch</type>
+        <description>For development and testing only</description>
+        <init-params>
+          <properties-param>
+             <name>constructor.params</name>
+             <property name="searchType" value="jcrNode"/>
+             <property name="displayName" value="JCR nodes"/>
+          </properties-param>
+        </init-params>      
+      </component-plugin>
+
     </component-plugins>
   </component>
 

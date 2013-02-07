@@ -3,16 +3,16 @@ package org.exoplatform.commons.search.service;
 import java.util.List;
 
 public class SearchSetting {
-  int resultsPerPage;
+  long resultsPerPage;
   List<String> searchTypes;
   boolean searchCurrentSiteOnly;
   boolean hideSearchForm;
   boolean hideFacetsFilter;
   
-  public int getResultsPerPage() {
+  public long getResultsPerPage() {
     return resultsPerPage;
   }
-  public void setResultsPerPage(int resultsPerPage) {
+  public void setResultsPerPage(long resultsPerPage) {
     this.resultsPerPage = resultsPerPage;
   }
   public List<String> getSearchTypes() {
@@ -40,13 +40,13 @@ public class SearchSetting {
     this.hideFacetsFilter = hideFacetsFilter;
   }
   
-  public SearchSetting(int resultsPerPage, List<String> searchTypes, boolean searchCurrentSiteOnly, boolean hideSearchForm, boolean hideFacetsFilter) {
+  public SearchSetting(long resultsPerPage, List<String> searchTypes, boolean searchCurrentSiteOnly, boolean hideSearchForm, boolean hideFacetsFilter) {
     this.resultsPerPage = resultsPerPage;
     this.searchTypes = searchTypes;
     this.searchCurrentSiteOnly = searchCurrentSiteOnly;
     this.hideSearchForm = hideSearchForm;
     this.hideFacetsFilter = hideFacetsFilter;
-  }  
+  }
 }
 
 

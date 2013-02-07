@@ -30,7 +30,7 @@ function initSearch() {
   //*** Utility functions ***
 
   String.prototype.toProperCase = function() {
-    return this.replace(/\\w\\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
   };
 
 
@@ -199,15 +199,15 @@ function initSearch() {
           <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[1] + "</div> \
         </div> \
       ";
-    }    
-    
-    if ("task"==result.type){	  
+    }
+
+    if ("task"==result.type){
   	  avatar = "\
-  	  		<div class='statusTask'> \
-  	  			<i class='"+result.imageUrl+"Icon'></i> \
-  			</div>\
-  	  		";
-    }    
+        <div class='statusTask'>\
+          <i class='"+result.imageUrl+"Icon'></i>\
+        </div>\
+      ";
+    }
 
     var html = SEARCH_RESULT_TEMPLATE.
       replace(/%{type}/g, result.type).
@@ -589,16 +589,14 @@ function initSearch() {
         if(query && !setting.searchCurrentSiteOnly) search();
       });
 
-      if(setting.hideFacetsFilter) {
-        $("#facetsFilter").hide();
+      if(!setting.hideFacetsFilter) {
+        $("#facetsFilter").show();
       }
 
-      if(setting.hideSearchForm) {
-        $("#searchForm").hide();
-      } else {
+      if(!setting.hideSearchForm) {
+        $("#searchForm").show();
         $("#txtQuery").focus();
       }
-
 
       var query = getUrlParam("q");
       $("#txtQuery").val(query);

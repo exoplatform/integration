@@ -9,13 +9,13 @@
       </div>
     </div>
 
-    <div id="searchForm" style="padding-top: 10px; text-align: center;">
+    <div id="searchForm" style="display: none; padding-top: 10px; text-align: center;">
       <input type="text" id="txtQuery" class="SearchBox" style="width: 250px;">
       <input type="button" id="btnSearch" value="Search">
       <hr style="color: lightgray; margin: 10px 0px 0px;">
     </div>
 
-    <div id="facetsFilter">
+    <div id="facetsFilter" style="display: none;">
       <div id="facetsFilterTitle">Filter By</div>
       <div style="padding-right: 5px;">
         <div id="siteFilter">
