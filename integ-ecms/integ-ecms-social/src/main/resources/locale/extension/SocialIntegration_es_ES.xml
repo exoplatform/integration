@@ -14,7 +14,10 @@
       <editContent>Content has been updated.</editContent>
       <editFile>File has been updated.</editFile>
       <singleCreator>Creator is {0}.</singleCreator>
-      <multiCreator>Creators are {0}.</multiCreator>      
+      <multiCreator>Creators are {0}.</multiCreator>
+      <emptyTitle>The title has been removed.</emptyTitle>
+      <emptySummary>The summary has been removed.</emptySummary>
+      <emptyContent>The content has been removed.</emptyContent>
       <singleSource>File source is {0}.</singleSource>
       <multiSource>File sources are {0}.</multiSource>      
       <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>      

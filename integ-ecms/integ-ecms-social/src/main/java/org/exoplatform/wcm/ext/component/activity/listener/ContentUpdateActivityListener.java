@@ -19,6 +19,7 @@ package org.exoplatform.wcm.ext.component.activity.listener;
 import javax.jcr.Node;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 
@@ -28,12 +29,17 @@ import org.exoplatform.services.listener.Listener;
  */
 public class ContentUpdateActivityListener extends Listener<Node, String> {
 
-  private String[]  editedField     = {"exo:title", "exo:summary", "dc:title", "dc:description", "exo:text"};
-  private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
-                                       "SocialIntegration.messages.editSummary",
-                                       "SocialIntegration.messages.editTitle",
-                                       "SocialIntegration.messages.editSummary",
-                                       "SocialIntegration.messages.editContent"};
+  private String[]  editedField        = {"exo:title", "exo:summary", "dc:title", "dc:description", "exo:text"};
+  private String[]  bundleMessage      = {"SocialIntegration.messages.editTitle",
+                                          "SocialIntegration.messages.editSummary",
+                                          "SocialIntegration.messages.editTitle",
+                                          "SocialIntegration.messages.editSummary",
+                                          "SocialIntegration.messages.editContent"};
+  private String[]  bundleMessageEmpty = {"SocialIntegration.messages.emptyTitle",
+                                          "SocialIntegration.messages.emptySummary",
+                                          "SocialIntegration.messages.emptyTitle",
+                                          "SocialIntegration.messages.emptySummary",
+                                          "SocialIntegration.messages.emptyContent"};
   private boolean[] needUpdate      = {true, true, true, true, false};
   private int consideredFieldCount = editedField.length;
   /**
@@ -45,25 +51,21 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
     String propertyName = event.getData();
     String newValue;
     try {
-      if (propertyName.equals(editedField[consideredFieldCount-1])) {
-        newValue ="";
-      } else {
-        if (!currentNode.hasProperty(propertyName)) return;
-        if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
-          StringBuffer sb = new StringBuffer();
-          Value[] values = currentNode.getProperty(propertyName).getValues();
-          for (int i=0; i<values.length; i++) {
-            if (i==0) {
-              sb.append(values[i].getString());
-            }else {
-              sb.append(", ").append(values[i].getString());
-            }
+      if (!currentNode.hasProperty(propertyName)) return;
+      if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
+        StringBuffer sb = new StringBuffer();
+        Value[] values = currentNode.getProperty(propertyName).getValues();
+        for (int i=0; i<values.length; i++) {
+          if (i==0) {
+            sb.append(values[i].getString());
+          }else {
+            sb.append(", ").append(values[i].getString());
           }
-          newValue = sb.toString();
-        }else {
-          newValue= currentNode.getProperty(propertyName).getString();
-          if (newValue==null) newValue =""; 
         }
+        newValue = sb.toString();
+      }else {
+        newValue= currentNode.getProperty(propertyName).getString();
+        if (newValue==null) newValue =""; 
       }
     }catch (Exception e) {
       newValue = "";
@@ -71,7 +73,11 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
     for (int i=0; i< consideredFieldCount; i++) {
       if (propertyName.equals(editedField[i])) {
         if (propertyName.equals("exo:summary")) newValue = Utils.getFirstSummaryLines(newValue);
-        Utils.postActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
+        if (StringUtils.isEmpty(newValue)) {
+          Utils.postActivity(currentNode, bundleMessageEmpty[i], needUpdate[i], true, "");
+        } else {
+          Utils.postActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
+        }
         break;
       }
     }
