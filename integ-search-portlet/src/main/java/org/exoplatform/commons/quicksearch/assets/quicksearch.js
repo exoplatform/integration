@@ -1,10 +1,10 @@
 
+// Function to be called when the quick search template is ready
 function initQuickSearch() {
   //*** Global variables ***
-  var CONNECTORS;
-  var SEARCH_TYPES;
-  var QUICKSEARCH_SETTING;
-  var QUICKSEARCH_LIMIT;
+  var CONNECTORS; //all registered SearchService connectors
+  var SEARCH_TYPES; //enabled search types
+  var QUICKSEARCH_SETTING; //quick search setting
 
   var QUICKSEARCH_RESULT_TEMPLATE= " \
     <div class='QuickSearchResult %{type}'> \
@@ -44,7 +44,7 @@ function initQuickSearch() {
 
 
   //*** Utility functions ***
-
+  // Highlight the specified text in a string
   String.prototype.highlight = function(words) {
     var str = this;
     for(var i=0; i<words.length; i++) {
@@ -73,18 +73,19 @@ function initQuickSearch() {
   function quickSearch() {
     var query = $("#txtQuickSearchQuery").val();
     var sites = QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all";
-    var types = QUICKSEARCH_SETTING.searchTypes.join(",");
-    var restUrl = "/rest/search?q=" + query+"&sites="+sites+"&types="+types+"&offset=0"+"&limit="+QUICKSEARCH_LIMIT+"&sort="+"&order=desc";
+    var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
+    var restUrl = "/rest/search?q=" + query+"&sites="+sites+"&types="+types+"&offset=0"+"&limit="+QUICKSEARCH_SETTING.resultsPerPage+"&sort=relevancy"+"&order=desc";
 
+    // get results of all search types in a map
     $.getJSON(restUrl, function(resultMap){
-      var rows = [];
+      var rows = []; //one row per type
       $.each(SEARCH_TYPES, function(i, searchType){
-        results = resultMap[searchType];
-        if(results && 0!=$(results).size()) {
-          results.map(function(result){result.type = searchType;});
-          var cell = [];
+        var results = resultMap[searchType]; //get all results of this type
+        if(results && 0!=$(results).size()) { //show the type with result only
+          results.map(function(result){result.type = searchType;}); //assign type for each result
+          var cell = []; //the cell contains results of this type (in the quick search result table)
           $.each(results, function(i, result){
-            cell.push(renderQuickSearchResult(result));
+            cell.push(renderQuickSearchResult(result)); //add this result to the cell
           });
           var row = QUICKSEARCH_TABLE_ROW_TEMPLATE.replace(/%{type}/g, CONNECTORS[searchType].displayName).replace(/%{results}/g, cell.join(""));
           rows.push(row);
@@ -96,17 +97,18 @@ function initQuickSearch() {
       $("#quickSearchResult").width(width);
       $("#quickSearchResult").show();
       var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
-      $("#seeAll").attr("href", searchPage +"?q="+query+"&types="+types);
+      $("#seeAll").attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page
     });
   }
 
 
   function renderQuickSearchResult(result) {
     var query = $("#txtQuickSearchQuery").val();
-    var terms = query.split(/\\s+/g);
+    var terms = query.split(/\\s+/g); //for highlighting
 
-    var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
+    var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>"; //render the image provided by the connector (by default)
 
+    // custom handle for Calendar result (event/task)
     if("event"==result.type || "task"==result.type) {
       result.url = "/portal/intranet/calendar" + result.url;
     }
@@ -144,7 +146,7 @@ function initQuickSearch() {
   //*** Event handlers - Quick search ***
 
   $("#seeAll").live("click", function(){
-    window.location.href = $(this).attr("href");
+    window.location.href = $(this).attr("href"); //open the main search page
     $("#quickSearchResult").hide();
   });
 
@@ -156,9 +158,9 @@ function initQuickSearch() {
     }
 
     if(13==e.keyCode) {
-      $("#seeAll").click();
+      $("#seeAll").click(); //go to main search page if Enter is pressed
     } else {
-      quickSearch();
+      quickSearch(); //search for the text just being typed in
     }
   });
 
@@ -176,13 +178,13 @@ function initQuickSearch() {
 
 
   //*** The entry point ***
+  // Load all needed configurations and settings from the service to prepare for the search
   getRegistry(function(registry){
     CONNECTORS = registry[0];
     SEARCH_TYPES = registry[1];
 
     getQuicksearchSetting(function(setting){
       QUICKSEARCH_SETTING = setting;
-      QUICKSEARCH_LIMIT = setting.resultsPerPage;
     });
 
   });

@@ -1,14 +1,16 @@
 
+// Function to be called when the quick search setting template is ready
 function initQuickSearchSetting(){
-  var CONNECTORS;
+  var CONNECTORS; //all registered SearchService connectors
 
+  // update the "Search in" text box with values selected in the dropdown list
   function updateTxtSearchIn() {
     var searchIn = [];
     if($(":checkbox[name='searchInOption'][value='all']").is(":checked")) {
-      $("#txtSearchIn").val("Everything");
+      $("#txtSearchIn").val("Everything"); //put Everything if all checkboxes is checked
     } else {
       $.each($(":checkbox[name='searchInOption'][value!='all']:checked"), function(){
-        searchIn.push(CONNECTORS[this.value].displayName);
+        searchIn.push(CONNECTORS[this.value].displayName); //put in the selected checkboxes
       });
       $("#txtSearchIn").val(searchIn.join(", "));
     }
@@ -28,6 +30,7 @@ function initQuickSearchSetting(){
   }
 
 
+  // Call REST service to save the setting
   $("#btnSave").click(function(){
     var jqxhr = $.post("/rest/search/setting/quicksearch", {
       resultsPerPage:$("#resultsPerPage").val(),
@@ -41,6 +44,7 @@ function initQuickSearchSetting(){
   });
 
 
+  // Show the search type list when clicking on the textbox
   $("#txtSearchIn").click(function(){
     $("#lstSearchInOptions").toggle();
     if($("#lstSearchInOptions").is(":visible")) {
@@ -50,6 +54,7 @@ function initQuickSearchSetting(){
   });
 
 
+  // Handler for the checkboxes
   $(":checkbox[name='searchInOption']").live("click", function(){
     if("all"==this.value){ //Everything checked
       if($(this).is(":checked")) { // check/uncheck all
@@ -65,11 +70,13 @@ function initQuickSearchSetting(){
   });
 
 
+  // Add 10 options (1..10) for "Results per page" field
   $("#resultsPerPage").html("");
   for(var i=1; i<=10; i++) {
     $("#resultsPerPage").append("<option>"+i+"</option>");
   }
 
+  // Load all needed configurations and settings from the service to build the UI
   $.getJSON("/rest/search/registry", function(registry){
     CONNECTORS = registry[0];
     var searchInOpts=[];
@@ -79,6 +86,7 @@ function initQuickSearchSetting(){
     });
     $("#lstSearchInOptions").html(searchInOpts.join(""));
 
+    // Display the previously saved (or default) quick search setting
     $.getJSON("/rest/search/setting/quicksearch", function(setting){
       $(":checkbox[name='searchInOption']").attr('checked', false);
       $.each($(":checkbox[name='searchInOption']"), function(){
