@@ -192,7 +192,7 @@ function initSearch() {
     }
 
     if("event"==result.type) {
-      var date = new Date(result.date).toUTCString().split(/\\s+/g);
+      var date = new Date(result.date).toUTCString().split(" ");// /\\s+/g
       avatar = " \
         <div class='calendarBox'> \
           <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[2] + "</div> \

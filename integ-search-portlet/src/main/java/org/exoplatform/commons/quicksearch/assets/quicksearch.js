@@ -112,7 +112,7 @@ function initQuickSearch() {
     }
 
     if("event"==result.type) {
-      var date = new Date(result.fromDateTime).toUTCString().split(/\\s+/g);
+      var date = new Date(result.fromDateTime).toUTCString().split(" ");// /\\s+/g
       avatar = " \
         <div class='calendarBox'> \
           <div class='heading' style='font-size: 8px; padding: 0px; border-width: 0px; height: 10px;'>" + date[2] + "</div> \
@@ -121,6 +121,14 @@ function initQuickSearch() {
       ";
     }
 
+    if ("task"==result.type){	  
+    	  avatar = "\
+    	  		<div class='statusTask'> \
+    	  			<i class='"+result.imageUrl+"Icon quicksearch'></i> \
+    			</div>\
+    	  		";
+    } 
+    
     var html = QUICKSEARCH_RESULT_TEMPLATE.
       replace(/%{type}/g, result.type).
       replace(/%{url}/g, result.url).

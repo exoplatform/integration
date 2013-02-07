@@ -89,3 +89,29 @@
     font-size: 24px;
     padding: 8px;
 }
+
+.statusTask i {
+    background: url("/unified-search/public/images/status-task.png") repeat scroll 0 0 transparent;
+    display: inline-block;
+    height: 38px;
+    margin-top: 1px;
+    width: 38px;
+}
+.statusTask i.quicksearch {
+    background-size: 110px 35px;
+    height: 24px;
+    width: 24px;
+}
+
+.statusTask i.needs-actionIcon {
+    background-position: 0 0;
+}
+.statusTask i.in-processIcon {
+    background-position: -27px 0;
+}
+.statusTask i.completedIcon {
+    background-position: -120px 0;
+}
+.statusTask i.canceledIcon {
+    background-position: -192px 0;
+}
