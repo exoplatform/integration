@@ -101,7 +101,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     if(!hit && propertyName.startsWith("dc:") && !propertyName.equals("dc:date")) {
     	if(newValue.length() > 0) {
     		resourceBundle = "SocialIntegration.messages.updateMetadata";
-    		newValue = propertyName + ActivityCommonService.VALUE_SEPERATOR + newValue;
+    		newValue = propertyName + ActivityCommonService.METADATA_VALUE_SEPERATOR + newValue;
     	}	else {
     		resourceBundle = "SocialIntegration.messages.removeMetadata";
     		newValue = propertyName;

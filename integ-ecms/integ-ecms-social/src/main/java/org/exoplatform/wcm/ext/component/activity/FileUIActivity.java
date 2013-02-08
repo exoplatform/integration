@@ -41,6 +41,7 @@ import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -48,6 +49,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
+import org.exoplatform.social.plugin.doc.UIDocActivity;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
@@ -61,6 +63,7 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 
+
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
  * 15, 2011
@@ -72,6 +75,7 @@ import org.exoplatform.webui.event.EventListener;
     @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
     @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
     @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
+    
     @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
     @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment") })
 public class FileUIActivity extends BaseUIActivity {
@@ -321,19 +325,14 @@ public class FileUIActivity extends BaseUIActivity {
   }
   
   protected int getVersion(Node node) {
-    try {
-      VersionNode rootVersion_ = new VersionNode(NodeLocation.getNodeByLocation(getNodeLocation())
-                                     .getVersionHistory()
-                                     .getRootVersion(), node.getSession());
-      if (rootVersion_ != null) {
-        return rootVersion_.getChildren().size();
-      }
-    } catch (UnsupportedRepositoryOperationException e) {
-      return 0;
-    } catch (RepositoryException e) {
-      return 0;
-    }    
-    return 0;
+  	String currentVersion = null;
+  	try {
+      currentVersion = contentNode.getBaseVersion().getName();      
+      if (currentVersion.contains("jcr:rootVersion")) currentVersion = "0";
+    }catch (Exception e) {
+      currentVersion ="0";
+    }
+  	return Integer.parseInt(currentVersion);
   }
 
   public String getUserProfileUri(String userId) {
@@ -467,6 +466,14 @@ public class FileUIActivity extends BaseUIActivity {
       return "";
     }
   }
+  
+  public String getDownloadLink() {
+    try {
+      return org.exoplatform.wcm.webui.Utils.getDownloadLink(getContentNode());
+    }catch (Exception e) {
+      return "";
+    }
+  }
   public static class ViewDocumentActionListener extends EventListener<FileUIActivity> {
     @Override
     public void execute(Event<FileUIActivity> event) throws Exception {
@@ -486,6 +493,27 @@ public class FileUIActivity extends BaseUIActivity {
       popupWindow.setResizable(true);
 
       event.getRequestContext().addUIComponentToUpdateByAjax(popupWindow);
+    }
+  }
+  
+  public static class DownloadDocumentActionListener extends EventListener<FileUIActivity> {
+    @Override
+    public void execute(Event<FileUIActivity> event) throws Exception {
+    	FileUIActivity uiComp = event.getSource() ;
+      String downloadLink = null;
+      if (getRealNode(uiComp.getContentNode()).getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
+        downloadLink = org.exoplatform.ecm.webui.utils.Utils.getDownloadRestServiceLink(uiComp.getContentNode());
+      }
+      event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
+    }
+    
+    private Node getRealNode(Node node) throws Exception {
+      // TODO: Need to add to check symlink node
+      if (node.isNodeType("nt:frozenNode")) {
+        String uuid = node.getProperty("jcr:frozenUuid").getString();
+        return node.getSession().getNodeByUUID(uuid);
+      }
+      return node;
     }
   }
 }

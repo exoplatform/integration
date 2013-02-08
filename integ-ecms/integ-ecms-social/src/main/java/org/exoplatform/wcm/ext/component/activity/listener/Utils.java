@@ -360,7 +360,6 @@ public class Utils {
         if (node.isNodeType(MIX_COMMENT)) {
           commentID = activity.getId();
           node.setProperty(MIX_COMMENT_ID, commentID);
-          node.getSession().save();
         }
       }      
       return activity;
@@ -385,7 +384,6 @@ public class Utils {
       String activityId = activity.getId();
       if (!StringUtils.isEmpty(activityId)) {
         ActivityTypeUtils.attachActivityId(node, activityId);
-        node.getSession().save();
       }
       return activity;
     }
@@ -421,6 +419,7 @@ public class Utils {
     }
     try {
       currentVersion = contentNode.getBaseVersion().getName();
+      
       //TODO Must improve this hardcode later, need specification
       if (currentVersion.contains("jcr:rootVersion")) currentVersion = "0";
     }catch (Exception e) {

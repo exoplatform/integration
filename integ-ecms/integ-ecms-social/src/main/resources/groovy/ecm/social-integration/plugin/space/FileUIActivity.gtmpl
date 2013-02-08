@@ -36,6 +36,7 @@
   import org.exoplatform.container.ExoContainer;
   import org.exoplatform.container.ExoContainerContext;
   import org.exoplatform.container.xml.PortalContainerInfo;
+  import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;  
   //ECMS import END
 
   def pcontext = Util.getPortalRequestContext();
@@ -107,12 +108,10 @@
   
   def docTypeName = uicomponent.getDocTypeName();
   def docTitle = uicomponent.getDocTitle();
-  def docVersionNo = uicomponent.getDocVersion();
-  def docVersion = _ctx.appRes("SocialIntegration.messages.version");
-  //docVersion = docVersion.replace("{0}", docVersionNo);
   def docSummary = uicomponent.getDocSummary();
   def viewLink = uicomponent.getViewLink();
   def editLink = uicomponent.getEditLink();
+  def downloadLink = uicomponent.getDownloadLink();
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
   def commentCount = 0;
@@ -311,7 +310,7 @@
           </div>
                   
           
-          	<%if (mimeType != null && mimeType.length() > 0){ %>
+          	<%if (mimeType != null && mimeType.length() > 0){%>
           	  <div style="margin-right: 260px;"> 
 		        <%   if(mimeType.startsWith("image")  && currentNode != null){%>
 		                 <div id="MediaContent${activity.id}" class="MediaContent">
@@ -319,11 +318,17 @@
 		           	  encodedPath = encodedPath.replaceAll ("%2F", "/");
 		              String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;              
 									%><a onclick="javascript:window.open('$binarySrc');" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="" style="max-height: 300px; max-width: 300px;" /></a></div><%
-		            } else if (mimeType.startsWith("application/pdf")  && currentNode != null){%>
+		            } else if (mimeType.startsWith("application/pdf") && currentNode != null){%>
 		               <div id="MediaContent${activity.id}" class="MediaContent">
 		               <%def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	   encodedPath = encodedPath.replaceAll ("%2F", "/");
 		               String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
+		               %><a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder" style="max-height: 300px; max-width: 300px;" /></a></div><%
+		            } else if ((mimeType.startsWith("application/msword") || mimeType.startsWith("opendocument"))  && currentNode != null){%>
+		               <div id="MediaContent${activity.id}" class="MediaContent">
+		               <%def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
+		           	   encodedPath = encodedPath.replaceAll ("%2F", "/");
+		               String pdfThumbnailImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/doc.gif";               
 		               %><a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder" style="max-height: 300px; max-width: 300px;" /></a></div><%
 		            } else if(fileComponent != null) {
 		              uicontentpresentation.renderUIComponent(fileComponent);
@@ -352,6 +357,7 @@
           <span class="DateTime">$activityPostedTime *</span>
         <% } %>
         <span class="viewAction"><a href="$contentActivityUri">View</a></span> |
+        <span class="downloadAction"><a href="$downloadLink">Download</a></span> |
         <span class="editAction"><a href="$editLink">Edit</a></span> |
         <% 
           def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
@@ -364,10 +370,7 @@
 	               <a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">$labelLike</a> |
 	          <%}%>
 	        <%}%>
-	        
-	        
-        <span class="commentCount">Comment: $commentCount</span>
-        <span class="likeCount">Like: $identityLikesNum</span>
+        <span class="commentCount">Comment: $commentCount</span>        
       </div>
       <!--DocActivityIcon END-->
 
@@ -453,8 +456,9 @@
               commentMessage = _ctx.appRes(systemComment[count]);
               if (systemCommentTitle!=null) {
                 if (systemCommentTitle.length>count) {
-                  for(def i = 0; i<systemCommentTitle.length; i++) {
-                    commentMessage = commentMessage.replace("{"+i+"}", "<strong>" + systemCommentTitle[i] + "</strong>");
+                  def titles = systemCommentTitle[count].split(ActivityCommonService.METADATA_VALUE_SEPERATOR);
+                  for(def i = 0; i<titles.length; i++) {
+                    commentMessage = commentMessage.replace("{"+i+"}", titles[i]);
                   }
                 }
               }

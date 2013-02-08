@@ -83,7 +83,7 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 	    }
 	    if(!hit && propertyName.startsWith("dc:") && !propertyName.equals("dc:date")) {
 	    	resourceBundle = "SocialIntegration.messages.updateMetadata";
-	    	newValue = propertyName + ActivityCommonService.VALUE_SEPERATOR + newValue;
+	    	newValue = propertyName + ActivityCommonService.METADATA_VALUE_SEPERATOR + newValue;
 	    	Utils.postFileActivity(currentNode, resourceBundle, false, true, newValue);
 	    }
     }
