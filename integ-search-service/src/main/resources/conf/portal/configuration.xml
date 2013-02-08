@@ -114,7 +114,7 @@
         </init-params>      
       </component-plugin>
       
-      <component-plugin>
+      <!-- <component-plugin>
         <name>JcrActivitySearch</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.commons.search.driver.jcr.connector.JcrActivitySearch</type>
@@ -126,9 +126,9 @@
              <property name="displayName" value="Activities"/>
           </properties-param>
         </init-params>      
-      </component-plugin>
+      </component-plugin> -->
       
-      <component-plugin>
+      <!-- <component-plugin>
         <name>JcrNodeSearch</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.commons.search.driver.jcr.connector.JcrNodeSearch</type>
@@ -140,7 +140,7 @@
              <property name="displayName" value="JCR nodes"/>
           </properties-param>
         </init-params>      
-      </component-plugin>
+      </component-plugin> -->
 
     </component-plugins>
   </component>
