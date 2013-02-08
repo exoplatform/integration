@@ -58,7 +58,7 @@ function initSearch() {
 
   function getUrlParam(name) {
     var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
-    return match && decodeURIComponent(match[1].replace(/\\+/g, ' '));
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
   }
 
 
@@ -183,7 +183,7 @@ function initSearch() {
 
   function renderSearchResult(result) {
     var query = $("#txtQuery").val();
-    var terms = query.split(/\\s+/g);
+    var terms = query.split(/\s+/g);
 
     var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
 
@@ -192,7 +192,7 @@ function initSearch() {
     }
 
     if("event"==result.type) {
-      var date = new Date(result.date).toUTCString().split(" ");// /\\s+/g
+      var date = new Date(result.date).toUTCString().split(/\s+/g);
       avatar = " \
         <div class='calendarBox'> \
           <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[2] + "</div> \
@@ -301,8 +301,6 @@ function initSearch() {
     if(numEntries==LIMIT) $("#showMore").show(); else $("#showMore").hide();
 
     var type=$(this).attr("type");
-    //type = type.replace(/(:|\\.)/g,'\\\\$1').replace(/\\s/g, "_"); //for jcr nodetype
-    type = type.replace(/(:|\\.)/g,'\\\\$1'); //for jcr nodetype
     $(".SearchResultType").hide(); //hide all other types
     $("#"+type+"-type").show();
 
@@ -320,7 +318,7 @@ function initSearch() {
       $.getJSON("/rest/search/jcr/props?node=" + url.replace("/rest/jcr/", ""), function(props){
         var sProps = "";
         $.each(props, function(key, value){
-          sProps = sProps + key + " = " + value + "\\n";
+          sProps = sProps + key + " = " + value + "\n";
         });
         console.log(props);
         alert(sProps);
@@ -490,7 +488,11 @@ function initSearch() {
   function renderCachedResults(append) {
     var current = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);
     if(0==current.length) {
-      clearResultPage("No result for <strong>" + (isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>");
+      if(append) {
+        $("#showMore").hide();
+      } else {
+        clearResultPage("No result for <strong>" + (isSqlMode()?$("#txtSql").val().replace(/%query%/g, $("#txtQuery").val()):$("#txtQuery").val()) + "<strong>");
+      }
       return;
     }
 

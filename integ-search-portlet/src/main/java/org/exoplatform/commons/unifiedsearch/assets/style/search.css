@@ -34,11 +34,13 @@
   margin-left: 5px;
   padding-top: 5px;
   height: 60px;
+  overflow: hidden;
 }
 
 .SearchResult .Avatar {
   float: left;
   padding-top: 3px;
+  overflow: hidden;
 }
 
 .SearchResult .Avatar img {

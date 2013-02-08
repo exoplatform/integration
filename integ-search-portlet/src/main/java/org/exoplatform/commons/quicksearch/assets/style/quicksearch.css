@@ -22,18 +22,20 @@
 
 
 .QuickSearchResult {
-  margin-left: 0px;
-  padding-top: 0px;
   height: 30px;
+  overflow: hidden;
 }
 
 .QuickSearchResult .Avatar {
   float: left;
   padding-top: 3px;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
 }
 
 .QuickSearchResult .Avatar img {
-  width: 20px;
+  width: 24px;
   height: 24px;
 }
 
@@ -94,24 +96,25 @@
     background: url("/unified-search/public/images/status-task.png") repeat scroll 0 0 transparent;
     display: inline-block;
     height: 38px;
-    margin-top: 1px;
     width: 38px;
 }
+
 .statusTask i.quicksearch {
-    background-size: 110px 35px;
+    background-size: 145px 35px;
     height: 24px;
     width: 24px;
 }
 
-.statusTask i.needs-actionIcon {
+.statusTask i.quicksearch.needs-actionIcon {
     background-position: 0 0;
 }
-.statusTask i.in-processIcon {
-    background-position: -27px 0;
+.statusTask i.quicksearch.in-processIcon {
+    background-position: -35px 0;
 }
-.statusTask i.completedIcon {
-    background-position: -120px 0;
+.statusTask i.quicksearch.completedIcon {
+    background-position: -72px 0;
 }
-.statusTask i.canceledIcon {
-    background-position: -192px 0;
+.statusTask i.quicksearch.canceledIcon {
+    background-position: -108px 0;
 }
+

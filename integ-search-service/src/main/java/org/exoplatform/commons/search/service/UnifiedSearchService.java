@@ -62,7 +62,7 @@ public class UnifiedSearchService implements ResourceContainer {
     List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
     int offset = null==sOffset || sOffset.isEmpty() ? 0 : Integer.parseInt(sOffset);
     int limit = null==sLimit || sLimit.isEmpty() ? 0 : Integer.parseInt(sLimit);
-    String sort = null==sSort || sSort.isEmpty() ? "jcrScore()" : sSort;
+    String sort = null==sSort || sSort.isEmpty() ? "relevancy" : sSort;
     String order = null==sOrder || sOrder.isEmpty() ? "DESC" : sOrder;
     
     try {
