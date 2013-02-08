@@ -59,7 +59,7 @@
 /*        color: #555555 !important;*/
 }
 
-.SearchResult .Content .Excerpt div {
+.SearchResult .Content .Excerpt, .SearchResult .Content .Excerpt * {
   font-size: x-small; height: 19px;
 }
 

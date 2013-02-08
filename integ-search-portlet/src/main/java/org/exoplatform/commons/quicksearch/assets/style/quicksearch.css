@@ -44,7 +44,7 @@
   overflow: hidden;
 }
 
-.QuickSearchResult .Content .Excerpt div {
+.QuickSearchResult .Content .Excerpt, .QuickSearchResult .Content .Excerpt * {
   font-size: xx-small; color: grey;
 }
 
