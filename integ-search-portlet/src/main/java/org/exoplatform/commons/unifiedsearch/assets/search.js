@@ -192,17 +192,17 @@ function initSearch() {
     }
 
     if("event"==result.type) {
-      var date = new Date(result.date).toUTCString().split(/\s+/g);
+      var date = new Date(result.fromDateTime).toString().split(/\s+/g);
       avatar = " \
         <div class='calendarBox'> \
-          <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[2] + "</div> \
-          <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[1] + "</div> \
+          <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[1] + "</div> \
+          <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[2] + "</div> \
         </div> \
       ";
     }
 
     if ("task"==result.type){
-  	  avatar = "\
+      avatar = "\
         <div class='statusTask'>\
           <i class='"+result.imageUrl+"Icon'></i>\
         </div>\
