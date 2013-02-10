@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ-calendar</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>4.0.0.Alpha1-unified-search-SNAPSHOT</version>
+    <version>4.0.0-unified-search-SNAPSHOT</version>
   </parent>
   <artifactId>integ-calendar-social</artifactId>
   <packaging>jar</packaging>
