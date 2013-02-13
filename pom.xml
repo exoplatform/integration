@@ -5,7 +5,7 @@
     <artifactId>maven-parent-pom</artifactId>
     <groupId>org.exoplatform</groupId>
     <version>9-beta-1</version>
-    <relativePath />
+    <relativePath></relativePath>
   </parent>
   <groupId>org.exoplatform.integration</groupId>
   <artifactId>integ</artifactId>
@@ -23,8 +23,8 @@
   <scm>
     <connection>scm:git:git://github.com/exoplatform/integration.git</connection>
     <developerConnection>scm:git:git@github.com:exoplatform/integration.git</developerConnection>
-    <url>http://fisheye.exoplatform.org/browse/integration</url>
     <tag>HEAD</tag>
+    <url>http://fisheye.exoplatform.org/browse/integration</url>
   </scm>
   <properties>
     <!-- **************************************** -->
