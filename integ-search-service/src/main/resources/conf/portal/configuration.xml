@@ -29,12 +29,14 @@
   <component>
     <key>org.exoplatform.commons.api.search.SearchService</key>
     <type>org.exoplatform.commons.search.driver.jcr.JcrSearchDriver</type>
+    
+    <!-- Wiki -->
     <component-plugins>
       <component-plugin>
         <name>WikiSearchServiceConnector</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.wiki.service.impl.WikiSearchServiceConnector</type>
-        <description>eXo Wiki articles</description>      
+        <description>eXo Wiki Pages</description>      
         <init-params>
           <properties-param>
              <name>constructor.params</name>
@@ -43,26 +45,13 @@
           </properties-param>
         </init-params>      
       </component-plugin>
-
+       
+      <!-- Social -->
       <component-plugin>
-        <name>JcrForumSearch</name>
+        <name>PeopleSearchConnector</name>
         <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrForumSearch</type>
-        <description>eXo Forum posts</description>
-        <init-params>
-          <properties-param>
-             <name>constructor.params</name>
-             <property name="searchType" value="discussion"/>
-             <property name="displayName" value="Discussions"/>
-          </properties-param>
-        </init-params>      
-      </component-plugin>
-            
-      <component-plugin>
-        <name>JcrPeopleSearch</name>
-        <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrPeopleSearch</type>
-        <description>eXo People</description>
+        <type>org.exoplatform.social.core.search.PeopleSearchConnector</type>
+        <description>eXo Social People</description>
         <init-params>
           <properties-param>
             <name>constructor.params</name>
@@ -72,11 +61,12 @@
         </init-params>      
       </component-plugin>
       
+      <!-- Social 
       <component-plugin>
-        <name>JcrSpaceSearch</name>
+        <name>SpaceSearchConnector</name>
         <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrSpaceSearch</type>
-        <description>eXo Spaces</description>
+        <type>org.exoplatform.social.core.search.SpaceSearchConnector</type>
+        <description>eXo Social Spaces</description>
         <init-params>
           <properties-param>
              <name>constructor.params</name>
@@ -84,8 +74,9 @@
              <property name="displayName" value="Spaces"/>
           </properties-param>
         </init-params>      
-      </component-plugin>
+      </component-plugin>-->
       
+      <!-- Calendar -->
       <component-plugin>
         <name>EventSearchConnector</name>
         <set-method>addConnector</set-method>
@@ -100,6 +91,7 @@
         </init-params>      
       </component-plugin>
       
+      <!-- Calendar -->
       <component-plugin>
         <name>TaskSearchConnector</name>
         <set-method>addConnector</set-method>
