@@ -1,10 +1,14 @@
 
 // Function to be called when the quick search template is ready
-function initQuickSearch() {
+function initQuickSearch(portletId) {
   //*** Global variables ***
   var CONNECTORS; //all registered SearchService connectors
   var SEARCH_TYPES; //enabled search types
   var QUICKSEARCH_SETTING; //quick search setting
+
+  var txtQuickSearchQuery_id = "#txtQuickSearchQuery-" + portletId;
+  var quickSearchResult_id = "#quickSearchResult-" + portletId;
+  var seeAll_id = "#seeAll-" + portletId;
 
   var QUICKSEARCH_RESULT_TEMPLATE= " \
     <div class='QuickSearchResult %{type}'> \
@@ -25,7 +29,7 @@ function initQuickSearch() {
           %{resultRows} \
           <tr> \
             <th colspan='2' style='padding: 10px; font-weight: normal;'> \
-              <a id='seeAll' class='Clickable' href='#'>%{message}</a> \
+              <a id='seeAll-" + portletId + "' class='Clickable' href='#'>%{message}</a> \
             </th> \
           </tr> \
         </table> \
@@ -71,7 +75,7 @@ function initQuickSearch() {
 
 
   function quickSearch() {
-    var query = $("#txtQuickSearchQuery").val();
+    var query = $(txtQuickSearchQuery_id).val();
     var sites = QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all";
     var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
     var restUrl = "/rest/search?q=" + query+"&sites="+sites+"&types="+types+"&offset=0"+"&limit="+QUICKSEARCH_SETTING.resultsPerPage+"&sort=relevancy"+"&order=desc";
@@ -92,18 +96,18 @@ function initQuickSearch() {
         }
       });
       var message = rows.length==0 ? "No result for <strong>" + query + "<strong>" : "See All Search Results";
-      $("#quickSearchResult").html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{message}/g, message));
-      var width = Math.min($("#quickSearchResult").width(), $(window).width() - $("#txtQuickSearchQuery").offset().left - 20);
-      $("#quickSearchResult").width(width);
-      $("#quickSearchResult").show();
+      $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{message}/g, message));
+      var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
+      $(quickSearchResult_id).width(width);
+      $(quickSearchResult_id).show();
       var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
-      $("#seeAll").attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page
+      $(seeAll_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page
     });
   }
 
 
   function renderQuickSearchResult(result) {
-    var query = $("#txtQuickSearchQuery").val();
+    var query = $(txtQuickSearchQuery_id).val();
     var terms = query.split(/\s+/g); //for highlighting
 
     var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>"; //render the image provided by the connector (by default)
@@ -145,35 +149,35 @@ function initQuickSearch() {
 
   //*** Event handlers - Quick search ***
 
-  $("#seeAll").live("click", function(){
+  $(seeAll_id).live("click", function(){
     window.location.href = $(this).attr("href"); //open the main search page
-    $("#quickSearchResult").hide();
+    $(quickSearchResult_id).hide();
   });
 
 
-  $("#txtQuickSearchQuery").keyup(function(e){
+  $(txtQuickSearchQuery_id).keyup(function(e){
     if(""==$(this).val()) {
-      $("#quickSearchResult").hide();
+      $(quickSearchResult_id).hide();
       return;
     }
 
     if(13==e.keyCode) {
-      $("#seeAll").click(); //go to main search page if Enter is pressed
+      $(seeAll_id).click(); //go to main search page if Enter is pressed
     } else {
       quickSearch(); //search for the text just being typed in
     }
   });
 
 
-  $("#txtQuickSearchQuery").focus(function(){
-    if(""!=$("#txtQuickSearchQuery").val()) {
+  $(txtQuickSearchQuery_id).focus(function(){
+    if(""!=$(txtQuickSearchQuery_id).val()) {
       quickSearch();
     }
   });
 
 
-  $("#txtQuickSearchQuery").blur(function(){
-    setTimeout(function(){$("#quickSearchResult").hide();}, 200);
+  $(txtQuickSearchQuery_id).blur(function(){
+    setTimeout(function(){$(quickSearchResult_id).hide();}, 200);
   });
 
 

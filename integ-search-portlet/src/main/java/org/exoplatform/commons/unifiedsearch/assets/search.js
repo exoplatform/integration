@@ -427,16 +427,16 @@ function initSearch() {
   }
 
   function byTitleASC(a,b) {
-    if (a.title < b.title)
+    if (a.title.toUpperCase() < b.title.toUpperCase())
       return -1;
-    if (a.title > b.title)
+    if (a.title.toUpperCase() > b.title.toUpperCase())
       return 1;
     return 0;
   }
   function byTitleDESC(b,a) {
-    if (a.title < b.title)
+    if (a.title.toUpperCase() < b.title.toUpperCase())
       return -1;
-    if (a.title > b.title)
+    if (a.title.toUpperCase() > b.title.toUpperCase())
       return 1;
     return 0;
   }
@@ -474,7 +474,7 @@ function initSearch() {
       });
 
       var sortFuncName = "by" + sort.toProperCase() + order.toUpperCase();
-      RESULT_CACHE = RESULT_CACHE.sort(window[sortFuncName]); //sort the result set
+      RESULT_CACHE = RESULT_CACHE.sort(eval(sortFuncName)); //sort the result set
 
       CACHE_OFFSET = 0; //reset the local offset
 

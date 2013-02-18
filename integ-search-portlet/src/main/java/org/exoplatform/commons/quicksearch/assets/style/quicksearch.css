@@ -49,21 +49,22 @@
 }
 
 
-#quickSearchResult {
+div[id*="quickSearchResult-"] {
   position: absolute;
   background: white;
   width: 315px;
   margin-top: 6px;
   margin-left: 3px;
   display:none;
+  z-index: 1001;
 }
 
-#quickSearchResult table, #quickSearchResult th, #quickSearchResult td {
+div[id*="quickSearchResult-"] table, div[id*="quickSearchResult-"] th, div[id*="quickSearchResult-"] td {
   border: 1px solid lightgray;
 }
 
-#quickSearchPortlet input:focus, #quickSearchPortlet textarea:focus {
-    outline: none;
+.QuickSearchPortlet input:focus, .QuickSearchPortlet textarea:focus {
+  outline: none;
 }
 
 
