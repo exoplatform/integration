@@ -463,13 +463,9 @@
                 }
               }
               if (systemComment!=null) {
-                if (systemComment.length>1) {
-                  commentBuffer.append("<p class=\"ContentBlock\">").append(commentMessage).append("</p>");
-                }else {
-                  commentBuffer.append(commentMessage);
-                }
+                commentBuffer.append("<p class=\"ContentBlock\">").append(commentMessage).append("</p>");                
               }else {
-                commentBuffer.append(commentMessage);
+                commentBuffer.append("<p class=\"ContentBlock\">").append(commentMessage).append("</p>");
               }
             }
           }
