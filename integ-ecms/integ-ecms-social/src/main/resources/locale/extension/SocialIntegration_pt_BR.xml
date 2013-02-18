@@ -62,4 +62,9 @@
       <live>Publicado</live>
     </publicationStates>
   </SocialIntegration>
+  <UIPopupWindow>
+    <title>
+      <DocViewer>Preview</DocViewer>
+    </title>
+  </UIPopupWindow>
 </bundle>
