@@ -480,7 +480,7 @@ public class FileUIActivity extends BaseUIActivity {
       final FileUIActivity docActivity = event.getSource();
       final UIActivitiesContainer activitiesContainer = docActivity.getParent();
       final UIPopupWindow popupWindow = activitiesContainer.getPopupWindow();
-      UIDocViewer docViewer = popupWindow.createUIComponent(UIDocViewer.class, null, "Preview");
+      UIDocViewer docViewer = popupWindow.createUIComponent(UIDocViewer.class, null, "DocViewer");
       docViewer.docPath = docActivity.docPath;
       docViewer.repository = docActivity.repository;
       docViewer.workspace = docActivity.workspace;
