@@ -83,7 +83,7 @@ public class ForumUIActivity extends BaseKSActivity {
       sb.append("/");
     }
     // add signal to show reply form
-    sb.append("false");
+    sb.append("lastpost/false");
     return sb.toString();
   }
   
