@@ -1,0 +1,49 @@
+
+<div id="searchPortlet">
+
+  <div id="searchPage">
+    <div id="sqlExec" style="margin-bottom: 20px; border: 1px dashed gray; padding-top: 5px; padding-left: 5px; display: none;">
+      <div style="font-size: small;">SQL:</div>
+      <div style="margin: 10px;">
+        <textarea rows="4" cols="50" id="txtSql">SELECT rep:excerpt(), jcr:primaryType FROM nt:base WHERE CONTAINS(*, '%query%') ORDER BY jcr:score() DESC</textarea>
+      </div>
+    </div>
+
+    <div id="searchForm" style="display: none; padding-top: 10px; text-align: center;">
+      <input type="text" id="txtQuery" class="SearchBox" style="width: 250px;">
+      <input type="button" id="btnSearch" value="Search">
+      <hr style="color: lightgray; margin: 10px 0px 0px;">
+    </div>
+
+    <div id="facetsFilter" style="display: none;">
+      <div id="facetsFilterTitle">Filter By</div>
+      <div style="padding-right: 5px;">
+        <div id="siteFilter">
+          <input type="checkbox" name="site" value="all">All Sites
+          <ul id="lstSites"></ul>
+        </div>
+
+        <input type="checkbox" name="contentType" value="all">All Content Types
+        <ul id="lstContentTypes"></ul>
+      </div>
+    </div>
+
+    <div id="resultPage" style="margin-left: 10px; margin-right: 20px; margin-top: 10px;">
+      <div id="resultTypes" style="display: none; margin-bottom: 15px; padding-top: 4px;"></div>
+      <div style="margin-bottom: 10px;">
+        <span id="resultHeader"></span>
+        <span id="resultSort" style="float: right; display: none;">
+          Sort By: <select id="lstSortBy"></select><span id="sortType" class="Desc Clickable">&nbsp;</span>
+        </span>
+      </div>
+      <div id="result"></div>
+      <div id="showMore" style="display: none; text-align: center; margin-bottom: 20px; margin-top: 40px;"><input type="button" id="btnShowMore" value="Show More Results"/></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  initSearch();
+</script>
