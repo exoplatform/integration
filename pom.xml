@@ -19,6 +19,8 @@
     <module>integ-wiki</module>
     <module>integ-forum</module>
     <module>integ-social</module>
+    <module>integ-search-service</module>
+    <module>integ-search-portlet</module>
   </modules>
   <scm>
     <connection>scm:git:git://github.com/exoplatform/integration.git</connection>
@@ -172,6 +174,23 @@
       <dependency>
         <groupId>org.exoplatform.integration</groupId>
         <artifactId>integ-forum-social</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-search-portlet</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-search-portlet</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-search-service</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
