@@ -1,0 +1,19 @@
+
+<div id="searchAdmin" style="margin-top: -11px; padding-bottom: 30px; background: white;">
+  <h3 style="margin-left: 3px; padding-top: 10px; text-align: center; width: 50%;">Search Administration</h3>
+  <hr>
+  <table style="table-layout: fixed; width: 50%; margin-top: 20px; margin-left: 10px;">
+    <col width="20%"/>
+    <col width="50%"/>
+    <col width="30%"/>
+    <tr>
+      <th>Content Type</th>
+      <th>Description</th>
+      <th>Action</th>
+    </tr>
+  </table>
+</div>
+
+<script>
+  initSearchAdmin();
+</script>
