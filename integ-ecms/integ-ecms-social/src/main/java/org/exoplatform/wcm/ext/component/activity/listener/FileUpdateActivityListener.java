@@ -16,13 +16,22 @@
  */
 package org.exoplatform.wcm.ext.component.activity.listener;
 
+import java.util.Map;
+
 import javax.jcr.Node;
 
+import org.exoplatform.services.cms.impl.CmsServiceImpl;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
+import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+
 import javax.jcr.Value;
+
+import org.exoplatform.services.cms.CmsService;
+import org.exoplatform.services.cms.JcrInputProperty;
+
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
@@ -61,8 +70,13 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
 
   @Override
   public void onEvent(Event<Node, String> event) throws Exception {
+  	CmsService cmsService = WCMCoreUtils.getService(CmsService.class);
+  	Map<String, Object> properties = cmsService.getPreProperties(); 
+  	Map<String, Object> updatedProperties = cmsService.getUpdatedProperties();
     Node currentNode = event.getSource();
+    
     String propertyName = event.getData();
+    String oldValue = "";
     String newValue = "";
     try {      
     	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
@@ -73,7 +87,17 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
 					}
     			newValue = newValue.substring(0, newValue.length()-2);
     		}
-    	} else newValue= currentNode.getProperty(propertyName).getString();      
+    		values = (Value[]) properties.get(propertyName);
+    		if(values != null) {
+    			for (Value value : values) {
+    				oldValue += value.getString() + ", ";
+					}
+    			oldValue = oldValue.substring(0, newValue.length()-2);
+    		}
+    	} else {
+    		oldValue = properties.get(propertyName).toString();
+    		newValue= currentNode.getProperty(propertyName).getString();      
+    	}
     }catch (Exception e) {
       newValue = "";
     }
