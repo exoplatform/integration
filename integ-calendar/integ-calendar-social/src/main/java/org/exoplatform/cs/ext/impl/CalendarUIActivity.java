@@ -1,11 +1,13 @@
 package org.exoplatform.cs.ext.impl;
 
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import javax.jcr.PathNotFoundException;
@@ -19,6 +21,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.web.CacheUserProfileFilter;
 import org.exoplatform.webui.application.WebuiRequestContext;
@@ -61,6 +64,7 @@ public class CalendarUIActivity extends BaseUIActivity {
 
   private String           timeZone           = "";
 
+  private String CALENDAR_PREFIX_KEY = "CalendarUIActivity.msg.";
   public CalendarUIActivity() {
     super();
   }
@@ -281,7 +285,30 @@ public class CalendarUIActivity extends BaseUIActivity {
     return dformat.format(calendar.getTime());
 
   }
-
+  /**
+   * builds localized string for comment content
+   * @param comment
+   * @return localized string for comment
+   * @since activity-type
+   */
+  public String buildComment(ExoSocialActivity comment) {
+	  StringBuilder commentMessage = new StringBuilder();
+	  WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+	  ResourceBundle rb = requestContext.getApplicationResourceBundle();
+	  Map<String,String> tempParams = comment.getTemplateParams();
+	  // get updated fields in formant {field1,field2,...}
+	  String fieldsChanged = tempParams.get(CalendarSpaceActivityPublisher.CALENDAR_FIELDS_CHANGED);
+	  if(fieldsChanged == null) {
+		  return comment.getTitle();
+	  }
+	  String[] fields = fieldsChanged.split(",");
+	  for(int i = 0; i < fields.length; i++) {
+		  String label = rb.getString(CALENDAR_PREFIX_KEY + fields[i]); 
+		  String childMessage = MessageFormat.format(label,tempParams.get(fields[i])); // message for each updated field
+		  commentMessage.append(childMessage + "<br/>");
+	  }
+	  return commentMessage.toString();
+  }
   public static class AcceptEventActionListener extends EventListener<CalendarUIActivity> {
 
     @Override

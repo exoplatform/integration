@@ -33,11 +33,11 @@
   
   def jsManager = pcontext.getJavascriptManager();
   //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
-
   def labelActivityHasBeenDeleted = _ctx.appRes("UIActivity.label.Activity_Has_Been_Deleted");
   def activity = uicomponent.getActivity();
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
+  def activityCommentable = uicomponent.isActivityCommentable();
   def streamOwner = activity.getStreamOwner();
 %>
 
@@ -151,7 +151,7 @@
       <div id="ActivityContextBox${activity.id}">
       <div class="TitleBlock TextBold">
         <%
-          def href = "<a class='TextBold' href=\"{0}\">{1}</a>";
+          def href = "<a class='TextBold' href=\"%s\">%s</a>";
           def activityContentTitle = uicomponent.getActivityContentTitle(_ctx, href);
         %>
         $activityContentTitle
@@ -160,7 +160,14 @@
         <%}%>
       </div>
       <div class="CommentBox QuoterBox">
-        <p class="QuoterClose">$activity.body</p>
+        <div class="QuoterClose">$activity.body</div>
+     </div>
+     <div class="NumberOfReliesBlock TextBold">
+        <%
+          def numberOfReplies = uicomponent.getNumberOfReplies();
+          def rate = uicomponent.getRate();
+        %>
+        <div>$numberOfReplies &nbsp;| &nbsp; $rate</div>
      </div>
       <div class="DefaultActivityIcon ForumActivityIcon">
         <% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
@@ -177,27 +184,34 @@
       <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
          def commentLink = "";
       %>
-     <% if (activityCommentAndLikable) { %>
+     <% if (activityCommentable) { %>
         <a class="$commentLink" onclick="$toggleDisplayCommentAction" id="CommentLink${activity.id}" href="#comment">
           $labelComment
         </a>
-      <% if (uicomponent.isLiked()) { %>
-        | <a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="#unlike">
-          $labelUnlike
-        </a>
-      <% } else { %>
-        |
-        <a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">
-          $labelLike
-        </a>
+        | 
       <% }%>
-      |
+      <% if (activityCommentAndLikable) { %>
+        <% if (uicomponent.isLiked()) { %>
+          <a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="#unlike">
+            $labelUnlike
+          </a>
+        <% } else { %>
+          <a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">
+            $labelLike
+          </a>
+        <% }%>
+         |
      <% }%>
+        <% if (activityCommentable) { %>
          <a href="${uicomponent.getReplyLink()}" id="ReplyLink${activity.id}">
            <%= _ctx.appRes("ForumUIActivity.label.reply")%>
          </a> |
+        <% }%>
          <a href="${uicomponent.getViewLink()}" id="View${activity.id}">
            <%= _ctx.appRes("ForumUIActivity.label.view") %>
+         </a> |
+         <a href="${uicomponent.getLastReplyLink()}" id="LastReply${activity.id}">
+           <%= _ctx.appRes("ForumUIActivity.label.lastReply") %>
          </a>
          </div>
       </div>
@@ -262,7 +276,8 @@
       } else {
         commentContentClass = "";
       }
-
+      
+      def postLink = uicomponent.getViewPostLink(it);
       def id = Utils.getIdentityManager().getIdentity(it.userId);
       commenterFullName = id.profile.fullName;
       commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
@@ -282,7 +297,16 @@
           <span class="BorderBottomCM"></span>
         </a>
         <div class="ContentBox">
-            <h5><a href="$commenterProfileUri">$commenterFullName</a></h5>
+            <h5 style="float:none">
+              <a href="$commenterProfileUri">$commenterFullName</a>
+            <%
+               if(postLink != null && postLink.length() > 0) {
+            %>
+                | <a href="$postLink">View</a>
+            <%
+               }
+            %>
+            </h5>
             <p class="ContentBlock">
               $commentMessage
             </p>
@@ -305,19 +329,21 @@
       def currentCommenterName = currentCommenterIdentity.profile.fullName;
       if (!currentCommenterAvatar) currentCommenterAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
     %>
-    <% if (commentList.size() == 0) { %>
-      <div class="CommentBox InputArea CommentFormBoxNone ClearFix" id="CommentFormBlock${activity.id}">
-    <% } else { %>
+    <%if (activityCommentable) {%>
+      <% if (commentList.size() == 0) { %>
+        <div class="CommentBox InputArea CommentFormBoxNone ClearFix" id="CommentFormBlock${activity.id}">
+      <% } else { %>
       <div class="CommentBox InputArea CommentFormBox ClearFix" id="CommentFormBlock${activity.id}">
-    <% } %>
-        <a class="AvatarCM" title="$currentCommenterName" href="$currentCommenterUri">
-          <img src="$currentCommenterAvatar">
-          <span class="BorderTopCM"></span>
-          <span class="BorderBottomCM"></span>
-        </a>
-        <div class="CommentInputBox"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
-        <input type="button" onclick="<%= uicomponent.event("PostComment") %>" value="$labelComment" class="CommentButton DisplayNone" id="CommentButton${activity.id}" />
-      </div>
+      <% } %>
+          <a class="AvatarCM" title="$currentCommenterName" href="$currentCommenterUri">
+            <img src="$currentCommenterAvatar">
+            <span class="BorderTopCM"></span>
+            <span class="BorderBottomCM"></span>
+          </a>
+          <div class="CommentInputBox"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
+          <input type="button" onclick="<%= uicomponent.event("PostComment") %>" value="$labelComment" class="CommentButton DisplayNone" id="CommentButton${activity.id}" />
+        </div>
+      <%} %>
     </div>
    </div>
   </div>

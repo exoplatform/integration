@@ -6,6 +6,48 @@
       <editedBy>a été édité par</editedBy>
       <system>le système</system>
       <readmore>...Lire la suite.</readmore>
+      <editTitle>Le titre a été mis à jour: {0}</editTitle>
+      <editFileTitle>Le nom a été mis à jour: {0}</editFileTitle>
+      <editDescription>La description a été mise à jour: {0}</editDescription>
+      <singleCreator>Le créateur est {0}</singleCreator>
+      <multiCreator>Les Créateurs sont {0}</multiCreator>
+      <emptyTitle> Le titre a été supprimé.</emptyTitle>
+      <emptySummary>Le sommaire a été supprimé.</emptySummary>
+      <emptyContent>Le contenu a été supprimé.</emptyContent>
+      <singleSource>la source est {0}.</singleSource>
+      <multiSource>Les sources sont {0}.</multiSource>
+      <updateMetadata>La Metadonnée {0} a été mis à jour par: {1}</updateMetadata>
+      <removeMetadata>La Metadonnée {0} a été supprimée.</removeMetadata>
+      <removeName>Le titre a été supprimé.</removeName>
+      <removeTitle>Le nom a été supprimé.</removeTitle>
+      <removeSummary>Le sommaire a été supprimé.</removeSummary>
+      <removeDescription>La description a été supprimé.</removeDescription>
+      <removeCreator>Un createur a été supprimé.</removeCreator>
+      <removeSource>Une source a été supprimée.</removeSource>
+      <removeContent>Le contenu a été supprimé.</removeContent>
+      <removeLanguage>Un language a été supprimé.</removeLanguage>
+      <editSummary>Le sommaire a été mis à jour: {0}</editSummary>
+      <editLanguage>Le language a été mis à jour: {0}</editLanguage>
+      <editContent>Le contenu a été mis à jour.</editContent>
+      <editFile>File has been updated.</editFile>
+      <attachmentAdded>Des fichiers ont été attachés.</attachmentAdded>
+      <attachmentRemoved>Des fichiers on été supprimés.</attachmentRemoved>
+      <categoryAdded>La catégorie: {0} a été ajoutée.</categoryAdded>
+      <categoryRemoved>La catégorie: {0} a été supprimée.</categoryRemoved>
+      <tagAdded>Tag: {0} a été ajouté.</tagAdded>
+      <tagsAdded>Tags: {0} ont été ajoutés.</tagsAdded>
+      <tagRemoved>Tag: {0} a été supprimé.</tagRemoved>
+      <tagsRemoved>Tags: {0} ont été supprimés.</tagsRemoved>
+      <stateChange>
+        <pending>La publication est maintenant en attente.</pending>
+        <approved>La publication a été approuvée.</approved>
+        <staged>La publication est prête.</staged>
+        <published>La publication est publiée.</published>
+      </stateChange>
+      <contentMoved>La publication a été déplacé: {0}</contentMoved>
+      <fileMoved>Le fichier a été déplacé: {0}</fileMoved>
+      <revisionChanged>La publication a été restauré à la version: {0}</revisionChanged>
+      <version>Version: {0}</version>
     </messages>
     <publicationStates>
       <archived>Archivé</archived>
@@ -20,4 +62,9 @@
       <live>Publié</live>
     </publicationStates>
   </SocialIntegration>
+  <UIPopupWindow>
+    <title>
+      <DocViewer>Prévisualiser</DocViewer>
+    </title>
+  </UIPopupWindow>
 </bundle>

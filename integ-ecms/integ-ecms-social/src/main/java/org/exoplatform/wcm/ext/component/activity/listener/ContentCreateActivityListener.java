@@ -18,15 +18,15 @@ package org.exoplatform.wcm.ext.component.activity.listener;
 
 import javax.jcr.Node;
 
-import org.exoplatform.services.cms.CmsService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
  * 15, 2011
  */
-public class ContentCreateActivityListener extends Listener<CmsService, Node> {
+public class ContentCreateActivityListener extends Listener<Object, Node> {
   
   private static final String RESOURCE_BUNDLE_KEY_CREATED_BY = "SocialIntegration.messages.createdBy";
   
@@ -37,8 +37,11 @@ public class ContentCreateActivityListener extends Listener<CmsService, Node> {
   }
 
   @Override
-  public void onEvent(Event<CmsService, Node> event) throws Exception {
-    Node currentNode = event.getData();
-    Utils.postActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY);
+  public void onEvent(Event<Object, Node> event) throws Exception {
+    Node currentNode = event.getData();    
+    if(!currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE))
+      Utils.postActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY, true, false, "");
+    else
+    	Utils.postFileActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY, true, false, "");
   }
 }

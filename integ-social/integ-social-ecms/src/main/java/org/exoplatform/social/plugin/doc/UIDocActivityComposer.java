@@ -243,7 +243,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     documentName = rawPath.substring(rawPath.lastIndexOf("/") + 1);
     documentPath = buildDocumentPath(rawPath);
     isDocumentReady = true;
-
+System.out.println("path : " + documentPath);
     documentRefLink = documentRefLink.replace("//", "/");
     documentPath = documentPath.replace("//", "/");
     setReadyForPostingActivity(true);
