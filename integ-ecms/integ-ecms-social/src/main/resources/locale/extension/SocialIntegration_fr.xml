@@ -7,7 +7,7 @@
       <system>le système</system>
       <readmore>...Lire la suite.</readmore>
       <editTitle>Le titre a été mis à jour: {0}</editTitle>
-      <editFileTitle>Le nom a été mis à jour: {0}</editFileTitle>
+      <editName>Le nom a été mis à jour: {0}</editName>
       <editDescription>La description a été mise à jour: {0}</editDescription>
       <singleCreator>Le créateur est {0}</singleCreator>
       <multiCreator>Les Créateurs sont {0}</multiCreator>

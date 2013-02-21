@@ -41,8 +41,8 @@ import org.exoplatform.services.cms.JcrInputProperty;
  */
 public class FileUpdateActivityListener extends Listener<Node, String> {
 
-  private String[]  editedField     = {"exo:title", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "jcr:data"};
-  private String[]  bundleMessage   = {"SocialIntegration.messages.editFileTitle",
+  private String[]  editedField     = {"exo:name", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "jcr:data"};
+  private String[]  bundleMessage   = {"SocialIntegration.messages.editName",
                                        "SocialIntegration.messages.editSummary",
                                        "SocialIntegration.messages.editLanguage",
                                        "SocialIntegration.messages.editTitle",
@@ -76,7 +76,8 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
   	Map<String, Object> properties = cmsService.getPreProperties(); 
   	Map<String, Object> updatedProperties = cmsService.getUpdatedProperties();
     Node currentNode = event.getSource();
-    
+    String nodeUUID = "";
+    if(currentNode.isNodeType(NodetypeConstant.MIX_REFERENCEABLE)) nodeUUID = currentNode.getUUID();
     String propertyName = event.getData();
     String oldValue = "";
     String newValue = "";
@@ -93,7 +94,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     				newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
     			if(commentValue.length() >=2) commentValue = commentValue.substring(0, commentValue.length() - 2);
     		}
-    		values = (Value[]) properties.get(currentNode.getUUID() + "_" + propertyName);
+    		values = (Value[]) properties.get(nodeUUID + "_" + propertyName);
     		if(values != null && values.length > 0) {
     			for (Value value : values) {
     				oldValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
@@ -102,8 +103,10 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     				oldValue = oldValue.substring(0, oldValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
     		}
     	} else {
-    		oldValue = properties.get(propertyName).toString();
-    		newValue= currentNode.getProperty(propertyName).getString();      
+    		newValue= currentNode.getProperty(propertyName).getString();
+    		commentValue = newValue;
+    		if(properties.containsKey(nodeUUID + "_" + propertyName)) 
+    			oldValue = properties.get(nodeUUID + "_" + propertyName).toString();
     	}
     }catch (Exception e) {
     }
@@ -206,7 +209,9 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
       	        break;
       				}      			
-      		}      		
+      		}
+      		Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
+	        break;
       	} else if(!propertyName.equals(NodetypeConstant.EXO_LANGUAGE)){ //Remove the property
       		resourceBundle = bundleRemoveMessage[i];
       		if(propertyName.equals(NodetypeConstant.DC_SOURCE) || propertyName.equals(NodetypeConstant.DC_CREATOR)) {

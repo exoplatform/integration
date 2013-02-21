@@ -7,7 +7,7 @@
       <system>el sistema</system>
       <readmore>...Leer más.</readmore>
       <editTitle>Title has been updated to: {0}</editTitle>
-      <editFileTitle>Name has been updated to: {0}</editFileTitle>
+      <editName>Name has been updated to: {0}</editName>
       <editDescription>Description has been updated to: {0}</editDescription>      
       <editSummary>Summary has been updated to: {0}</editSummary>
       <editLanguage>Language has been updated to: {0}</editLanguage>

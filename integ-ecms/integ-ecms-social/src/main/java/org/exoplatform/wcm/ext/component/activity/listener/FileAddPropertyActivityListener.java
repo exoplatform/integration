@@ -31,7 +31,7 @@ import javax.jcr.Value;
 public class FileAddPropertyActivityListener extends Listener<Node, String> {
 
   private String[]  editedField     = {"dc:title", "dc:description", "dc:creator", "dc:source"};
-  private String[]  bundleMessage   = {"SocialIntegration.messages.editFileTitle",
+  private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editDescription",
                                        "SocialIntegration.messages.singleCreator",
                                        "SocialIntegration.messages.addSource"};

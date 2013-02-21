@@ -7,7 +7,7 @@
       <system>o sistema</system>
       <readmore>...Ler mais.</readmore>
       <editTitle>Title has been updated to: {0}</editTitle>
-      <editFileTitle>Name has been updated to: {0}</editFileTitle>
+      <editName>Name has been updated to: {0}</editName>
       <editDescription>Description has been updated to: {0}</editDescription>
       <singleCreator>Creator is {0}</singleCreator>
       <multiCreator>Creators are {0}</multiCreator>
