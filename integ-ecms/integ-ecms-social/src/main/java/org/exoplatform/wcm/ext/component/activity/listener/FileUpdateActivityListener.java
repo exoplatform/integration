@@ -41,7 +41,7 @@ import org.exoplatform.services.cms.JcrInputProperty;
  */
 public class FileUpdateActivityListener extends Listener<Node, String> {
 
-  private String[]  editedField     = {"exo:name", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "jcr:data"};
+  private String[]  editedField     = {"exo:title", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "jcr:data"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editName",
                                        "SocialIntegration.messages.editSummary",
                                        "SocialIntegration.messages.editLanguage",
