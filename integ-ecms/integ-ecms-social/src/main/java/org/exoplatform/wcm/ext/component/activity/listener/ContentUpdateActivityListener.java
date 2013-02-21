@@ -20,6 +20,7 @@ import javax.jcr.Node;
 import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.services.jcr.impl.core.NodeImpl;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 
@@ -41,6 +42,7 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
                                           "SocialIntegration.messages.emptySummary",
                                           "SocialIntegration.messages.emptyContent"};
   private boolean[] needUpdate      = {true, true, true, true, false};
+  private int CONTENT_BUNDLE_INDEX  = bundleMessage.length-1;
   private int consideredFieldCount = editedField.length;
   /**
    * Instantiates a new post edit content event listener.
@@ -78,7 +80,14 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
         } else {
           Utils.postActivity(currentNode, bundleMessage[i], needUpdate[i], true, newValue);
         }
-        break;
+        return;
+      }
+    }//for
+    if (propertyName.endsWith("jcr:data")) { //Special case for text content but store in jcr:content/jcr:data
+      if (StringUtils.isEmpty(newValue)) {
+        Utils.postActivity(currentNode, bundleMessageEmpty[CONTENT_BUNDLE_INDEX], needUpdate[CONTENT_BUNDLE_INDEX], true, "");
+      }else {
+        Utils.postActivity(currentNode, bundleMessage[CONTENT_BUNDLE_INDEX], needUpdate[CONTENT_BUNDLE_INDEX], true, newValue);
       }
     }
   }
