@@ -49,20 +49,27 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
     Node currentNode = event.getSource();
     String propertyName = event.getData();
     String newValue = "";
+    String commentValue = "";
     try {      
     	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
     		Value[] values = currentNode.getProperty(propertyName).getValues();
     		if(values != null) {
     			for (Value value : values) {
-						newValue += value.getString() + ", ";
+						newValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
+						commentValue += value.getString() + ", ";
 					}
-    			newValue = newValue.substring(0, newValue.length()-2);
+    			if(newValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length())
+    			  newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
+    			if(commentValue.length() >=2) commentValue = commentValue.substring(0, commentValue.length() - 2);
     		}
     	} else newValue= currentNode.getProperty(propertyName).getString();      
     }catch (Exception e) {
       newValue = "";
+      commentValue = "";
     }
     newValue = newValue.trim();
+    commentValue = commentValue.trim();
+    
     if(newValue != null && newValue.length() > 0) {
 	    if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
 	    String resourceBundle = "";
@@ -70,17 +77,18 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 	    for (int i=0; i< consideredFieldCount; i++) {
 	      if (propertyName.equals(editedField[i])) {
 	      	resourceBundle = bundleMessage[i];
-	      	if(propertyName.equals(NodetypeConstant.DC_CREATOR) && newValue.split(",").length > 1)
-	      		resourceBundle = "SocialIntegration.messages.addMultiCreator";	      	
-	      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
+	      	if(propertyName.equals(NodetypeConstant.DC_CREATOR) && 
+	      			newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
+	      		resourceBundle = "SocialIntegration.messages.multiCreator";	      	
+	      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
 	      	hit = true;
 	        break;
 	      }
 	    }
 	    if(!hit && propertyName.startsWith("dc:") && !propertyName.equals("dc:date")) {
 	    	resourceBundle = "SocialIntegration.messages.updateMetadata";
-	    	newValue = propertyName + ActivityCommonService.METADATA_VALUE_SEPERATOR + newValue;
-	    	Utils.postFileActivity(currentNode, resourceBundle, false, true, newValue);
+	    	commentValue = propertyName + ActivityCommonService.METADATA_VALUE_SEPERATOR + commentValue;
+	    	Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue);
 	    }
     }
   }

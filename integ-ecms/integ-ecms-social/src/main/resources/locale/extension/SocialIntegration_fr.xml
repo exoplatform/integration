@@ -27,7 +27,7 @@
       <removeTitle>Le nom a été supprimé.</removeTitle>
       <removeSummary>Le sommaire a été supprimé.</removeSummary>
       <removeDescription>La description a été supprimé.</removeDescription>
-      <removeCreator>Un createur a été supprimé.</removeCreator>
+      <removeCreator>Creator(s): {0} has been removed.</removeCreator>
       <removeContent>Le contenu a été supprimé.</removeContent>
       <removeLanguage>Un language a été supprimé.</removeLanguage>
       <editSummary>Le sommaire a été mis à jour: {0}</editSummary>

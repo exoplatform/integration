@@ -32,7 +32,7 @@
       <removeTitle>Title has been removed.</removeTitle>
       <removeSummary>Summary has been removed.</removeSummary>
       <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator has been removed.</removeCreator>
+      <removeCreator>Creator(s): {0} has been removed.</removeCreator>
       <removeContent>Content has been removed.</removeContent>
       <removeLanguage>Language has been removed.</removeLanguage>
       

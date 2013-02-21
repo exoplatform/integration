@@ -57,7 +57,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
                                            "SocialIntegration.messages.removeTitle",
                                            "SocialIntegration.messages.removeDescription",
                                            "SocialIntegration.messages.removeCreator",
-                                           "SocialIntegration.messages.removeAllSource",
+                                           "SocialIntegration.messages.removeSource",
                                            "SocialIntegration.messages.editFile",
                                            "SocialIntegration.messages.removeContent"};
   
@@ -80,21 +80,26 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     String propertyName = event.getData();
     String oldValue = "";
     String newValue = "";
+    String commentValue = "";
     try {      
     	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
     		Value[] values = currentNode.getProperty(propertyName).getValues();
     		if(values != null && values.length > 0) {
     			for (Value value : values) {
-						newValue += value.getString() + ", ";
+						newValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
+						commentValue += value.getString() + ", ";
 					}
-    			if(newValue.length() >= 2) newValue = newValue.substring(0, newValue.length()-2);
+    			if(newValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
+    				newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
+    			if(commentValue.length() >=2) commentValue = commentValue.substring(0, commentValue.length() - 2);
     		}
     		values = (Value[]) properties.get(currentNode.getUUID() + "_" + propertyName);
     		if(values != null && values.length > 0) {
     			for (Value value : values) {
-    				oldValue += value.getString() + ", ";
+    				oldValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
 					}
-    			if(oldValue.length() >= 2) oldValue = oldValue.substring(0, oldValue.length()-2);
+    			if(oldValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
+    				oldValue = oldValue.substring(0, oldValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
     		}
     	} else {
     		oldValue = properties.get(propertyName).toString();
@@ -104,6 +109,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     }
     newValue = newValue.trim();
     oldValue = oldValue.trim();
+    commentValue = commentValue.trim();
     
     if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
     String resourceBundle = "";
@@ -114,39 +120,74 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       	if(newValue.length() > 0) {
       		
       		resourceBundle = bundleMessage[i];
+      		//Post activity when update dc:creator property
       		if(propertyName.equals(NodetypeConstant.DC_CREATOR))
       		{
-      			if(newValue.split(",").length > 1) {
-      				if(oldValue != null && oldValue.length() > 0)
-        	  		resourceBundle = "SocialIntegration.messages.multiCreator";
-        	  	else
-        	  		resourceBundle = "SocialIntegration.messages.addMultiCreator";
-      			} else {
-      				resourceBundle = "SocialIntegration.messages.addCreator";
-      			}
-      			Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
-            break;
+      			List<String> lstOld = Arrays.asList(oldValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR));
+    				List<String> lstNew = Arrays.asList(newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR));
+    				String itemsRemoved = "";
+    				StringBuffer sb = new StringBuffer();
+    				for (String item : lstOld) {
+							if(!lstNew.contains(item)) sb.append(item).append(", ");
+						}
+    				if(sb.length() > 0) {
+    				  itemsRemoved = sb.toString();
+    				  itemsRemoved = itemsRemoved.substring(0, itemsRemoved.length()-2);
+    				}
+    				sb.delete(0, sb.length());
+    				String itemsAdded = "";
+    				for (String item : lstNew) {
+							if(!lstOld.contains(item)) sb.append(item).append(", ");
+						}
+    				if(sb.length() > 0) {
+    					itemsAdded = sb.toString();
+    					itemsAdded = itemsAdded.substring(0, itemsAdded.length()-2);
+    				}
+    				
+    				if(itemsRemoved.length() > 0 && itemsAdded.length() > 0){  					
+    					Utils.postFileActivity(currentNode, "SocialIntegration.messages.removeCreator", needUpdate[i], true, itemsRemoved);
+    					if(newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
+    					  Utils.postFileActivity(currentNode, "SocialIntegration.messages.multiCreator", needUpdate[i], true, commentValue);
+    					else 
+    						Utils.postFileActivity(currentNode, "SocialIntegration.messages.singleCreator", needUpdate[i], true, commentValue);
+    	        break;
+    				}      				  
+    				else if(itemsRemoved.length() > 0) {
+    					resourceBundle = "SocialIntegration.messages.removeCreator";
+    					newValue = itemsRemoved;
+    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
+    	        break;
+    				}
+    				else if(itemsAdded.length() > 0) {
+    					if(newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
+    					  resourceBundle = "SocialIntegration.messages.multiCreator";
+    					else
+    						resourceBundle = "SocialIntegration.messages.singleCreator";
+    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
+    	        break;
+    				}     			
       		}
+      	  //Post activity when update dc:source property
       		if(propertyName.equals(NodetypeConstant.DC_SOURCE)) {      			
-      				List<String> lstOld = Arrays.asList(oldValue.split(","));
-      				List<String> lstNew = Arrays.asList(newValue.split(","));
+      				List<String> lstOld = Arrays.asList(oldValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR));
+      				List<String> lstNew = Arrays.asList(newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR));
       				String itemsRemoved = "";
       				StringBuffer sb = new StringBuffer();
       				for (String item : lstOld) {
-								if(!lstNew.contains(item)) sb.append(item).append(",");
+								if(!lstNew.contains(item)) sb.append(item).append(", ");
 							}
       				if(sb.length() > 0) {
       				  itemsRemoved = sb.toString();
-      				  itemsRemoved = itemsRemoved.substring(0, itemsRemoved.length()-1);
+      				  itemsRemoved = itemsRemoved.substring(0, itemsRemoved.length()-2);
       				}
       				sb.delete(0, sb.length());
       				String itemsAdded = "";
       				for (String item : lstNew) {
-								if(!lstOld.contains(item)) sb.append(item).append(",");
+								if(!lstOld.contains(item)) sb.append(item).append(", ");
 							}
       				if(sb.length() > 0) {
       					itemsAdded = sb.toString();
-      					itemsAdded = itemsAdded.substring(0, itemsAdded.length()-1);
+      					itemsAdded = itemsAdded.substring(0, itemsAdded.length()-2);
       				}
       				if(itemsRemoved.length() > 0 && itemsAdded.length() > 0){  					
       					Utils.postFileActivity(currentNode, "SocialIntegration.messages.removeSource", needUpdate[i], true, itemsRemoved);
@@ -168,10 +209,10 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       		}      		
       	} else if(!propertyName.equals(NodetypeConstant.EXO_LANGUAGE)){ //Remove the property
       		resourceBundle = bundleRemoveMessage[i];
-      		if(propertyName.equals(NodetypeConstant.DC_SOURCE)) {
-      			newValue = oldValue;
+      		if(propertyName.equals(NodetypeConstant.DC_SOURCE) || propertyName.equals(NodetypeConstant.DC_CREATOR)) {
+      			commentValue = oldValue.replaceAll(ActivityCommonService.METADATA_VALUE_SEPERATOR, ", ");
       		}
-      		Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
+      		Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
           break;
       	} else break;
       	        
@@ -180,12 +221,12 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     if(!hit && propertyName.startsWith("dc:") && !propertyName.equals("dc:date")) {
     	if(newValue.length() > 0) {
     		resourceBundle = "SocialIntegration.messages.updateMetadata";
-    		newValue = propertyName + ActivityCommonService.METADATA_VALUE_SEPERATOR + newValue;
+    		commentValue = propertyName + ActivityCommonService.METADATA_VALUE_SEPERATOR + commentValue;
     	}	else {
     		resourceBundle = "SocialIntegration.messages.removeMetadata";
-    		newValue = propertyName;
+    		commentValue = propertyName;
     	}
-    	Utils.postFileActivity(currentNode, resourceBundle, false, true, newValue);
+    	Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue);
     }
   }
 }
