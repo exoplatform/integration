@@ -1,0 +1,33 @@
+
+<div id="quickSearchSetting">
+  <h3 style="margin-left: 3px;">Quick Search Settings</h3>
+  <hr>
+  <div style="margin-left: 10px; margin-bottom: 40px;">
+    <div style="margin-bottom: 25px;">
+      <table>
+        <tr>
+          <td><span>Results per type</span></td>
+          <td><select id="resultsPerPage"></select></td>
+        </tr>
+        <tr>
+          <td><span>Search in</span></td>
+          <td>
+            <input type="text" id="txtSearchIn" value="Everything" readonly/>
+            <ul id="lstSearchInOptions"></ul>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div><label><input type="checkbox" id="searchCurrentSiteOnly" style="margin-left: 0px;">Search in current site only</label></div>
+
+    <div style="margin-top: 20px; margin-left: 20px;">
+      <input type="button" value="Save Settings" id="btnSave">
+    </div>
+
+  </div>
+</div>
+
+<script>
+  initQuickSearchSetting();
+</script>

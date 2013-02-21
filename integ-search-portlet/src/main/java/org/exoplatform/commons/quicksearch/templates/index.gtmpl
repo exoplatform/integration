@@ -1,0 +1,19 @@
+<%
+  import java.util.Random;
+  Random rand = new Random();
+  portletId = rand.nextInt(1000000);
+%>
+
+<div class="QuickSearchPortlet">
+  <div>
+    <div style="padding-top: 5px;">
+      <input type="text" id="txtQuickSearchQuery-${portletId}" class="SearchBox">
+    </div>
+    <div id="quickSearchResult-${portletId}">
+    </div>
+  </div>
+</div>
+
+<script>
+  initQuickSearch(${portletId});
+</script>
