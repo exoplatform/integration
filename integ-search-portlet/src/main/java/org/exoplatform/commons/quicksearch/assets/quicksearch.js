@@ -195,4 +195,5 @@ function initQuickSearch(portletId) {
 
     });
   })(jQuery);
+  $ = jQuery; //undo .conflict();
 }
