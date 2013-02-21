@@ -16,6 +16,11 @@
       <emptyContent>Le contenu a été supprimé.</emptyContent>
       <singleSource>la source est {0}.</singleSource>
       <multiSource>Les sources sont {0}.</multiSource>
+      <addCreator>Creator {0} has been added</addCreator>
+      <addMultiCreator>Creators {0} have been added</addMultiCreator>      
+      <addSource>File source(s): {0} has been added</addSource>
+      <removeSource>File sources: {0} has been removed</removeSource>
+      <removeAllSource>File source(s) has been removed</removeAllSource>
       <updateMetadata>La Metadonnée {0} a été mis à jour par: {1}</updateMetadata>
       <removeMetadata>La Metadonnée {0} a été supprimée.</removeMetadata>
       <removeName>Le titre a été supprimé.</removeName>
@@ -23,7 +28,6 @@
       <removeSummary>Le sommaire a été supprimé.</removeSummary>
       <removeDescription>La description a été supprimé.</removeDescription>
       <removeCreator>Un createur a été supprimé.</removeCreator>
-      <removeSource>Une source a été supprimée.</removeSource>
       <removeContent>Le contenu a été supprimé.</removeContent>
       <removeLanguage>Un language a été supprimé.</removeLanguage>
       <editSummary>Le sommaire a été mis à jour: {0}</editSummary>

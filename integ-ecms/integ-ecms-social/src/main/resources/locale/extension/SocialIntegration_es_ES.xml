@@ -15,6 +15,12 @@
       <editFile>File has been updated.</editFile>
       <singleCreator>Creator is {0}.</singleCreator>
       <multiCreator>Creators are {0}.</multiCreator>
+      
+      <addCreator>Creator {0} has been added</addCreator>
+      <addMultiCreator>Creators {0} have been added</addMultiCreator>      
+      <addSource>File source(s): {0} has been added</addSource>
+      <removeSource>File source(s): {0} has been removed</removeSource>
+      <removeAllSource>File source(s) has been removed</removeAllSource>     
       <emptyTitle>The title has been removed.</emptyTitle>
       <emptySummary>The summary has been removed.</emptySummary>
       <emptyContent>The content has been removed.</emptyContent>
@@ -27,7 +33,6 @@
       <removeSummary>Summary has been removed.</removeSummary>
       <removeDescription>Description has been removed.</removeDescription>
       <removeCreator>Creator has been removed.</removeCreator>
-      <removeSource>File source(s) has been removed.</removeSource>
       <removeContent>Content has been removed.</removeContent>
       <removeLanguage>Language has been removed.</removeLanguage>
       

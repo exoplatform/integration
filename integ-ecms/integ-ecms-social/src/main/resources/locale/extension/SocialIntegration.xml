@@ -11,6 +11,11 @@
 			<editDescription>Description has been updated to: {0}</editDescription>
 			<singleCreator>Creator is {0}</singleCreator>
       <multiCreator>Creators are {0}</multiCreator>
+      <addCreator>Creator {0} has been added</addCreator>
+      <addMultiCreator>Creators {0} have been added</addMultiCreator>      
+      <addSource>File source(s): {0} has been added</addSource>
+      <removeSource>File source(s): {0} has been removed</removeSource>
+      <removeAllSource>File source(s) has been removed</removeAllSource>
 			<editSummary>Summary has been updated to: {0}</editSummary>
 			<editLanguage>Language has been updated to: {0}</editLanguage>
 			<editContent>Content has been updated.</editContent>
@@ -27,7 +32,6 @@
       <removeSummary>Summary has been removed.</removeSummary>
       <removeDescription>Description has been removed.</removeDescription>
       <removeCreator>Creator has been removed.</removeCreator>
-      <removeSource>File source(s) has been removed.</removeSource>
       <removeLanguage>Language has been removed.</removeLanguage>
       <removeContent>Content has been removed.</removeContent>
 			<attachmentAdded>File(s) has been attached.</attachmentAdded>

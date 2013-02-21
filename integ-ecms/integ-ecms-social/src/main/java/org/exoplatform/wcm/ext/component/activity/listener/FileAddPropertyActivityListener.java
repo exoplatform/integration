@@ -32,12 +32,10 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 
   private String[]  editedField     = {"dc:title", "dc:description", "dc:creator", "dc:source"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editFileTitle",
-  																		 "SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editDescription",
                                        "SocialIntegration.messages.singleCreator",
-                                       "SocialIntegration.messages.singleSource",
-                                       "SocialIntegration.messages.updateMetadata"};
-  private boolean[] needUpdate      = {false, false, false, false,false};
+                                       "SocialIntegration.messages.addSource"};
+  private boolean[] needUpdate      = {false, false, false, false};
   private int consideredFieldCount = editedField.length;
   /**
    * Instantiates a new post edit content event listener.
@@ -73,9 +71,7 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 	      if (propertyName.equals(editedField[i])) {
 	      	resourceBundle = bundleMessage[i];
 	      	if(propertyName.equals(NodetypeConstant.DC_CREATOR) && newValue.split(",").length > 1)
-	      		resourceBundle = "SocialIntegration.messages.multiCreator";	      			
-	      	else if(propertyName.equals(NodetypeConstant.DC_SOURCE) && newValue.split(",").length > 1)
-	      		resourceBundle = "SocialIntegration.messages.multiSource";	      	
+	      		resourceBundle = "SocialIntegration.messages.addMultiCreator";	      	
 	      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
 	      	hit = true;
 	        break;
