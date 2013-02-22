@@ -127,7 +127,7 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     activity = getManager().getActivity(activityId);
     comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
     assertEquals(2,comments.size());
-    assertEquals("Details has been edited to: new question's detail\n1\n2\n3", comments.get(1).getTitle());
+    assertEquals("Details has been edited to: new question's detail<br/>1<br/>2<br/>3", comments.get(1).getTitle());
     
     //unactivate question
     question = faqService_.getQuestionById(question.getId());
@@ -219,11 +219,24 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     assertEquals(3,comments.size());
     assertEquals("Answer has been submitted: Response 2 of the previous question", comments.get(2).getTitle());
     
-    //delete an answer will delete the comment of activity
+    //delete answer will delete the comment associated
     faqService_.deleteAnswerQuestionLang(questionPath, answer2.getId(), answer2.getLanguage());
     activity = getManager().getActivity(activityId);
     comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
     assertEquals(2,comments.size());
+    
+    //delete activity and add new answer, this will re-create an activity with a comment associated
+    getManager().deleteActivity(activityId);
+    activity = getManager().getActivity(activityId);
+    assertNull(activity);
+    Answer answer3 = createAnswer("demo", "Response 3 of the previous question");
+    question.setAnswers(new Answer[] { answer3 });
+    faqService_.saveAnswer(questionPath, question.getAnswers());
+    String newActivityId = faqService_.getActivityIdForQuestion(question.getCategoryPath() + "/" + question.getId());
+    activity = getManager().getActivity(newActivityId);
+    comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
+    assertEquals(1,comments.size());
+    assertEquals("Answer has been submitted: Response 3 of the previous question", comments.get(0).getTitle());
     
     //delete question will delete the activity
     faqService_.removeQuestion(questionPath);
