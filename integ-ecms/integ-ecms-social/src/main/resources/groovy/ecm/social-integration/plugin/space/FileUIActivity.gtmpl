@@ -253,35 +253,7 @@
       <% if (activityDeletable) {%>
         <span onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="CloseContentBoxNormal" id="DeleteActivityButton${activity.id}"></span>
       <%}%>
-      </h5>
-      
-
-       <p class="Content">
-      <!--ECMS update content of activity BEGIN-->
-        <div id="ActivityDetail" style="margin: 8px 0;">
-        <%if (currentNode) {%>
-          <a title="$activityContentTitle" href="$contentActivityUri"> <%=uicomponent.getTitle(currentNode)%> </a>
-        <%} else {%>
-          <span class="UIActivity Deleted"><%=uicomponent.getTitle(currentNode)%></span>
-        <%}%>
-        <%=_ctx.appRes(activityMessage) %>
-			  <%if (author != null && author.length() > 0) { 
-     				def authorName = uicomponent.getUserFullName(author);
-	    			def authorURL = uicomponent.getUserProfileUri(author);
-	 		  %>
-				  <a title="$authorName" href="$authorURL"> $authorName</a>
-  		<% } else { %>
-	  			<%=_ctx.appRes("SocialIntegration.messages.system") %>
-	  	<% } 					
-			  
-			   if (state != null && state.length() > 0) { %>
-			   	 &nbsp;&nbsp; state: <%=_ctx.appRes("SocialIntegration.publicationStates." + state)%>
-			<% } %>		
-        </div>
-		  
-		<!--ECMS update content of activity END-->
-      </p>
-      
+      </h5>      
       
       <div class="BoxGray ClearFix">         
           <% 
