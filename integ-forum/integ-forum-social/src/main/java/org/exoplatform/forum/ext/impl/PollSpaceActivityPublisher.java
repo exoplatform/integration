@@ -55,6 +55,8 @@ public class PollSpaceActivityPublisher extends PollEventListener{
   
   public static final String VOTE_VALUE           = "VOTE_VALUE";
   
+  public static final String SPACE_PRETTY_NAME = "SpacePrettyName";
+  
   private ExoSocialActivity activity(Identity author, String title, String body, Map<String, String> templateParams) throws Exception {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setUserId(author.getId());
@@ -105,9 +107,6 @@ public class PollSpaceActivityPublisher extends PollEventListener{
           comment.setTemplateParams(templateParams);
           getManager().updateActivity(activity);
           getManager().saveComment(activity, comment);
-          if (PollAction.Update_Poll.equals(poll.getPollAction())) {
-            saveCommentToTopicActivity(poll, comment.getTitle(), "forum.update-poll");
-          }
         } else {
           activityId = null;
           poll.setInfoVote();
@@ -119,7 +118,8 @@ public class PollSpaceActivityPublisher extends PollEventListener{
         //set stream owner
         Identity spaceIdentity = getSpaceIdentity(poll);
         if (spaceIdentity != null) {
-          pollOwnerIdentity =  spaceIdentity;
+          pollOwnerIdentity = spaceIdentity;
+          templateParams.put(SPACE_PRETTY_NAME, pollOwnerIdentity.getRemoteId());
         }
         templateParams.put(POLL_LINK_KEY, poll.getLink());
         getManager().saveActivityNoReturn(pollOwnerIdentity, newActivity);

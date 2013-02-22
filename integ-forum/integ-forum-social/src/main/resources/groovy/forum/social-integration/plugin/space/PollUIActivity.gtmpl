@@ -124,12 +124,19 @@
 
   def ownerIdentity = uicomponent.ownerIdentity;
   def profile = ownerIdentity.profile;
-  
+  def spacePrettyName = uicomponent.getSpacePrettyName();
   if (uicomponent.isUserActivity()) {
     ownerUri = LinkProvider.getUserProfileUri(ownerIdentity.getRemoteId());
     ownerAvatar = profile.avatarUrl;
     ownerName = profile.fullName;
     if (!ownerAvatar) ownerAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
+    if (spacePrettyName.length() > 0) {
+      Space space = Utils.getSpaceService().getSpaceByPrettyName(spacePrettyName);
+      spaceAvatar = space.avatarUrl;
+      spaceUri = LinkProvider.getSpaceUri(space.url);
+      spaceName = space.displayName;
+      if (!spaceAvatar) spaceAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+    }
   } else if(uicomponent.isSpaceActivity()){
     Space space = Utils.getSpaceService().getSpaceByPrettyName(ownerIdentity.remoteId);
     ownerUri = Utils.getSpaceHomeURL(space);
@@ -158,11 +165,19 @@
       <div id="ActivityContextBox${activity.id}">
       <h5 class="TitleContent ClearFix">
         <a class="Text" title="$ownerName" href="$ownerUri">$ownerName</a>
-        <span class="DateTime">$activityPostedTime</span>
       <% if (activityDeletable) {%>
         <span onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="CloseContentBoxNormal" id="DeleteActivityButton${activity.id}"></span>
       <%}%>
       </h5>
+      <div class="spaceInformation">
+        <span class="DateTime">$activityPostedTime</span>
+        <% if (uicomponent.isUserActivity() && spacePrettyName.length() > 0) {%>
+          <a class="SpaceAvatar" title="$spaceName" href="$spaceUri">
+            <img title="$spaceName" src="$spaceAvatar" width="15" height="15" alt="$spaceName" />
+          </a>
+          <a class="Text" title="$spaceName" href="$spaceUri">$spaceName</a>
+        <%}%> 
+      </div>
       <div class="Content">
         <div class="PollQuestion">
           <a class="Text" href="${uicomponent.getLink()}">
