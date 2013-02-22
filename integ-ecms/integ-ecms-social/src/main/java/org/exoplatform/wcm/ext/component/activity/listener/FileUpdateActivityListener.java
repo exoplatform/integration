@@ -49,8 +49,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
                                        "SocialIntegration.messages.editDescription",
                                        "SocialIntegration.messages.singleCreator",
                                        "SocialIntegration.messages.singleSource",
-                                       "SocialIntegration.messages.editFile",
-                                       "SocialIntegration.messages.editContent"};
+                                       "SocialIntegration.messages.editFile"};
   private String[]  bundleRemoveMessage = {"SocialIntegration.messages.removeName",
       																 	   "SocialIntegration.messages.removeSummary",
       																 	  "SocialIntegration.messages.removeLanguage",
@@ -58,10 +57,9 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
                                            "SocialIntegration.messages.removeDescription",
                                            "SocialIntegration.messages.removeCreator",
                                            "SocialIntegration.messages.removeSource",
-                                           "SocialIntegration.messages.editFile",
-                                           "SocialIntegration.messages.removeContent"};
+                                           "SocialIntegration.messages.editFile"};
   
-  private boolean[] needUpdate      = {true, true, false, true, true, false, false, false};
+  private boolean[] needUpdate      = {true, true, false, true, true, false, false, true};
   private int consideredFieldCount = editedField.length;
   /**
    * Instantiates a new post edit content event listener.
@@ -74,10 +72,10 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
   public void onEvent(Event<Node, String> event) throws Exception {
   	CmsService cmsService = WCMCoreUtils.getService(CmsService.class);
   	Map<String, Object> properties = cmsService.getPreProperties(); 
-  	Map<String, Object> updatedProperties = cmsService.getUpdatedProperties();
     Node currentNode = event.getSource();
     String nodeUUID = "";
     if(currentNode.isNodeType(NodetypeConstant.MIX_REFERENCEABLE)) nodeUUID = currentNode.getUUID();
+    else nodeUUID = currentNode.getName();
     String propertyName = event.getData();
     String oldValue = "";
     String newValue = "";
