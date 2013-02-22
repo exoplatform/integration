@@ -62,6 +62,8 @@ public class ForumActivityBuilder {
 
   private static final int NUMBER_CHAR_IN_LINE    = 70;
   
+  public static final String SPACE_PRETTY_NAME  = "SpacePrettyName";
+  
   private ForumActivityBuilder() {
     
   }
@@ -112,15 +114,18 @@ public class ForumActivityBuilder {
   }
 
   public static String getNumberFirstLines(String content, int line) {
-    String[] tab = TransformHTML.getPlainText(content).split("\\r?\\n");
+    String[] tab = TransformHTML.getPlainText(content).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
     int length = tab.length;
     if (length > line) length = line;
     StringBuilder sb = new StringBuilder();
     String prefix = "";
     for (int i=0; i<length; i++) {
       sb.append(prefix);
-      prefix = "\n";
-      sb.append(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(tab[i], (List<String>) Collections.EMPTY_LIST)));
+      prefix = "<br/>";
+      String s = tab[i];
+      if (s.length() > NUMBER_CHAR_IN_LINE)
+        s = s.substring(0, NUMBER_CHAR_IN_LINE) + "...";
+      sb.append(StringEscapeUtils.unescapeHtml(s));
     }
     return sb.toString();
     /*int maxL = NUMBER_CHAR_IN_LINE * line;
@@ -160,6 +165,10 @@ public class ForumActivityBuilder {
     //
     templateParams.put(FORUM_ID_KEY, topic.getForumId());
     templateParams.put(CATE_ID_KEY, topic.getCategoryId());
+    
+    if (ForumActivityUtils.hasSpace(topic.getForumId())) {
+      templateParams.put(SPACE_PRETTY_NAME, ForumActivityUtils.getSpaceIdentity(topic.getForumId()).getRemoteId());
+    }
     activity.setTemplateParams(templateParams);
     return activity;
   }
