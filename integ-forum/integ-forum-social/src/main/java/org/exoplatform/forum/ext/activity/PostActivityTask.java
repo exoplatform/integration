@@ -56,6 +56,17 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
     }
     
     @Override
+    protected ExoSocialActivity processComment(ForumActivityContext ctx, ExoSocialActivity comment) {
+      
+      //censoring status, hidden post's comment in stream
+      if (ctx.getPost().getIsWaiting()) {
+        comment.isHidden(true);
+      }
+
+      return processTitle(comment);
+    }
+    
+    @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity topicActivity) {
       Map<String, String> templateParams = topicActivity.getTemplateParams();
       
@@ -103,8 +114,23 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
     @Override
     protected ExoSocialActivity processTitle(ExoSocialActivity activity) {
       //where $value is first 3 lines of the reply
-      return ForumActivityType.UPDATE_POST.getActivity(activity, activity.getBody());
+      return ForumActivityType.UPDATE_POST.getActivity(activity, activity.getTitle());
     }
+    
+    @Override
+    protected ExoSocialActivity processComment(ForumActivityContext ctx, ExoSocialActivity comment) {
+      ExoSocialActivity newComment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
+      if (comment != null) {
+        comment.setTitle(newComment.getTitle());
+        comment.setTitleId(newComment.getTitleId());
+        comment.setTemplateParams(newComment.getTemplateParams());
+        comment = processTitle(comment);
+      } else {
+        comment = newComment;
+        comment = processTitle(comment);
+      }
+      return comment;
+    };
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity topicActivity) {
@@ -118,22 +144,102 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
         ctx.setTopic(topic);
         
         //FORUM_34 case: update activity's title
-        //add comment for updated post 
+        //update comment for updated post 
         ExoSocialActivity topicActivity = ForumActivityUtils.getActivityOfTopic(ctx);
         
         //
         ActivityManager am = ForumActivityUtils.getActivityManager();
-        ExoSocialActivity newComment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
-        newComment = processComment(ctx, newComment);
-      
-        //
-        Identity poster = ForumActivityUtils.getIdentity(ctx.getPost().getOwner());
-        newComment.setUserId(poster.getId());
         
-        am.saveComment(topicActivity, newComment);
-        return topicActivity;
+        //Get comment corresponding to this post, null if don't exist
+        ExoSocialActivity comment = ForumActivityUtils.getCommentOfPost(ctx);
+        
+        boolean isCommentExist = false;
+        if (comment != null)
+          isCommentExist = true;
+        
+        comment = processComment(ctx, comment);
+        
+        if (isCommentExist) {
+          am.updateActivity(comment);
+        } else {
+          Identity poster = ForumActivityUtils.getIdentity(ctx.getPost().getOwner());
+          comment.setUserId(poster.getId());
+          am.saveComment(topicActivity, comment);
+        }
+        
+        return comment;
       } catch (Exception e) {
         LOG.error("Can not record Comment when updates post " + ctx.getPost().getId(), e);
+      }
+      
+      return null;
+    }
+    
+  };
+  
+  public static PostActivityTask HIDE_POST = new PostActivityTask() {
+    
+    @Override
+    protected ExoSocialActivity processTitle(ExoSocialActivity activity) {
+      return activity;
+    }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity topicActivity) {
+      return topicActivity;
+    };
+    
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        String postActivityId = ForumActivityUtils.getForumService().getActivityIdForOwnerPath(ctx.getPost().getPath());
+        ExoSocialActivity postActivity = null;
+        if (postActivityId != null) {
+          postActivity = am.getActivity(postActivityId);
+          if (postActivity != null) {
+            postActivity.isHidden(true);
+            am.updateActivity(postActivity);
+          }
+        }
+        return postActivity;
+      } catch (Exception e) {
+        LOG.error("Can not hide comment when hide post " + ctx.getPost().getId(), e);
+      }
+      
+      return null;
+    }
+    
+  };
+  
+  public static PostActivityTask UNHIDE_POST = new PostActivityTask() {
+    
+    @Override
+    protected ExoSocialActivity processTitle(ExoSocialActivity activity) {
+      return activity;
+    }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity topicActivity) {
+      return topicActivity;
+    };
+    
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        String postActivityId = ForumActivityUtils.getForumService().getActivityIdForOwnerPath(ctx.getPost().getPath());
+        ExoSocialActivity postActivity = null;
+        if (postActivityId != null) {
+          postActivity = am.getActivity(postActivityId);
+          if (postActivity != null) {
+            postActivity.isHidden(false);
+            am.updateActivity(postActivity);
+          }
+        }
+        return postActivity;
+      } catch (Exception e) {
+        LOG.error("Can not unhide comment when unhide post " + ctx.getPost().getId(), e);
       }
       
       return null;

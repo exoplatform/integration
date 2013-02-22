@@ -35,6 +35,8 @@ import org.exoplatform.social.core.manager.ActivityManager;
  */
 public abstract class TopicActivityTask implements ActivityTask<ForumActivityContext> {
   protected static final Log   LOG = ExoLogger.getExoLogger(TopicActivityTask.class);
+  
+  public static final String SPACE_PRETTY_NAME = "SpacePrettyName";
 
   /**
    * 
@@ -702,6 +704,12 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       //
       templateParams.put(ForumActivityBuilder.FORUM_ID_KEY, topic.getForumId());
       templateParams.put(ForumActivityBuilder.CATE_ID_KEY, topic.getCategoryId());
+      
+      if (ForumActivityUtils.hasSpace(topic.getForumId())) {
+        templateParams.put(SPACE_PRETTY_NAME, activity.getStreamOwner());
+      }
+      
+      activity.setTemplateParams(templateParams);
       
       return activity;
     };
