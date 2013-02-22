@@ -20,7 +20,6 @@ import javax.jcr.Node;
 import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.services.jcr.impl.core.NodeImpl;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 
@@ -88,6 +87,19 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
         Utils.postActivity(currentNode, bundleMessageEmpty[CONTENT_BUNDLE_INDEX], needUpdate[CONTENT_BUNDLE_INDEX], true, "");
       }else {
         Utils.postActivity(currentNode, bundleMessage[CONTENT_BUNDLE_INDEX], needUpdate[CONTENT_BUNDLE_INDEX], true, newValue);
+      }
+    }
+    if (propertyName.endsWith("dc:description")) { //Special case for text content but store in jcr:content/jcr:data
+      try {
+        if (currentNode.hasProperty("exo:summary")) return;
+        //Modify the dc:description but the node have already had the summary property
+      }catch (Exception ex) {
+        return;
+      }
+      if (StringUtils.isEmpty(newValue)) {
+        Utils.postActivity(currentNode, "SocialIntegration.messages.emptySummary", true, true, "");
+      }else {
+        Utils.postActivity(currentNode, "SocialIntegration.messages.editSummary", true, true, newValue);
       }
     }
   }
