@@ -1,13 +1,11 @@
 package org.exoplatform.commons.search.driver.jcr.connector;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +19,7 @@ import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 
 import org.exoplatform.commons.api.search.SearchServiceConnector;
+import org.exoplatform.commons.api.search.data.SearchContext;
 import org.exoplatform.commons.api.search.data.SearchResult;
 import org.exoplatform.commons.search.driver.jcr.JcrSearch;
 import org.exoplatform.commons.search.driver.jcr.JcrSearchResult;
@@ -48,7 +47,7 @@ public class JcrNodeSearch extends SearchServiceConnector {
   }
 
   @Override
-  public Collection<SearchResult> search(String query, Collection<String> sites, int offset, int limit, String sort, String order) {
+  public Collection<SearchResult> search(SearchContext context, String query, Collection<String> sites, int offset, int limit, String sort, String order) {
     Map<String, Object> parameters = new HashMap<String, Object>(); 
     parameters.put("sites", sites);
     parameters.put("offset", offset);

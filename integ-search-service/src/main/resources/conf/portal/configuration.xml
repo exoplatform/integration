@@ -30,8 +30,8 @@
     <key>org.exoplatform.commons.api.search.SearchService</key>
     <type>org.exoplatform.commons.search.driver.jcr.JcrSearchDriver</type>
     
-    <!-- Wiki -->
     <component-plugins>
+      <!-- Wiki -->
       <component-plugin>
         <name>WikiSearchServiceConnector</name>
         <set-method>addConnector</set-method>
@@ -61,7 +61,7 @@
         </init-params>      
       </component-plugin>
       
-      <!-- Social 
+      <!-- Social --> 
       <component-plugin>
         <name>SpaceSearchConnector</name>
         <set-method>addConnector</set-method>
@@ -74,7 +74,7 @@
              <property name="displayName" value="Spaces"/>
           </properties-param>
         </init-params>      
-      </component-plugin>-->
+      </component-plugin>
       
       <!-- Calendar -->
       <component-plugin>
@@ -105,20 +105,6 @@
           </properties-param>
         </init-params>      
       </component-plugin>
-      
-      <!-- <component-plugin>
-        <name>JcrActivitySearch</name>
-        <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrActivitySearch</type>
-        <description>eXo Social activities</description>
-        <init-params>
-          <properties-param>
-             <name>constructor.params</name>
-             <property name="searchType" value="activity"/>
-             <property name="displayName" value="Activities"/>
-          </properties-param>
-        </init-params>      
-      </component-plugin> -->
       
       <!-- <component-plugin>
         <name>JcrNodeSearch</name>
