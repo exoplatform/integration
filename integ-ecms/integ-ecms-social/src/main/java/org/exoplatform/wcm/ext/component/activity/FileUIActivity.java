@@ -22,6 +22,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -332,6 +335,34 @@ public class FileUIActivity extends BaseUIActivity {
       }
     } catch(Exception ex) { }
     return fileSize;    
+  }
+  
+  protected int getImageWidth(Node node) {
+  	int imageWidth = 0;
+  	try {
+  		if(node.hasNode(NodetypeConstant.JCR_CONTENT)) node = node.getNode(NodetypeConstant.JCR_CONTENT);
+    	ImageReader reader = ImageIO.getImageReadersByMIMEType(mimeType).next();
+    	ImageInputStream iis = ImageIO.createImageInputStream(node.getProperty("jcr:data").getStream());
+    	reader.setInput(iis, true);
+    	imageWidth = reader.getWidth(0);
+    	iis.close();
+    	reader.dispose();   	
+    } catch (Exception e) {}
+  	return imageWidth;
+  }
+  
+  protected int getImageHeight(Node node) {
+  	int imageHeight = 0;
+  	try {
+  		if(node.hasNode(NodetypeConstant.JCR_CONTENT)) node = node.getNode(NodetypeConstant.JCR_CONTENT);
+    	ImageReader reader = ImageIO.getImageReadersByMIMEType(mimeType).next();
+    	ImageInputStream iis = ImageIO.createImageInputStream(node.getProperty("jcr:data").getStream());
+    	reader.setInput(iis, true);
+    	imageHeight = reader.getHeight(0);
+    	iis.close();
+    	reader.dispose();   	
+    } catch (Exception e) {}
+  	return imageHeight;
   }
   
   protected int getVersion(Node node) {
