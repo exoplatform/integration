@@ -318,7 +318,20 @@ public class FileUIActivity extends BaseUIActivity {
     } catch (RepositoryException e) {
       return StringUtils.EMPTY;
     }
-    return StringUtils.EMPTY;
+    return StringUtils.EMPTY;    
+  }
+  
+  protected double getFileSize(Node node) {
+    double fileSize = 0;    
+    try {
+      if (node.hasNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT)) {
+        Node contentNode = node.getNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT);
+        if (contentNode.hasProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA)) {
+        	fileSize = contentNode.getProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA).getLength();
+        }
+      }
+    } catch(Exception ex) { }
+    return fileSize;    
   }
   
   protected int getVersion(Node node) {

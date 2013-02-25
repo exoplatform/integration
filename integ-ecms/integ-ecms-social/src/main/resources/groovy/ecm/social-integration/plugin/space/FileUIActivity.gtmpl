@@ -112,6 +112,8 @@
   def viewLink = uicomponent.getViewLink();
   def editLink = uicomponent.getEditLink();
   def downloadLink = uicomponent.getDownloadLink();
+  def size = uicomponent.getSize(currentNode);
+  def fileSize = uicomponent.getFileSize(currentNode);
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
   def commentCount = 0;
@@ -271,18 +273,17 @@
             <div>$description</div>
             <div style="margin-top: 30px; color: gray;">
           <%
-            def version = uicomponent.getVersion(currentNode);
-            def size = uicomponent.getSize(currentNode);
+            def version = uicomponent.getVersion(currentNode);            
             if (version > 0) {
-          %>
-            <%=_ctx.appRes("UIComposerDocumentExtension.label.Version"); %>&nbsp; $version -
-          <%} %>
+              %>
+                <%=_ctx.appRes("UIComposerDocumentExtension.label.Version"); %>&nbsp; $version -
+              <%} %>
             $size
             </div>
           </div>
                   
           
-          	<%if (mimeType != null && mimeType.length() > 0){%>
+          	<%if (mimeType != null && mimeType.length() > 0 && fileSize > 0){%>
           	  <div style="margin-right: 260px;"> 
 		        <%   if(mimeType.startsWith("image")  && currentNode != null){%>
 		               <div id="MediaContent${activity.id}" class="MediaContent">
@@ -327,7 +328,11 @@
         <%} else {%>
           <span class="DateTime">$activityPostedTime *</span>
         <% } %>
-        <span class="viewAction"><a href="$contentActivityUri">View</a></span> |
+        <%
+          if(fileSize > 0) {
+        %>
+          <span class="viewAction"><a href="$contentActivityUri">View</a></span> |
+        <% } %>  
         <span class="downloadAction"><a href="$downloadLink">Download</a></span> |
         <% if(editLink.length() > 0) {%>
           <span class="editAction"><a href="$editLink">Edit</a></span> |
