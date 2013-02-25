@@ -90,30 +90,29 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   public static final String CALENDAR_FIELDS_CHANGED = "CALENDAR_FIELDS_CHANGED";
 
 
-  private static final String SUMMARY_UPDATED = "summary_updated";
-  private static final String DESCRIPTION_UPDATED = "description_updated";
-  private static final String FROM_UPDATED = "fromDateTime_updated";
-  private static final String TO_UPDATED = "toDateTime_updated";
-  private static final String LOCATION_UPDATED = "location_updated";
-  private static final String ALLDAY_UPDATED = "allDay_updated";
-  private static final String REPEAT_UPDATED = "repeatType_updated";
-  private static final String ATTACH_UPDATED = "attachment_updated";
-  private static final String CATEGORY_UPDATED = "eventCategoryName_updated";
-  private static final String CALENDAR_UPDATED = "calendarId_updated";
-  private static final String PRIORITY_UPDATED = "priority_updated";
+  public static final String SUMMARY_UPDATED = "summary_updated";
+  public static final String DESCRIPTION_UPDATED = "description_updated";
+  public static final String FROM_UPDATED = "fromDateTime_updated";
+  public static final String TO_UPDATED = "toDateTime_updated";
+  public static final String LOCATION_UPDATED = "location_updated";
+  public static final String ALLDAY_UPDATED = "allDay_updated";
+  public static final String REPEAT_UPDATED = "repeatType_updated";
+  public static final String ATTACH_UPDATED = "attachment_updated";
+  public static final String CATEGORY_UPDATED = "eventCategoryName_updated";
+  public static final String CALENDAR_UPDATED = "calendarId_updated";
+  public static final String PRIORITY_UPDATED = "priority_updated";
 
 
-  private static final String NAME_UPDATED = "name_updated";
-  private static final String NOTE_UPDATED = "note_updated";
-  private static final String TASK_CATEGORY_UPDATED = "taskCategoryName_updated";
-  private static final String TASK_CALENDAR_UPDATED = "task_CalendarId_updated";
-  private static final String TASK_ATTACH_UPDATED = "task_attachment_updated";
-  private static final String TASK_NEED_ACTION = CalendarEvent.NEEDS_ACTION;
-  private static final String TASK_IN_PROCESS_ACTION = CalendarEvent.IN_PROCESS;
-  private static final String TASK_COMPLETED_ACTION = CalendarEvent.COMPLETED;
-  private static final String TASK_CANCELLED_ACTION = CalendarEvent.CANCELLED;
+  public static final String NAME_UPDATED = "name_updated";
+  public static final String NOTE_UPDATED = "note_updated";
+  public static final String TASK_CATEGORY_UPDATED = "taskCategoryName_updated";
+  public static final String TASK_CALENDAR_UPDATED = "task_CalendarId_updated";
+  public static final String TASK_ATTACH_UPDATED = "task_attachment_updated";
+  public static final String TASK_NEED_ACTION = CalendarEvent.NEEDS_ACTION;
+  public static final String TASK_IN_PROCESS_ACTION = CalendarEvent.IN_PROCESS;
+  public static final String TASK_COMPLETED_ACTION = CalendarEvent.COMPLETED;
+  public static final String TASK_CANCELLED_ACTION = CalendarEvent.CANCELLED;
 
-  private static final SimpleDateFormat dformat = new SimpleDateFormat("EEEEE, MMMMM dd, yyyy HH:mm a");
   private CalendarService calService_ ;
 
   /**
@@ -312,7 +311,6 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     }
   }
   private Map<String, String> buildParams(CalendarEvent oldEvent, CalendarEvent newEvent){
-    dformat.setTimeZone(getUserTimeZone());
     Map<String, String> messagesParams = new LinkedHashMap<String, String>();
     try {
       if(CalendarEvent.TYPE_EVENT.equals(newEvent.getEventType())) {
@@ -337,10 +335,10 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
           messagesParams.put(ALLDAY_UPDATED,"") ;
         } else if (!isAllDayEvent(newEvent)) {
           if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
-            messagesParams.put(FROM_UPDATED,dformat.format(newEvent.getFromDateTime())) ;
+            messagesParams.put(FROM_UPDATED,String.valueOf(newEvent.getFromDateTime().getTime())) ;
           }
           if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
-            messagesParams.put(TO_UPDATED,dformat.format(newEvent.getToDateTime())) ; 
+            messagesParams.put(TO_UPDATED,String.valueOf(newEvent.getToDateTime().getTime())) ; 
           }
         }
         if(!newEvent.getRepeatType().equals(oldEvent.getRepeatType())) {
@@ -356,10 +354,10 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         
         if (!isAllDayEvent(newEvent)) {
           if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
-            messagesParams.put(FROM_UPDATED, dformat.format(newEvent.getFromDateTime()));
+            messagesParams.put(FROM_UPDATED, String.valueOf(newEvent.getFromDateTime().getTime()));
           }
           if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
-            messagesParams.put(TO_UPDATED, dformat.format(newEvent.getToDateTime())); 
+            messagesParams.put(TO_UPDATED, String.valueOf(newEvent.getToDateTime().getTime())); 
           }
         }
         if(newEvent.getPriority()!= null && !newEvent.getPriority().equals(oldEvent.getPriority())) {
