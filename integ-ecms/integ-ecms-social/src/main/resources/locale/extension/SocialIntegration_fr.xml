@@ -69,4 +69,11 @@
       <DocViewer>Prévisualiser</DocViewer>
     </title>
   </UIPopupWindow>
+  <ElementSet>
+    <dialog>
+      <label>       
+        <resourceType>Resource Type</resourceType>        
+      </label>
+    </dialog>
+  </ElementSet>
 </bundle>

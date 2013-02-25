@@ -33,6 +33,8 @@ import javax.jcr.Value;
 
 import org.exoplatform.services.cms.CmsService;
 import org.exoplatform.services.cms.JcrInputProperty;
+import org.exoplatform.webui.application.WebuiRequestContext;
+import org.exoplatform.webui.application.portlet.PortletRequestContext;
 
 
 /**
@@ -254,13 +256,19 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       }
     }
     if(!hit && propertyName.startsWith("dc:") && !propertyName.equals("dc:date")) {
-    	if(newValue.length() > 0) {
-    		resourceBundle = "SocialIntegration.messages.updateMetadata";
-    		commentValue = propertyName + ActivityCommonService.METADATA_VALUE_SEPERATOR + commentValue;
-    	}	else {
-    		resourceBundle = "SocialIntegration.messages.removeMetadata";
-    		commentValue = propertyName;
+    	PortletRequestContext portletRequestContext = WebuiRequestContext.getCurrentInstance();
+    	String dcProperty = propertyName;
+    	try {
+    		dcProperty = portletRequestContext.getApplicationResourceBundle().getString("ElementSet.dialog.label." + 
+    	  		propertyName.substring(propertyName.lastIndexOf(":") + 1, propertyName.length()));
+    	} catch(Exception ex) {
+    		//nothing
     	}
+    	if(newValue.length() > 0) resourceBundle = "SocialIntegration.messages.updateMetadata";
+    	else resourceBundle = "SocialIntegration.messages.removeMetadata";    	
+    	resourceBundle = portletRequestContext.getApplicationResourceBundle().getString(resourceBundle);
+    	resourceBundle = resourceBundle.replace("{0}", dcProperty);
+    	resourceBundle = resourceBundle.replace("{1}", commentValue);
     	Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue);
     }
   }

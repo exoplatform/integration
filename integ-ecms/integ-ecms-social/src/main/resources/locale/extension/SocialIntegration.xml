@@ -11,7 +11,7 @@
 			<editDescription>Description has been updated to: {0}</editDescription>
 			<singleCreator>Creator is {0}</singleCreator>
       <multiCreator>Creators are {0}</multiCreator>
-      <addSource>File source(s): {0} has been added</addSource>
+      <addSource>File source: {0} has been added</addSource>
       <addMultiSource>File sources: {0} have been added</addMultiSource>
       <removeSource>File source: {0} has been removed</removeSource>
       <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
@@ -69,4 +69,11 @@
       <DocViewer>Preview</DocViewer>
     </title>
   </UIPopupWindow>
+  <ElementSet>
+    <dialog>
+      <label>       
+        <resourceType>Resource Type</resourceType>        
+      </label>
+    </dialog>
+  </ElementSet>
 </bundle>
