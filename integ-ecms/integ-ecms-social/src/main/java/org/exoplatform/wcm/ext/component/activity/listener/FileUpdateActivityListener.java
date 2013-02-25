@@ -48,7 +48,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
                                        "SocialIntegration.messages.editTitle",
                                        "SocialIntegration.messages.editDescription",
                                        "SocialIntegration.messages.singleCreator",
-                                       "SocialIntegration.messages.singleSource",
+                                       "SocialIntegration.messages.addSource",
                                        "SocialIntegration.messages.editFile"};
   private String[]  bundleRemoveMessage = {"SocialIntegration.messages.removeName",
       																 	   "SocialIntegration.messages.removeSummary",
@@ -56,7 +56,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
                                            "SocialIntegration.messages.removeTitle",
                                            "SocialIntegration.messages.removeDescription",
                                            "SocialIntegration.messages.removeCreator",
-                                           "SocialIntegration.messages.removeSource",
+                                           "SocialIntegration.messages.addSource",
                                            "SocialIntegration.messages.editFile"};
   
   private boolean[] needUpdate      = {true, true, false, true, true, false, false, true};
@@ -127,9 +127,14 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       			List<String> lstOld = Arrays.asList(oldValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR));
     				List<String> lstNew = Arrays.asList(newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR));
     				String itemsRemoved = "";
+    				int removedCount = 0;
+    				int addedCount = 0;
     				StringBuffer sb = new StringBuffer();
     				for (String item : lstOld) {
-							if(!lstNew.contains(item)) sb.append(item).append(", ");
+							if(!lstNew.contains(item)) {
+								sb.append(item).append(", ");
+								removedCount++;
+							}
 						}
     				if(sb.length() > 0) {
     				  itemsRemoved = sb.toString();
@@ -138,32 +143,36 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     				sb.delete(0, sb.length());
     				String itemsAdded = "";
     				for (String item : lstNew) {
-							if(!lstOld.contains(item)) sb.append(item).append(", ");
+							if(!lstOld.contains(item)) {
+								sb.append(item).append(", ");
+								addedCount++;
+							}
 						}
     				if(sb.length() > 0) {
     					itemsAdded = sb.toString();
     					itemsAdded = itemsAdded.substring(0, itemsAdded.length()-2);
     				}
     				
-    				if(itemsRemoved.length() > 0 && itemsAdded.length() > 0){  					
-    					Utils.postFileActivity(currentNode, "SocialIntegration.messages.removeCreator", needUpdate[i], true, itemsRemoved);
-    					if(newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
-    					  Utils.postFileActivity(currentNode, "SocialIntegration.messages.multiCreator", needUpdate[i], true, commentValue);
-    					else 
-    						Utils.postFileActivity(currentNode, "SocialIntegration.messages.singleCreator", needUpdate[i], true, commentValue);
+    				if(itemsRemoved.length() > 0 && itemsAdded.length() > 0){ 
+    					resourceBundle = (removedCount > 1) ?
+    							"SocialIntegration.messages.removeMultiCreator" : "SocialIntegration.messages.removeCreator";
+    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsRemoved);
+    					
+    					resourceBundle = (addedCount > 1) ?
+    							"SocialIntegration.messages.multiCreator" : "SocialIntegration.messages.singleCreator";
+    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
     	        break;
     				}      				  
     				else if(itemsRemoved.length() > 0) {
-    					resourceBundle = "SocialIntegration.messages.removeCreator";
+    					resourceBundle = (removedCount > 1) ?
+    							"SocialIntegration.messages.removeMultiCreator" : "SocialIntegration.messages.removeCreator";
     					newValue = itemsRemoved;
     					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
     	        break;
     				}
     				else if(itemsAdded.length() > 0) {
-    					if(newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
-    					  resourceBundle = "SocialIntegration.messages.multiCreator";
-    					else
-    						resourceBundle = "SocialIntegration.messages.singleCreator";
+    					resourceBundle = (addedCount > 1) ?
+    							"SocialIntegration.messages.multiCreator" : "SocialIntegration.messages.singleCreator";
     					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
     	        break;
     				}     			
@@ -173,9 +182,14 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       				List<String> lstOld = Arrays.asList(oldValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR));
       				List<String> lstNew = Arrays.asList(newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR));
       				String itemsRemoved = "";
+      				int removedCount = 0;
+      				int addedCount = 0;
       				StringBuffer sb = new StringBuffer();
       				for (String item : lstOld) {
-								if(!lstNew.contains(item)) sb.append(item).append(", ");
+								if(!lstNew.contains(item)) {
+									sb.append(item).append(", ");
+									removedCount++;
+								}
 							}
       				if(sb.length() > 0) {
       				  itemsRemoved = sb.toString();
@@ -184,25 +198,35 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       				sb.delete(0, sb.length());
       				String itemsAdded = "";
       				for (String item : lstNew) {
-								if(!lstOld.contains(item)) sb.append(item).append(", ");
+								if(!lstOld.contains(item)) {
+									sb.append(item).append(", ");
+									addedCount++;
+								}
 							}
       				if(sb.length() > 0) {
       					itemsAdded = sb.toString();
       					itemsAdded = itemsAdded.substring(0, itemsAdded.length()-2);
       				}
       				if(itemsRemoved.length() > 0 && itemsAdded.length() > 0){  					
-      					Utils.postFileActivity(currentNode, "SocialIntegration.messages.removeSource", needUpdate[i], true, itemsRemoved);
-      					Utils.postFileActivity(currentNode, "SocialIntegration.messages.addSource", needUpdate[i], true, itemsAdded);
+      					resourceBundle = (removedCount > 1) ?
+      							"SocialIntegration.messages.removeMultiSource" : "SocialIntegration.messages.removeSource";
+      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsRemoved);
+      					
+      					resourceBundle = (addedCount > 1) ?
+      							"SocialIntegration.messages.addMultiSource" : "SocialIntegration.messages.addSource";
+      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsAdded);
       	        break;
       				}      				  
       				else if(itemsRemoved.length() > 0) {
-      					resourceBundle = "SocialIntegration.messages.removeSource";
+      					resourceBundle = (removedCount > 1) ?
+      							"SocialIntegration.messages.removeMultiSource" : "SocialIntegration.messages.removeSource";
       					newValue = itemsRemoved;
       					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
       	        break;
       				}
       				else if(itemsAdded.length() > 0) {
-      					resourceBundle = "SocialIntegration.messages.addSource";
+      					resourceBundle = (addedCount > 1) ?
+      							"SocialIntegration.messages.addMultiSource" : "SocialIntegration.messages.addSource";
       					newValue = itemsAdded;
       					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
       	        break;
@@ -211,10 +235,18 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       		Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
 	        break;
       	} else if(!propertyName.equals(NodetypeConstant.EXO_LANGUAGE)){ //Remove the property
-      		resourceBundle = bundleRemoveMessage[i];
+      		resourceBundle = bundleRemoveMessage[i];      		
+      		if(propertyName.equals(NodetypeConstant.DC_CREATOR)) {
+      			resourceBundle = (oldValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1) ?
+  							"SocialIntegration.messages.removeMultiCreator" : "SocialIntegration.messages.removeCreator";
+      		} else if(propertyName.equals(NodetypeConstant.DC_SOURCE)) {
+      			resourceBundle = (oldValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1) ?
+  							"SocialIntegration.messages.removeMultiSource" : "SocialIntegration.messages.removeSource";
+      		}
+      		
       		if(propertyName.equals(NodetypeConstant.DC_SOURCE) || propertyName.equals(NodetypeConstant.DC_CREATOR)) {
       			commentValue = oldValue.replaceAll(ActivityCommonService.METADATA_VALUE_SEPERATOR, ", ");
-      		}
+      		}      		
       		Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
           break;
       	} else break;

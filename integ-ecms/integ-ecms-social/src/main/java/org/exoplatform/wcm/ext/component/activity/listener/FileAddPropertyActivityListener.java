@@ -79,7 +79,10 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 	      	resourceBundle = bundleMessage[i];
 	      	if(propertyName.equals(NodetypeConstant.DC_CREATOR) && 
 	      			newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
-	      		resourceBundle = "SocialIntegration.messages.multiCreator";	      	
+	      		resourceBundle = "SocialIntegration.messages.multiCreator";	      
+	      	if(propertyName.equals(NodetypeConstant.DC_SOURCE) &&
+	      			newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
+	      		resourceBundle = "SocialIntegration.messages.addMultiSource";
 	      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
 	      	hit = true;
 	        break;

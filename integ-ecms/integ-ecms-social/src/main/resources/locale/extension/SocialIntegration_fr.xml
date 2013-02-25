@@ -14,20 +14,18 @@
       <emptyTitle> Le titre a été supprimé.</emptyTitle>
       <emptySummary>Le sommaire a été supprimé.</emptySummary>
       <emptyContent>Le contenu a été supprimé.</emptyContent>
-      <singleSource>la source est {0}.</singleSource>
-      <multiSource>Les sources sont {0}.</multiSource>
-      <addCreator>Creator {0} has been added</addCreator>
-      <addMultiCreator>Creators {0} have been added</addMultiCreator>      
-      <addSource>File source(s): {0} has been added</addSource>
-      <removeSource>File sources: {0} has been removed</removeSource>
-      <removeAllSource>File source(s) has been removed</removeAllSource>
+      <addSource>File source: {0} has been added</addSource>
+      <addMultiSource>File sources: {0} have been added</addMultiSource>
+      <removeSource>File source: {0} has been removed</removeSource>
+      <removeMultiSource>File sources have been removed</removeMultiSource>
       <updateMetadata>La Metadonnée {0} a été mis à jour par: {1}</updateMetadata>
       <removeMetadata>La Metadonnée {0} a été supprimée.</removeMetadata>
       <removeName>Le titre a été supprimé.</removeName>
       <removeTitle>Le nom a été supprimé.</removeTitle>
       <removeSummary>Le sommaire a été supprimé.</removeSummary>
       <removeDescription>La description a été supprimé.</removeDescription>
-      <removeCreator>Creator(s): {0} has been removed.</removeCreator>
+      <removeCreator>Creator: {0} has been removed.</removeCreator>
+      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
       <removeContent>Le contenu a été supprimé.</removeContent>
       <removeLanguage>Un language a été supprimé.</removeLanguage>
       <editSummary>Le sommaire a été mis à jour: {0}</editSummary>
