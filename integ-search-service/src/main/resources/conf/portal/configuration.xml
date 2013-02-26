@@ -30,10 +30,40 @@
     <key>org.exoplatform.commons.api.search.SearchService</key>
     <type>org.exoplatform.commons.search.driver.jcr.JcrSearchDriver</type>
     
+    <!-- Ecms -->
     <component-plugins>
+      <component-plugin>
+        <name>FileSearchConnector</name>
+        <set-method>addConnector</set-method>
+        <type>org.exoplatform.services.wcm.search.connector.FileSearchServiceConnector</type>
+        <description>eXo WCM documents</description>      
+        <init-params>
+          <properties-param>
+             <name>constructor.params</name>
+             <property name="searchType" value="file"/>
+             <property name="displayName" value="Files"/>
+          </properties-param>
+        </init-params>      
+      </component-plugin>
+
+      <!-- Ecms -->
+      <component-plugin>
+        <name>DocumentSearchConnector</name>
+        <set-method>addConnector</set-method>
+        <type>org.exoplatform.services.wcm.search.connector.DocumentSearchServiceConnector</type>
+        <description>eXo DMS documents</description>      
+        <init-params>
+          <properties-param>
+             <name>constructor.params</name>
+             <property name="searchType" value="document"/>
+             <property name="displayName" value="Documents"/>
+          </properties-param>
+        </init-params>      
+      </component-plugin>
+
       <!-- Wiki -->
       <component-plugin>
-        <name>WikiSearchServiceConnector</name>
+        <name>WikiSearchConnector</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.wiki.service.impl.WikiSearchServiceConnector</type>
         <description>eXo Wiki Pages</description>      
@@ -41,7 +71,37 @@
           <properties-param>
              <name>constructor.params</name>
              <property name="searchType" value="wiki"/>
-             <property name="displayName" value="Wikis"/>
+             <property name="displayName" value="Wiki"/>
+          </properties-param>
+        </init-params>      
+      </component-plugin>
+       
+      <!-- Ecms --> 
+      <component-plugin>
+        <name>PageSearchConnector</name>
+        <set-method>addConnector</set-method>
+        <type>org.exoplatform.services.wcm.search.connector.PageSearchServiceConnector</type>
+        <description>eXo portal pages</description>      
+        <init-params>
+          <properties-param>
+             <name>constructor.params</name>
+             <property name="searchType" value="page"/>
+             <property name="displayName" value="Pages"/>
+          </properties-param>
+        </init-params>      
+      </component-plugin>
+
+      <!-- Forum --> 
+      <component-plugin>
+        <name>DiscussionSearchConnector</name>
+        <set-method>addConnector</set-method>
+        <type>org.exoplatform.forum.service.search.DiscussionSearchConnector</type>
+        <description>eXo Forum Posts</description>
+        <init-params>
+          <properties-param>
+             <name>constructor.params</name>
+             <property name="searchType" value="post"/>
+             <property name="displayName" value="Discussions"/>
           </properties-param>
         </init-params>      
       </component-plugin>
@@ -106,20 +166,21 @@
         </init-params>      
       </component-plugin>
       
-      <!-- <component-plugin>
-        <name>JcrNodeSearch</name>
+      <!-- Forum --> 
+      <component-plugin>
+        <name>AnswerSearchConnector</name>
         <set-method>addConnector</set-method>
-        <type>org.exoplatform.commons.search.driver.jcr.connector.JcrNodeSearch</type>
-        <description>For development and testing only</description>
+        <type>org.exoplatform.faq.service.search.AnswerSearchConnector</type>
+        <description>eXo Answers answers</description>
         <init-params>
           <properties-param>
              <name>constructor.params</name>
-             <property name="searchType" value="jcrNode"/>
-             <property name="displayName" value="JCR nodes"/>
+             <property name="searchType" value="answer"/>
+             <property name="displayName" value="Answers"/>
           </properties-param>
         </init-params>      
-      </component-plugin> -->
-
+      </component-plugin>
+      
     </component-plugins>
   </component>
 

@@ -2,6 +2,7 @@
 // Function to be called when the quick search setting template is ready
 function initQuickSearchSetting(){
   jQuery.noConflict();
+
   (function($){
     var CONNECTORS; //all registered SearchService connectors
 
@@ -104,4 +105,6 @@ function initQuickSearchSetting(){
 
     });
   })(jQuery);
+
+  $ = jQuery; //undo .conflict();
 }

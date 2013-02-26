@@ -2,6 +2,7 @@
 // Function to be called when the quick search template is ready
 function initQuickSearch(portletId) {
   jQuery.noConflict();
+
   (function($){
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
@@ -194,4 +195,6 @@ function initQuickSearch(portletId) {
 
     });
   })(jQuery);
+
+  $ = jQuery; //undo .conflict();
 }
