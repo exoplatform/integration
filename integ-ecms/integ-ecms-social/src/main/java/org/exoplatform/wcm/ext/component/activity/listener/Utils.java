@@ -79,6 +79,7 @@ public class Utils {
   private static String MIX_COMMENT                = "exo:activityComment";
   private static String MIX_COMMENT_ID             = "exo:activityCommentID";
   private static int    MAX_SUMMARY_LINES_COUNT    = 4;
+  private static int    MAX_SUMMARY_CHAR_COUNT     = 430;
 
   /**
    * Populate activity data with the data from Node
@@ -431,9 +432,6 @@ public class Utils {
     activityParams.put(ContentUIActivity.DOCUMENT_VERSION, currentVersion);
     String summary = getSummary(contentNode);
     summary =getFirstSummaryLines(summary, MAX_SUMMARY_LINES_COUNT);
-//    summary = summary.replaceAll("\\<.*?>\n", "\n");
-//    summary = summary.replaceAll("\\<.*?>", "");
-//    System.out.println(summary);
     activityParams.put(ContentUIActivity.DOCUMENT_SUMMARY, summary);
     activity.setTemplateParams(activityParams);
     activityManager.updateActivity(activity);
@@ -704,7 +702,12 @@ public class Utils {
       i++;
       if (i>linesCount) break;
     }
-    if (index <0) return result;
+    if (index <0) {
+      if (result.length()>MAX_SUMMARY_CHAR_COUNT)
+      return  result.substring(0, MAX_SUMMARY_CHAR_COUNT-1); 
+      return result;
+    }
+    if (index>MAX_SUMMARY_CHAR_COUNT) index = MAX_SUMMARY_CHAR_COUNT-1;
     result = result.substring(0, index) + "<br>...";
     return result;
   }  

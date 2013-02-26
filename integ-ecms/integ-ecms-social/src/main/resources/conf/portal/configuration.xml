@@ -159,6 +159,13 @@
     </component-plugin>
     
     <component-plugin profiles="default,all,social">
+      <name>ActivityNotify.event.NodeRemoved</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.wcm.ext.component.activity.listener.ContentRemovedActivityListener</type>
+      <description>this listener will publish an activity when a content has been updated</description>
+    </component-plugin>
+    
+    <component-plugin profiles="default,all,social">
       <name>ActivityNotify.event.RevisionChanged</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.wcm.ext.component.activity.listener.ContentRevisionActivityListener</type>
