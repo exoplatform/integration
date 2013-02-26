@@ -266,19 +266,19 @@
               rightCss = "float:right;";
           %>
           <div style="$rightCss width:250px;">
-             <div style="color: blue; margin: 5px 0px 10px;"><strong>$dName</strong></div>
+             <div style="color: blue; margin: 10px 0px 10px;"><strong>$dName</strong></div>
           <% 
             def description = uicomponent.getSummary(currentNode); 
           %>
             <div>$description</div>
-            <div style="margin-top: 30px; color: gray;">
+            <div style="margin-top: 10px; color: gray;">
           <%
             def version = uicomponent.getVersion(currentNode);            
             if (version > 0) {
               %>
                 <%=_ctx.appRes("UIComposerDocumentExtension.label.Version"); %>&nbsp; $version -
               <%} %>
-            $size
+            <%=_ctx.appRes("SocialIntegration.titles.fileSize"); %>:&nbsp; $size
             </div>
           </div>
                   
@@ -306,18 +306,28 @@
 									   %>
 									   <a onclick="javascript:window.open('$binarySrc');" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="$activityContentTitle" /></a>
 									 </div><%
-		            } else if( mimeType.startsWith("application/pdf") ){%>
+		            } else if( mimeType.startsWith("application/pdf") || mimeType.startsWith("application/msword") || mimeType.startsWith("application/vnd.oasis.opendocument.text") ){%>
 		               <div id="MediaContent${activity.id}" class="MediaContent">
 		                 <%
 		                   def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
 		                 %>
-		                 <a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder" style="max-height: 250px; max-width: 350px;" /></a>
+		                 <a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder"/></a>
 		               </div><%
 		            } else if(fileComponent != null) {
 		              uicontentpresentation.renderUIComponent(fileComponent);
-		            } %>		            
+		            } else {
+		            %>
+		              <div id="MediaContent${activity.id}" class="MediaContent center">
+		               <%
+		                 def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
+		           	     encodedPath = encodedPath.replaceAll ("%2F", "/");
+		                 String defaultImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/default.gif";               
+		               %>
+		               <a href="$contentActivityUri" title="$activityContentTitle"><image src="$defaultImage" class="PDFImageBorder"/></a></div>
+		            <%
+		            }%>		            
 		           </div> 
 		        <% }%>          
           

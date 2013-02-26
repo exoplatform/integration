@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bundle>
   <SocialIntegration>
+    <titles>
+      <fileSize>File Size</fileSize>
+    </titles>
     <messages>
       <createdBy>was created by</createdBy>
       <editedBy>was edited by</editedBy>
