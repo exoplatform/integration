@@ -1,14 +1,10 @@
 package org.exoplatform.cs.ext.impl;
 
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.TimeZone;
+import java.util.*;
 
 import javax.jcr.PathNotFoundException;
 
@@ -64,7 +60,8 @@ public class CalendarUIActivity extends BaseUIActivity {
 
   private String           timeZone           = "";
 
-  private String CALENDAR_PREFIX_KEY = "CalendarUIActivity.msg.";
+  protected static final String CALENDAR_PREFIX_KEY = "CalendarUIActivity.msg.";
+
   public CalendarUIActivity() {
     super();
   }
@@ -293,8 +290,6 @@ public class CalendarUIActivity extends BaseUIActivity {
    */
   public String buildComment(ExoSocialActivity comment) {
 	  StringBuilder commentMessage = new StringBuilder();
-	  WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
-	  ResourceBundle rb = requestContext.getApplicationResourceBundle();
 	  Map<String,String> tempParams = comment.getTemplateParams();
 	  // get updated fields in formant {field1,field2,...}
 	  String fieldsChanged = tempParams.get(CalendarSpaceActivityPublisher.CALENDAR_FIELDS_CHANGED);
@@ -303,12 +298,21 @@ public class CalendarUIActivity extends BaseUIActivity {
 	  }
 	  String[] fields = fieldsChanged.split(",");
 	  for(int i = 0; i < fields.length; i++) {
-		  String label = rb.getString(CALENDAR_PREFIX_KEY + fields[i]); 
+		  String label = getUICalendarLabel(fields[i]);
 		  String childMessage = MessageFormat.format(label,tempParams.get(fields[i])); // message for each updated field
 		  commentMessage.append(childMessage + "<br/>");
 	  }
 	  return commentMessage.toString();
   }
+
+  public static String getUICalendarLabel(String label)
+  {
+    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+    ResourceBundle resourceBundle = requestContext.getApplicationResourceBundle();
+    return resourceBundle.getString(CALENDAR_PREFIX_KEY + label);
+  }
+
+
   public static class AcceptEventActionListener extends EventListener<CalendarUIActivity> {
 
     @Override
