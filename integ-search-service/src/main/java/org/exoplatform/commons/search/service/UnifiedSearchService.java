@@ -58,14 +58,14 @@ public class UnifiedSearchService implements ResourceContainer {
   private static SearchSetting defaultQuicksearchSetting = new SearchSetting(5, Arrays.asList("all"), true, true, true);
   
   private SearchService searchService;
-  private UserPortalConfigService dataStorage;
+  private UserPortalConfigService userPortalConfigService;
   private SettingService settingService;
   private Router router;
   
-  public UnifiedSearchService(SearchService searchService, SettingService settingService, UserPortalConfigService dataStorage, WebAppController webAppController){
+  public UnifiedSearchService(SearchService searchService, SettingService settingService, UserPortalConfigService userPortalConfigService, WebAppController webAppController){
     this.searchService = searchService;
     this.settingService = settingService;
-    this.dataStorage = dataStorage;
+    this.userPortalConfigService = userPortalConfigService;
     
     try {
       File controllerXml = new File(webAppController.getConfigurationPath());
@@ -115,9 +115,9 @@ public class UnifiedSearchService implements ResourceContainer {
   
   @GET
   @Path("/sites")
-  public Response REST_getAllPortalNames() {
+  public Response REST_getSites() {
     try {
-      return Response.ok(dataStorage.getAllPortalNames(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+      return Response.ok(userPortalConfigService.getAllPortalNames(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
       return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).cacheControl(cacheControl).build();
