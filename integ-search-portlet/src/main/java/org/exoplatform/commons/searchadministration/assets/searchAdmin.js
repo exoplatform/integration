@@ -1,6 +1,7 @@
 
 function initSearchAdmin() {
   jQuery.noConflict();
+
   (function($){
     $.getJSON("/rest/search/registry", function(registry){
       var row_template = " \
@@ -55,4 +56,6 @@ function initSearchAdmin() {
       });
     });
   })(jQuery);
+
+  $ = jQuery; //undo .conflict();
 }

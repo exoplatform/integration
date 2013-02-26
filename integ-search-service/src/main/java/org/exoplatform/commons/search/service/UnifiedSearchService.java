@@ -94,8 +94,6 @@ public class UnifiedSearchService implements ResourceContainer {
     
     try {
       SearchContext context = new SearchContext(this.router);
-      // sql mode (for testing)
-      if(sQuery.startsWith("SELECT")) return Response.ok(searchService.search(context, sQuery, Arrays.asList("all"), Arrays.asList("jcrNode"), 0, 0, "jcrScore()", "DESC"), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
       return Response.ok(searchService.search(context, sQuery, sites, types, offset, limit, sort, order), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
