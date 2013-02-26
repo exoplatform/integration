@@ -36,6 +36,10 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
  * @version $Revision$
  */
 public class ForumSpaceActivityPublisher extends ForumEventListener {
+  
+  public static final int    APPROVE               = 3;
+  public static final int    WAITING               = 5;
+  public static final int    HIDDEN                = 9;
 
   @Override
   public void saveCategory(Category category) {
@@ -64,7 +68,36 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
     ActivityExecutor.execute(task, ctx);
   }
 
-
+  @Override
+  public void updatePost(Post post, int type) {
+    switch (type) {
+      case HIDDEN:
+        if (post.getIsHidden() == true) {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.HIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        } else {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.UNHIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        }
+        break;
+      case WAITING:
+        if (post.getIsWaiting() == true) {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.HIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        } else {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.UNHIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        }
+        break;
+      default:
+        return;
+    }
+  }
+  
   @Override
   public void addTopic(Topic topic) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);

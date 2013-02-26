@@ -89,7 +89,30 @@ public class PostActivityTest extends AbstractActivityTypeTest {
     PostActivityTask task = PostActivityTask.UPDATE_POST;
     ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(post, ctx);
     ctx.setTopic(topic);
+    
+    //Comment associated with this post exist --> update
     comment = task.processComment(ctx, comment);
     assertPostTitle(comment, "Edited his reply to: edited post content");
+    
+    //Comment associated with this post has been deleted --> add new
+    comment = task.processComment(ctx, null);
+    assertPostTitle(comment, "Edited his reply to: edited post content");
+    
+    //Case of post with multi-lines, 3 firsts lines will be used
+    updatePostContent(post, "edited post content1\n2\n3\n4\n5");
+    
+    //
+    ctx = ForumActivityContext.makeContextForUpdatePost(post);
+    task = PostActivityTask.UPDATE_POST;
+    comment = ForumActivityBuilder.createActivityComment(post, ctx);
+    ctx.setTopic(topic);
+    
+    //Comment associated with this post exist --> update
+    comment = task.processComment(ctx, comment);
+    assertPostTitle(comment, "Edited his reply to: edited post content1<br/>2<br/>3");
+    
+    //Comment associated with this post has been deleted --> add new
+    comment = task.processComment(ctx, null);
+    assertPostTitle(comment, "Edited his reply to: edited post content1<br/>2<br/>3");
   }
 }

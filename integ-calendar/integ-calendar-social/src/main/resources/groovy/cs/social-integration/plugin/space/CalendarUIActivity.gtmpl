@@ -173,10 +173,13 @@
                 print "<div class='portlet-msg-alert Warning' style='padding-left:20px' >" + _ctx.appRes("CalendarUIActivity.msg.event-not-found") + "</div>";
               } else {
             %>
+            <% if(!"".equals(uicomponent.getDescription())) { %>
             <%=_ctx.appRes("CalendarUIActivity.msg.event.label.description") + uicomponent.getDescription();%> <br>
+            <% } %>
+            <% if(!"".equals(uicomponent.getLocation())) { %>
             <%=_ctx.appRes("CalendarUIActivity.msg.event.label.location") + uicomponent.getLocation();%> <br>
+            <% } %>
             <%=_ctx.appRes("CalendarUIActivity.msg.event.label.start-time") + uicomponent.getEventStartTime(_ctx);%> <br>
-            <%=_ctx.appRes("CalendarUIActivity.msg.event.label.end-time") + uicomponent.getEventEndTime(_ctx);%> <br>
             <% } %>
           </div>
   
@@ -320,7 +323,7 @@
       commenterFullName = id.profile.fullName;
       commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
       //commentMessage = it.title;
-      commentMessage = uicomponent.buildComment(it);
+      commentMessage = uicomponent.buildComment(_ctx, it);
       commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
       commenterAvatarImgSrc = id.profile.avatarUrl;
       if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;

@@ -112,6 +112,8 @@
   def viewLink = uicomponent.getViewLink();
   def editLink = uicomponent.getEditLink();
   def downloadLink = uicomponent.getDownloadLink();
+  def size = uicomponent.getSize(currentNode);
+  def fileSize = uicomponent.getFileSize(currentNode);
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
   def commentCount = 0;
@@ -199,7 +201,7 @@
 	  background: #F8F8F8;
       border: 1px solid #E1E1E1;
       border-radius: 3px;
-      padding: 10px 15px;
+      padding: 8px 8px;
 	}
 	  
 	.IllustrationThumbnail {
@@ -253,35 +255,7 @@
       <% if (activityDeletable) {%>
         <span onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="CloseContentBoxNormal" id="DeleteActivityButton${activity.id}"></span>
       <%}%>
-      </h5>
-      
-
-       <p class="Content">
-      <!--ECMS update content of activity BEGIN-->
-        <div id="ActivityDetail" style="margin: 8px 0;">
-        <%if (currentNode) {%>
-          <a title="$activityContentTitle" href="$contentActivityUri"> <%=uicomponent.getTitle(currentNode)%> </a>
-        <%} else {%>
-          <span class="UIActivity Deleted"><%=uicomponent.getTitle(currentNode)%></span>
-        <%}%>
-        <%=_ctx.appRes(activityMessage) %>
-			  <%if (author != null && author.length() > 0) { 
-     				def authorName = uicomponent.getUserFullName(author);
-	    			def authorURL = uicomponent.getUserProfileUri(author);
-	 		  %>
-				  <a title="$authorName" href="$authorURL"> $authorName</a>
-  		<% } else { %>
-	  			<%=_ctx.appRes("SocialIntegration.messages.system") %>
-	  	<% } 					
-			  
-			   if (state != null && state.length() > 0) { %>
-			   	 &nbsp;&nbsp; state: <%=_ctx.appRes("SocialIntegration.publicationStates." + state)%>
-			<% } %>		
-        </div>
-		  
-		<!--ECMS update content of activity END-->
-      </p>
-      
+      </h5>      
       
       <div class="BoxGray ClearFix">         
           <% 
@@ -291,49 +265,69 @@
             if(mimeType != null && mimeType.length() > 0) 
               rightCss = "float:right;";
           %>
-          <div style="$rightCss width:255px;">
-             <div style="color: blue; margin: 5px 0px 10px;"><strong>$dName</strong></div>
+          <div style="$rightCss width:250px;">
+             <div style="color: blue; margin: 10px 0px 10px;"><strong>$dName</strong></div>
           <% 
             def description = uicomponent.getSummary(currentNode); 
           %>
             <div>$description</div>
-            <div style="margin-top: 30px; color: gray;">
+            <div style="margin-top: 10px; color: gray;">
           <%
-            def version = uicomponent.getVersion(currentNode);
-            def size = uicomponent.getSize(currentNode);
+            def version = uicomponent.getVersion(currentNode);            
             if (version > 0) {
-          %>
-            <%=_ctx.appRes("UIComposerDocumentExtension.label.Version"); %>&nbsp; $version -
-          <%} %>
-            $size
+              %>
+                <%=_ctx.appRes("UIComposerDocumentExtension.label.Version"); %>&nbsp; $version -
+              <%} %>
+            <%=_ctx.appRes("SocialIntegration.titles.fileSize"); %>:&nbsp; $size
             </div>
           </div>
                   
           
-          	<%if (mimeType != null && mimeType.length() > 0){%>
-          	  <div style="margin-right: 260px;"> 
+          	<%if (mimeType != null && mimeType.length() > 0 && fileSize > 0){%>
+          	  <div style="margin-right: 256px;"> 
 		        <%   if(mimeType.startsWith("image")  && currentNode != null){%>
-		                 <div id="MediaContent${activity.id}" class="MediaContent">
-		           	 <%def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
-		           	  encodedPath = encodedPath.replaceAll ("%2F", "/");
-		              String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;              
-									%><a onclick="javascript:window.open('$binarySrc');" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="" style="max-height: 250px; max-width: 350px;" /></a></div><%
-		            } else if (mimeType.startsWith("application/pdf") && currentNode != null){%>
 		               <div id="MediaContent${activity.id}" class="MediaContent">
-		               <%def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
-		           	   encodedPath = encodedPath.replaceAll ("%2F", "/");
-		               String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
-		               %><a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder" style="max-height: 250px; max-width: 350px;" /></a></div><%
-		            } else if ((mimeType.startsWith("application/msword") || mimeType.startsWith("opendocument"))  && currentNode != null){%>
+		           	     <%
+		           	       def imageWidth = uicomponent.getImageHeight(currentNode);
+		           	       def imageHeight = uicomponent.getImageHeight(currentNode);
+		           	       if (imageHeight > imageWidth && imageHeight > 350) {
+		           	         imageWidth = (350 * imageWidth) / imageHeight;
+		           	         imageHeight = 350;
+		           	       } else if(imageWidth > imageHeight && imageWidth > 350){
+		           	         imageHeight = (350 * imageHeight) / imageWidth;
+		           	         imageWidth = 350;
+		           	       } else if(imageWidth == imageHeight && imageHeight > 350) {
+		           	         imageWidth = 350;
+		           	         imageHeight= 350;
+		           	       }
+		           	       def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
+		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
+		                   String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/"+imageWidth+"x"+imageHeight+"/" + repository + "/" + preferenceWS + encodedPath;              
+									   %>
+									   <a onclick="javascript:window.open('$binarySrc');" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="$activityContentTitle" /></a>
+									 </div><%
+		            } else if( mimeType.startsWith("application/pdf") || mimeType.startsWith("application/msword") || mimeType.startsWith("application/vnd.oasis.opendocument.text") ){%>
 		               <div id="MediaContent${activity.id}" class="MediaContent">
-		               <%def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
-		           	   encodedPath = encodedPath.replaceAll ("%2F", "/");
-		               String pdfThumbnailImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/doc.gif";               
-		               %><a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder" style="max-height: 250px; max-width: 350px;" /></a></div><%
+		                 <%
+		                   def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
+		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
+		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
+		                 %>
+		                 <a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="PDFImageBorder"/></a>
+		               </div><%
 		            } else if(fileComponent != null) {
 		              uicontentpresentation.renderUIComponent(fileComponent);
-		            } %>
-		            
+		            } else {
+		            %>
+		              <div id="MediaContent${activity.id}" class="MediaContent center">
+		               <%
+		                 def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
+		           	     encodedPath = encodedPath.replaceAll ("%2F", "/");
+		                 String defaultImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/default.gif";               
+		               %>
+		               <a href="$contentActivityUri" title="$activityContentTitle"><image src="$defaultImage" class="PDFImageBorder"/></a></div>
+		            <%
+		            }%>		            
 		           </div> 
 		        <% }%>          
           
@@ -356,9 +350,15 @@
         <%} else {%>
           <span class="DateTime">$activityPostedTime *</span>
         <% } %>
-        <span class="viewAction"><a href="$contentActivityUri">View</a></span> |
+        <%
+          if(fileSize > 0) {
+        %>
+          <span class="viewAction"><a href="$contentActivityUri">View</a></span> |
+        <% } %>  
         <span class="downloadAction"><a href="$downloadLink">Download</a></span> |
-        <span class="editAction"><a href="$editLink">Edit</a></span> |
+        <% if(editLink.length() > 0) {%>
+          <span class="editAction"><a href="$editLink">Edit</a></span> |
+        <% } %>  
         <% 
           def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
           def commentLink = "";

@@ -22,10 +22,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFormatException;
 import javax.portlet.PortletRequest;
 
@@ -35,7 +37,6 @@ import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.ecm.jcr.model.VersionNode;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.log.ExoLogger;
@@ -49,7 +50,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
-import org.exoplatform.social.plugin.doc.UIDocActivity;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
@@ -321,7 +321,48 @@ public class FileUIActivity extends BaseUIActivity {
     } catch (RepositoryException e) {
       return StringUtils.EMPTY;
     }
-    return StringUtils.EMPTY;
+    return StringUtils.EMPTY;    
+  }
+  
+  protected double getFileSize(Node node) {
+    double fileSize = 0;    
+    try {
+      if (node.hasNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT)) {
+        Node contentNode = node.getNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT);
+        if (contentNode.hasProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA)) {
+        	fileSize = contentNode.getProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA).getLength();
+        }
+      }
+    } catch(Exception ex) { }
+    return fileSize;    
+  }
+  
+  protected int getImageWidth(Node node) {
+  	int imageWidth = 0;
+  	try {
+  		if(node.hasNode(NodetypeConstant.JCR_CONTENT)) node = node.getNode(NodetypeConstant.JCR_CONTENT);
+    	ImageReader reader = ImageIO.getImageReadersByMIMEType(mimeType).next();
+    	ImageInputStream iis = ImageIO.createImageInputStream(node.getProperty("jcr:data").getStream());
+    	reader.setInput(iis, true);
+    	imageWidth = reader.getWidth(0);
+    	iis.close();
+    	reader.dispose();   	
+    } catch (Exception e) {}
+  	return imageWidth;
+  }
+  
+  protected int getImageHeight(Node node) {
+  	int imageHeight = 0;
+  	try {
+  		if(node.hasNode(NodetypeConstant.JCR_CONTENT)) node = node.getNode(NodetypeConstant.JCR_CONTENT);
+    	ImageReader reader = ImageIO.getImageReadersByMIMEType(mimeType).next();
+    	ImageInputStream iis = ImageIO.createImageInputStream(node.getProperty("jcr:data").getStream());
+    	reader.setInput(iis, true);
+    	imageHeight = reader.getHeight(0);
+    	iis.close();
+    	reader.dispose();   	
+    } catch (Exception e) {}
+  	return imageHeight;
   }
   
   protected int getVersion(Node node) {

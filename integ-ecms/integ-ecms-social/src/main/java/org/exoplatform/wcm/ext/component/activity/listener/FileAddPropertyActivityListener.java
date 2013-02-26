@@ -22,6 +22,9 @@ import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
+import org.exoplatform.webui.application.WebuiRequestContext;
+import org.exoplatform.webui.application.portlet.PortletRequestContext;
+
 import javax.jcr.Value;
 
 /**
@@ -79,15 +82,28 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 	      	resourceBundle = bundleMessage[i];
 	      	if(propertyName.equals(NodetypeConstant.DC_CREATOR) && 
 	      			newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
-	      		resourceBundle = "SocialIntegration.messages.multiCreator";	      	
+	      		resourceBundle = "SocialIntegration.messages.multiCreator";	      
+	      	if(propertyName.equals(NodetypeConstant.DC_SOURCE) &&
+	      			newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
+	      		resourceBundle = "SocialIntegration.messages.addMultiSource";
 	      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
 	      	hit = true;
 	        break;
 	      }
 	    }
 	    if(!hit && propertyName.startsWith("dc:") && !propertyName.equals("dc:date")) {
+	    	PortletRequestContext portletRequestContext = WebuiRequestContext.getCurrentInstance();
+	    	String dcProperty = propertyName;
+	    	try {
+	    		dcProperty = portletRequestContext.getApplicationResourceBundle().getString("ElementSet.dialog.label." + 
+	    	  		propertyName.substring(propertyName.lastIndexOf(":") + 1, propertyName.length()));
+	    	} catch(Exception ex) {
+	    		//nothing
+	    	}
 	    	resourceBundle = "SocialIntegration.messages.updateMetadata";
-	    	commentValue = propertyName + ActivityCommonService.METADATA_VALUE_SEPERATOR + commentValue;
+	    	resourceBundle = portletRequestContext.getApplicationResourceBundle().getString(resourceBundle);
+	    	resourceBundle = resourceBundle.replace("{0}", dcProperty);
+	    	resourceBundle = resourceBundle.replace("{1}", commentValue);
 	    	Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue);
 	    }
     }

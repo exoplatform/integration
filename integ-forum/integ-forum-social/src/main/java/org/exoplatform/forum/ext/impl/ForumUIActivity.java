@@ -67,6 +67,7 @@ public class ForumUIActivity extends BaseKSActivity {
   private static final String SPACES_GROUP = SpaceUtils.SPACE_GROUP.substring(1);
   private static final String FORUM_PAGE_NAGVIGATION = "forum";
   private static final String FORUM_PORTLET_NAME = "ForumPortlet";
+  private static final String SPACE_PRETTY_NAME = "SpacePrettyName";
 
   public ForumUIActivity() {
     
@@ -227,7 +228,15 @@ public class ForumUIActivity extends BaseKSActivity {
     Map<String, String> templateParams = activity.getTemplateParams();
     
     String got = templateParams.get(ForumActivityBuilder.TOPIC_POST_COUNT_KEY);
-    return String.format("%s Replies", got);
+    int nbReplies = Integer.parseInt(got);
+    switch (nbReplies) {
+      case 0:
+        return "No Reply";
+      case 1:
+        return "1 Reply";
+      default:
+        return String.format("%s Replies", got);
+    }
   }
   
   public String getRate() {
@@ -341,4 +350,8 @@ public class ForumUIActivity extends BaseKSActivity {
     return activity;
   }
 
+  @SuppressWarnings("unused")
+  private String getSpacePrettyName() {
+    return getActivityParamValue(SPACE_PRETTY_NAME);
+  }
 }

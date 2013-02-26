@@ -15,14 +15,6 @@
            <field name="activityKeyTypeMapping">
              <map type="java.util.HashMap">
                <entry>
-                 <key><string>vote_poll</string></key>
-                 <value><string>PollUIActivity.label.vote_poll</string></value>
-               </entry>
-               <entry>
-                 <key><string>vote_again_poll</string></key>
-                 <value><string>PollUIActivity.label.vote_again_poll</string></value>
-               </entry>
-               <entry>
                  <key><string>update_poll</string></key>
                  <value><string>PollUIActivity.label.update_poll</string></value>
                </entry>

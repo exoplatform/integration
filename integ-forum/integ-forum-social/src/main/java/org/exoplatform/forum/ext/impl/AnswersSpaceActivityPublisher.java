@@ -61,6 +61,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   public static final String QUESTION_RATING = "QuestionRating";
   public static final String NUMBER_OF_ANSWERS = "NumberOfAnswers";
   public static final String NUMBER_OF_COMMENTS = "NumberOfComments";
+  public static final String SPACE_PRETTY_NAME = "SpacePrettyName";
+  public static final int NUMBER_CHAR_IN_LINE    = 70;
   
   private final static Log LOG = ExoLogger.getExoLogger(AnswersSpaceActivityPublisher.class);
   
@@ -96,6 +98,38 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     return templateParams;
   }
   
+  private ExoSocialActivity createCommentForAnswer(Identity userIdentity, Answer answer) {
+    ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
+    StringBuilder commentTitle = new StringBuilder();
+    comment.setUserId(userIdentity.getId());
+    comment.setType(ANSWER_APP_ID);
+    
+    //Build the message corresponding with an event
+    String prefix = "";
+    for (PropertyChangeEvent pce : answer.getChangeEvent()) {
+      commentTitle.append(prefix);
+      prefix="\n";
+      commentTitle.append(getAnswerMessage(pce, answer, comment));
+    }
+    comment.setTitle(commentTitle.toString());
+    return comment;
+  }
+  
+  private ExoSocialActivity createCommentWhenUpdateQuestion(Identity userIdentity, Question question) {
+    ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
+    comment.setType(ANSWER_APP_ID);
+    comment.setUserId(userIdentity.getId());
+    StringBuilder commentTitle = new StringBuilder();
+    String prefix = "";
+    for (PropertyChangeEvent pce : question.getChangeEvent()) {
+      commentTitle.append(prefix);
+      prefix="\n";
+      commentTitle.append(getQuestionMessage(pce, question, comment));
+    }
+    comment.setTitle(commentTitle.toString());
+    return comment;
+  }
+  
   @Override
   public void saveAnswer(String questionId, Answer answer, boolean isNew) {
     try {
@@ -109,38 +143,41 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       if (activityId != null) {
         try {
           ExoSocialActivity activity = activityM.getActivity(activityId);
-          StringBuilder commentTitle = new StringBuilder();
-          ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
-          String prefix = "";
-          for (PropertyChangeEvent pce : answer.getChangeEvent()) {
-            commentTitle.append(prefix);
-            prefix="\n";
-            commentTitle.append(getAnswerMessage(pce, answer, comment));
-          }
-          comment.setUserId(userIdentity.getId());
-          comment.setType(ANSWER_APP_ID);
-          if (!commentTitle.toString().equals("")) {
-            comment.setTitle(commentTitle.toString());
+          ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
+          
+          if (!comment.getTitle().equals("")) { //Case update answer or promote comment to answer
             String answerContent = formatBody(answer.getResponses());
             String promotedAnswer = "Comment "+answerContent+" has been promoted as an answer";
-            if (promotedAnswer.equals(commentTitle.toString())) {
-              faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
+            if (promotedAnswer.equals(comment.getTitle())) {
+              //promote a comment to an answer
               updateCommentTemplateParms(comment, question.getLink());
+              activityM.saveComment(activity, comment);
+              faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
+              
+              //update question activity content
+              Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(),questionId, getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+              activity.setTemplateParams(activityTemplateParams);
+              activityM.updateActivity(activity);
             } else {
+              //update answer
+              activityM.saveComment(activity, comment);
               String answerActivityId = faqS.getActivityIdForAnswer(questionId, answer);
               faqS.saveActivityIdForAnswer(questionId, answer, answerActivityId+","+comment.getId());
             }
-            activityM.saveComment(activity, comment);
           } else {
+            //Case submit new answer
             String answerContent = formatBody(answer.getResponses());
             comment.setTitle("Answer has been submitted: "+answerContent);
             I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
+            
             Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(),questionId, getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
             activity.setTemplateParams(activityTemplateParams);
             activity.setBody(formatBody(question.getDetail()));
             activityM.updateActivity(activity);
+            
             updateCommentTemplateParms(comment, question.getLink());
             activityM.saveComment(activity, comment);
+            
             faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
           }
           
@@ -151,6 +188,16 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       }
       if (activityId == null) {
         saveQuestion(question, false);
+        String newActivityId = faqS.getActivityIdForQuestion(question.getId());
+        ExoSocialActivity activity = activityM.getActivity(newActivityId);
+        ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
+        if (comment.getTitle().equals("")) {
+          String answerContent = formatBody(answer.getResponses());
+          comment.setTitle("Answer has been submitted: "+answerContent);
+          I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
+          updateCommentTemplateParms(comment, question.getLink());
+        }
+        activityM.saveComment(activity, comment);
       }
     } catch (Exception e) { // FQAService
       LOG.error("Can not record Activity for space when post answer ", e);
@@ -174,20 +221,19 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           String commentActivityId = faqS.getActivityIdForComment(questionId, cm.getId(), language);
           Map<String, String> commentTemplateParams = new HashMap<String, String>();
           commentTemplateParams.put(LINK_KEY, question.getLink());
-          if (commentActivityId != null) {
+          if (commentActivityId != null) { //try to update activity's comment
             ExoSocialActivityImpl oldComment = (ExoSocialActivityImpl) activityM.getActivity(commentActivityId);
             if (oldComment != null) {
               comment = oldComment;
               comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(cm.getComments(), (List<String>) Collections.EMPTY_LIST)));
-              comment.setTemplateParams(commentTemplateParams);
               activityM.updateActivity(comment);
             } else {
               commentActivityId = null;
             }
           }
-          if (commentActivityId == null) {
+          if (commentActivityId == null) { //create new activity's comment
             comment.setTemplateParams(commentTemplateParams);
-            comment.setTitle(cm.getComments());
+            comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(cm.getComments(), (List<String>) Collections.EMPTY_LIST)));
             comment.setUserId(userIdentity.getId());
             Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), questionId, getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
             activity.setTemplateParams(activityTemplateParams);
@@ -201,8 +247,17 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           activityId = null;
         }
       } 
-      if (activityId == null) {
+      if (activityId == null) { //Create new activity for the question and add new comment
         saveQuestion(question, false);
+        String newActivityId = faqS.getActivityIdForQuestion(questionId);
+        ExoSocialActivity activity = activityM.getActivity(newActivityId);
+        ExoSocialActivity comment = new ExoSocialActivityImpl();
+        comment.setUserId(userIdentity.getId());
+        Map<String, String> commentTemplateParams = new HashMap<String, String>();
+        commentTemplateParams.put(LINK_KEY, question.getLink());
+        comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(cm.getComments(), (List<String>) Collections.EMPTY_LIST)));
+        comment.setTemplateParams(commentTemplateParams);
+        activityM.saveComment(activity, comment);
       }
     } catch (Exception e) { //FQAService      
       LOG.error("Can not record Activity for space when post comment ", e);
@@ -220,25 +275,21 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,question.getAuthor(),false);
       Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
       String activityId = faqS.getActivityIdForQuestion(question.getId());
+      
+      //in case deleted activity, if isUpdate, we will re-create new activity and add a comment associated
+      boolean isUpdate = false;
+      
       if (activityId != null) {
+        isUpdate = true;
         try {
           ExoSocialActivity activity = activityM.getActivity(activityId);
           activity.setTitle(question.getQuestion());
           activity.setBody(formatBody(question.getDetail()));
           activity.setTemplateParams(templateParams);
-          ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
-          comment.setType(ANSWER_APP_ID);
-          comment.setUserId(userIdentity.getId());
-          StringBuilder commentTitle = new StringBuilder();
-          String prefix = "";
-          for (PropertyChangeEvent pce : question.getChangeEvent()) {
-            commentTitle.append(prefix);
-            prefix="\n";
-            commentTitle.append(getQuestionMessage(pce, question, comment));
-          }
           activityM.updateActivity(activity);
-          if (! "".equals(commentTitle.toString())) {
-            comment.setTitle(commentTitle.toString());
+          
+          ExoSocialActivity comment = createCommentWhenUpdateQuestion(userIdentity, question);
+          if (! "".equals(comment.getTitle())) {
             activityM.saveComment(activity, comment);
           }
         } catch (Exception e) {
@@ -253,6 +304,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         if (spaceIdentity != null) {
           // publish the activity in the space stream.
           streamOwner = spaceIdentity;
+          templateParams.put(SPACE_PRETTY_NAME, streamOwner.getRemoteId());
         }
         List<String> categoryIds = faqS.getCategoryPath(catId);
         Collections.reverse(categoryIds);
@@ -262,6 +314,13 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         ExoSocialActivity activity = newActivity(userIdentity,question.getQuestion(),formatBody(question.getDetail()),templateParams);
         activityM.saveActivityNoReturn(streamOwner, activity);
         faqS.saveActivityIdForQuestion(question.getId(),activity.getId());
+        
+        if (isUpdate) {
+          ExoSocialActivity comment = createCommentWhenUpdateQuestion(userIdentity, question);
+          if (! "".equals(comment.getTitle())) {
+            activityM.saveComment(activity, comment);
+          }
+        }
       }
     } catch (Exception e) { // FQAService
       LOG.error("Can not record Activity for space when add new question ", e);
@@ -324,14 +383,12 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     }
   }
   
-  public void removeAnswer(String questionPath, String answerId) {
+  public void removeAnswer(String questionPath, String answerActivityId) {
     try {
       ExoContainer exoContainer = ExoContainerContext.getCurrentContainer();
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
-      Answer answer = faqS.getAnswerById(questionPath, answerId);
       String questionActivityId = faqS.getActivityIdForQuestion(questionPath);
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
-      String answerActivityId = faqS.getActivityIdForAnswer(questionPath, answer);
       for (String id : answerActivityId.split(",")) {
         ExoSocialActivity activity = activityM.getActivity(id);
         if (activity != null) {
@@ -356,15 +413,18 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private String formatBody(String body) {
-    String[] tab = body.split("\\r?\\n");
+    String[] tab = TransformHTML.getPlainText(body).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
     int length = tab.length;
     if (length > 4) length = 4;
     StringBuilder sb = new StringBuilder();
     String prefix = "";
     for (int i=0; i<length; i++) {
       sb.append(prefix);
-      prefix = "\n";
-      sb.append(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(tab[i], (List<String>) Collections.EMPTY_LIST)));
+      prefix = "<br/>";
+      String s = tab[i];
+      if (s.length() > NUMBER_CHAR_IN_LINE)
+        s = s.substring(0, NUMBER_CHAR_IN_LINE) + "...";
+      sb.append(StringEscapeUtils.unescapeHtml(s));
     }
     return sb.toString();
   }
@@ -375,13 +435,26 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   
   private String getNbOfAnswers(Question question) {
     int numberOfAnswers = (question.getAnswers() != null) ? question.getAnswers().length : 0;
-    return String.valueOf(numberOfAnswers);
+    switch (numberOfAnswers) {
+    case 0:
+      return "No Answer";
+    case 1:
+      return "1 Answer";
+    default:
+      return String.format("%s Answers", String.valueOf(numberOfAnswers));
+    }
   }
   
   private String getNbOfComments(Question question) {
-    int numberOfAnswers = (question.getAnswers() != null) ? question.getAnswers().length : 0;
-    int numberOfComments = (question.getComments() != null) ? question.getComments().length + numberOfAnswers : 0+numberOfAnswers;
-    return String.valueOf(numberOfComments);
+    int numberOfComments = (question.getComments() != null) ? question.getComments().length : 0;
+    switch (numberOfComments) {
+    case 0:
+      return "No Comment";
+    case 1:
+      return "1 Comment";
+    default:
+      return String.format("%s Comments", String.valueOf(numberOfComments));
+    }
   }
 
   private String getQuestionMessage(PropertyChangeEvent e, Question question, ExoSocialActivity comment) {
@@ -445,6 +518,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ExoSocialActivity activity = activityM.getActivity(questionActivityId);
       Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
       activity.setTemplateParams(templateParams);
+      activity.setBody(formatBody(question.getDetail()));
       activityM.updateActivity(activity);
     } catch (Exception e) {
       LOG.debug("Fail to refresh activity "+e.getMessage());

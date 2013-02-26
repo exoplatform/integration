@@ -1,15 +1,19 @@
 package org.exoplatform.forum.ext.impl;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.DataStorage;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.faq.service.Question;
+import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
@@ -76,6 +80,11 @@ public class AnswerUIActivity extends BaseKSActivity {
   @SuppressWarnings("unused")
   private String getNumberOfComments() {
     return getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS);
+  }
+  
+  @SuppressWarnings("unused")
+  private String getSpacePrettyName() {
+    return getActivityParamValue(AnswersSpaceActivityPublisher.SPACE_PRETTY_NAME);
   }
 
   private ExoSocialActivity toActivity(Comment comment) {
@@ -208,6 +217,12 @@ public class AnswerUIActivity extends BaseKSActivity {
       ExoSocialActivity cm = uiActivity.toActivity(comment);
       ActivityManager activityM = (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
       ExoSocialActivity activity = activityM.getActivity(faqService.getActivityIdForQuestion(question.getPath()));
+      Map<String, String> templateParams = activity.getTemplateParams();
+      templateParams.put(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS, String.valueOf(question.getComments().length+1));
+      activity.setTemplateParams(templateParams);
+      activity.setBody(formatBody(question.getDetail()));
+      activityM.updateActivity(activity);
+      
       Map<String, String> commentTemplateParams = new HashMap<String, String>();
       commentTemplateParams.put(AnswersSpaceActivityPublisher.LINK_KEY, question.getLink());
       cm.setTemplateParams(commentTemplateParams);
@@ -230,5 +245,22 @@ public class AnswerUIActivity extends BaseKSActivity {
       activity = i18NActivityProcessor.processKeys(activity, userLocale);
     }
     return activity;
+  }
+  
+  private static String formatBody(String body) {
+    String[] tab = TransformHTML.getPlainText(body).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
+    int length = tab.length;
+    if (length > 4) length = 4;
+    StringBuilder sb = new StringBuilder();
+    String prefix = "";
+    for (int i=0; i<length; i++) {
+      sb.append(prefix);
+      prefix = "<br/>";
+      String s = tab[i];
+      if (s.length() > AnswersSpaceActivityPublisher.NUMBER_CHAR_IN_LINE)
+        s = s.substring(0, AnswersSpaceActivityPublisher.NUMBER_CHAR_IN_LINE) + "...";
+      sb.append(StringEscapeUtils.unescapeHtml(s));
+    }
+    return sb.toString();
   }
 }

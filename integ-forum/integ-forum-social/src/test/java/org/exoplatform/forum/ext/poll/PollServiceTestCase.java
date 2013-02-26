@@ -27,8 +27,6 @@ import org.exoplatform.social.core.storage.api.IdentityStorage;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.forum.ext.impl.PollSpaceActivityPublisher;
 import org.exoplatform.poll.service.Poll;
-import org.exoplatform.poll.service.Poll.PollAction;
-import org.exoplatform.poll.service.PollNodeTypes;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -81,7 +79,6 @@ public class PollServiceTestCase extends BaseTestCase {
     pollTopic.setOption(options);
     pollTopic.setOwner(rootIdentity.getRemoteId());
     pollTopic.setParentPath(topicPath);
-    pollTopic.setPollAction(PollAction.Create_Poll);
     pollTopic.setInTopic(false);
 
     // When create poll, an activity will be save
@@ -95,7 +92,6 @@ public class PollServiceTestCase extends BaseTestCase {
 
     // update poll
     pollTopic.setQuestion("Hello");
-    pollTopic.setPollAction(PollAction.Update_Poll);
     pollService.savePoll(pollTopic, false, false);
     activity = getManager().getActivity(activityId);
     List<ExoSocialActivity> comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
@@ -103,44 +99,23 @@ public class PollServiceTestCase extends BaseTestCase {
     assertEquals(1, comments.size());
     assertEquals("Poll has been updated.", comments.get(0).getTitle());
 
-    // vote poll
-    String[] userVote = { "root:1" };
-    pollTopic.setUserVote(userVote);
-    pollTopic.setPollAction(PollAction.Vote_Poll);
-    pollService.savePoll(pollTopic, false, true);
-    activity = getManager().getActivity(activityId);
-    comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
-    // Number of comments must be 2
-    assertEquals(2, comments.size());
-    assertEquals("Has voted for " + options[1] + ".", comments.get(1).getTitle());
-
-    // vote again poll
-    String[] voteAgain = { "root:0" };
-    pollTopic.setUserVote(voteAgain);
-    pollTopic.setPollAction(PollAction.Vote_Again_Poll);
-    pollService.savePoll(pollTopic, false, true);
-    activity = getManager().getActivity(activityId);
-    comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
-    // Number of comments must be 3
-    assertEquals(3, comments.size());
-    assertEquals("Has changed is voted for " + options[0] + ".", comments.get(2).getTitle());
-
     // delete activity
     getManager().deleteActivity(activity);
 
-    // vote again
-    String[] newVoteAgain = { "root:1" };
-    pollTopic.setUserVote(newVoteAgain);
-    pollTopic.setPollAction(PollAction.Vote_Again_Poll);
-    pollService.savePoll(pollTopic, false, true);
+    // re-update, this will re-create activity and add new comment associated
+    pollTopic.setQuestion("new question");
+    pollService.savePoll(pollTopic, false, false);
     String newActivityId = pollService.getActivityIdForOwner(pollTopic.getParentPath() + "/"+ pollTopic.getId());
     activity = getManager().getActivity(newActivityId);
     comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
-    // Number of comments must be 0
-    assertEquals(0, comments.size());
+    // Number of comments must be 1
+    assertEquals(1, comments.size());
+    assertEquals("Poll has been updated.", comments.get(0).getTitle());
 
-    // remove poll
+    // remove poll will remove activity
     pollService.removePoll(pollTopic.getId());
+    activity = getManager().getActivity(newActivityId);
+    assertNull(activity);
   }
 
   private ActivityManager getManager() {

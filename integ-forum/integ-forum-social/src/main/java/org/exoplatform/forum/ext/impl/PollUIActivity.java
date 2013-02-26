@@ -50,4 +50,9 @@ public class PollUIActivity extends BaseKSActivity {
     return getActivityParamValue(PollSpaceActivityPublisher.POLL_LINK_KEY);
   }
   
+  @SuppressWarnings("unused")
+  private String getSpacePrettyName() {
+    return getActivityParamValue(PollSpaceActivityPublisher.SPACE_PRETTY_NAME);
+  }
+  
 }
