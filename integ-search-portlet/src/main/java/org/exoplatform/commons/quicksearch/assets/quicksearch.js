@@ -19,10 +19,9 @@ function initQuickSearch(portletId) {
         </div> \
         <div class='Content'> \
           <div class='Title Ellipsis'><a href='%{url}'>%{title}</a></div> \
-          <div class='Excerpt Ellipsis'>%{excerpt}</div> \
         </div> \
       </div> \
-    ";
+    ";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \
 
     var QUICKSEARCH_TABLE_TEMPLATE=" \
           <table style='table-layout: fixed;'> \

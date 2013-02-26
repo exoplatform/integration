@@ -44,8 +44,9 @@
   overflow: hidden;
 }
 
-.QuickSearchResult .Content .Excerpt, .QuickSearchResult .Content .Excerpt * {
-  font-size: xx-small; color: grey;
+.QuickSearchResult .Content .Title{
+  padding-top: 8px;
+  vertical-align: bottom;
 }
 
 
