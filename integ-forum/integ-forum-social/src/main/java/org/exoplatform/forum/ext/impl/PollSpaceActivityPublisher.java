@@ -21,13 +21,12 @@ import java.util.Map;
 
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.poll.service.Poll;
-import org.exoplatform.poll.service.Poll.PollAction;
 import org.exoplatform.poll.service.PollEventListener;
 import org.exoplatform.poll.service.PollService;
 import org.exoplatform.poll.service.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.social.core.BaseActivityProcessorPlugin;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -49,12 +48,6 @@ public class PollSpaceActivityPublisher extends PollEventListener{
   
   public static final String UPDATE_POLL_TITLE_ID   = "update_poll";
   
-  public static final String VOTE_POLL_TITLE_ID   = "vote_poll";
-  
-  public static final String VOTE_AGAIN_POLL_TITLE_ID = "vote_again_poll";
-  
-  public static final String VOTE_VALUE           = "VOTE_VALUE";
-  
   public static final String SPACE_PRETTY_NAME = "SpacePrettyName";
   
   private ExoSocialActivity activity(Identity author, String title, String body, Map<String, String> templateParams) throws Exception {
@@ -67,7 +60,24 @@ public class PollSpaceActivityPublisher extends PollEventListener{
     return activity;
   }
   
-  private void savePollForActivity(Poll poll) {
+  private ExoSocialActivity createComment() {
+    ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
+    comment.setTitle("Poll has been updated.");
+    comment.setType(POLL_COMMENT_APP_ID);
+    I18NActivityUtils.addResourceKey(comment, UPDATE_POLL_TITLE_ID, null);
+    return comment;
+  }
+  
+  private String getCurrentUserId() {
+    ConversationState state = ConversationState.getCurrent();
+    String currentUserId = null;
+    if (state != null) {
+      currentUserId = state.getIdentity().getUserId();
+    }
+    return currentUserId;
+  }
+  
+  private void savePollForActivity(Poll poll, boolean isNew, boolean isVote) {
     PollService pollService = (PollService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PollService.class);
     IdentityManager identityManager = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
     try {
@@ -79,34 +89,23 @@ public class PollSpaceActivityPublisher extends PollEventListener{
         ExoSocialActivity activity = getManager().getActivity(activityId);
         if (activity != null) {
           poll.setInfoVote();
+          
+          //update activity's content
           activity.setBody(Utils.getInfoVote(poll));
           activity.setTitle(poll.getQuestion());
-          ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
-          String currentName = Utils.getCurrentUserVote(poll);
-          if (currentName.equals(poll.getOwner())) {
-            comment.setUserId(pollOwnerIdentity.getId());
-            comment.setTitle(poll.getPollAction().getMessage(Utils.getUserVote(poll, poll.getOwner())));
-            templateParams.put(VOTE_VALUE, Utils.getUserVote(poll, poll.getOwner()));
-          } else {
-            Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentName, false);
-            comment.setUserId(currentIdentity.getId());
-            comment.setTitle(poll.getPollAction().getMessage(Utils.getUserVote(poll,currentName)));
-            templateParams.put(VOTE_VALUE, Utils.getUserVote(poll, currentName));
-          }
-          if (poll.getPollAction().equals(PollAction.Update_Poll)) {
-            comment.setTitleId(UPDATE_POLL_TITLE_ID);
-          }
-          if (poll.getPollAction().equals(PollAction.Vote_Poll)) {
-            comment.setTitleId(VOTE_POLL_TITLE_ID);
-          } 
-          if (poll.getPollAction().equals(PollAction.Vote_Again_Poll)) {
-            comment.setTitleId(VOTE_AGAIN_POLL_TITLE_ID);
-          }
-          templateParams.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, VOTE_VALUE);
-          comment.setType(POLL_COMMENT_APP_ID);
-          comment.setTemplateParams(templateParams);
           getManager().updateActivity(activity);
-          getManager().saveComment(activity, comment);
+          
+          if (! isVote) {
+            ExoSocialActivity comment = createComment();
+            String userId = getCurrentUserId();
+            if (userId != null && ! userId.equals(pollOwnerIdentity.getRemoteId())) {
+              Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false); 
+              comment.setUserId(currentIdentity.getId());
+            } else {
+              comment.setUserId(pollOwnerIdentity.getId());
+            }
+            getManager().saveComment(activity, comment);
+          }
         } else {
           activityId = null;
           poll.setInfoVote();
@@ -122,9 +121,21 @@ public class PollSpaceActivityPublisher extends PollEventListener{
           templateParams.put(SPACE_PRETTY_NAME, pollOwnerIdentity.getRemoteId());
         }
         templateParams.put(POLL_LINK_KEY, poll.getLink());
+        newActivity.setTemplateParams(templateParams);
         getManager().saveActivityNoReturn(pollOwnerIdentity, newActivity);
         
-        newActivity.setTemplateParams(templateParams);
+        //Case activity deleted and re-updated poll
+        if (! isNew) {
+          ExoSocialActivity comment = createComment();
+          String userId = getCurrentUserId();
+          if (userId != null && ! userId.equals(pollOwnerIdentity.getRemoteId())) {
+            Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false); 
+            comment.setUserId(currentIdentity.getId());
+          } else {
+            comment.setUserId(pollOwnerIdentity.getId());
+          }
+          getManager().saveComment(newActivity, comment);
+        }
         
         if (pollService.getActivityIdForOwner(pollPath) == null) {
           saveCommentToTopicActivity(poll, "A poll has been added to the topic.", "forum.add-poll");
@@ -145,7 +156,15 @@ public class PollSpaceActivityPublisher extends PollEventListener{
       if (poll.isInTopic() && topicActivity != null) {
         ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
         Identity pollOwnerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, poll.getOwner(), false);
-        comment.setUserId(pollOwnerIdentity.getId());
+        
+        String userId = getCurrentUserId();
+        if (userId != null && ! userId.equals(pollOwnerIdentity.getRemoteId())) {
+          Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false); 
+          comment.setUserId(currentIdentity.getId());
+        } else {
+          comment.setUserId(pollOwnerIdentity.getId());
+        }
+        
         comment.setType("ks-forum:spaces");
         comment.setTitle(title);
         I18NActivityUtils.addResourceKey(comment, titleId, null);
@@ -154,8 +173,8 @@ public class PollSpaceActivityPublisher extends PollEventListener{
     }
   }
   
-  public void savePoll(Poll poll) {
-    savePollForActivity(poll);
+  public void savePoll(Poll poll, boolean isNew, boolean isVote) {
+    savePollForActivity(poll, isNew, isVote);
   }
   
   public void closePoll(Poll poll) {
