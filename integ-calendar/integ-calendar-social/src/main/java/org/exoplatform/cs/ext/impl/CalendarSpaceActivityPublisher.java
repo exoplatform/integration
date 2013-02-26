@@ -32,7 +32,6 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.common.ExoSocialException;
-import org.exoplatform.social.core.BaseActivityProcessorPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -340,7 +339,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         } else if(newEvent.getAttachment().size() != oldEvent.getAttachment().size()) {
           messagesParams.put(ATTACH_UPDATED,"") ;
         }
-        if(isAllDayEvent(newEvent) && !isAllDayEvent(oldEvent)) {
+        if(isAllDayEvent(newEvent) && !isAllDayEvent(oldEvent) && CalendarEvent.TYPE_EVENT.equals(oldEvent.getCalType())) {
           messagesParams.put(ALLDAY_UPDATED,"") ;
         } else if (!isAllDayEvent(newEvent)) {
           if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
@@ -699,7 +698,9 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   public void updatePublicEvent(CalendarEvent oldEvent, CalendarEvent newEvent, String calendarId) {
     String eventType = newEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
     Map<String, String> messagesParams = buildParams(oldEvent, newEvent);
-    updateToActivity(newEvent, calendarId, eventType, messagesParams);
+    if(messagesParams.size() > 0) {
+      updateToActivity(newEvent, calendarId, eventType, messagesParams);
+    }
   }
 
   /**

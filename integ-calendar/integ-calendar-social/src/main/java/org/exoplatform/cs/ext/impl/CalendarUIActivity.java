@@ -306,20 +306,25 @@ public class CalendarUIActivity extends BaseUIActivity {
   private String getDateString(Locale locale, Calendar calendar) {
     DateFormat dformat = DateFormat.getDateInstance(DateFormat.FULL, locale); // date format
     dformat.setTimeZone(timeZone);
-    return dformat.format(calendar.getTime());
+    return capitalizeFirstChar(dformat.format(calendar.getTime()));
   }
   
   private String getTimeString(Locale locale, Calendar calendar) {
-    String timeStr, result;
+    String timeStr;
     DateFormat tformat = DateFormat.getTimeInstance(DateFormat.SHORT, locale); // time format
     tformat.setTimeZone(timeZone);
     
     timeStr = tformat.format(calendar.getTime());
     if(LOCALE_US.equals(locale) && timeStr.indexOf(":00") > -1) {
-      result =  timeStr.replace(":00", "");
-      return result;
+      return timeStr.replace(":00", "");
     }
     return timeStr;
+  }
+  
+  private String capitalizeFirstChar(String str) {
+    StringBuilder sb = new StringBuilder(str.substring(0,1).toUpperCase());
+    sb.append(str.substring(1));
+    return sb.toString();
   }
   /**
    * builds localized string for comment content
