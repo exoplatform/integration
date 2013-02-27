@@ -188,8 +188,4 @@
     <type>org.exoplatform.commons.search.service.UnifiedSearchService</type>
   </component>
 
-  <component>
-    <type>org.exoplatform.commons.search.driver.jcr.JcrSearch</type>
-  </component>
-
 </configuration>
