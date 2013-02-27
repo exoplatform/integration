@@ -110,7 +110,7 @@
   def docTitle = uicomponent.getDocTitle();
   def docSummary = uicomponent.getDocSummary();
   def viewLink = uicomponent.getViewLink();
-  def editLink = uicomponent.getEditLink();
+  def editLink = uicomponent.getActivityEditLink();
   def downloadLink = uicomponent.getDownloadLink();
   def size = uicomponent.getSize(currentNode);
   def fileSize = uicomponent.getFileSize(currentNode);

@@ -508,6 +508,14 @@ public class FileUIActivity extends BaseUIActivity {
     }
   }
   
+  public String getActivityEditLink() {
+  	try {
+      return org.exoplatform.wcm.webui.Utils.getActivityEditLink(getContentNode());
+    }catch (Exception e) {
+      return "";
+    }
+  }
+  
   public String getDownloadLink() {
     try {
       return org.exoplatform.wcm.webui.Utils.getDownloadLink(getContentNode());

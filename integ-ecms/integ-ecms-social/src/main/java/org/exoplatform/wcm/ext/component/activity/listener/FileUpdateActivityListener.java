@@ -173,7 +173,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     	        break;
     				}
     				else if(itemsAdded.length() > 0) {
-    					resourceBundle = (addedCount > 1) ?
+    					resourceBundle = (commentValue.split(",").length > 1) ?
     							"SocialIntegration.messages.multiCreator" : "SocialIntegration.messages.singleCreator";
     					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
     	        break;
