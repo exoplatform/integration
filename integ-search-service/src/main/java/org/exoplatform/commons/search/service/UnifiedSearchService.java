@@ -1,5 +1,7 @@
 package org.exoplatform.commons.search.service;
 
+import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -19,6 +21,7 @@ import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.exoplatform.commons.api.search.SearchService;
 import org.exoplatform.commons.api.search.SearchServiceConnector;
+import org.exoplatform.commons.api.search.data.SearchContext;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
@@ -31,6 +34,10 @@ import org.exoplatform.services.rest.impl.RuntimeDelegateImpl;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.settings.impl.SettingServiceImpl;
+import org.exoplatform.web.WebAppController;
+import org.exoplatform.web.controller.metadata.ControllerDescriptor;
+import org.exoplatform.web.controller.metadata.DescriptorBuilder;
+import org.exoplatform.web.controller.router.Router;
 
 
 @Path("/search")
@@ -50,26 +57,45 @@ public class UnifiedSearchService implements ResourceContainer {
   private static SearchSetting anonymousSearchSetting = new SearchSetting(10, Arrays.asList("page", "file", "document", "discussion", "jcrNode"), true, false, true);
   private static SearchSetting defaultQuicksearchSetting = new SearchSetting(5, Arrays.asList("all"), true, true, true);
   
+  private SearchService searchService;
+  private UserPortalConfigService userPortalConfigService;
+  private SettingService settingService;
+  private Router router;
+  
+  public UnifiedSearchService(SearchService searchService, SettingService settingService, UserPortalConfigService userPortalConfigService, WebAppController webAppController){
+    this.searchService = searchService;
+    this.settingService = settingService;
+    this.userPortalConfigService = userPortalConfigService;
+    
+    try {
+      File controllerXml = new File(webAppController.getConfigurationPath());
+      URL url = controllerXml.toURI().toURL();
+      ControllerDescriptor routerDesc = new DescriptorBuilder().build(url.openStream());
+      this.router = new Router(routerDesc);
+    } catch (Exception e) {
+      LOG.error(e.getMessage(), e);
+    }
+    
+  }
   
   @GET
   public Response REST_search(@QueryParam("q") String sQuery, @QueryParam("sites") String sSites, @QueryParam("types") String sTypes, @QueryParam("offset") String sOffset, @QueryParam("limit") String sLimit, @QueryParam("sort") String sSort, @QueryParam("order") String sOrder) {
-    if(null==sQuery || sQuery.isEmpty()) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-
-    String userId = ConversationState.getCurrent().getIdentity().getUserId();
-    SearchSetting searchSetting = userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting();
-    
-    List<String> sites = null==sSites ? Arrays.asList("all") : Arrays.asList(sSites.split(",\\s*"));
-    List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
-    int offset = null==sOffset || sOffset.isEmpty() ? 0 : Integer.parseInt(sOffset);
-    int limit = null==sLimit || sLimit.isEmpty() ? 0 : Integer.parseInt(sLimit);
-    String sort = null==sSort || sSort.isEmpty() ? "relevancy" : sSort;
-    String order = null==sOrder || sOrder.isEmpty() ? "DESC" : sOrder;
-    
     try {
-      SearchService searchService = (SearchService)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SearchService.class);
-      // sql mode (for testing)
-      if(sQuery.startsWith("SELECT")) return Response.ok(searchService.search(sQuery, Arrays.asList("all"), Arrays.asList("jcrNode"), 0, 0, "jcrScore()", "DESC"), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-      return Response.ok(searchService.search(sQuery, sites, types, offset, limit, sort, order), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+      if(null==sQuery || sQuery.isEmpty()) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+  
+      String userId = ConversationState.getCurrent().getIdentity().getUserId();
+      SearchSetting searchSetting = userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting();
+      
+      List<String> sites = null==sSites ? Arrays.asList("all") : Arrays.asList(sSites.split(",\\s*"));      
+      if(sites.contains("all")) sites = userPortalConfigService.getAllPortalNames();      
+      List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
+      int offset = null==sOffset || sOffset.isEmpty() ? 0 : Integer.parseInt(sOffset);
+      int limit = null==sLimit || sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
+      String sort = null==sSort || sSort.isEmpty() ? "relevancy" : sSort;
+      String order = null==sOrder || sOrder.isEmpty() ? "DESC" : sOrder;
+    
+      SearchContext context = new SearchContext(this.router);
+      return Response.ok(searchService.search(context, sQuery, sites, types, offset, limit, sort, order), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
       return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).cacheControl(cacheControl).build();
@@ -79,8 +105,7 @@ public class UnifiedSearchService implements ResourceContainer {
   
   @GET
   @Path("/registry")
-  public static Response REST_getRegistry() {
-    SearchService searchService = (SearchService)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SearchService.class);
+  public Response REST_getRegistry() {
     LinkedHashMap<String, SearchServiceConnector> searchConnectors = new LinkedHashMap<String, SearchServiceConnector>();
     for(SearchServiceConnector connector:searchService.getConnectors()) {
       searchConnectors.put(connector.getSearchType(), connector);
@@ -91,10 +116,9 @@ public class UnifiedSearchService implements ResourceContainer {
   
   @GET
   @Path("/sites")
-  public static Response REST_getAllPortalNames() {
+  public Response REST_getSites() {
     try {
-      UserPortalConfigService dataStorage = (UserPortalConfigService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(UserPortalConfigService.class);
-      return Response.ok(dataStorage.getAllPortalNames(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+      return Response.ok(userPortalConfigService.getAllPortalNames(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
       return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).cacheControl(cacheControl).build();
@@ -103,10 +127,8 @@ public class UnifiedSearchService implements ResourceContainer {
 
   
   @SuppressWarnings("unchecked")
-  public static SearchSetting getSearchSetting() {
+  private SearchSetting getSearchSetting() {
     try {
-      SettingService settingService = (SettingServiceImpl)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingServiceImpl.class);
-      
       Long resultsPerPage = ((SettingValue<Long>)settingService.get(Context.USER, Scope.WINDOWS, "resultsPerPage")).getValue();
       String searchTypes = ((SettingValue<String>) settingService.get(Context.USER, Scope.WINDOWS, "searchTypes")).getValue();
       Boolean searchCurrentSiteOnly = ((SettingValue<Boolean>) settingService.get(Context.USER, Scope.WINDOWS, "searchCurrentSiteOnly")).getValue();
@@ -121,16 +143,14 @@ public class UnifiedSearchService implements ResourceContainer {
 
   @GET
   @Path("/setting")
-  public static Response REST_getSearchSetting() {
+  public Response REST_getSearchSetting() {
     String userId = ConversationState.getCurrent().getIdentity().getUserId();
     return Response.ok(userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   }
   
   @POST
   @Path("/setting")
-  public static Response REST_setSearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @FormParam("hideSearchForm") boolean hideSearchForm, @FormParam("hideFacetsFilter") boolean hideFacetsFilter) {
-    SettingService settingService = (SettingServiceImpl)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingServiceImpl.class);
-
+  public Response REST_setSearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @FormParam("hideSearchForm") boolean hideSearchForm, @FormParam("hideFacetsFilter") boolean hideFacetsFilter) {
     settingService.set(Context.USER, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));
     settingService.set(Context.USER, Scope.WINDOWS, "searchTypes", new SettingValue<String>(searchTypes));
     settingService.set(Context.USER, Scope.WINDOWS, "searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
@@ -142,10 +162,8 @@ public class UnifiedSearchService implements ResourceContainer {
 
 
   @SuppressWarnings("unchecked")
-  public static SearchSetting getQuickSearchSetting() {
+  private SearchSetting getQuickSearchSetting() {
     try {
-      SettingService settingService = (SettingServiceImpl)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingServiceImpl.class);
-      
       Long resultsPerPage = ((SettingValue<Long>)settingService.get(Context.GLOBAL, Scope.WINDOWS, "resultsPerPage")).getValue();
       String searchTypes = ((SettingValue<String>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchTypes")).getValue();
       Boolean searchCurrentSiteOnly = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchCurrentSiteOnly")).getValue();
@@ -158,19 +176,16 @@ public class UnifiedSearchService implements ResourceContainer {
 
   @GET
   @Path("/setting/quicksearch")
-  public static Response REST_getQuicksearchSetting() {
+  public Response REST_getQuicksearchSetting() {
     return Response.ok(getQuickSearchSetting(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   }
   
   @POST
   @Path("/setting/quicksearch")
-  public static Response REST_setQuicksearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly) {
-    SettingService settingService = (SettingServiceImpl)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingServiceImpl.class);
-
+  public Response REST_setQuicksearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly) {
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchTypes", new SettingValue<String>(searchTypes));
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
-
     return Response.ok("ok", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   } 
   
@@ -180,7 +195,7 @@ public class UnifiedSearchService implements ResourceContainer {
     SettingService settingService = (SettingServiceImpl)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingServiceImpl.class);
     SettingValue<String> enabledSearchTypes = (SettingValue<String>) settingService.get(Context.GLOBAL, Scope.APPLICATION, "enabledSearchTypes");
     if(null!=enabledSearchTypes) return Arrays.asList(enabledSearchTypes.getValue().split(",\\s*"));
-    
+
     SearchService searchService = (SearchService)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SearchService.class);
     LinkedList<String> allSearchTypes = new LinkedList<String>();
     for(SearchServiceConnector connector:searchService.getConnectors()) {
@@ -191,10 +206,9 @@ public class UnifiedSearchService implements ResourceContainer {
   
   @POST
   @Path("/enabled-searchtypes")
-  public static Response REST_setEnabledSearchtypes(@FormParam("searchTypes") String searchTypes) {
+  public Response REST_setEnabledSearchtypes(@FormParam("searchTypes") String searchTypes) {
     Collection<String> roles = ConversationState.getCurrent().getIdentity().getRoles();    
     if(!roles.isEmpty() && roles.contains("administrators")) {//only administrators can set this
-      SettingService settingService = (SettingServiceImpl)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingServiceImpl.class);
       settingService.set(Context.GLOBAL, Scope.APPLICATION, "enabledSearchTypes", new SettingValue<String>(searchTypes));      
       return Response.ok("ok", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     }

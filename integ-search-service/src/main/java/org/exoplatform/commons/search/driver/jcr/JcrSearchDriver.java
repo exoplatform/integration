@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.exoplatform.commons.api.search.SearchService;
 import org.exoplatform.commons.api.search.SearchServiceConnector;
+import org.exoplatform.commons.api.search.data.SearchContext;
 import org.exoplatform.commons.api.search.data.SearchResult;
 import org.exoplatform.commons.search.service.UnifiedSearchService;
 import org.exoplatform.services.log.ExoLogger;
@@ -20,22 +21,23 @@ public class JcrSearchDriver extends SearchService {
   private final static Log LOG = ExoLogger.getLogger(JcrSearchDriver.class);
   
   @Override
-  public Map<String, Collection<SearchResult>> search(String query, Collection<String> sites, Collection<String> types, int offset, int limit, String sort, String order) {
+  public Map<String, Collection<SearchResult>> search(SearchContext context, String query, Collection<String> sites, Collection<String> types, int offset, int limit, String sort, String order) {
     HashMap<String, ArrayList<String>> terms = parse(query); //parse query for single and quoted terms
     query = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s~", terms.get("single"), " "); //add a ~ after each single term (for fuzzy search)
 
     Map<String, Collection<SearchResult>> results = new HashMap<String, Collection<SearchResult>>();
     if(null==types || types.isEmpty()) return results;
     List<String> enabledTypes = UnifiedSearchService.getEnabledSearchTypes();
-    try {
-      for(SearchServiceConnector connector:this.getConnectors()){
-        if(!enabledTypes.contains(connector.getSearchType())) continue; //ignore disabled types
-        if(!types.contains("all") && !types.contains(connector.getSearchType())) continue; // search requested types only
-        LOG.debug("\n[UNIFIED SEARCH]: connector = " + connector.getClass().getSimpleName());
-        results.put(connector.getSearchType(), connector.search(query, sites, offset, limit, sort, order));
+    for(SearchServiceConnector connector:this.getConnectors()){
+      if(!enabledTypes.contains(connector.getSearchType())) continue; //ignore disabled types
+      if(!types.contains("all") && !types.contains(connector.getSearchType())) continue; //search requested types only
+      LOG.debug("\n[UNIFIED SEARCH]: connector = " + connector.getClass().getSimpleName());
+      try {
+        results.put(connector.getSearchType(), connector.search(context, query, sites, offset, limit, sort, order));
+      } catch (Exception e) {
+        LOG.error(e.getMessage(), e);
+        continue; //skip this connector and continue searching with the others
       }
-    } catch (Exception e) {
-      LOG.error(e.getMessage(), e);
     }
     return results;    
   }

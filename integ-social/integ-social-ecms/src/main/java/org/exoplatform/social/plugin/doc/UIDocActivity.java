@@ -52,7 +52,7 @@ import org.exoplatform.webui.event.EventListener;
      @EventConfig(listeners = UIDocActivity.DownloadDocumentActionListener.class),
      @EventConfig(listeners = UIDocActivity.ViewDocumentActionListener.class),
      @EventConfig(listeners = UIDocActivity.GotoFolderActionListener.class),
-     @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class),
+     @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
      @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
      @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
      @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),

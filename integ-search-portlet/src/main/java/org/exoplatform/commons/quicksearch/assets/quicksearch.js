@@ -2,6 +2,7 @@
 // Function to be called when the quick search template is ready
 function initQuickSearch(portletId) {
   jQuery.noConflict();
+
   (function($){
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
@@ -19,10 +20,9 @@ function initQuickSearch(portletId) {
         </div> \
         <div class='Content'> \
           <div class='Title Ellipsis'><a href='%{url}'>%{title}</a></div> \
-          <div class='Excerpt Ellipsis'>%{excerpt}</div> \
         </div> \
       </div> \
-    ";
+    ";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \
 
     var QUICKSEARCH_TABLE_TEMPLATE=" \
           <table style='table-layout: fixed;'> \
@@ -195,5 +195,6 @@ function initQuickSearch(portletId) {
 
     });
   })(jQuery);
+
   $ = jQuery; //undo .conflict();
 }

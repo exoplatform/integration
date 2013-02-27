@@ -13,6 +13,16 @@
   <description>Integration search portlet</description>
   <dependencies>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>integ-search-service</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.portlet</groupId>
+      <artifactId>portlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.juzu</groupId>
       <artifactId>juzu-bom-core</artifactId>
       <exclusions>
@@ -52,16 +62,11 @@
     </dependency>
     <dependency>
       <groupId>org.juzu</groupId>
-      <artifactId>juzu-plugins-portlet</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.juzu</groupId>
       <artifactId>juzu-plugins-less</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.portlet</groupId>
-      <artifactId>portlet-api</artifactId>
-      <scope>provided</scope>
+      <groupId>org.juzu</groupId>
+      <artifactId>juzu-plugins-portlet</artifactId>
     </dependency>
   </dependencies>
   <build>
