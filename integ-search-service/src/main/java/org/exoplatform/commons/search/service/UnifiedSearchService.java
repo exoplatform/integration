@@ -80,19 +80,20 @@ public class UnifiedSearchService implements ResourceContainer {
   
   @GET
   public Response REST_search(@QueryParam("q") String sQuery, @QueryParam("sites") String sSites, @QueryParam("types") String sTypes, @QueryParam("offset") String sOffset, @QueryParam("limit") String sLimit, @QueryParam("sort") String sSort, @QueryParam("order") String sOrder) {
-    if(null==sQuery || sQuery.isEmpty()) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-
-    String userId = ConversationState.getCurrent().getIdentity().getUserId();
-    SearchSetting searchSetting = userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting();
-    
-    List<String> sites = null==sSites ? Arrays.asList("all") : Arrays.asList(sSites.split(",\\s*"));
-    List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
-    int offset = null==sOffset || sOffset.isEmpty() ? 0 : Integer.parseInt(sOffset);
-    int limit = null==sLimit || sLimit.isEmpty() ? 0 : Integer.parseInt(sLimit);
-    String sort = null==sSort || sSort.isEmpty() ? "relevancy" : sSort;
-    String order = null==sOrder || sOrder.isEmpty() ? "DESC" : sOrder;
-    
     try {
+      if(null==sQuery || sQuery.isEmpty()) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+  
+      String userId = ConversationState.getCurrent().getIdentity().getUserId();
+      SearchSetting searchSetting = userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting();
+      
+      List<String> sites = null==sSites ? Arrays.asList("all") : Arrays.asList(sSites.split(",\\s*"));      
+      if(sites.contains("all")) sites = userPortalConfigService.getAllPortalNames();      
+      List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
+      int offset = null==sOffset || sOffset.isEmpty() ? 0 : Integer.parseInt(sOffset);
+      int limit = null==sLimit || sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
+      String sort = null==sSort || sSort.isEmpty() ? "relevancy" : sSort;
+      String order = null==sOrder || sOrder.isEmpty() ? "DESC" : sOrder;
+    
       SearchContext context = new SearchContext(this.router);
       return Response.ok(searchService.search(context, sQuery, sites, types, offset, limit, sort, order), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     } catch (Exception e) {

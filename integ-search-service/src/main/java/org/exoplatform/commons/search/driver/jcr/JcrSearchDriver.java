@@ -14,32 +14,17 @@ import org.exoplatform.commons.api.search.SearchServiceConnector;
 import org.exoplatform.commons.api.search.data.SearchContext;
 import org.exoplatform.commons.api.search.data.SearchResult;
 import org.exoplatform.commons.search.service.UnifiedSearchService;
-import org.exoplatform.portal.config.UserPortalConfigService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 public class JcrSearchDriver extends SearchService {
   private final static Log LOG = ExoLogger.getLogger(JcrSearchDriver.class);
-  private UserPortalConfigService userPortalConfigService;
-  
-  public JcrSearchDriver(UserPortalConfigService userPortalConfigService) {
-    this.userPortalConfigService = userPortalConfigService;
-  }
   
   @Override
   public Map<String, Collection<SearchResult>> search(SearchContext context, String query, Collection<String> sites, Collection<String> types, int offset, int limit, String sort, String order) {
     HashMap<String, ArrayList<String>> terms = parse(query); //parse query for single and quoted terms
     query = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s~", terms.get("single"), " "); //add a ~ after each single term (for fuzzy search)
 
-    if(sites.contains("all")){
-      try {
-        sites = userPortalConfigService.getAllPortalNames();
-      } catch (Exception e) {
-        sites = new ArrayList<String>();
-        LOG.error(e.getMessage(), e);
-      }
-    }
-    
     Map<String, Collection<SearchResult>> results = new HashMap<String, Collection<SearchResult>>();
     if(null==types || types.isEmpty()) return results;
     List<String> enabledTypes = UnifiedSearchService.getEnabledSearchTypes();
