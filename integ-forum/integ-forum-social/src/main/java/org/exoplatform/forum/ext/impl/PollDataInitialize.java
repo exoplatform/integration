@@ -99,4 +99,9 @@ public class PollDataInitialize extends SpaceListenerPlugin {
     
   }
 
+  @Override
+  public void spaceAccessEdited(SpaceLifeCycleEvent event) {
+    
+  }
+
 }
