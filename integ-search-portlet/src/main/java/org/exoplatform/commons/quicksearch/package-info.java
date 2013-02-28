@@ -22,11 +22,7 @@
         @Script(id = "jquery", src = "jquery-1.7.1.min.js", location = AssetLocation.CLASSPATH),
         @Script(id = "quicksearch", src = "quicksearch.js", location = AssetLocation.CLASSPATH),
         @Script(id = "quicksearch-setting", src = "quicksearch-setting.js", location = AssetLocation.CLASSPATH)
-    },
-    stylesheets = {
-        @Stylesheet(src = "style/quicksearch.css", location = AssetLocation.CLASSPATH),
-        @Stylesheet(src = "style/quicksearch-setting.css", location = AssetLocation.CLASSPATH)
-    }        
+    }      
 )
 package org.exoplatform.commons.quicksearch;
 

@@ -1,0 +1,20 @@
+#searchSetting {
+  height: 600px;
+}
+#searchSetting div {
+  margin-top: 10px;
+}
+#searchSetting table tr {
+  height: 30px;
+}
+#searchSetting table td:first-child {
+  width: 110px;
+}
+#lstSearchInOptions {
+  display: none;
+  border: 1px dotted;
+  border-top: none;
+  overflow-x: hidden;
+  padding-bottom: 10px;
+  margin-left: 4px;
+}

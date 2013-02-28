@@ -1,0 +1,143 @@
+.SearchBox {
+  background: url("/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/SearchIcon.png") no-repeat scroll 4px center #ffffff;
+  border: solid 1px lightgray;
+  border-radius: 12px;
+  height: 18px;
+  padding-left: 20px;
+  width: 120px;
+}
+.Selected {
+  font-weight: bold;
+}
+.Clickable {
+  cursor: pointer;
+}
+.Ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
+}
+.SearchResultType {
+  margin-bottom: 40px;
+  display: none;
+}
+.SearchResult {
+  margin-left: 5px;
+  padding-top: 5px;
+  height: 60px;
+  overflow: hidden;
+}
+.SearchResult .Avatar {
+  float: left;
+  padding-top: 3px;
+  overflow: hidden;
+}
+.SearchResult .Avatar img {
+  width: 48px;
+  height: 48px;
+}
+.SearchResult .Content {
+  padding-left: 10px;
+  overflow: hidden;
+}
+.SearchResult .Content .Title {
+  /*        font-weight: bold;*/
+
+  /*        color: lightgray !important;*/
+
+  /*        color: #555555 !important;*/
+
+}
+.SearchResult .Content .Excerpt,
+.SearchResult .Content .Excerpt * {
+  font-size: x-small;
+  height: 19px;
+}
+.SearchResult .Content .Detail {
+  font-size: small;
+  color: grey;
+}
+#facetsFilter {
+  float: left;
+  border: solid 1px lightgray;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 5px;
+  padding-bottom: 10px;
+  height: auto;
+  width: auto;
+}
+#facetsFilterTitle {
+  text-align: center;
+  background: none repeat scroll 0% 0% lightGrey;
+  /*border-bottom: 1px solid;*/
+
+  margin-bottom: 10px;
+  padding-top: 4px;
+  padding-bottom: 6px;
+}
+#facetsFilter ul {
+  list-style: none outside none;
+  padding-left: 20px;
+  margin-top: 2px;
+  margin-bottom: 16px;
+}
+#resultPage {
+  overflow: auto;
+}
+#sortType {
+  padding-right: 15px;
+}
+#sortType.Asc {
+  background: url("/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/NavigationIcons/BlueUpArrow.gif") no-repeat;
+}
+#sortType.Desc {
+  background: url("/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/NavigationIcons/BlueDownArrow.gif") no-repeat;
+}
+#searchPortlet input:focus,
+#searchPortlet textarea:focus {
+  outline: none;
+}
+.calendarBox {
+  font-family: "Helvetica Neue Bold", Helvetica, Lucida, Arial, sans-serif;
+  font-weight: bold;
+  text-align: center;
+}
+.calendarBox .heading {
+  background-color: #567AB6;
+  background-image: -moz-linear-gradient(center top, #638acd, #426393);
+  background-repeat: repeat-x;
+  border: 1px solid #224886;
+  border-radius: 4px 4px 0 0;
+  color: #FFFFFF;
+  margin: 0;
+  padding: 2px 0;
+}
+.calendarBox .content {
+  border: 1px solid #C3C3C3;
+  border-radius: 0 0 4px 4px;
+  color: #316399;
+  font-size: 24px;
+  padding: 8px;
+}
+.statusTask i {
+  background: url("/unified-search/public/images/status-task.png") repeat scroll 0 0 transparent;
+  display: inline-block;
+  height: 38px;
+  margin-top: 1px;
+  width: 38px;
+}
+.statusTask i.needs-actionIcon {
+  background-position: 0 0;
+}
+.statusTask i.in-processIcon {
+  background-position: -60px 0;
+}
+.statusTask i.completedIcon {
+  background-position: -120px 0;
+}
+.statusTask i.canceledIcon {
+  background-position: -180px 0;
+}
