@@ -71,7 +71,6 @@
   </dependencies>
 
 	<build>
-	<finalName>unified-search</finalName>
 		<plugins>
 				
 			<plugin>
