@@ -154,4 +154,8 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
 
   }
 
+  @Override
+  public void spaceRenamed(SpaceLifeCycleEvent event) {
+  }
+
 }

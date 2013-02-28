@@ -160,4 +160,8 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
 
   }
 
+  @Override
+  public void spaceRenamed(SpaceLifeCycleEvent event) {
+  }
+
 }

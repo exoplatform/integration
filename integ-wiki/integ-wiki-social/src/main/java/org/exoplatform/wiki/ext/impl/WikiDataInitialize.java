@@ -56,4 +56,8 @@ public class WikiDataInitialize extends SpaceListenerPlugin {
   public void spaceRemoved(SpaceLifeCycleEvent event) {
   }
 
+  @Override
+  public void spaceRenamed(SpaceLifeCycleEvent event) {
+  }
+
 }
