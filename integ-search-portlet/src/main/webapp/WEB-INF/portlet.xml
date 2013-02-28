@@ -33,6 +33,7 @@
        <portlet-mode>edit</portlet-mode>       
      </supports>
      <supported-locale>en</supported-locale>
+      <resource-bundle>quicksearch.quicksearch</resource-bundle>
      <portlet-info>
        <title>Quick Search</title>
        <keywords>Search</keywords>
