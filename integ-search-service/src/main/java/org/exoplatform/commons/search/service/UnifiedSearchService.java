@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,7 +17,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.exoplatform.commons.api.search.SearchService;
@@ -39,7 +42,6 @@ import org.exoplatform.web.controller.metadata.ControllerDescriptor;
 import org.exoplatform.web.controller.metadata.DescriptorBuilder;
 import org.exoplatform.web.controller.router.Router;
 
-
 @Path("/search")
 @Produces(MediaType.APPLICATION_JSON)
 public class UnifiedSearchService implements ResourceContainer {
@@ -54,7 +56,7 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   private static SearchSetting defaultSearchSetting = new SearchSetting(10, Arrays.asList("all"), false, false, false);
-  private static SearchSetting anonymousSearchSetting = new SearchSetting(10, Arrays.asList("page", "file", "document", "discussion", "jcrNode"), true, false, true);
+  private static SearchSetting anonymousSearchSetting = new SearchSetting(10, Arrays.asList("page", "file", "document", "discussion"), true, false, true);
   private static SearchSetting defaultQuicksearchSetting = new SearchSetting(5, Arrays.asList("all"), true, true, true);
   
   private SearchService searchService;
@@ -79,30 +81,39 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   @GET
-  public Response REST_search(@QueryParam("q") String sQuery, @QueryParam("sites") String sSites, @QueryParam("types") String sTypes, @QueryParam("offset") String sOffset, @QueryParam("limit") String sLimit, @QueryParam("sort") String sSort, @QueryParam("order") String sOrder) {
+  public Response REST_search(
+      @javax.ws.rs.core.Context UriInfo uriInfo,
+      @QueryParam("q") String query, 
+      @QueryParam("sites") @DefaultValue("all") String sSites, 
+      @QueryParam("types") String sTypes, 
+      @QueryParam("offset") @DefaultValue("0") String sOffset, 
+      @QueryParam("limit") String sLimit, 
+      @QueryParam("sort") @DefaultValue("relevancy") String sort, 
+      @QueryParam("order") @DefaultValue("desc") String order) 
+  {
     try {
-      if(null==sQuery || sQuery.isEmpty()) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+      MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
+      String siteName = queryParams.getFirst("searchContext[siteName]");
+      SearchContext context = new SearchContext(this.router, siteName);
+      
+      if(null==query || query.isEmpty()) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   
       String userId = ConversationState.getCurrent().getIdentity().getUserId();
       SearchSetting searchSetting = userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting();
       
-      List<String> sites = null==sSites ? Arrays.asList("all") : Arrays.asList(sSites.split(",\\s*"));      
+      List<String> sites = Arrays.asList(sSites.split(",\\s*"));      
       if(sites.contains("all")) sites = userPortalConfigService.getAllPortalNames();      
-      List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
-      int offset = null==sOffset || sOffset.isEmpty() ? 0 : Integer.parseInt(sOffset);
+      List<String> types = null==sTypes || sTypes.isEmpty() ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
+      int offset = Integer.parseInt(sOffset);
       int limit = null==sLimit || sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
-      String sort = null==sSort || sSort.isEmpty() ? "relevancy" : sSort;
-      String order = null==sOrder || sOrder.isEmpty() ? "DESC" : sOrder;
-    
-      SearchContext context = new SearchContext(this.router);
-      return Response.ok(searchService.search(context, sQuery, sites, types, offset, limit, sort, order), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+
+      return Response.ok(searchService.search(context, query, sites, types, offset, limit, sort, order), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
       return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).cacheControl(cacheControl).build();
     }
   }
 
-  
   @GET
   @Path("/registry")
   public Response REST_getRegistry() {

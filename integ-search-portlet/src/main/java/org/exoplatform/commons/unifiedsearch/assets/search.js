@@ -13,7 +13,7 @@ function initSearch() {
 
     var SEARCH_RESULT_TEMPLATE = " \
       <div class='SearchResult %{type}'> \
-        <div class='Avatar Clickable'> \
+        <div class='Avatar'> \
           %{avatar} \
         </div> \
         <div class='Content'> \
@@ -132,10 +132,6 @@ function initSearch() {
 
       var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
 
-      if("event"==result.type || "task"==result.type) {
-        result.url = "/portal/intranet/calendar" + result.url;
-      }
-
       if("event"==result.type) {
         var date = new Date(result.fromDateTime).toString().split(/\s+/g);
         avatar = " \
@@ -143,14 +139,6 @@ function initSearch() {
             <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[1] + "</div> \
             <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[2] + "</div> \
           </div> \
-        ";
-      }
-
-      if ("task"==result.type){
-        avatar = "\
-          <div class='statusTask'>\
-            <i class='"+result.imageUrl+"Icon'></i>\
-          </div>\
         ";
       }
 
@@ -167,7 +155,6 @@ function initSearch() {
 
 
     function clearResultPage(message){
-      $("#resultTypes").html("");
       $("#result").html("");
       $("#resultHeader").html(message?message:"");
       $("#resultSort").hide();
@@ -246,8 +233,20 @@ function initSearch() {
 
       setWaitingStatus(true);
 
-      var restUrl = "/rest/search?q="+ query+"&sites="+getSelectedSites()+"&types="+getSelectedTypes()+"&offset="+SERVER_OFFSET+"&limit="+LIMIT+"&sort="+sort+"&order="+order;
-      $.getJSON(restUrl, function(resultMap){
+      var searchParams = {
+        searchContext: {
+          siteName:parent.eXo.env.portal.portalName
+        },
+        q: query,
+        sites: getSelectedSites(),
+        types: getSelectedTypes(),
+        offset: SERVER_OFFSET,
+        limit: LIMIT,
+        sort: sort,
+        order: order
+      };
+
+      $.getJSON("/rest/search", searchParams, function(resultMap){
         RESULT_CACHE = [];
         $.each(resultMap, function(searchType, results){
           results.map(function(result){result.type = searchType;});
@@ -328,28 +327,6 @@ function initSearch() {
     });
 
 
-    $(".ResultType").live("click", function(){
-      $(".Selected").toggleClass("Selected");
-      $(this).toggleClass("Selected");
-
-      var offset = parseInt($(this).attr("offset"));
-      var numEntries = parseInt($(this).attr("numEntries"));
-
-      var resultHeader = (0==numEntries) ? "No more result" : "Results 1 to " + (offset+numEntries);
-      resultHeader = resultHeader + " for <strong>" + $("#txtQuery").val() + "<strong>";
-      $("#resultHeader").html(resultHeader);
-      if(numEntries==LIMIT) $("#showMore").show(); else $("#showMore").hide();
-
-      var type=$(this).attr("type");
-      $(".SearchResultType").hide(); //hide all other types
-      $("#"+type+"-type").show();
-
-      var $viewingType = $(".ResultType.Selected");
-      $("#lstSortBy").val($viewingType.attr("sortBy")||"relevancy").attr("selected",true);
-      $("#sortType").removeClass("Asc Desc").addClass($viewingType.attr("sortType")||"Desc");
-    });
-
-
     $(":checkbox[name='contentType']").live("click", function(){
       if("all"==this.value){ //All Content Types checked
         if($(this).is(":checked")) { // check/uncheck all
@@ -360,7 +337,7 @@ function initSearch() {
       } else {
         $(":checkbox[name='contentType'][value='all']").attr('checked', false); //uncheck All Content Types
       }
-      
+
       search();
     });
 
