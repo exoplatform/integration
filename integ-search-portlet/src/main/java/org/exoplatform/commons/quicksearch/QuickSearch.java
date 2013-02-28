@@ -17,15 +17,17 @@
 package org.exoplatform.commons.quicksearch;
 
 
-import javax.inject.Inject;
-import javax.portlet.PortletMode;
-
 import juzu.Path;
 import juzu.View;
 import juzu.bridge.portlet.JuzuPortlet;
 import juzu.impl.request.Request;
 import juzu.request.RequestContext;
 import juzu.template.Template;
+
+import javax.inject.Inject;
+import javax.portlet.PortletMode;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Created by The eXo Platform SAS
@@ -46,13 +48,15 @@ public class QuickSearch {
   @View
   public void index(){
     RequestContext requestContext = Request.getCurrent().getContext();
-    
+    Locale locale = requestContext.getUserContext().getLocale();
+    ResourceBundle rs = ResourceBundle.getBundle("quicksearch/quicksearch", locale);
+    String SearchInInput = rs.getString("quicksearch.input.label");
     QuickSearch_.index().setProperty(JuzuPortlet.PORTLET_MODE, PortletMode.EDIT);
     PortletMode mode = requestContext.getProperty(JuzuPortlet.PORTLET_MODE);
     if (PortletMode.EDIT == mode){      
       edit.render();
     }else {
-      index.render();
+      index.with().set("SearchInInput",SearchInInput).render();
     }
   }  
 }

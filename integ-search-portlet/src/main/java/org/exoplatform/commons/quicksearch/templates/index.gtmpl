@@ -4,13 +4,14 @@
   portletId = rand.nextInt(1000000);
 %>
 
-<div class="QuickSearchPortlet">
+<div class="uiSearchPlatformToolBarPortlet uiDropdownWithIcon dropdown" id="ToolBarSearch">
   <div>
-    <div style="padding-top: 5px;">
-      <input type="text" id="txtQuickSearchQuery-${portletId}" class="SearchBox">
-    </div>
-    <div id="quickSearchResult-${portletId}">
-    </div>
+     <input id="adminkeyword" name="adminkeyword" value="${SearchInInput}" type="text"/>
+     <a href="#" id="adminSearchLink" class="dropdown-toggle">
+       <i class="uiIconPLF24x24Search"></i>
+     </a>
+  </div>
+  <div id="quickSearchResult-${portletId}">
   </div>
 </div>
 

@@ -9,9 +9,13 @@ function initQuickSearch(portletId) {
     var SEARCH_TYPES; //enabled search types
     var QUICKSEARCH_SETTING; //quick search setting
 
-    var txtQuickSearchQuery_id = "#txtQuickSearchQuery-" + portletId;
+    var txtQuickSearchQuery_id = "#adminkeyword";
+    var linkQuickSearchQuery_id = "#adminSearchLink";
     var quickSearchResult_id = "#quickSearchResult-" + portletId;
     var seeAll_id = "#seeAll-" + portletId;
+    var isAlt = false;
+    var value = $(txtQuickSearchQuery_id).val();
+    var isDefault = false;
 
     var QUICKSEARCH_RESULT_TEMPLATE= " \
       <div class='QuickSearchResult %{type}'> \
@@ -162,7 +166,6 @@ function initQuickSearch(portletId) {
         $(quickSearchResult_id).hide();
         return;
       }
-
       if(13==e.keyCode) {
         $(seeAll_id).click(); //go to main search page if Enter is pressed
       } else {
@@ -170,9 +173,46 @@ function initQuickSearch(portletId) {
       }
     });
 
+    // set th boolean variable isAlt to false  when Alt is released
+    document.onkeyup = function (e) {
+      if (e.which == 18) isAlt = false;
+    }
+
+    // show the input search field and place the control in it if Alt + Space are pressed
+    $(document).keydown(function (e) {
+      if (e.which == 18) isAlt = true;
+      if (isAlt == true && e.which == 32) {
+        $(txtQuickSearchQuery_id).show();
+        $(txtQuickSearchQuery_id).focus();
+        return false;
+      }
+    });
+
+    //show the input search or go to the main search page when search link is clicked
+    $(linkQuickSearchQuery_id).click(function () {
+      if ($(txtQuickSearchQuery_id).is(':hidden')) {
+        if ($(txtQuickSearchQuery_id).val('')) {
+          $(txtQuickSearchQuery_id).val(value);
+          $(txtQuickSearchQuery_id).css('color', '#555');
+          isDefault = true;
+        }
+        $(txtQuickSearchQuery_id).show();
+      }
+      else
+      if (isDefault == true) {
+          $(txtQuickSearchQuery_id).hide();
+      }
+      else
+        $(seeAll_id).click(); //go to main search page if Enter is pressed
+    });
 
     $(txtQuickSearchQuery_id).focus(function(){
-      if(""!=$(txtQuickSearchQuery_id).val()) {
+      if ($(this).val(value)) {
+        $(this).val('');
+          $(this).css('color', '#000');
+          isDefault = false;
+      }
+      if(""!=$(this).val()) {
         quickSearch();
       }
     });
@@ -182,6 +222,12 @@ function initQuickSearch(portletId) {
       setTimeout(function(){$(quickSearchResult_id).hide();}, 200);
     });
 
+    //collapse the input search field when clicking outside the search box
+    $('body').click(function (evt) {
+      if ($(evt.target).parents('#ToolBarSearch').length == 0) {
+        $(txtQuickSearchQuery_id).hide();
+      }
+    });
 
     //*** The entry point ***
     // Load all needed configurations and settings from the service to prepare for the search
