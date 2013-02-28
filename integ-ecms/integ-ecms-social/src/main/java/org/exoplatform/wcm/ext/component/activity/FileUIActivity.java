@@ -70,7 +70,7 @@ import org.exoplatform.webui.event.EventListener;
  */
 @ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/ecm/social-integration/plugin/space/FileUIActivity.gtmpl", events = {
     @EventConfig(listeners = FileUIActivity.ViewDocumentActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
     @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
     @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
     @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),

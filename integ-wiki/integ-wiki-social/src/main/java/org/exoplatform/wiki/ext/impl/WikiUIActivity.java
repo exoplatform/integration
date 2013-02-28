@@ -18,7 +18,7 @@ import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
     lifecycle = UIFormLifecycle.class,
     template = "classpath:groovy/wiki/social-integration/plugin/space/WikiUIActivity.gtmpl",
     events = {
-        @EventConfig(listeners = BaseUIActivity.ToggleDisplayLikesActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
         @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
         @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
         @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),

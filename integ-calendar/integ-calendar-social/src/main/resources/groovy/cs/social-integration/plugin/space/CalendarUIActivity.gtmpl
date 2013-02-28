@@ -79,18 +79,17 @@
   }
   def commentListStatus = uicomponent.getCommentListStatus();
   def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
-  def likesDisplayed = uicomponent.isLikesDisplayed();
+  def likesDisplayed = uicomponent.isAllLoaded();
   //params for init UIActivity javascript object
-  def params = """
-    {activityId: '${activity.id}',
-     inputWriteAComment: '$inputWriteAComment',
-     commentMinCharactersAllowed: ${uicomponent.getCommentMinCharactersAllowed()},
-     commentMaxCharactersAllowed: ${uicomponent.getCommentMaxCharactersAllowed()},
-     commentFormDisplayed: $commentFormDisplayed,
-     allCommentSize: ${allComments.size()},
-     commentFormFocused: ${uicomponent.isCommentFormFocused()}
-    }
-  """
+	def params = """ {
+		activityId: '${activity.id}',
+		inputWriteAComment: '$inputWriteAComment',
+		commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
+		commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
+		commentFormDisplayed: '$commentFormDisplayed',
+		allCommentSize: '${allComments.size()}',
+		commentFormFocused: '${uicomponent.isCommentFormFocused()}'
+	} """
   //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
   jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
   

@@ -210,10 +210,6 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     String remoteUser = requestContext.getRemoteUser();
     saveActivity(activityParams, activityManager, identityManager, ownerIdentity, remoteUser);
 
-    if ((uiUserActivitiesDisplay.getSelectedDisplayMode() == UIUserActivitiesDisplay.DisplayMode.NETWORK_UPDATES)
-        || (uiUserActivitiesDisplay.getSelectedDisplayMode() == UIUserActivitiesDisplay.DisplayMode.SPACE_UPDATES)) {
-      uiUserActivitiesDisplay.setSelectedDisplayMode(UIUserActivitiesDisplay.DisplayMode.MY_STATUS);
-    }
   }
 
   private void postActivityToSpace(UIComponent source, WebuiRequestContext requestContext,

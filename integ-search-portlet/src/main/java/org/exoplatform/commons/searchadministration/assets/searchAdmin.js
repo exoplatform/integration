@@ -1,6 +1,7 @@
 
 function initSearchAdmin() {
   jQuery.noConflict();
+
   (function($){
     $.getJSON("/rest/search/registry", function(registry){
       var row_template = " \
@@ -9,7 +10,6 @@ function initSearchAdmin() {
           <td style='padding-left: 6px;'>%{description}</td> \
           <td style='text-align: center;'> \
             <input type='button' class='ContentType' id='%{id}' value='Enable'> \
-            <input type='button' value='Reindex' disabled> \
           </td> \
         </tr> \
       ";
@@ -24,7 +24,7 @@ function initSearchAdmin() {
 
       $.each(searchTypes, function(i, type){
         $(".ContentType#"+type).val("Disable");
-        $(".ContentType#"+type).next().attr("disabled", false);
+        //$(".ContentType#"+type).next().attr("disabled", false);
       });
     });
 
@@ -32,10 +32,10 @@ function initSearchAdmin() {
     $(".ContentType").live("click", function(){
       if("Enable"==$(this).val()) {
         $(this).val("Disable");
-        $(this).next().attr("disabled", false);
+        //$(this).next().attr("disabled", false);
       } else {
         $(this).val("Enable");
-        $(this).next().attr("disabled", true);
+        //$(this).next().attr("disabled", true);
       }
 
       var enabledTypes = [];
@@ -56,4 +56,6 @@ function initSearchAdmin() {
       });
     });
   })(jQuery);
+
+  $ = jQuery; //undo .conflict();
 }

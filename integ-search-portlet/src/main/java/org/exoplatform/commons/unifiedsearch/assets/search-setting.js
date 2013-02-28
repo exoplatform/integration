@@ -1,6 +1,7 @@
 
 function initSearchSetting() {
   jQuery.noConflict();
+  
   (function($){
     var CONNECTORS;
 
@@ -100,4 +101,6 @@ function initSearchSetting() {
 
     });
   })(jQuery);
+
+  $ = jQuery; //undo .conflict();
 }

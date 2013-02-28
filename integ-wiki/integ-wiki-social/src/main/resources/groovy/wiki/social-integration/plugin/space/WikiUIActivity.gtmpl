@@ -79,7 +79,7 @@
   }
   def commentListStatus = uicomponent.getCommentListStatus();
   def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
-  def likesDisplayed = uicomponent.isLikesDisplayed();
+  def likesDisplayed = uicomponent.isAllLoaded();
   //params for init UIActivity javascript object
   def params = """ {
       activityId: '${activity.id}',
