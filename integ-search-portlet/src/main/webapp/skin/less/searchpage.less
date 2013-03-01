@@ -1,3 +1,49 @@
+@import "variables.less"; 
+@import "mixins.less";
+
+
+
+.uiSearchPortlet {
+	padding: 1px;
+	.searchContainer {
+		margin: 20px;
+		border-bottom: 1px solid #cccccc;
+		.searchForm > input[type="text"] {
+			margin: 0;
+		}
+		.result {
+			padding: 20px 0 5px;
+		}
+	}
+	
+	.filterContainer ul.listFilter {
+	  padding-left: 20px;
+	}
+	
+	.uiAction .btn {
+		width: 100%; 
+		display: block;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .SearchBox {
   background: url("/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/SearchIcon.png") no-repeat scroll 4px center white;
@@ -67,7 +113,7 @@
   font-size: small; color: grey;
 }
 
-
+/*
 #facetsFilter {
   float: left;
   border: solid 1px lightgray;
@@ -82,7 +128,7 @@
 #facetsFilterTitle {
   text-align: center;
   background: none repeat scroll 0% 0% lightGrey;
-  /*border-bottom: 1px solid;*/
+  border-bottom: 1px solid;
   margin-bottom: 10px;
   padding-top: 4px;
   padding-bottom: 6px;
@@ -95,10 +141,25 @@
   margin-bottom: 16px;
 }
 
+*/
 
+
+/*
 #resultPage {
   overflow: auto;
 }
+*/
+
+#facetsFilterTitle {
+  text-align: center;
+  background: none repeat scroll 0% 0% lightGrey;
+  /*border-bottom: 1px solid;*/
+  margin-bottom: 10px;
+  padding-top: 4px;
+  padding-bottom: 6px;
+}
+
+
 
 
 #sortType {
@@ -163,34 +224,5 @@
 .statusTask i.canceledIcon {
     background-position: -180px 0;
 }
-
-/*for setting*/
-
-#searchSetting {
-  height: 600px;
-}
-
-#searchSetting div {
-  margin-top: 10px;
-}
-
-#searchSetting table tr {
-  height: 30px;
-}
-
-#searchSetting table td:first-child {
-  width: 110px;
-}
-
-
-#lstSearchInOptions {
-  display: none;
-  border: 1px dotted;
-  border-top:none;
-  overflow-x: hidden;
-  padding-bottom: 10px;
-  margin-left: 4px;
-}
-
 
 

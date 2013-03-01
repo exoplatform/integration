@@ -80,7 +80,7 @@ function initSearch() {
         var connector = connectors[searchType];
         // Show only the types user selected in setting
         if(connector && (-1 != $.inArray("all", searchSetting.searchTypes) || -1 != $.inArray(searchType, searchSetting.searchTypes))) {
-          contentTypes.push("<li><label><input type='checkbox' name='contentType' value='" + connector.searchType + "'>" + connector.displayName + "</label></li>");
+          contentTypes.push("<li><span class='uiCheckbox'><input type='checkbox' class='checkbox' name='contentType' value='" + connector.searchType + "'><span></span></span>" + connector.displayName + "</li>");
         }
       });
       if(0!=contentTypes.length) {
@@ -98,7 +98,7 @@ function initSearch() {
         $.getJSON("/rest/search/sites", function(sites){
           var siteNames = [];
           $.each(sites, function(i, site){
-            siteNames.push("<li><label><input type='checkbox' name='site' value='" + site + "'>" + site.toProperCase() + "</label></li>");
+            siteNames.push("<li><span class='uiCheckbox'><input type='checkbox' class='checkbox' name='site' value='" + site + "'><span></span></span>" + site.toProperCase() + "</li>");
           });
           $("#lstSites").html(siteNames.join(""));
           if(callback) callback();

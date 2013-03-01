@@ -1,39 +1,51 @@
 
-<div id="searchPortlet">
+<div id="searchPortlet" class="uiSearchPortlet">
 
   <div id="searchPage">
-
-    <div id="searchForm" style="display: none; padding-top: 10px; text-align: center;">
-      <input type="text" id="txtQuery" class="SearchBox" style="width: 250px;">
-      <input type="button" id="btnSearch" value="Search">
-      <hr style="color: lightgray; margin: 10px 0px 0px;">
-    </div>
-
-    <div id="facetsFilter" style="display: none;">
-      <div id="facetsFilterTitle">Filter By</div>
-      <div style="padding-right: 5px;">
-        <div id="siteFilter">
-          <input type="checkbox" name="site" value="all">All Sites
-          <ul id="lstSites"></ul>
-        </div>
-
-        <input type="checkbox" name="contentType" value="all">All Content Types
-        <ul id="lstContentTypes"></ul>
-      </div>
-    </div>
-
-    <div id="resultPage" style="margin-left: 10px; margin-right: 20px; margin-top: 10px;">
-      <div id="resultTypes" style="display: none; margin-bottom: 15px; padding-top: 4px;"></div>
-      <div style="margin-bottom: 10px;">
+    
+    <div id="searchForm" class="searchContainer" style="display: none;">
+    	<div class="searchForm">
+	      <input type="text" id="txtQuery" style="width: 250px;">
+	      <button type="button" class="btn btn-primary" id="btnSearch" value="Search">Search</button>
+	    </div>
+      <div class="result">
         <span id="resultHeader"></span>
         <span id="resultSort" style="float: right; display: none;">
           Sort By: <select id="lstSortBy"></select><span id="sortType" class="Desc Clickable">&nbsp;</span>
         </span>
       </div>
-      <div id="result"></div>
-      <div id="showMore" style="display: none; text-align: center; margin-bottom: 20px; margin-top: 40px;"><input type="button" id="btnShowMore" value="Show More Results"/></div>
     </div>
-
+		
+		<div class="clearfix">
+		
+	    <div id="facetsFilter" style="display: none;" class="filterContainer span3">
+	    	<div class="uiBox">
+		      <h5 class="title">Filter By</h5>
+		      <div class="uiContentBox">
+		      
+		        <div id="siteFilter" class="siteFilter">
+		          <h6><span class="uiCheckbox"><input type="checkbox" class="checkbox" name="site" value="all"><span></span></span>All Sites</h6>
+		          <ul id="lstSites" class="listFilter"></ul>
+		        </div>
+						
+						<div class="contentTypeFilter">
+			        <h6><span class="uiCheckbox"><input class="checkbox" type="checkbox" name="contentType" value="all"><span></span></span>All Content Types</h6>
+			        <ul id="lstContentTypes" class="listFilter"></ul>
+		        </div>
+		        
+		      </div>
+		    </div>
+	    </div>
+	
+	    <div id="resultPage" class="resultPage offset3">
+	      <div id="resultTypes" style="display: none; margin-bottom: 15px; padding-top: 4px;"></div>
+	      
+	      <div id="result"></div>
+	      <div id="showMore" class="uiAction"><button type="button" class="btn" id="btnShowMore" value="Show More Results">Show More Results</button></div>
+	    </div>
+	    
+		</div>
+		
   </div>
 
 </div>
