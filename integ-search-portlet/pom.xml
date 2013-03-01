@@ -71,7 +71,31 @@
   </dependencies>
 <build>
 		<plugins>
-
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>unpack</id>
+                  <phase>generate-resources</phase>
+                  <goals>
+                    <goal>unpack</goal>
+                  </goals>
+                  <configuration>
+                    <artifactItems>
+                      <artifactItem>
+                        <groupId>org.exoplatform.platform-ui</groupId>
+                        <artifactId>platform-ui-web-eXoResources</artifactId>
+                        <type>war</type>
+                        <overWrite>false</overWrite>
+                        <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+                        <includes>skin/less/mixins.less,skin/less/variables.less</includes>
+                      </artifactItem>
+                    </artifactItems>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.lesscss</groupId>
 				<artifactId>lesscss-maven-plugin</artifactId>
@@ -83,8 +107,12 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<sourceDirectory>${basedir}/src/main/webapp/skin/less</sourceDirectory>
-							<outputDirectory>${basedir}/src/main/webapp/skin/css</outputDirectory>
+                            <sourceDirectory>${project.build.directory}/${project.build.finalName}/skin/less</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/skin/css</outputDirectory>
+                            <excludes>
+                              <exclude>mixins.less</exclude>
+                              <exclude>variables.less</exclude>
+                            </excludes>
 						</configuration>
 					</execution>
 				</executions>
