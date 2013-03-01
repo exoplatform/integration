@@ -17,6 +17,7 @@
 package org.exoplatform.forum.ext.activity;
 
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.ForumService;
@@ -29,6 +30,7 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -49,8 +51,7 @@ public class ForumActivityUtils {
   
   
   public static Identity getSpaceIdentity(String forumId) {
-    String prettyname = forumId.replaceFirst(Utils.FORUM_SPACE_ID_PREFIX, "");
-    Space space = getSpaceService().getSpaceByPrettyName(prettyname);
+    Space space = getSpaceService().getSpaceByGroupId(getSpaceGroupId(forumId));
     Identity spaceIdentity = null;
     if (space != null) {
       spaceIdentity = getIdentityManager().getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
@@ -58,6 +59,12 @@ public class ForumActivityUtils {
     return spaceIdentity;
   }
   
+  public static String getSpaceGroupId(String forumId) {
+    String groupId = forumId.replaceFirst(Utils.FORUM_SPACE_ID_PREFIX, "");
+    String spaceGroupId = SpaceUtils.SPACE_GROUP + CommonUtils.SLASH + groupId;
+    return spaceGroupId;
+  }
+
   public static boolean hasSpace(String forumId) {
     return !Utils.isEmpty(forumId) && forumId.indexOf(Utils.FORUM_SPACE_ID_PREFIX) >= 0;
   }

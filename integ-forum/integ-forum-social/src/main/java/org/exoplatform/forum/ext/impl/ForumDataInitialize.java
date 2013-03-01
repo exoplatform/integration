@@ -30,6 +30,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.Group;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.social.core.space.SpaceListenerPlugin;
 import org.exoplatform.social.core.space.SpaceUtils;
@@ -81,7 +82,8 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
     String parentGrId = "";
     try {
       OrganizationService service = (OrganizationService) exoContainer.getComponentInstanceOfType(OrganizationService.class);
-      parentGrId = service.getGroupHandler().findGroupById(space.getGroupId()).getParentId();
+      Group group = service.getGroupHandler().findGroupById(space.getGroupId());
+      parentGrId = group.getParentId();
 
       String categorySpId = Utils.CATEGORY + parentGrId.replaceAll(CommonUtils.SLASH, CommonUtils.EMPTY_STR);
       Category category = fServie.getCategory(categorySpId);
@@ -94,7 +96,7 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         category.setDescription("All forums from spaces");
         fServie.saveCategory(category, true);
       }
-      String forumId = Utils.FORUM_SPACE_ID_PREFIX + space.getPrettyName();
+      String forumId = Utils.FORUM_SPACE_ID_PREFIX + group.getGroupName();
       if (fServie.getForum(categorySpId, forumId) == null) {
         Set<String> prs = new HashSet<String>(Arrays.asList(category.getUserPrivate()));
         prs.add(space.getGroupId());

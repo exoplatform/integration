@@ -39,6 +39,7 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.core.space.SpaceUtils;
+import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.web.url.navigation.NavigationResource;
@@ -67,7 +68,7 @@ public class ForumUIActivity extends BaseKSActivity {
   private static final String SPACES_GROUP = SpaceUtils.SPACE_GROUP.substring(1);
   private static final String FORUM_PAGE_NAGVIGATION = "forum";
   private static final String FORUM_PORTLET_NAME = "ForumPortlet";
-  private static final String SPACE_PRETTY_NAME = "SpacePrettyName";
+  private static final String SPACE_GROUP_ID  = "SpaceGroupId";
 
   public ForumUIActivity() {
     
@@ -102,8 +103,7 @@ public class ForumUIActivity extends BaseKSActivity {
       //
       if (cate.getId().indexOf(SPACES_GROUP) > 0) {
         Forum forum = fs.getForum(categoryId, forumId);
-        String prefixId = Utils.FORUM_SPACE_ID_PREFIX;
-        String spaceGroupId = SpaceUtils.SPACE_GROUP.concat("/").concat(forum.getId().replaceFirst(prefixId, ""));
+        String spaceGroupId = ForumActivityUtils.getSpaceGroupId(forum.getId());
         link = buildTopicLink(spaceGroupId, topicId);
       } else {
         PortalRequestContext prc = Util.getPortalRequestContext();
@@ -176,15 +176,16 @@ public class ForumUIActivity extends BaseKSActivity {
    * 
    * @param space
    * @return
-   * @since 1.2.1
+   * @since 4.x
    */
   public static String getSpaceHomeURL(String spaceGroupId) {
     // work-around for SOC-2366 when rename existing space
     String permanentSpaceName = spaceGroupId.split("/")[2];
+    Space space = ForumActivityUtils.getSpaceService().getSpaceByGroupId(spaceGroupId);
     
     NodeURL nodeURL =  RequestContext.getCurrentInstance().createURL(NodeURL.TYPE);
     NavigationResource resource = new NavigationResource(SiteType.GROUP, SpaceUtils.SPACE_GROUP + "/"
-                                        + permanentSpaceName, permanentSpaceName);
+                                        + permanentSpaceName, space.getPrettyName());
    
     return nodeURL.setResource(resource).toString(); 
   }
@@ -351,7 +352,7 @@ public class ForumUIActivity extends BaseKSActivity {
   }
 
   @SuppressWarnings("unused")
-  private String getSpacePrettyName() {
-    return getActivityParamValue(SPACE_PRETTY_NAME);
+  private String getSpaceGroupId() {
+    return getActivityParamValue(SPACE_GROUP_ID);
   }
 }

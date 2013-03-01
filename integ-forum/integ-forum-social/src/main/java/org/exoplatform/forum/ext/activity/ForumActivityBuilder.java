@@ -62,7 +62,7 @@ public class ForumActivityBuilder {
 
   private static final int NUMBER_CHAR_IN_LINE    = 70;
   
-  public static final String SPACE_PRETTY_NAME  = "SpacePrettyName";
+  public static final String SPACE_GROUP_ID  = "SpaceGroupId";
   
   private ForumActivityBuilder() {
     
@@ -167,7 +167,7 @@ public class ForumActivityBuilder {
     templateParams.put(CATE_ID_KEY, topic.getCategoryId());
     
     if (ForumActivityUtils.hasSpace(topic.getForumId())) {
-      templateParams.put(SPACE_PRETTY_NAME, ForumActivityUtils.getSpaceIdentity(topic.getForumId()).getRemoteId());
+      templateParams.put(SPACE_GROUP_ID, ForumActivityUtils.getSpaceGroupId(topic.getForumId()));
     }
     activity.setTemplateParams(templateParams);
     return activity;

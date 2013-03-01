@@ -1,9 +1,7 @@
 package org.exoplatform.forum.ext.impl;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -19,6 +17,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.mop.SiteType;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
@@ -29,8 +28,14 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.processor.I18NActivityProcessor;
+import org.exoplatform.social.core.space.SpaceUtils;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.web.application.ApplicationMessage;
+import org.exoplatform.web.application.RequestContext;
+import org.exoplatform.web.url.navigation.NavigationResource;
+import org.exoplatform.web.url.navigation.NodeURL;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -53,18 +58,38 @@ public class AnswerUIActivity extends BaseKSActivity {
   
   @SuppressWarnings("unused")
   private String getViewCommentLink(ExoSocialActivity comment) {
-    String value = null;
-    String key = AnswersSpaceActivityPublisher.LINK_KEY;
     Map<String, String> params = comment.getTemplateParams();
-    if (params != null) {
-      value = params.get(key);
-    }
-    return value != null ? value : "";
+    String itemId = params.get(AnswersSpaceActivityPublisher.LINK_KEY);
+    if (itemId == null || itemId.length() == 0)
+      return "";
+    String linkQuestion = getLink();
+    String commentLink = String.format("%s/%s", linkQuestion, itemId);
+    return commentLink;
+    
   }
   
-  @SuppressWarnings("unused")
+  public String getSpaceHomeURL(String spaceGroupId) {
+    if ("".equals(spaceGroupId))
+      return null;
+    String permanentSpaceName = spaceGroupId.split("/")[2];
+    SpaceService spaceService  = (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
+    Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+    
+    NodeURL nodeURL =  RequestContext.getCurrentInstance().createURL(NodeURL.TYPE);
+    NavigationResource resource = new NavigationResource(SiteType.GROUP, SpaceUtils.SPACE_GROUP + "/"
+                                        + permanentSpaceName, space.getPrettyName());
+   
+    return nodeURL.setResource(resource).toString(); 
+  }
+  
   private String getLink() {
-    return getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY);
+    String spaceLink = getSpaceHomeURL(getSpaceGroupId());
+    if (spaceLink == null) {
+      return getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY);
+    }
+    String[] tab = getQuestionId().split("/");
+    String answerLink = String.format("%s/answer/%s", spaceLink, tab[tab.length-1]);
+    return answerLink;
   }
   
   @SuppressWarnings("unused")
@@ -82,9 +107,12 @@ public class AnswerUIActivity extends BaseKSActivity {
     return getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS);
   }
   
-  @SuppressWarnings("unused")
-  private String getSpacePrettyName() {
-    return getActivityParamValue(AnswersSpaceActivityPublisher.SPACE_PRETTY_NAME);
+  private String getSpaceGroupId() {
+    return getActivityParamValue(AnswersSpaceActivityPublisher.SPACE_GROUP_ID);
+  }
+  
+  private String getQuestionId() {
+    return getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID);
   }
 
   private ExoSocialActivity toActivity(Comment comment) {

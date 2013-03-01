@@ -36,7 +36,7 @@ import org.exoplatform.social.core.manager.ActivityManager;
 public abstract class TopicActivityTask implements ActivityTask<ForumActivityContext> {
   protected static final Log   LOG = ExoLogger.getExoLogger(TopicActivityTask.class);
   
-  public static final String SPACE_PRETTY_NAME = "SpacePrettyName";
+  public static final String SPACE_GROUP_ID  = "SpaceGroupId";
 
   /**
    * 
@@ -706,7 +706,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       templateParams.put(ForumActivityBuilder.CATE_ID_KEY, topic.getCategoryId());
       
       if (ForumActivityUtils.hasSpace(topic.getForumId())) {
-        templateParams.put(SPACE_PRETTY_NAME, activity.getStreamOwner());
+        templateParams.put(SPACE_GROUP_ID, ForumActivityUtils.getSpaceGroupId(topic.getForumId()));
       }
       
       activity.setTemplateParams(templateParams);

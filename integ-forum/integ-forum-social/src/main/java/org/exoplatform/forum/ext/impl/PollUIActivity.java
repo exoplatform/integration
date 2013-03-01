@@ -17,7 +17,15 @@
 package org.exoplatform.forum.ext.impl;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.portal.mop.SiteType;
+import org.exoplatform.social.core.space.SpaceUtils;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
+import org.exoplatform.web.application.RequestContext;
+import org.exoplatform.web.url.navigation.NavigationResource;
+import org.exoplatform.web.url.navigation.NodeURL;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -47,12 +55,30 @@ public class PollUIActivity extends BaseKSActivity {
   
   @SuppressWarnings("unused")
   private String getLink() {
-    return getActivityParamValue(PollSpaceActivityPublisher.POLL_LINK_KEY);
+    String spaceLink = getSpaceHomeURL(getSpaceGroupId());
+    if (spaceLink == null)
+      return getActivityParamValue(PollSpaceActivityPublisher.POLL_LINK_KEY);
+    String topicId = getActivityParamValue(PollSpaceActivityPublisher.POLL_ID);
+    String topicLink = String.format("%s/forum/topic/%s", spaceLink, topicId);
+    return topicLink;
   }
   
-  @SuppressWarnings("unused")
-  private String getSpacePrettyName() {
-    return getActivityParamValue(PollSpaceActivityPublisher.SPACE_PRETTY_NAME);
+  private String getSpaceGroupId() {
+    return getActivityParamValue(PollSpaceActivityPublisher.SPACE_GROUP_ID);
+  }
+  
+  public String getSpaceHomeURL(String spaceGroupId) {
+    if ("".equals(spaceGroupId))
+      return null;
+    String permanentSpaceName = spaceGroupId.split("/")[2];
+    SpaceService spaceService  = (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
+    Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+    
+    NodeURL nodeURL =  RequestContext.getCurrentInstance().createURL(NodeURL.TYPE);
+    NavigationResource resource = new NavigationResource(SiteType.GROUP, SpaceUtils.SPACE_GROUP + "/"
+                                        + permanentSpaceName, space.getPrettyName());
+   
+    return nodeURL.setResource(resource).toString(); 
   }
   
 }

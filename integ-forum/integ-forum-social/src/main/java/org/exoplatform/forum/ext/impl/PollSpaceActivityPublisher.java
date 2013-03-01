@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.poll.service.Poll;
 import org.exoplatform.poll.service.PollEventListener;
 import org.exoplatform.poll.service.PollService;
@@ -35,20 +36,21 @@ import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.processor.I18NActivityUtils;
+import org.exoplatform.social.core.space.SpaceUtils;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class PollSpaceActivityPublisher extends PollEventListener{
 
-  public static final String POLL_APP_ID          = "ks-poll:spaces";
-  
-  public static final String POLL_COMMENT_APP_ID  = "poll:spaces";
-  
-  private static final Log   LOG                  = ExoLogger.getExoLogger(PollSpaceActivityPublisher.class);
-
-  public static final String POLL_LINK_KEY        = "PollLink";
-  
+  public static final String POLL_APP_ID            = "ks-poll:spaces";
+  public static final String POLL_COMMENT_APP_ID    = "poll:spaces";
+  private static final Log   LOG                    = ExoLogger.getExoLogger(PollSpaceActivityPublisher.class);
+  public static final String POLL_LINK_KEY          = "PollLink";
   public static final String UPDATE_POLL_TITLE_ID   = "update_poll";
+  public static final String SPACE_GROUP_ID         = "SpaceGroupId";
+  public static final String CATE_SPACE_ID_PREFIX   = "forumSpace".intern();
   
-  public static final String SPACE_PRETTY_NAME = "SpacePrettyName";
+  public static final String POLL_ID = "Id";
   
   private ExoSocialActivity activity(Identity author, String title, String body, Map<String, String> templateParams) throws Exception {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
@@ -118,9 +120,10 @@ public class PollSpaceActivityPublisher extends PollEventListener{
         Identity spaceIdentity = getSpaceIdentity(poll);
         if (spaceIdentity != null) {
           pollOwnerIdentity = spaceIdentity;
-          templateParams.put(SPACE_PRETTY_NAME, pollOwnerIdentity.getRemoteId());
+          templateParams.put(SPACE_GROUP_ID, getSpaceGroupId(poll.getParentPath()));
         }
         templateParams.put(POLL_LINK_KEY, poll.getLink());
+        templateParams.put(POLL_ID, poll.getId().replaceFirst("poll", "topic"));
         newActivity.setTemplateParams(templateParams);
         getManager().saveActivityNoReturn(pollOwnerIdentity, newActivity);
         
@@ -199,18 +202,26 @@ public class PollSpaceActivityPublisher extends PollEventListener{
     return (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
   }
   
+  private String getSpaceGroupId(String path) {
+    String spaceGroupId = "";
+    if (path.contains("forumCategoryspaces")) {
+      String[] tab = path.split("/");
+      String spaceName = tab[tab.length-2].replace(CATE_SPACE_ID_PREFIX, "");
+      spaceGroupId = SpaceUtils.SPACE_GROUP + CommonUtils.SLASH + spaceName;
+    }
+    return spaceGroupId;
+  }
+  
   private Identity getSpaceIdentity(Poll poll) {
     IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
     String path = poll.getParentPath();
-    String spaceName = "";
-    if (path.contains("forumCategoryspaces")) {
-      String[] tab = path.split("/");
-      spaceName = tab[tab.length-2].replace("forumSpace", "");
-    }
-    if ("".equals(spaceName)) {
+    String spaceGroupId = getSpaceGroupId(path);
+    if ("".equals(spaceGroupId)) {
       return null;
     } else {
-      return identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, spaceName, false);
+      SpaceService spaceService  = (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
+      Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+      return identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
     }
   }
   

@@ -124,14 +124,14 @@
   activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
 
   def ownerIdentity = uicomponent.ownerIdentity;
-  def spacePrettyName = uicomponent.getSpacePrettyName();
+  def spaceGroupId = uicomponent.getSpaceGroupId();
   if (uicomponent.isUserActivity()) {
     ownerUri = LinkProvider.getUserProfileUri(ownerIdentity.getRemoteId());
     ownerAvatar = ownerIdentity.profile.avatarUrl;
     ownerName = ownerIdentity.profile.fullName;
     if (!ownerAvatar) ownerAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
-    if (spacePrettyName.length() > 0) {
-      Space space = Utils.getSpaceService().getSpaceByPrettyName(spacePrettyName);
+    if (spaceGroupId.length() > 0) {
+      Space space = Utils.getSpaceService().getSpaceByGroupId(spaceGroupId);
       spaceAvatar = space.avatarUrl;
       spaceUri = LinkProvider.getSpaceUri(space.url);
       spaceName = space.displayName;
@@ -168,7 +168,7 @@
         <%}%>
       </div>
       <div class="headerDescription">
-        <% if (uicomponent.isUserActivity() && spacePrettyName.length() > 0) {%>
+        <% if (uicomponent.isUserActivity() && spaceGroupId.length() > 0) {%>
           <a class="SpaceAvatar" title="$spaceName" href="$spaceUri">
             <img title="$spaceName" src="$spaceAvatar" width="15" height="15" alt="$spaceName" />
           </a>

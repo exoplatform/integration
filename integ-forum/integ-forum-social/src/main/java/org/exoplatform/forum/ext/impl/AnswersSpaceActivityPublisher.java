@@ -32,6 +32,7 @@ import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -43,6 +44,7 @@ import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.processor.I18NActivityUtils;
+import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -53,29 +55,38 @@ import org.exoplatform.social.core.space.spi.SpaceService;
  */
 public class AnswersSpaceActivityPublisher extends AnswerEventListener {
 
-  public static final String SPACE_APP_ID = "ks-answer:spaces";
-  public static final String ANSWER_APP_ID = "answer:spaces";
-  public static final String QUESTION_ID = "Id";
-  public static final String LINK_KEY = "Link";
-  public static final String LANGUAGE_KEY = "Language";
-  public static final String QUESTION_RATING = "QuestionRating";
-  public static final String NUMBER_OF_ANSWERS = "NumberOfAnswers";
+  public static final String SPACE_APP_ID       = "ks-answer:spaces";
+  public static final String ANSWER_APP_ID      = "answer:spaces";
+  public static final String QUESTION_ID        = "Id";
+  public static final String LINK_KEY           = "Link";
+  public static final String LANGUAGE_KEY       = "Language";
+  public static final String QUESTION_RATING    = "QuestionRating";
+  public static final String NUMBER_OF_ANSWERS  = "NumberOfAnswers";
   public static final String NUMBER_OF_COMMENTS = "NumberOfComments";
-  public static final String SPACE_PRETTY_NAME = "SpacePrettyName";
-  public static final int NUMBER_CHAR_IN_LINE    = 70;
+  public static final String SPACE_GROUP_ID     = "SpaceGroupId";
+  public static final int NUMBER_CHAR_IN_LINE   = 70;
   
   private final static Log LOG = ExoLogger.getExoLogger(AnswersSpaceActivityPublisher.class);
   
   private Identity getSpaceIdentity(String categoryId) {
-    if (categoryId.indexOf(Utils.CATE_SPACE_ID_PREFIX) < 0) 
+    String spaceGroupId = getSpaceGroupId(categoryId);
+    if ("".equals(spaceGroupId))
       return null;
-    String prettyname = categoryId.split(Utils.CATE_SPACE_ID_PREFIX)[1];
     IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
     SpaceService spaceService  = (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
-    Space space = spaceService.getSpaceByPrettyName(prettyname);
+    Space space = spaceService.getSpaceByGroupId(spaceGroupId);
     if (space != null)
       return identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
     else return null;
+  }
+  
+  private String getSpaceGroupId(String categoryId) {
+    String spaceGroupId = "";
+    if (categoryId.indexOf(Utils.CATE_SPACE_ID_PREFIX) < 0) 
+      return "";
+    String prettyname = categoryId.split(Utils.CATE_SPACE_ID_PREFIX)[1];
+    spaceGroupId = SpaceUtils.SPACE_GROUP + CommonUtils.SLASH + prettyname;
+    return spaceGroupId;
   }
   
   private ExoSocialActivity newActivity(Identity author, String title, String body, Map<String, String> templateParams) {
@@ -150,12 +161,12 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             String promotedAnswer = "Comment "+answerContent+" has been promoted as an answer";
             if (promotedAnswer.equals(comment.getTitle())) {
               //promote a comment to an answer
-              updateCommentTemplateParms(comment, question.getLink());
+              updateCommentTemplateParms(comment, answer.getId());
               activityM.saveComment(activity, comment);
               faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
               
               //update question activity content
-              Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(),questionId, getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+              Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
               activity.setTemplateParams(activityTemplateParams);
               activityM.updateActivity(activity);
             } else {
@@ -170,12 +181,12 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             comment.setTitle("Answer has been submitted: "+answerContent);
             I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
             
-            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(),questionId, getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
             activity.setTemplateParams(activityTemplateParams);
             activity.setBody(formatBody(question.getDetail()));
             activityM.updateActivity(activity);
             
-            updateCommentTemplateParms(comment, question.getLink());
+            updateCommentTemplateParms(comment, answer.getId());
             activityM.saveComment(activity, comment);
             
             faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
@@ -195,7 +206,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           String answerContent = formatBody(answer.getResponses());
           comment.setTitle("Answer has been submitted: "+answerContent);
           I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
-          updateCommentTemplateParms(comment, question.getLink());
+          updateCommentTemplateParms(comment, answer.getId());
         }
         activityM.saveComment(activity, comment);
       }
@@ -220,7 +231,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
           String commentActivityId = faqS.getActivityIdForComment(questionId, cm.getId(), language);
           Map<String, String> commentTemplateParams = new HashMap<String, String>();
-          commentTemplateParams.put(LINK_KEY, question.getLink());
+          commentTemplateParams.put(LINK_KEY, cm.getId());
           if (commentActivityId != null) { //try to update activity's comment
             ExoSocialActivityImpl oldComment = (ExoSocialActivityImpl) activityM.getActivity(commentActivityId);
             if (oldComment != null) {
@@ -235,7 +246,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             comment.setTemplateParams(commentTemplateParams);
             comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(cm.getComments(), (List<String>) Collections.EMPTY_LIST)));
             comment.setUserId(userIdentity.getId());
-            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), questionId, getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
             activity.setTemplateParams(activityTemplateParams);
             activity.setBody(formatBody(question.getDetail()));
             activityM.updateActivity(activity);
@@ -254,7 +265,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         ExoSocialActivity comment = new ExoSocialActivityImpl();
         comment.setUserId(userIdentity.getId());
         Map<String, String> commentTemplateParams = new HashMap<String, String>();
-        commentTemplateParams.put(LINK_KEY, question.getLink());
+        commentTemplateParams.put(LINK_KEY, cm.getId());
         comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(cm.getComments(), (List<String>) Collections.EMPTY_LIST)));
         comment.setTemplateParams(commentTemplateParams);
         activityM.saveComment(activity, comment);
@@ -304,7 +315,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         if (spaceIdentity != null) {
           // publish the activity in the space stream.
           streamOwner = spaceIdentity;
-          templateParams.put(SPACE_PRETTY_NAME, streamOwner.getRemoteId());
+          templateParams.put(SPACE_GROUP_ID, getSpaceGroupId(catId));
         }
         List<String> categoryIds = faqS.getCategoryPath(catId);
         Collections.reverse(categoryIds);
