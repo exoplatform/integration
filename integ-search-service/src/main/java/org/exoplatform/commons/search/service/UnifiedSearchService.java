@@ -103,7 +103,7 @@ public class UnifiedSearchService implements ResourceContainer {
       
       List<String> sites = Arrays.asList(sSites.split(",\\s*"));      
       if(sites.contains("all")) sites = userPortalConfigService.getAllPortalNames();      
-      List<String> types = null==sTypes || sTypes.isEmpty() ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
+      List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
       int offset = Integer.parseInt(sOffset);
       int limit = null==sLimit || sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
 
