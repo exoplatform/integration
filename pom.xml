@@ -46,12 +46,12 @@
     <org.exoplatform.jcr.version>1.15.2-GA</org.exoplatform.jcr.version>
     <org.gatein.portal.version>3.5.2.Final</org.gatein.portal.version>
     <org.gatein.shindig.version>2.0.2.Final-gatein-4</org.gatein.shindig.version>
-    <org.exoplatform.commons.version>4.0.0-SNAPSHOT</org.exoplatform.commons.version>
-    <org.exoplatform.ecms.version>4.0.0-SNAPSHOT</org.exoplatform.ecms.version>
-    <org.exoplatform.social.version>4.0.0-SNAPSHOT</org.exoplatform.social.version>
-    <org.exoplatform.forum.version>4.0.0-SNAPSHOT</org.exoplatform.forum.version>
-    <org.exoplatform.wiki.version>4.0.0-SNAPSHOT</org.exoplatform.wiki.version>
-    <org.exoplatform.calendar.version>4.0.0-SNAPSHOT</org.exoplatform.calendar.version>
+    <org.exoplatform.commons.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.commons.version>
+    <org.exoplatform.ecms.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.ecms.version>
+    <org.exoplatform.social.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.social.version>
+    <org.exoplatform.forum.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.forum.version>
+    <org.exoplatform.wiki.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.wiki.version>
+    <org.exoplatform.calendar.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.calendar.version>
   </properties>
   <dependencyManagement>
     <dependencies>
