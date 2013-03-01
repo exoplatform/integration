@@ -296,7 +296,9 @@ public class CalendarUIActivity extends BaseUIActivity {
     sb.append(" ");
     
     if(event != null && isAllDay(event)) {
-      sb.append(rb.getString("CalendarUIActivity.label.allday"));
+      if(CalendarEvent.TYPE_EVENT.equals(event.getEventType())) {
+        sb.append(rb.getString("CalendarUIActivity.label.allday"));
+      }
     } else {
       sb.append(getTimeString(locale, calendar));
     }

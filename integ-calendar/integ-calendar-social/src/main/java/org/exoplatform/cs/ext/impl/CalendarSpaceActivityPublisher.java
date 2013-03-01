@@ -19,7 +19,14 @@ package org.exoplatform.cs.ext.impl;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 import org.exoplatform.calendar.service.CalendarEvent;
 import org.exoplatform.calendar.service.CalendarService;
@@ -339,7 +346,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         } else if(newEvent.getAttachment().size() != oldEvent.getAttachment().size()) {
           messagesParams.put(ATTACH_UPDATED,"") ;
         }
-        if(isAllDayEvent(newEvent) && !isAllDayEvent(oldEvent) && CalendarEvent.TYPE_EVENT.equals(oldEvent.getCalType())) {
+        if(isAllDayEvent(newEvent) && !isAllDayEvent(oldEvent) && CalendarEvent.TYPE_EVENT.equals(oldEvent.getEventType())) {
           messagesParams.put(ALLDAY_UPDATED,"") ;
         } else if (!isAllDayEvent(newEvent)) {
           if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
