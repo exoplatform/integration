@@ -5,12 +5,11 @@
 %>
 
 <div class="uiSearchPlatformToolBarPortlet uiDropdownWithIcon dropdown" id="ToolBarSearch">
-  <div>
-     <input id="adminkeyword" name="adminkeyword" value="${SearchInInput}" type="text"/>
-     <a href="#" id="adminSearchLink" class="dropdown-toggle">
-       <i class="uiIconPLF24x24Search"></i>
-     </a>
-  </div>
+  
+	<input id="adminkeyword" name="adminkeyword" value="${SearchInInput}" type="text"/>
+	<a href="#" id="adminSearchLink" class="dropdown-toggle">
+	  <i class="uiIconPLF24x24Search"></i>
+	</a>
   <div id="quickSearchResult-${portletId}">
   </div>
 </div>
