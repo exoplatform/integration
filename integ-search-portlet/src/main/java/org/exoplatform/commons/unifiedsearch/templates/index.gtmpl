@@ -8,9 +8,10 @@
         <input type="text" id="txtQuery" style="width: 250px;">
         <button type="button" class="btn btn-primary" id="btnSearch" value="Search">Search</button>
       </div>
-      <div class="result">
-        <span id="resultHeader"></span>
-        <span id="resultSort" style="float: right; display: none;">
+      
+      <div class="result clearfix">
+        <div id="resultHeader" class="pull-left"></div>
+        <div id="resultSort" class="pull-right" style="display: none;">
           Sort By:
           <div class="btn-group uiDropdownWithIcon">
             <a data-toggle="dropdown" class="btn dropdown-toggle">
@@ -24,38 +25,75 @@
               <li><a href="#">Title</a></li>
             </ul>
           </div>
-        </span>
-      </div>
-    </div>
-
-    <div class="clearfix">
-
-      <div id="facetsFilter" style="display: none;" class="filterContainer span3">
-        <div class="uiBox">
-          <h5 class="title">Filter By</h5>
-          <div class="uiContentBox">
-
-            <div id="siteFilter" class="siteFilter">
-              <h6><span class="uiCheckbox"><input type="checkbox" class="checkbox" name="site" value="all"><span></span></span>All Sites</h6>
-              <ul id="lstSites" class="listFilter"></ul>
-            </div>
-
-            <div class="contentTypeFilter">
-              <h6><span class="uiCheckbox"><input class="checkbox" type="checkbox" name="contentType" value="all"><span></span></span>All Content Types</h6>
-              <ul id="lstContentTypes" class="listFilter"></ul>
-            </div>
-
-          </div>
         </div>
       </div>
-
-      <div id="resultPage" class="resultPage offset3">
-        <div id="result"></div>
-        <div id="showMore" class="uiAction"><button type="button" class="btn" id="btnShowMore" value="Show More Results">Show More Results</button></div>
-      </div>
-
+      
     </div>
-
+		
+		<div class="clearfix">
+		
+	    <div id="facetsFilter" style="display: none;" class="filterContainer pull-left">
+	    	<div class="uiBox">
+		      <h5 class="title">Filter By</h5>
+		      <div class="uiContentBox">
+		      
+		        <div id="siteFilter" class="siteFilter">
+		          <h6><span class="uiCheckbox"><input type="checkbox" class="checkbox" name="site" value="all"><span></span></span>All Sites</h6>
+		          <ul id="lstSites" class="listFilter"></ul>
+		        </div>
+						
+						<div class="contentTypeFilter">
+			        <h6><span class="uiCheckbox"><input class="checkbox" type="checkbox" name="contentType" value="all"><span></span></span>All Content Types</h6>
+			        <ul id="lstContentTypes" class="listFilter"></ul>
+		        </div>
+		        
+		      </div>
+		    </div>
+	    </div>
+	
+	    <div id="resultPage" class="resultPage uiBox">
+	      <div id="resultTypes" style="display: none; margin-bottom: 15px; padding-top: 4px;"></div>
+	      
+	      <div id="result">
+	      	
+	      </div>
+	      
+	      <div class="resultBox clearfix">
+	      	<span class="avatar pull-left">
+	      		<img src="/unified-search/public/images/status-task.png" alt=""/>
+	      	</span>
+	      	<div class="content pull-left">
+	      		<h6><a href="#">GateIn 3.5 has been released !</a></h6>
+	      		<p class="description">
+	      			4.jpg root lifecycle1 d700b4555e171e61004056005e548447,draft,root root en Authoring publication root draft 4.jpg
+	      		</p>
+	      		<div class="time">
+	      			Due for: Friday, February 22, 2013 - 8:00 PM 
+	      		</div>
+	      	</div>
+	      </div>
+	      
+	      <div class="resultBox clearfix">
+	      	<span class="avatar pull-left">
+	      		<img src="/unified-search/public/images/status-task.png" alt=""/>
+	      	</span>
+	      	<div class="content pull-left">
+	      		<h6>GateIn 3.5 has been released !</h6>
+	      		<p class="description">
+	      			4.jpg root lifecycle1 d700b4555e171e61004056005e548447,draft,root root en Authoring publication root draft 4.jpg
+	      		</p>
+	      		<div class="time">
+	      			Due for: Friday, February 22, 2013 - 8:00 PM 
+	      		</div>
+	      	</div>
+	      </div>
+	      
+	      <div id="showMore" class="showMore"><button type="button" class="btn" id="btnShowMore" value="Show More Results">Show More Results</button></div>
+	    </div>
+	    
+		</div>
+		
+>>>>>>>  UI-2495 [PLF 4] Unified Search Relooking
   </div>
 
 </div>

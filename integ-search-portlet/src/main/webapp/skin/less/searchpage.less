@@ -4,9 +4,9 @@
 
 
 .uiSearchPortlet {
-	padding: 1px;
+	padding: 20px;
 	.searchContainer {
-		margin: 20px;
+		margin-bottom: 20px;
 		border-bottom: 1px solid #cccccc;
 		.searchForm > input[type="text"] {
 			margin: 0;
@@ -16,13 +16,50 @@
 		}
 	}
 	
-	.filterContainer ul.listFilter {
-	  padding-left: 20px;
+	.filterContainer {
+		width: 220px;
+		float: left;
+		margin: 0;
+		ul.listFilter {
+	  	padding-left: 20px;
+	  }
 	}
 	
-	.uiAction .btn {
-		width: 100%; 
-		display: block;
+	.resultPage {
+		padding: 0 20px;
+		margin-left: 240px;
+		.resultBox {
+			margin: 20px 0;
+			overflow:hidden;
+			.avatar {
+				width: 50px;
+				> img {
+					width: 50px;
+				}
+			}
+			.content {
+				margin-left: 15px;
+				> h6 {
+					margin-top: 0;
+					color: #2f5e92;
+				}
+				.description {
+					line-height: 22px;
+				}
+				.time {
+					color: #999999;
+				}
+			}
+		}
+	}
+	
+	.showMore {
+		padding: 15px 0;
+		.btn {
+			width: 100%; 
+			display: block;
+			margin: 0;
+		}
 	}
 }
 
