@@ -10,10 +10,9 @@
       </div>
       
       <div class="result clearfix">
-        <div id="resultHeader" class="pull-left"></div>
-        <div id="resultSort" class="pull-right" style="display: none;">
-          Sort By:
-          <div class="btn-group uiDropdownWithIcon">
+        <div id="resultHeader" class="pull-left resultHeader"></div>
+        <div id="resultSort" class="pull-right resultSort" style="display: none;">
+          <div class="btn-group uiDropdownWithIcon pull-right">
             <a data-toggle="dropdown" class="btn dropdown-toggle">
               <span id="sortField" >Relevancy</span>
               <span class="spiter"></span>
@@ -25,6 +24,7 @@
               <li><a href="#">Title</a></li>
             </ul>
           </div>
+          <span>Sort By:</span>
         </div>
       </div>
       
@@ -93,7 +93,6 @@
 	    
 		</div>
 		
->>>>>>>  UI-2495 [PLF 4] Unified Search Relooking
   </div>
 
 </div>
