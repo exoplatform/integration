@@ -167,7 +167,6 @@ function initSearch() {
 
 
     function clearResultPage(message){
-      $("#resultTypes").html("");
       $("#result").html("");
       $("#resultHeader").html(message?message:"");
       $("#resultSort").hide();
@@ -241,8 +240,8 @@ function initSearch() {
         return;
       }
 
-      var sort = $("#lstSortBy").val();
-      var order = $("#sortType").hasClass("Asc") ? "asc" : "desc";
+      var sort = $("#sortField").text();
+      var order = $("#sortField").attr("order");
 
       setWaitingStatus(true);
 
@@ -309,47 +308,6 @@ function initSearch() {
     });
 
 
-    $("#lstSortBy").change(function(){
-      SERVER_OFFSET = 0;
-      NUM_RESULTS_RENDERED = 0;
-      getFromServer(function(){
-        renderCachedResults();
-      });
-    });
-
-
-    $("#sortType").live("click", function(){
-      $(this).toggleClass("Asc Desc");
-      SERVER_OFFSET = 0;
-      NUM_RESULTS_RENDERED = 0;
-      getFromServer(function(){
-        renderCachedResults();
-      });
-    });
-
-
-    $(".ResultType").live("click", function(){
-      $(".Selected").toggleClass("Selected");
-      $(this).toggleClass("Selected");
-
-      var offset = parseInt($(this).attr("offset"));
-      var numEntries = parseInt($(this).attr("numEntries"));
-
-      var resultHeader = (0==numEntries) ? "No more result" : "Results 1 to " + (offset+numEntries);
-      resultHeader = resultHeader + " for <strong>" + $("#txtQuery").val() + "<strong>";
-      $("#resultHeader").html(resultHeader);
-      if(numEntries==LIMIT) $("#showMore").show(); else $("#showMore").hide();
-
-      var type=$(this).attr("type");
-      $(".SearchResultType").hide(); //hide all other types
-      $("#"+type+"-type").show();
-
-      var $viewingType = $(".ResultType.Selected");
-      $("#lstSortBy").val($viewingType.attr("sortBy")||"relevancy").attr("selected",true);
-      $("#sortType").removeClass("Asc Desc").addClass($viewingType.attr("sortType")||"Desc");
-    });
-
-
     $(":checkbox[name='contentType']").live("click", function(){
       if("all"==this.value){ //All Content Types checked
         if($(this).is(":checked")) { // check/uncheck all
@@ -360,7 +318,7 @@ function initSearch() {
       } else {
         $(":checkbox[name='contentType'][value='all']").attr('checked', false); //uncheck All Content Types
       }
-      
+
       search();
     });
 
@@ -390,6 +348,43 @@ function initSearch() {
       if(13==keyCode) search();
     });
 
+
+    $("#sortOptions > li > a").on("click", function(){
+      var oldOption = $("#sortField").text();
+      var newOption = $(this).text();
+
+      if(newOption==oldOption) { //click a same option again
+        $(this).children("i").toggleClass("uiIconSortUp uiIconSortDown"); //toggle the arrow
+      } else {
+        $("#sortField").text(newOption);
+        $("#sortOptions > li > a > i").remove(); //remove the arrows from other options
+
+        // Select the default sort order: DESC for Relevancy, ASC for Date & Title
+        var sortByIcon;
+        switch(newOption) {
+          case "Relevancy":
+            sortByIcon = 'uiIconSortDown';
+            break;
+          case "Date":
+            sortByIcon = 'uiIconSortUp';
+            break;
+          case "Title":
+            sortByIcon = 'uiIconSortUp';
+            break;
+        }
+
+        $(this).append("<i class='" + sortByIcon + "'></i>"); //add the arrow to this option
+      }
+
+      $("#sortField").attr("order", $(this).children("i").hasClass("uiIconSortUp") ? "asc" : "desc");
+
+      SERVER_OFFSET = 0;
+      NUM_RESULTS_RENDERED = 0;
+      getFromServer(function(){
+        renderCachedResults();
+      });
+
+    });
 
 
     //*** The entry point ***
@@ -434,9 +429,8 @@ function initSearch() {
           $(":checkbox[name='contentType']").attr('checked', true); //check all types by default
         }
 
-        $("#lstSortBy").val(getUrlParam("sort")||"relevancy");
-        var order = getUrlParam("order");
-        $("#sortType").removeClass("Asc Desc").addClass(order && order.toUpperCase()=="ASC" ? "Asc" : "Desc");
+        $("#sortField").text((getUrlParam("sort")||"relevancy").toProperCase());
+        $("#sortField").attr("order", getUrlParam("order") || "desc");
 
         var limit = getUrlParam("limit");
         LIMIT = limit && !isNaN(parseInt(limit)) ? parseInt(limit) : setting.resultsPerPage;
@@ -448,12 +442,6 @@ function initSearch() {
       });
     });
 
-    var sortBy = [];
-    var sortFields = ["relevancy", "date", "title"];
-    $.each(sortFields, function(i, field){
-      sortBy.push("<option value='" + field + "'>" + field.toProperCase() + "</option>")
-    });
-    $("#lstSortBy").html(sortBy.join(""));
   })(jQuery);
 
   $ = jQuery; //undo .conflict();
