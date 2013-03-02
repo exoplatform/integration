@@ -191,11 +191,9 @@ function initQuickSearch(portletId) {
     //show the input search or go to the main search page when search link is clicked
     $(linkQuickSearchQuery_id).click(function () {
       if ($(txtQuickSearchQuery_id).is(':hidden')) {
-        if ($(txtQuickSearchQuery_id).val('')) {
-          $(txtQuickSearchQuery_id).val(value);
-          $(txtQuickSearchQuery_id).css('color', '#555');
-          isDefault = true;
-        }
+        $(txtQuickSearchQuery_id).val(value);
+        $(txtQuickSearchQuery_id).css('color', '#555');
+        isDefault = true;
         $(txtQuickSearchQuery_id).show();
       }
       else
@@ -207,14 +205,9 @@ function initQuickSearch(portletId) {
     });
 
     $(txtQuickSearchQuery_id).focus(function(){
-      if ($(this).val(value)) {
-        $(this).val('');
-          $(this).css('color', '#000');
-          isDefault = false;
-      }
-      if(""!=$(this).val()) {
-        quickSearch();
-      }
+      $(this).val('');
+      $(this).css('color', '#000');
+      isDefault = false;
     });
 
 
