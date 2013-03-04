@@ -18,24 +18,22 @@ function initQuickSearch(portletId) {
     var isDefault = false;
 
     var QUICKSEARCH_RESULT_TEMPLATE= " \
-      <div class='QuickSearchResult %{type}'> \
-        <div class='Avatar Clickable'> \
+      <div class='quickSearchResult %{type}'> \
+        <span class='avatar'> \
           %{avatar} \
-        </div> \
-        <div class='Content'> \
-          <div class='Title Ellipsis'><a href='%{url}'>%{title}</a></div> \
-        </div> \
+        </span> \
+       	<a href='%{url}' class='name text-overflow'>%{title}</a> \
       </div> \
     ";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \
 
     var QUICKSEARCH_TABLE_TEMPLATE=" \
-          <table style='table-layout: fixed;'> \
+          <table class='uiGrid table  table-hover table-striped  rounded-corners'> \
             <col width='30%'> \
             <col width='70%'> \
             %{resultRows} \
             <tr> \
-              <th colspan='2' style='padding: 10px; font-weight: normal;'> \
-                <a id='seeAll-" + portletId + "' class='Clickable' href='#'>%{message}</a> \
+              <th colspan='2' class='message'> \
+                <a id='seeAll-" + portletId + "' class='' href='#'>%{message}</a> \
               </th> \
             </tr> \
           </table> \
@@ -44,10 +42,10 @@ function initQuickSearch(portletId) {
     var QUICKSEARCH_TABLE_ROW_TEMPLATE=" \
           <tr> \
             <th> \
-              <div style='margin-top: 8px; color: gray;'>%{type}</div> \
+              %{type} \
             </th> \
-            <td style='padding: 2px;'> \
-              <div style='margin-left: 3px;'>%{results}</div> \
+            <td> \
+              %{results} \
             </td> \
           </tr> \
         ";

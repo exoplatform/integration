@@ -1,66 +1,9 @@
-
-#adminSearchLink {
-  display: inline-block;
-  line-height: 41px;
-  padding: 0 10px 0 11px;
-}
-#adminkeyword {
-  display: none;
-  margin-bottom: 0px;
-}
-
-.SearchBox {
-  background: url("/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/SearchIcon.png") no-repeat scroll 4px center white;
-  border: solid 1px lightgray;
-  border-radius: 12px;
-  height: 18px;
-  padding-left: 20px;
-  width: 120px;
-}
-
-.Clickable {
-  cursor: pointer;
-}
-
-.Ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -o-text-overflow: ellipsis;
-  -ms-text-overflow: ellipsis;
-}
+@import "variables.less"; 
+@import "mixins.less";
 
 
-.QuickSearchResult {
-  height: 30px;
-  overflow: hidden;
-}
 
-.QuickSearchResult .Avatar {
-  float: left;
-  padding-top: 3px;
-  width: 24px;
-  height: 24px;
-  overflow: hidden;
-}
-
-.QuickSearchResult .Avatar img {
-  width: 24px;
-  height: 24px;
-}
-
-.QuickSearchResult .Content {
-  padding-left: 5px;
-  overflow: hidden;
-}
-
-.QuickSearchResult .Content .Title{
-  padding-top: 8px;
-  vertical-align: bottom;
-}
-
-
-div[id*="quickSearchResult-"] {
+.uiQuickSearchResult {
   position: absolute;
   background: white;
   width: 315px;
@@ -68,15 +11,86 @@ div[id*="quickSearchResult-"] {
   margin-left: 3px;
   display:none;
   z-index: 1001;
+  .uiGrid {
+  	margin: 0;
+	  tr th {
+	  	border: none;
+	  	text-align: right;
+	  }
+	  tr:nth-child(2n) th {
+	  	background: white;
+	  }  
+		tbody {
+			tr:hover td,
+			tr:hover th {
+				#gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 15%));
+				color: white;
+				border-color: #8ba6d5;
+			}
+			tr:hover td a {
+				color: white;
+			}
+		}
+		
+		tr:first-child th {
+			border-top-left-radius: 4px;
+		}
+		
+		tr:first-child td {
+			border-top-right-radius: 4px;
+		}
+		
+		tr:last-child th:first-child,
+		tr:last-child td:first-child {
+			border-bottom-left-radius: 4px;
+			border-bottom-right-radius: 4px;
+		}
+		
+		.message {
+			border-top: 1px solid #CFCFCF;
+			text-align: center;
+			> a {
+				font-weight: bold;
+				color: #333333;
+			}
+			> a:hover {
+				color: #2f5e92;
+			}
+		}
+		.message:hover {
+			background: none;
+		}
+	}
+	
+	.quickSearchResult {
+		.avatar {
+			display: inline-block;
+			.square(20px);
+			vertical-align: middle;
+			overflow: hidden;
+			img {
+				.square(20px);
+			}
+		}
+		.name {
+			display: inline-block;
+			margin-left: 5px;
+	    max-width: 145px;
+	    white-space: nowrap;
+		}
+	}
+	
 }
 
-div[id*="quickSearchResult-"] table, div[id*="quickSearchResult-"] th, div[id*="quickSearchResult-"] td {
-  border: 1px solid lightgray;
-}
 
-.QuickSearchPortlet input:focus, .QuickSearchPortlet textarea:focus {
-  outline: none;
-}
+
+
+
+
+
+
+
+
 
 
 .calendarBox {
@@ -128,6 +142,10 @@ div[id*="quickSearchResult-"] table, div[id*="quickSearchResult-"] th, div[id*="
 }
 .statusTask i.quicksearch.canceledIcon {
   background-position: -108px 0;
+}
+
+
+ion: -108px 0;
 }
 
 /*for setting*/

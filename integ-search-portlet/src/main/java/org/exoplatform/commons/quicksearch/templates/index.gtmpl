@@ -10,7 +10,7 @@
 	<a href="#" id="adminSearchLink" class="dropdown-toggle">
 	  <i class="uiIconPLF24x24Search"></i>
 	</a>
-  <div id="quickSearchResult-${portletId}">
+  <div id="quickSearchResult-${portletId}" class="uiQuickSearchResult">
   </div>
 </div>
 
