@@ -103,13 +103,22 @@
 
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
-
+  
+  def docTypeName = uicomponent.getDocTypeName();
+  def docTitle = uicomponent.getDocTitle();
+  def docVersionNo = uicomponent.getDocVersion();
+  def docVersion = _ctx.appRes("SocialIntegration.messages.version");
+  docVersion = docVersion.replace("{0}", docVersionNo);
+  def docSummary = uicomponent.getDocSummary();
+  def viewLink = uicomponent.getViewLink();
+  def editLink = uicomponent.getEditLink();
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
+  def commentCount = 0;
   if (allComments) {
+    commentCount = allComments.size();
     labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
     labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
-
   }
   def displayedIdentityLikes = uicomponent.getDisplayedIdentityLikes();
   def identityLikesNum = 0;
@@ -135,7 +144,6 @@
     } """
   //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
   jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
-  
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
   def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
@@ -182,47 +190,15 @@
     if (!ownerAvatar) ownerAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
   }
 %>
-
 <div class="activityStream uiContentActivity">
-  <script type="text/javascript">    
-	  
-	//javascript function added by ECMS - BEGIN
-	function changeStyleForMediaComponent (mediaContentDivId) {
-	  var mediaContentDiv = document.getElementById(mediaContentDivId);
-	  if (mediaContentDiv == null) return;
-	  
-	  var playerContentDiv = mediaContentDiv.getElementsByClassName('playerContent')[0];
-	  if (playerContentDiv == null) return;
-	  
-	  playerContentDiv.removeAttribute("style");
-	  playerContentDiv.className = "mediaPlayerDisplay";
-	}
-	
-	function loadImageOnError(obj){
-		var grandParent = obj.parentNode.parentNode;
-		grandParent.style.display = "none";
-		
-		var wcborder = getAncesstorByClass(obj, "webContentBorder");		
-		if (wcborder.getElementsByTagName("span")[0] == null) {
-			grandParent.parentNode.style.display = "none";
-		}
-	}
-	function getAncesstorByClass(obj, className) {
-	  var parent = obj.parentNode;
-	  while (parent!=null && parent.className==className ) parent = parent.parentNode;
-	  return parent;
-	}
-	//javascript function added by ECMS - END
-  </script>
-
-  <% uiform.begin() %>
-  	 <div class="activityTimeLine pull-left">
+	<% uiform.begin() %>
+	<div class="activityTimeLine pull-left">
 		<div class="activityAvatar avatarCircle">
 			<a rel="tooltip" data-placement="bottom" title="$ownerName" href="$ownerUri">
-			  <img alt="$ownerName" src="$ownerAvatar"/>
+				<img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<div class="activityType"><span><i class="uiIconSocContentMini uiIconSocWhite"></i></span></div>					
+		<div class="activityType"><span><i class="uiIconSocContentMini uiIconSocWhite"></i></span></div>
 	</div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
@@ -251,24 +227,20 @@
 				<div class="uiBox roundedBottom introBox contentShare">	
 					<div class="clearfix">
 						<div class="pull-left">
-							<img alt="article type" rel="tooltip" data-placement="bottom" src=""/> <!-- hackcode-->
+							<img alt="<%=uicomponent.getDocIconClass();%> type" rel="tooltip" data-placement="bottom" src=""/> <!-- hackcode-->
 						</div>
 						<div class="text">
 							<%if (currentNode) {%>
 							  <a class="linkTitle" title="$activityContentTitle" href="$contentActivityUri"> $activityContentTitle </a>
 							<%} else {%>
-							  <span>$activityContentTitle</span>
+							  <span>$docTitle</span>
 							<%}%>
-							<p>This is article is unveilling all new features of GateIn 3.5 Proin facilisis dictum magna.</p><!--hackcode-->
-							<span class="versionFile">Article&nbsp;-&nbsp;Version 3&nbsp;-&nbsp; <!--hackcode-->
-							<%  if (state != null && state.length() > 0) { %>
-								<%=_ctx.appRes("SocialIntegration.publicationStates." + state)%>
-							<% } %>		
-							</span>
+							<p>$docSummary</p>
+							<span class="versionFile">$docTypeName - $docVersion - $state</span>
 						</div>
 					</div>	
 				</div><!--end introBox,contentShare-->	
-				<div class="actionBar clearfix ContentActivityIcon">					
+				<div class="actionBar clearfix ContentActivityIcon">
 				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 					 def commentLink = "";
 				  %>
@@ -338,26 +310,63 @@
 					 </div>
 					 <% } %>
 					<div class="commentList">	
-					<%
-					def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
-					def first = true, commentContentClass;
-					def commentCounter = 0;
-					commentList.each({
-					  commentCounter++;
-					  if (first & !uicomponent.commentListToggleable()) {
-						commentContentClass = "commentContent";
-						first = false;
-					  } else {
-						commentContentClass = "";
-					  }
+				    <%
+				    def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
+				    def first = true, commentContentClass;
+				    def commentCounter = 0;
+ 				   commentList.each({
+ 				     commentCounter++;
+ 				     if (first & !uicomponent.commentListToggleable()) {
+ 				       commentContentClass = "commentContent";
+  				      first = false;
+ 				     } else {
+ 				       commentContentClass = "";
+ 				     }
 
-					  def id = Utils.getIdentityManager().getIdentity(it.userId);
-					  commenterFullName = id.profile.fullName;
-					  commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-					  commentMessage = it.title;
-					  commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
-					  commenterAvatarImgSrc = id.profile.avatarUrl;
-					  if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
+ 				     def id = Utils.getIdentityManager().getIdentity(it.userId);
+				      commenterFullName = id.profile.fullName;
+  				    commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
+  				    //VinhNT, new spec for ActivityTypes
+					def activityParams = it.getTemplateParams();
+ 				     def systemComment = uicomponent.getSystemCommentBundle(activityParams);
+ 				     def systemCommentTitle ;
+ 				     StringBuffer commentBuffer = new StringBuffer();
+ 				     if (systemComment!=null) {
+   				     systemCommentTitle = uicomponent.getSystemCommentTitle(activityParams);
+  				      if (systemComment!=null) {
+ 				         if (systemComment.length>0) {
+ 				           for (def count=0; count<systemComment.length; count++) {
+ 				             commentMessage = _ctx.appRes(systemComment[count]);
+ 				             if (systemCommentTitle!=null) {
+ 				               if (systemCommentTitle.length>count) {
+  				                commentMessage = commentMessage.replace("{0}", systemCommentTitle[count]);
+  				              }
+ 				             }
+  				            if (systemComment!=null) {
+  				              if (systemComment.length>1) {
+  				                commentBuffer.append("<p>").append(commentMessage).append("</p>");
+  				              }else {
+   				               commentBuffer.append(commentMessage);
+   				             }
+    				          }else {
+   				             commentBuffer.append(commentMessage);
+    				          }
+     				       }
+      				    }
+  				        commentMessage = commentBuffer.toString(); 
+ 				       }else {
+ 				         commentMessage = it.title;
+  				      }
+  				    } else {
+  				      commentMessage = it.title;
+  				    }
+					def id = Utils.getIdentityManager().getIdentity(it.userId);
+					commenterFullName = id.profile.fullName;
+					commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
+					commentMessage = it.title;
+					commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
+					commenterAvatarImgSrc = id.profile.avatarUrl;
+					if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
 					%>
 					  <% if (commentCounter == commentList.size()) {%>
 					  <div id="CommentBlock${activity.id}${commentCounter}" class="commentItem commentItemLast">
@@ -424,3 +433,4 @@
 <% } else { %> <!-- activity deleted -->
 <div class="activityStream deleted">$labelActivityHasBeenDeleted</div>
 <% }%>
+

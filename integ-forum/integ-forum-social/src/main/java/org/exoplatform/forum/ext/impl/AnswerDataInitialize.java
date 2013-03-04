@@ -130,4 +130,18 @@ public class AnswerDataInitialize extends SpaceListenerPlugin {
 
   }
 
+  @Override
+  public void spaceRenamed(SpaceLifeCycleEvent event) {}
+
+  @Override
+  public void spaceDescriptionEdited(SpaceLifeCycleEvent event) {}
+
+  @Override
+  public void spaceAvatarEdited(SpaceLifeCycleEvent event) {}
+
+  @Override
+  public void spaceAccessEdited(SpaceLifeCycleEvent event) {
+    
+  }
+
 }

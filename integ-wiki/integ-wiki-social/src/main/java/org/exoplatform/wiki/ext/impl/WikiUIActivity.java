@@ -2,6 +2,7 @@ package org.exoplatform.wiki.ext.impl;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.model.Space;
@@ -84,15 +85,9 @@ public class WikiUIActivity extends BaseUIActivity {
   }
 
   String getActivityMessage(WebuiBindingContext _ctx) throws Exception {
-    String activityType = getActivityParamValue(WikiSpaceActivityPublisher.ACTIVITY_TYPE_KEY);
-    if (activityType.equalsIgnoreCase(WikiSpaceActivityPublisher.ADD_PAGE_TYPE)) {
-      return _ctx.appRes("WikiUIActivity.label.page-create");
-    } else if (WikiSpaceActivityPublisher.UPDATE_PAGE_TYPE.equalsIgnoreCase(activityType)) {
-      return _ctx.appRes("WikiUIActivity.label.page-update");
-    }
-    return "";
+    return _ctx.appRes("WikiUIActivity.label.page-create");
   }
-
+  
   String getPageName() {
     return getActivityParamValue(WikiSpaceActivityPublisher.PAGE_TITLE_KEY);
   }
@@ -108,5 +103,8 @@ public class WikiUIActivity extends BaseUIActivity {
   String getPageExcerpt(){
     return getActivityParamValue(WikiSpaceActivityPublisher.PAGE_EXCERPT);
   }
-
+  
+  String getPageVersion(){
+    return getActivityParamValue(WikiSpaceActivityPublisher.WIKI_PAGE_VERSION);
+  }
 }

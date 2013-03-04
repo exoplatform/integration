@@ -26,11 +26,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
@@ -44,6 +46,7 @@ import org.exoplatform.social.core.storage.SpaceStorageException;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
+import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -70,33 +73,47 @@ public class ContentUIActivity extends BaseUIActivity {
 
   private static final String NEW_DATE_FORMAT = "hh:mm:ss MMM d, yyyy";
 
-  private static final Log   LOG           = ExoLogger.getLogger(ContentUIActivity.class);
+  private static final Log   LOG               = ExoLogger.getLogger(ContentUIActivity.class);
 
-  public static final String ACTIVITY_TYPE = "CONTENT_ACTIVITY";
+  public static final String ACTIVITY_TYPE      = "CONTENT_ACTIVITY";
 
-  public static final String ID            = "id";
+  public static final String ID                 = "id";
 
-  public static final String CONTENT_LINK  = "contenLink";
+  public static final String CONTENT_LINK       = "contenLink";
 
-  public static final String MESSAGE       = "message";
+  public static final String MESSAGE            = "message";
 
-  public static final String REPOSITORY    = "repository";
+  public static final String REPOSITORY         = "repository";
 
-  public static final String WORKSPACE     = "workspace";
+  public static final String WORKSPACE          = "workspace";
 
-  public static final String CONTENT_NAME  = "contentName";
+  public static final String CONTENT_NAME       = "contentName";
 
-  public static final String IMAGE_PATH    = "imagePath";
+  public static final String IMAGE_PATH         = "imagePath";
 
-  public static final String MIME_TYPE     = "mimeType";
+  public static final String MIME_TYPE          = "mimeType";
 
-  public static final String STATE         = "state";
+  public static final String STATE              = "state";
 
-  public static final String AUTHOR        = "author";
+  public static final String AUTHOR             = "author";
 
-  public static final String DATE_CREATED  = "dateCreated";
+  public static final String DATE_CREATED       = "dateCreated";
 
-  public static final String LAST_MODIFIED = "lastModified";
+  public static final String LAST_MODIFIED      = "lastModified";
+
+  public static final String DOCUMENT_TYPE_LABEL= "docTypeLabel";
+  
+  public static final String DOCUMENT_TITLE     = "docTitle";
+  
+  public static final String DOCUMENT_VERSION   = "docVersion";
+  
+  public static final String DOCUMENT_SUMMARY   = "docSummary";
+
+  public static final String IS_SYSTEM_COMMENT  = "isSystemComment";
+  
+  public static final String SYSTEM_COMMENT     = "systemComment";
+  
+  
 
   private String             contentLink;
 
@@ -121,7 +138,12 @@ public class ContentUIActivity extends BaseUIActivity {
   private Node               contentNode;
 
   private NodeLocation       nodeLocation;
-
+  
+  private String             docTypeName;
+  private String             docTitle;
+  private String             docVersion;
+  private String             docSummary;
+  
   public ContentUIActivity() throws Exception {
     super();
   }
@@ -189,6 +211,19 @@ public class ContentUIActivity extends BaseUIActivity {
   public void setAuthor(String author) {
     this.author = author;
   }
+
+  public String getDocTypeName() {
+    return docTypeName;
+  }
+  public String getDocTitle() {
+    return docTitle;
+  }
+  public String getDocVersion() {
+    return docVersion;
+  }
+  public String getDocSummary() {
+    return docSummary;
+  }
   
   private String convertDateFormat(String strDate, String strOldFormat, String strNewFormat) throws ParseException {
     if (strDate == null || strDate.length() <= 0) {
@@ -218,11 +253,11 @@ public class ContentUIActivity extends BaseUIActivity {
   }
 
   public Node getContentNode() {
-    return contentNode;
+    return NodeLocation.getNodeByLocation(nodeLocation);
   }
 
   public void setContentNode(Node contentNode) {
-    this.contentNode = contentNode;
+    this.nodeLocation = NodeLocation.getNodeLocationByNode(contentNode);
   }
 
   public NodeLocation getNodeLocation() {
@@ -235,42 +270,27 @@ public class ContentUIActivity extends BaseUIActivity {
 
   /**
    * Gets the summary.
-   * 
    * @param node the node
    * @return the summary of Node. Return empty string if catch an exception.
    */
   public String getSummary(Node node) {
-    String desc = "";
-    try {
-      if (node != null) {
-        if (node.hasProperty("exo:summary")) {
-          desc = node.getProperty("exo:summary").getValue().getString();
-        } else if (node.hasNode("jcr:content")) {
-          Node content = node.getNode("jcr:content");
-          if (content.hasProperty("dc:description") && content.getProperty("dc:description").getValues().length > 0) {
-            desc = content.getProperty("dc:description").getValues()[0].getString();
-          }
-        }
-      }
-    } catch (RepositoryException re) {
-      if (LOG.isWarnEnabled())
-        LOG.warn("RepositoryException: ", re);
-    }
-    
-    return desc;
+    return Utils.getSummary(node);
   }
-
+  
+  public String getDocumentSummary(Map<String, String> activityParams) {
+    return activityParams.get(ContentUIActivity.DOCUMENT_SUMMARY);
+  }
   public String getUserFullName(String userId) {
     ExoContainer container = ExoContainerContext.getCurrentContainer();
     IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
-    
+
     return identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, true).getProfile().getFullName();
   }
 
   public String getUserProfileUri(String userId) {
     ExoContainer container = ExoContainerContext.getCurrentContainer();
     IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
-    
+
     return identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, true).getProfile().getUrl();
   }
 
@@ -291,6 +311,16 @@ public class ContentUIActivity extends BaseUIActivity {
     }
     return null;
   }
+  public String getDocIconClass() {
+    if (contentNode!=null) {
+      try {
+        return contentNode.getPrimaryNodeType().getName().replaceAll(":", "_");
+      } catch (RepositoryException e) {
+        
+      }
+    }
+    return "";
+  }
 
   public void setUIActivityData(Map<String, String> activityParams) {
     this.contentLink = activityParams.get(ContentUIActivity.CONTENT_LINK);
@@ -303,10 +333,14 @@ public class ContentUIActivity extends BaseUIActivity {
     this.message = activityParams.get(ContentUIActivity.MESSAGE);
     this.mimeType = activityParams.get(ContentUIActivity.MIME_TYPE);
     this.imagePath = activityParams.get(ContentUIActivity.IMAGE_PATH);
+    this.docTypeName = activityParams.get(ContentUIActivity.DOCUMENT_TYPE_LABEL);
+    this.docTitle = activityParams.get(ContentUIActivity.DOCUMENT_TITLE);  
+    this.docVersion = activityParams.get(ContentUIActivity.DOCUMENT_VERSION);
+    this.docSummary = activityParams.get(ContentUIActivity.DOCUMENT_SUMMARY);
   }
-  
-  
-  
+
+
+
   /**
    * Gets the webdav url.
    * 
@@ -315,9 +349,9 @@ public class ContentUIActivity extends BaseUIActivity {
    * @throws Exception the exception
    */
   public String getWebdavURL() throws Exception {
+    contentNode = getContentNode();
     PortletRequestContext portletRequestContext = WebuiRequestContext.getCurrentInstance();
     PortletRequest portletRequest = portletRequestContext.getRequest();
-    NodeLocation nodeLocation = NodeLocation.getNodeLocationByNode(this.contentNode);
     String repository = nodeLocation.getRepository();
     String workspace = nodeLocation.getWorkspace();
     String baseURI = portletRequest.getScheme() + "://" + portletRequest.getServerName() + ":"
@@ -340,19 +374,70 @@ public class ContentUIActivity extends BaseUIActivity {
 
     return friendlyService.getFriendlyUri(link);
   }
-  
+
+  public String[] getSystemCommentBundle(Map<String, String> activityParams) {
+    String[] result;
+    if (activityParams==null) return null;
+    String tmp = activityParams.get(ContentUIActivity.IS_SYSTEM_COMMENT);
+    String commentMessage;
+    if (tmp==null) return null;
+    try {
+      if (Boolean.parseBoolean(tmp)) {
+        commentMessage  = activityParams.get(ContentUIActivity.MESSAGE);
+        if (!StringUtils.isEmpty(commentMessage)) {
+          if (commentMessage.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
+            result = commentMessage.split(ActivityCommonService.VALUE_SEPERATOR); 
+            return result;
+          }else {
+            return new String[] {commentMessage};
+          }
+        }
+      } 
+    }catch (Exception e) {
+      
+      return null;
+    }
+    return null;
+    
+  }
+  public String[] getSystemCommentTitle(Map<String, String> activityParams) {
+    String[] result;
+    if (activityParams==null) return null;
+    String commentValue = activityParams.get(ContentUIActivity.SYSTEM_COMMENT);
+    if (!StringUtils.isEmpty(commentValue)) {
+      if (commentValue.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
+        result = commentValue.split(ActivityCommonService.VALUE_SEPERATOR); 
+        return result;
+      }else {
+        return new String[] {commentValue};
+      }
+    }
+    return null;
+  }
+  public String getViewLink() {
+    try {
+    return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
+    }catch (Exception e) {
+      return "";
+    }
+  }
+  public String getEditLink() {
+    try {
+      return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), true, false);
+    }catch (Exception e) {
+      return "";
+    }
+  }
   public static class ViewDocumentActionListener extends EventListener<ContentUIActivity> {
     @Override
     public void execute(Event<ContentUIActivity> event) throws Exception {
       final ContentUIActivity docActivity = event.getSource();
       final UIActivitiesContainer activitiesContainer = docActivity.getParent();
       final UIPopupWindow popupWindow = activitiesContainer.getPopupWindow();
-
       UIDocViewer docViewer = popupWindow.createUIComponent(UIDocViewer.class, null, "DocViewer");
       final Node docNode = docActivity.getContentNode();
       docViewer.setOriginalNode(docNode);
       docViewer.setNode(docNode);
-
       popupWindow.setUIComponent(docViewer);
       popupWindow.setWindowSize(800, 600);
       popupWindow.setShow(true);

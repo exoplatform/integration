@@ -16,68 +16,30 @@
  */
 package org.exoplatform.forum.ext.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.beans.PropertyChangeEvent;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.bbcode.core.ExtendedBBCodeProvider;
-import org.exoplatform.forum.common.TransformHTML;
+import org.exoplatform.commons.utils.PropertyChangeSupport;
+import org.exoplatform.forum.ext.activity.ActivityExecutor;
+import org.exoplatform.forum.ext.activity.ForumActivityContext;
+import org.exoplatform.forum.ext.activity.ForumActivityUtils;
+import org.exoplatform.forum.ext.activity.PostActivityTask;
+import org.exoplatform.forum.ext.activity.TopicActivityTask;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.ForumEventListener;
-import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
-import org.exoplatform.forum.service.Utils;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
-import org.exoplatform.social.core.manager.ActivityManager;
-import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceService;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice Lamarque</a>
  * @version $Revision$
  */
 public class ForumSpaceActivityPublisher extends ForumEventListener {
-
-  public static final String FORUM_APP_ID      = "ks-forum:spaces";
-
-  public static final String FORUM_ID_KEY      = "ForumId";
-
-  public static final String CATE_ID_KEY       = "CateId";
-
-  public static final String ACTIVITY_TYPE_KEY = "ActivityType";
-
-  public static final String POST_TYPE         = "Post";
-
-  public static final String POST_ID_KEY       = "PostId";
-
-  public static final String POST_OWNER_KEY    = "PostOwner";
-
-  public static final String POST_LINK_KEY     = "PostLink";
-
-  public static final String POST_NAME_KEY     = "PostName";
-
-  public static final String TOPIC_ID_KEY      = "TopicId";
-
-  public static final String TOPIC_OWNER_KEY   = "TopicOwner";
-
-  public static final String TOPIC_LINK_KEY    = "TopicLink";
-
-  public static final String TOPIC_NAME_KEY    = "TopicName";
   
-  private static final int   TYPE_PRIVATE      = 2;
-
-  private static final Log   LOG               = ExoLogger.getExoLogger(ForumSpaceActivityPublisher.class);
+  public static final int    APPROVE               = 3;
+  public static final int    WAITING               = 5;
+  public static final int    HIDDEN                = 9;
 
   @Override
   public void saveCategory(Category category) {
@@ -86,154 +48,207 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   @Override
   public void saveForum(Forum forum) {
   }
-
-  public static enum ACTIVITYTYPE {
-    AddPost, AddTopic, UpdatePost, UpdateTopic
+  
+ 
+  
+  @Override
+  public void addPost(Post post) {
+    ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
+    PostActivityTask task = PostActivityTask.ADD_POST;
+    ExoSocialActivity comment = ActivityExecutor.execute(task, ctx);
+    
+    //
+    ForumActivityUtils.takeCommentBack(post, comment);
   }
   
-  private void saveActivity(Identity ownerStream, ExoSocialActivity activity) throws Exception {
-    ActivityManager activityM = (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
-    activityM.saveActivityNoReturn(ownerStream, activity);
-  }
-  
-  private ExoSocialActivity activity(Identity author, String title, String body, String forumId, String categoryId, String topicId, String type, Map<String, String> templateParams) throws Exception {
-    ExoSocialActivity activity = new ExoSocialActivityImpl();
-    body = StringEscapeUtils.unescapeHtml(TransformHTML.getTitleInHTMLCode(body, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes())));
-    activity.setUserId(author.getId());
-    title = StringEscapeUtils.unescapeHtml(title);
-    activity.setTitle(title);
-    activity.setBody(body);
-    activity.setType(FORUM_APP_ID);
-    templateParams.put(FORUM_ID_KEY, forumId);
-    templateParams.put(CATE_ID_KEY, categoryId);
-    templateParams.put(TOPIC_ID_KEY, topicId);
-    templateParams.put(ACTIVITY_TYPE_KEY, type);
-    activity.setTemplateParams(templateParams);
-    return activity;
+  @Override
+  public void updatePost(Post post) {
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+    PostActivityTask task = PostActivityTask.UPDATE_POST;
+    ActivityExecutor.execute(task, ctx);
   }
 
-  private Map<String, String> updateTemplateParams(Map<String, String> templateParams, String id, String link, String owner, String name, ACTIVITYTYPE type) throws Exception {
-    if (type.name().indexOf(POST_TYPE) > 0) {
-      templateParams.put(POST_ID_KEY, id);
-      templateParams.put(POST_LINK_KEY, link);
-      templateParams.put(POST_NAME_KEY, name);
-      templateParams.put(POST_OWNER_KEY, owner);
-    } else {
-      templateParams.put(TOPIC_ID_KEY, id);
-      templateParams.put(TOPIC_LINK_KEY, link);
-      templateParams.put(TOPIC_NAME_KEY, name);
-      templateParams.put(TOPIC_OWNER_KEY, owner);
+  @Override
+  public void updatePost(Post post, int type) {
+    switch (type) {
+      case HIDDEN:
+        if (post.getIsHidden() == true) {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.HIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        } else {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.UNHIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        }
+        break;
+      case WAITING:
+        if (post.getIsWaiting() == true) {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.HIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        } else {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.UNHIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        }
+        break;
+      default:
+        return;
     }
-    return templateParams;
   }
   
-  private boolean isCategoryPublic(Category category) {
-    // the category is public when it does not restrict viewers and private users.
-    return category != null && Utils.isEmpty(category.getViewer()) && Utils.isEmpty(category.getUserPrivate());
+  @Override
+  public void addTopic(Topic topic) {
+    ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);
+    TopicActivityTask task = TopicActivityTask.ADD_TOPIC;
+    ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
+    
+    //
+    ForumActivityUtils.takeActivityBack(topic, got);
+  }
+  
+  @Override
+  public void updateTopic(Topic topic) {
+    
+    TopicActivityTask task = null;
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    updateProperties(topic, ctx);
+    
+    PropertyChangeEvent[] events = topic.getChangeEvent();
+    
+    for (int i = 0; i < events.length; i++) {
+      task = getTaskFromUpdateTopic(events[i]);
+      ActivityExecutor.execute(task, ctx);
+    }
+  }
+  
+  private void updateProperties(Topic topic, ForumActivityContext ctx) {
+    PropertyChangeSupport newPcs = new PropertyChangeSupport(topic);
+    PropertyChangeSupport pcs = topic.getPcs();
+    
+    //Topic.TOPIC_NAME
+    if (pcs.hasPropertyName(Topic.TOPIC_NAME)) {
+      newPcs.addPropertyChange(pcs.getPropertyChange(Topic.TOPIC_NAME));
+    }
+    
+    //Topic.TOPIC_CONTENT
+    if (pcs.hasPropertyName(Topic.TOPIC_CONTENT)) {
+      newPcs.addPropertyChange(pcs.getPropertyChange(Topic.TOPIC_CONTENT));
+    }
+    
+    if (newPcs.getChangeEvents().length > 1) {
+      ctx.setPcs(newPcs);
+      
+      //1. executes task
+      TopicActivityTask task = TopicActivityTask.UPDATE_TOPIC_PROPERTIES;
+      ActivityExecutor.execute(task, ctx);
+      //2. remove events
+      pcs.removePropertyChange(Topic.TOPIC_NAME);
+      pcs.removePropertyChange(Topic.TOPIC_CONTENT);
+    }
+    
+  }
+  
+ 
+  @Override
+  public void moveTopic(Topic topic, String toCategoryName, String toForumName) {
+    ForumActivityContext ctx = ForumActivityContext.makeContextForMoveTopic(topic, toCategoryName, toForumName);
+    TopicActivityTask task = TopicActivityTask.MOVE_TOPIC;
+    ActivityExecutor.execute(task, ctx);
+  }
+
+  @Override
+  public void mergeTopic(Topic newTopic, String removeActivityId1, String removeActivityId2) {
+    ForumActivityContext ctx = ForumActivityContext.makeContextForMergeTopic(newTopic, removeActivityId1, removeActivityId2);
+    TopicActivityTask task = TopicActivityTask.MERGE_TOPIC;
+    ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
+    
+    //
+    ForumActivityUtils.takeActivityBack(ctx.getTopic(), got);
+  }
+
+  @Override
+  public void splitTopic(Topic newTopic, Topic splitedTopic, String removeActivityId) {
+    /** 1. Call delete activityId*/
+    /** 2. Call add topic*/
+    ForumActivityContext ctx = ForumActivityContext.makeContextForSplitTopic(newTopic, splitedTopic, removeActivityId);
+    TopicActivityTask task = TopicActivityTask.SPLIT_TOPIC;
+    ExoSocialActivity activity = ActivityExecutor.execute(task, ctx);
+    
+    //
+    ForumActivityUtils.takeActivityBack(newTopic, activity);
   }
  
-  private boolean isForumPublic(Forum forum) {
- // the forum is public when it does not restrict viewers and is opening.
-    return forum != null && !forum.getIsClosed() && Utils.isEmpty(forum.getViewer());
+  @Override
+  public void removeActivity(String activityId) {
+    ForumActivityUtils.removeActivities(activityId);
   }
   
-  private boolean isTopicPublic(Topic topic) {
-    // the topic is public when it is active, not waiting, not closed yet and does not restrict users
-    return topic != null && topic.getIsActive() && topic.getIsApproved() && !topic.getIsWaiting() && !topic.getIsClosed() && Utils.isEmpty(topic.getCanView());
+  @Override
+  public void removeComment(String activityId, String commentId) {
+    ForumActivityUtils.removeComment(activityId, commentId);
   }
   
-  private boolean isPostPublic(Post post) {
-    // the post is public when it is not private, not hidden by censored words, active by topic and not waiting for approval
-    return post != null && post.getUserPrivate().length != TYPE_PRIVATE && !post.getIsWaiting() && !post.getIsHidden() && post.getIsActiveByTopic() && post.getIsApproved();
-  }
-  
-
-  private boolean hasSpace(String forumId) throws Exception {
-    return !Utils.isEmpty(forumId) && forumId.indexOf(Utils.FORUM_SPACE_ID_PREFIX) >= 0;
-  }
-  
-  private Identity getSpaceIdentity(String forumId) {
-    IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
-    SpaceService spaceS = (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
-    String prettyname = forumId.replaceFirst(Utils.FORUM_SPACE_ID_PREFIX, "");
-    Space space = spaceS.getSpaceByPrettyName(prettyname);
-    Identity spaceIdentity = null;
-    if (space != null) {
-      spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
-    }
-    return spaceIdentity;
-  }
-  
-  private void saveActivityForPost(Post post, String categoryId, String forumId, String topicId, ACTIVITYTYPE type) {
-      ForumService forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
-      IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
-      if (isPostPublic(post)) {
-        try {
-        Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, post.getOwner(), false);
-        Identity ownerStream = null, author = userIdentity;
-        Topic topic = forumService.getTopic(categoryId, forumId, topicId, "");
-        if (isTopicPublic(topic)) {
-          if (hasSpace(forumId)) {
-            // publish the activity in the space stream. 
-            ownerStream = getSpaceIdentity(forumId);
-          }
-          if (ownerStream == null && isCategoryPublic(forumService.getCategory(categoryId)) && isForumPublic(forumService.getForum(categoryId, forumId))) {
-            ownerStream = userIdentity;
-          }
-          if (ownerStream != null) {
-            Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), post.getId(), post.getLink(), post.getOwner(), post.getName(), type);
-            saveActivity(ownerStream, activity(author, post.getName(), post.getMessage(), forumId, categoryId, topicId, type.name(), templateParams));
-          }
-        }
-        } catch (Exception e) { //ForumService
-          LOG.error("Can not record Activity for space when post " + post.getId(), e);
-        }
+  private TopicActivityTask getTaskFromUpdateTopic(PropertyChangeEvent event) {
+    TopicActivityTask got = null;
+    if (Topic.TOPIC_NAME.equals(event.getPropertyName())) {
+      got = TopicActivityTask.UPDATE_TOPIC_TITLE;
+    } else if (Topic.TOPIC_CONTENT.equals(event.getPropertyName())) {
+      got = TopicActivityTask.UPDATE_TOPIC_CONTENT;
+    } else if (Topic.TOPIC_RATING.equals(event.getPropertyName())) {
+      got = TopicActivityTask.UPDATE_TOPIC_RATE;
+    } else if (Topic.TOPIC_STATE_CLOSED.equals(event.getPropertyName())) {
+      
+      //
+      boolean isClose = (Boolean) event.getNewValue();
+      if (isClose) {
+        got = TopicActivityTask.CLOSE_TOPIC;
+      } else {
+        got = TopicActivityTask.OPEN_TOPIC;
       }
       
-  }
-  
-  private void saveActivityForTopic(Topic topic, String categoryId, String forumId, ACTIVITYTYPE type) {
-    ForumService forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
-    IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
-    Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false);
-    Identity ownerStream = null, author;
-    author = userIdentity;
-    if (isTopicPublic(topic)) {
-      try {
-        if (hasSpace(forumId)) {
-          ownerStream = getSpaceIdentity(forumId);
-        }
-        if (ownerStream == null && isCategoryPublic(forumService.getCategory(categoryId)) && isForumPublic(forumService.getForum(categoryId, forumId))) {
-          // if the category and the forum are public, publishing the activity on the user stream.
-          ownerStream = userIdentity;
-        }
-        if (ownerStream != null) {
-          Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), topic.getId(), topic.getLink(), topic.getOwner(), topic.getTopicName(), type);
-          saveActivity(ownerStream, activity(author, topic.getTopicName(), topic.getDescription(), forumId, categoryId, topic.getId(), type.name(), templateParams));
-        }
-      } catch (Exception e) { //ForumService
-        LOG.error("Can not record Activity for space when add topic " + e.getMessage());
+    } else if (Topic.TOPIC_STATUS_LOCK.equals(event.getPropertyName())) {
+      
+      //
+      boolean isLock = (Boolean) event.getNewValue();
+      if (isLock) {
+        got = TopicActivityTask.LOCK_TOPIC;
+      } else {
+        got = TopicActivityTask.UNLOCK_TOPIC;
+      }
+   } else if (Topic.TOPIC_STATUS_APPROVED.equals(event.getPropertyName())) {
+      
+      //
+      boolean isLock = (Boolean) event.getNewValue();
+      if (isLock) {
+        got = TopicActivityTask.APPROVED_TOPIC;
+      } else {
+        got = TopicActivityTask.UNAPPROVED_TOPIC;
+      }
+    
+    } else if (Topic.TOPIC_STATUS_ACTIVE.equals(event.getPropertyName())) {
+      
+      //
+      boolean isActive = (Boolean) event.getNewValue();
+      if (isActive) {
+        got = TopicActivityTask.ACTIVE_TOPIC;
+      } else {
+        got = TopicActivityTask.HIDDEN_TOPIC;
+      }
+    } else if (Topic.TOPIC_STATUS_WAITING.equals(event.getPropertyName())) {
+      
+      //
+      boolean isWaiting = (Boolean) event.getNewValue();
+      if (isWaiting) {
+        got = TopicActivityTask.CENSORING_TOPIC;
+      } else {
+        got = TopicActivityTask.UNCENSORING_TOPIC;
       }
     }
+    
+    return got;
   }
   
-  @Override
-  public void addPost(Post post, String categoryId, String forumId, String topicId) {
-    saveActivityForPost(post, categoryId, forumId, topicId, ACTIVITYTYPE.AddPost) ;
-  }
-
-  @Override
-  public void addTopic(Topic topic, String categoryId, String forumId) {
-    saveActivityForTopic(topic, categoryId, forumId, ACTIVITYTYPE.AddTopic);
-  }
-
-  @Override
-  public void updatePost(Post post, String categoryId, String forumId, String topicId) {
-    saveActivityForPost(post, categoryId, forumId, topicId, ACTIVITYTYPE.UpdatePost);
-  }
-
-  @Override
-  public void updateTopic(Topic topic, String categoryId, String forumId) {
-    saveActivityForTopic(topic, categoryId, forumId, ACTIVITYTYPE.UpdateTopic);
-  }
 }

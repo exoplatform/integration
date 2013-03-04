@@ -55,7 +55,8 @@
   def labelYouLikeThis = _ctx.appRes("UIActivity.label.You_Like_This");
   def labelYouAndOnePersonLikeThis = _ctx.appRes("UIActivity.label.You_And_One_Person_Like_This");
   def labelYouAndPeopleLikeThis = _ctx.appRes("UIActivity.label.You_And_People_Like_This");
-
+  def version = uicomponent.getPageVersion();
+  def versionLabel = _ctx.appRes("WikiUIActivity.label.version") + version;
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
 
@@ -161,6 +162,10 @@
 				 <% if (activityDeletable) {%>
 					<a href="javascript:void(0)" onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="uiIconClose uiIconLightGray" id="DeleteActivityButton${activity.id}"></a>
 				  <%}%>
+         <% if (version > 1) { 
+           String viewChangeURL1 = uicomponent.getViewChangeURL(); %>
+           <span class="FR"><a href="$viewChangeURL1">$versionLabel</a></span>
+         <% } %>
 				<div class="author">
 					<a rel="tooltip" data-placement="bottom" title="$ownerName" href="$ownerUri">$ownerName</a>                
 				</div>

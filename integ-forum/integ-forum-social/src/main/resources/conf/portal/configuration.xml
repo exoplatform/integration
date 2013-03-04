@@ -1,6 +1,177 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
+  <external-component-plugins>
+   <target-component>org.exoplatform.social.core.processor.I18NActivityProcessor</target-component>
+   <component-plugin>
+     <name>poll:spaces</name> <!-- activity type -->
+     <set-method>addActivityResourceBundlePlugin</set-method>
+     <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
+     <init-params>
+       <object-param>
+         <name>locale.forum.integration.integration</name> <!-- resource bundle key file -->
+         <description>activity key type resource bundle mapping for poll:activity</description>
+         <object type="org.exoplatform.social.core.processor.ActivityResourceBundlePlugin">
+           <field name="activityKeyTypeMapping">
+             <map type="java.util.HashMap">
+               <entry>
+                 <key><string>update_poll</string></key>
+                 <value><string>PollUIActivity.label.update_poll</string></value>
+               </entry>
+             </map>
+           </field>
+         </object>
+       </object-param>
+     </init-params>
+   </component-plugin>
+   <component-plugin>
+     <name>answer:spaces</name> <!-- activity type -->
+     <set-method>addActivityResourceBundlePlugin</set-method>
+     <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
+     <init-params>
+       <object-param>
+         <name>locale.forum.integration.integration</name> <!-- resource bundle key file -->
+         <description>activity key type resource bundle mapping for answer:activity</description>
+         <object type="org.exoplatform.social.core.processor.ActivityResourceBundlePlugin">
+           <field name="activityKeyTypeMapping">
+             <map type="java.util.HashMap">
+               <entry>
+                 <key><string>answer-add</string></key>
+                 <value><string>AnswerUIActivity.label.answer-add</string></value>
+               </entry>
+               <entry>
+                 <key><string>answer-update-content</string></key>
+                 <value><string>AnswerUIActivity.label.answer-update-content</string></value>
+               </entry>
+               <entry>
+                 <key><string>answer-promoted</string></key>
+                 <value><string>AnswerUIActivity.label.answer-promoted</string></value>
+               </entry>
+               <entry>
+                 <key><string>answer-activated</string></key>
+                 <value><string>AnswerUIActivity.label.answer-activated</string></value>
+               </entry>
+               <entry>
+                 <key><string>answer-unactivated</string></key>
+                 <value><string>AnswerUIActivity.label.answer-unactivated</string></value>
+               </entry>
+               <entry>
+                 <key><string>answer-approved</string></key>
+                 <value><string>AnswerUIActivity.label.answer-approved</string></value>
+               </entry>
+               <entry>
+                 <key><string>answer-disapproved</string></key>
+                 <value><string>AnswerUIActivity.label.answer-disapproved</string></value>
+               </entry>
+               <entry>
+                 <key><string>question-update-title</string></key>
+                 <value><string>AnswerUIActivity.label.question-update-title</string></value>
+               </entry>
+               <entry>
+                 <key><string>question-activated</string></key>
+                 <value><string>AnswerUIActivity.label.question-activated</string></value>
+               </entry>
+               <entry>
+                 <key><string>question-unactivated</string></key>
+                 <value><string>AnswerUIActivity.label.question-unactivated</string></value>
+               </entry>
+               <entry>
+                 <key><string>question-update-detail</string></key>
+                 <value><string>AnswerUIActivity.label.question-update-detail</string></value>
+               </entry>
+               <entry>
+                 <key><string>question-add-language</string></key>
+                 <value><string>AnswerUIActivity.label.question-add-language</string></value>
+               </entry>
+               <entry>
+                 <key><string>question-add-attachment</string></key>
+                 <value><string>AnswerUIActivity.label.question-add-attachment</string></value>
+               </entry>
+             </map>
+           </field>
+         </object>
+       </object-param>
+     </init-params>
+   </component-plugin>
+   <component-plugin>
+     <name>ks-forum:spaces</name> <!-- activity type -->
+     <set-method>addActivityResourceBundlePlugin</set-method>
+     <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
+     <init-params>
+       <object-param>
+         <name>locale.forum.integration.integration</name> <!-- resource bundle key file -->
+         <description>activity key type resource bundle mapping for exosocial:spaces</description>
+         <object type="org.exoplatform.social.core.processor.ActivityResourceBundlePlugin">
+           <field name="activityKeyTypeMapping">
+             <map type="java.util.HashMap">
+               <entry>
+                 <key><string>forum.update-topic-title</string></key>
+                 <value><string>ForumUIActivity.forum.update-topic-title</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.update-topic-content</string></key>
+                 <value><string>ForumUIActivity.forum.update-topic-content</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.update-topic-rate</string></key>
+                 <value><string>ForumUIActivity.forum.update-topic-rate</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.closed-topic</string></key>
+                 <value><string>ForumUIActivity.forum.closed-topic</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.opened-topic</string></key>
+                 <value><string>ForumUIActivity.forum.opened-topic</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.locked-topic</string></key>
+                 <value><string>ForumUIActivity.forum.locked-topic</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.unlocked-topic</string></key>
+                 <value><string>ForumUIActivity.forum.unlocked-topic</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.approved-topic</string></key>
+                 <value><string>ForumUIActivity.forum.approved-topic</string></value>
+               </entry>
+                <entry>
+                 <key><string>forum.unapproved-topic</string></key>
+                 <value><string>ForumUIActivity.forum.unapproved-topic</string></value>
+               </entry>
+                <entry>
+                 <key><string>forum.move-topic</string></key>
+                 <value><string>ForumUIActivity.forum.move-topic</string></value>
+               </entry>
+                <entry>
+                 <key><string>forum.update-post</string></key>
+                 <value><string>ForumUIActivity.forum.update-post</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.add-poll</string></key>
+                 <value><string>ForumUIActivity.forum.add-poll</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.update-poll</string></key>
+                 <value><string>ForumUIActivity.forum.update-poll</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.close-poll</string></key>
+                 <value><string>ForumUIActivity.forum.close-poll</string></value>
+               </entry>
+               <entry>
+                 <key><string>forum.remove-poll</string></key>
+                 <value><string>ForumUIActivity.forum.remove-poll</string></value>
+               </entry>
+             </map>
+           </field>
+         </object>
+       </object-param>
+     </init-params>
+   </component-plugin>
+  </external-component-plugins>
+
  <!-- Social integration -->
    <external-component-plugins>
     <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
@@ -26,6 +197,17 @@
 				</value-param>
 			</init-params>
     </component-plugin>
+    <component-plugin>
+      <name>PollDataInitialize</name>
+      <set-method>addSpaceListener</set-method>
+      <type>org.exoplatform.forum.ext.impl.PollDataInitialize</type>
+      <init-params>
+        <value-param>
+          <name>portletName</name>
+          <value>PollPortlet</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
   </external-component-plugins>
 	
    <external-component-plugins>
@@ -45,6 +227,15 @@
       <type>org.exoplatform.forum.ext.impl.AnswersSpaceActivityPublisher</type>
     </component-plugin>
   </external-component-plugins>
+  
+  <external-component-plugins>
+    <target-component>org.exoplatform.poll.service.PollService</target-component>
+    <component-plugin>
+      <name>PollEventListener</name>
+      <set-method>addListenerPlugin</set-method>
+      <type>org.exoplatform.forum.ext.impl.PollSpaceActivityPublisher</type>
+    </component-plugin>
+  </external-component-plugins>
 
   <external-component-plugins>
     <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
@@ -58,6 +249,7 @@
           <value>ForumPortlet</value>
           <value>AnswersPortlet</value>
           <value>FAQPortlet</value>
+          <value>PollPortlet</value>
         </values-param>
       </init-params>
     </component-plugin>
@@ -94,6 +286,22 @@
             <field name="name"><string>ks-answer:spaces</string></field>
             <field name="component"><string>org.exoplatform.forum.ext.impl.AnswerUIActivity</string></field>
             <field name="activityBuiderClass"><string>org.exoplatform.forum.ext.impl.AnswerSpaceUIActivityBuilder</string></field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>add.poll.activity.plugin</name>
+      <set-method>registerUIExtensionPlugin</set-method>
+      <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+      <init-params>
+        <object-param>
+          <name>Poll Space Activity</name>
+          <object type="org.exoplatform.social.webui.activity.UIActivityExtension">
+            <field name="type"><string>org.exoplatform.social.webui.activity.BaseUIActivity</string></field>
+            <field name="name"><string>ks-poll:spaces</string></field>
+            <field name="component"><string>org.exoplatform.forum.ext.impl.PollUIActivity</string></field>
+            <field name="activityBuiderClass"><string>org.exoplatform.forum.ext.impl.PollSpaceUIActivityBuilder</string></field>
           </object>
         </object-param>
       </init-params>

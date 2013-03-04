@@ -23,6 +23,7 @@
 <%
   import java.text.SimpleDateFormat;
   import org.exoplatform.portal.webui.util.Util;
+  import org.exoplatform.social.core.activity.model.ExoSocialActivity;
   import org.exoplatform.webui.form.UIFormTextAreaInput;
   import org.exoplatform.social.core.service.LinkProvider;
   import org.exoplatform.social.core.space.model.Space;
@@ -62,10 +63,10 @@
 
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
-
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
-  if (allComments) {
+  
+  if (allComments.size() > 0) {
     labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
     labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
 
@@ -73,7 +74,7 @@
   def displayedIdentityLikes = uicomponent.getDisplayedIdentityLikes();
   def identityLikesNum = 0;
   def labelLikes = null;
-  def toggleDisplayLikesAction = uicomponent.event("ToggleDisplayLikes");
+  def toggleDisplayLikesAction = uicomponent.event("LoadLikesActionListener");
   def startTag = "<a onclick=\"$toggleDisplayLikesAction\" id=\"ToggleDisplayListPeopleLikes${activity.id}\" href=\"#ToggleDisplayListPeopleLikes\">";
   def endTag = "</a>";
   if (displayedIdentityLikes != null) {
@@ -145,6 +146,7 @@
 
 <div class="activityStream uiCalendarActivity"> 
   <% uiform.begin() %>
+
   <%
   def calendarIconClass = "eventActivityIcon";
   def typeCalenderIconClass = "uiIconCalendarMini";
@@ -198,12 +200,11 @@
 				<div class="uiBox roundedBottom introBox CalendarShare">
 					<div class="clearfix">
 						<%
-							SimpleDateFormat sdf = new SimpleDateFormat("MMM");   
 							if (uicomponent.getTypeOfEvent().contains("Task")) {
 						%>
 						<div class="pull-left statusTask"><i class="<%=event.getEventState()%>Icon"  ></i></div>
 						<%} else { 
-						
+					    SimpleDateFormat sdf = new SimpleDateFormat("MMM");   
 						def month = sdf.format(event.getFromDateTime());    
 						sdf = new SimpleDateFormat("dd");    
 						def day = (sdf.format(event.getFromDateTime())) ;
@@ -231,13 +232,11 @@
 								<p><%= uicomponent.getDescription();%> </p>
 								<%
 									if (uicomponent.getTypeOfEvent().contains("Task")) {
-									sdf = new SimpleDateFormat("EEEEE, MMMMMMMM dd, yyyy K:mm a") ;  
-									def fullTask = (sdf.format(event.getToDateTime())) ;
+									def fullTask = uicomponent.getEventEndTime() ;
 								%>
 									<span class="dateTime">Due for: $fullTask</span> 
 								<% } else {
-									sdf = new SimpleDateFormat("EEEEE, MMMMMMMM dd, yyyy K:mm a") ;    
-									def full = (sdf.format(event.getFromDateTime())) ;
+									def full = uicomponent.getEventStartTime() ;
 								%>  
 									<span class="dateTime">$full</span><br/>
 									<span class="location"><%= uicomponent.getLocation();%> <br></span>	
@@ -328,7 +327,7 @@
 					  def id = Utils.getIdentityManager().getIdentity(it.userId);
 					  commenterFullName = id.profile.fullName;
 					  commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-					  commentMessage = it.title;
+					  commentMessage = uicomponent.buildComment(_ctx,it);
 					  commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
 					  commenterAvatarImgSrc = id.profile.avatarUrl;
 					  if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;

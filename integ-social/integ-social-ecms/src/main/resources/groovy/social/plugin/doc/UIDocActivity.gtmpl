@@ -28,6 +28,7 @@
   import org.exoplatform.social.core.service.LinkProvider;
   import org.exoplatform.social.core.space.model.Space;
   import org.exoplatform.social.webui.Utils;
+  import org.apache.commons.lang.StringUtils;
 
   def pcontext = Util.getPortalRequestContext();
   def jsManager = pcontext.getJavascriptManager();
@@ -141,7 +142,6 @@
 
   def downloadFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.Download");
   def viewFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.View_File");
-  def gotoFolderLabel = _ctx.appRes("UIComposerDocumentExtension.label.Goto_Folder");
 %>
 
 <div class="activityStream uiDocActivity">
@@ -222,7 +222,7 @@
 						<% if (uicomponent.isLiked()) { %>
 						<li>
 							<a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="#unlike">
-							   <i class="uiIconThumbUp uiIconLightGray"></i>&nbsp;3<!-- hackcode add dynamic later-->
+							   <i class="uiIconThumbUp uiIconBlue"></i>&nbsp;3<!-- hackcode add dynamic later-->
 							</a>
 						</li>
 						<% } else { %>
@@ -237,14 +237,13 @@
 					 <ul class="pull-left statusAction">					 
 						<li><a href="<%= uicomponent.event("ViewDocument")%>"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;$viewFileLabel</a></li> 
 						<li><a href="<%= uicomponent.event("DownloadDocument")%>"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;$downloadFileLabel</a></li>
-						<li><a href="<%= uicomponent.event("GotoFolder")%>"><i class="uiIconFolder uiIconLightGray"></i>&nbsp;$gotoFolderLabel</a></li>
 					 </ul>
 				</div><!--end actionBar-->		
 				<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>				
 				<div class="listLikedBox $listPeopleBGClass">		
 					  <div class="listPeopleContent">
 					  <% if (!labelLikes) labelLikes = ""; %>
-								<p>Liked by you, Thomas and Marry</p><!--hackcode-->
+								<p>$labelLikes</p>
 
 						<% if (identityLikesNum > 0) {%>
 						<div class="listLiked">

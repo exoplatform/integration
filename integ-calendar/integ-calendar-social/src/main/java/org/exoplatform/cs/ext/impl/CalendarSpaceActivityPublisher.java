@@ -16,10 +16,21 @@
  */
 package org.exoplatform.cs.ext.impl;
 
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.exoplatform.calendar.service.CalendarEvent;
+import org.exoplatform.calendar.service.CalendarService;
+import org.exoplatform.calendar.service.CalendarSetting;
 import org.exoplatform.calendar.service.impl.CalendarEventListener;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
@@ -37,6 +48,7 @@ import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.webui.application.WebuiRequestContext;
 
 /**
  * Created by The eXo Platform SAS
@@ -74,11 +86,48 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   public static final String EVENT_STARTTIME_KEY   = "EventStartTime".intern();
 
   public static final String EVENT_ENDTIME_KEY     = "EventEndTime".intern();
-  
+
   public static final String EVENT_LINK_KEY        = "EventLink";
-  
+
   public static final String INVITATION_DETAIL     = "/invitation/detail/";
-  
+
+  public static final String CALENDAR_FIELDS_CHANGED = "CALENDAR_FIELDS_CHANGED";
+
+
+  public static final String SUMMARY_UPDATED = "summary_updated";
+  public static final String DESCRIPTION_UPDATED = "description_updated";
+  public static final String FROM_UPDATED = "fromDateTime_updated";
+  public static final String TO_UPDATED = "toDateTime_updated";
+  public static final String LOCATION_UPDATED = "location_updated";
+  public static final String ALLDAY_UPDATED = "allDay_updated";
+  public static final String REPEAT_UPDATED = "repeatType_updated";
+  public static final String ATTACH_UPDATED = "attachment_updated";
+  public static final String CATEGORY_UPDATED = "eventCategoryName_updated";
+  public static final String CALENDAR_UPDATED = "calendarId_updated";
+  public static final String PRIORITY_UPDATED = "priority_updated";
+
+
+  private static final String RP_END_BYDATE = "endByDate";
+  private static final String RP_END_AFTER = "endAfter";
+  private static final String RP_END_NEVER = "neverEnd";
+
+  private static final String RP_MONTHLY_BYDAY = "monthlyByDay";
+  private static final String RP_MONTHLY_BYMONTHDAY = "monthlyByMonthDay";
+
+  private static final String REPEAT_EVENT_INSTANCE_REMOVED = "repeatEvent_instance_removed";
+
+  public static final String NAME_UPDATED = "name_updated";
+  public static final String NOTE_UPDATED = "note_updated";
+  public static final String TASK_CATEGORY_UPDATED = "taskCategoryName_updated";
+  public static final String TASK_CALENDAR_UPDATED = "task_CalendarId_updated";
+  public static final String TASK_ATTACH_UPDATED = "task_attachment_updated";
+  public static final String TASK_NEED_ACTION = CalendarEvent.NEEDS_ACTION;
+  public static final String TASK_IN_PROCESS_ACTION = CalendarEvent.IN_PROCESS;
+  public static final String TASK_COMPLETED_ACTION = CalendarEvent.COMPLETED;
+  public static final String TASK_CANCELLED_ACTION = CalendarEvent.CANCELLED;
+
+  private CalendarService calService_ ;
+
   /**
    * Make url for the event of the calendar application. 
    * Format of the url is: 
@@ -95,13 +144,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    */
   private String makeEventLink(CalendarEvent event) {
     StringBuffer sb = new StringBuffer("");    
-      PortalRequestContext requestContext = Util.getPortalRequestContext();
-      sb.append(requestContext.getPortalURI())
-        .append(requestContext.getNodePath())
-        .append(INVITATION_DETAIL)
-        .append(ConversationState.getCurrent().getIdentity().getUserId())
-        .append("/").append(event.getId())
-        .append("/").append(event.getCalType());    
+    PortalRequestContext requestContext = Util.getPortalRequestContext();
+    sb.append(requestContext.getPortalURI())
+    .append(requestContext.getNodePath())
+    .append(INVITATION_DETAIL)
+    .append(ConversationState.getCurrent().getIdentity().getUserId())
+    .append("/").append(event.getId())
+    .append("/").append(event.getCalType());    
     return sb.toString();
   }
 
@@ -145,25 +194,544 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         activity.setUserId(userIdentity.getId());
         activity.setTitle(event.getSummary());
         activity.setBody(event.getDescription());
-        activity.setType(CALENDAR_APP_ID);
+        activity.setType("cs-calendar:spaces");
         activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
-
         activityM.saveActivityNoReturn(spaceIdentity, activity);
+        event.setActivityId(activity.getId());
       }
     }catch(ExoSocialException e){ //getSpaceByPrettyName
-      if (LOG.isErrorEnabled())
+      if (LOG.isDebugEnabled())
         LOG.error("Can not record Activity for space when event added ", e);
     }
   }
-  
+  /**
+   * adds comment to activity of a calendar event each time it's updated
+   * @param event
+   * @param calendarId
+   * @param eventType
+   * @param messagesParams
+   */
+  private void updateToActivity(CalendarEvent event, String calendarId, String eventType, Map<String, String> messagesParams){
+	  try {
+		  Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
+	  } catch (ClassNotFoundException e) {
+		  if (LOG.isDebugEnabled()) {
+			  LOG.debug("eXo Social components not found!", e);
+		  }
+		  return;
+	  }
+	  if (calendarId == null || calendarId.indexOf(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX) < 0) {
+		  return;
+	  }
+	  try{
+		  IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
+		  ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
+		  SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+		  String spacePrettyName = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
+		  Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
+		  
+		  if (space != null && event.getActivityId() != null) {
+			  String userId = ConversationState.getCurrent().getIdentity().getUserId();
+			  Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
+			  Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
+			  ExoSocialActivity activity = activityM.getActivity(event.getActivityId()) ;
+			  // if the activity was deleted, create new activity and add comments
+			  if(activity == null) {
+	        
+			    // re-create activity
+			    ExoSocialActivity newActivity = new ExoSocialActivityImpl();
+	        newActivity.setUserId(userIdentity.getId());
+	        newActivity.setTitle(event.getSummary());
+	        newActivity.setBody(event.getDescription());
+	        newActivity.setType("cs-calendar:spaces");
+	        newActivity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
+	        activityM.saveActivityNoReturn(spaceIdentity, newActivity);
+	       
+	        // add comments
+	        ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
+          activityM.saveComment(newActivity, newComment);
+          
+          // update activity id for event
+	        event.setActivityId(newActivity.getId());
+          LOG.info(String.format("[CALENDAR] successfully re-created activity for event: %s", event.getSummary()));
+			  } else {
+          activity.setTitle(event.getSummary());
+			    activity.setBody(event.getDescription());
+			    activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
+	        activityM.updateActivity(activity);
+	        ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
+	        activityM.saveComment(activity, newComment);
+	        LOG.info(String.format("[CALENDAR] successfully added comment to activity of event: %s", event.getSummary()));
+			  }
+			  
+		  }
+
+	  } catch (ExoSocialException e){  
+		  if (LOG.isDebugEnabled())
+			  LOG.error("Can not update Activity for space when event modified ", e);
+	  }
+  }
+  /**
+   * creates a comment associated to updated fields
+   * @param userId
+   * @param messagesParams
+   * @return a comment object
+   * @since activity-type
+   */
+  private ExoSocialActivity createComment(String userId, Map<String,String> messagesParams) {
+    ExoSocialActivity newComment = new ExoSocialActivityImpl();
+    newComment.isComment(true);
+    newComment.setUserId(userId);
+    newComment.setType("CALENDAR_ACTIVITY");
+    StringBuilder fields = new StringBuilder();
+    Map<String, String> data = new LinkedHashMap<String, String>(); 
+
+    for(String field : messagesParams.keySet()) {
+      String value = messagesParams.get(field);
+      data.put(field, value); // store field changed and its new value
+      fields.append("," + field);
+    }
+    String fieldsChanged = fields.toString().substring(1); // remove the first ","
+    data.put(CALENDAR_FIELDS_CHANGED, fieldsChanged);
+    newComment.setTitleId(fieldsChanged);
+    newComment.setTemplateParams(data);
+//    newComment.setTitle(title.toString());
+    return newComment;
+  }
+
+
+  private void deleteActivity(CalendarEvent event, String calendarId, String eventType){
+    try {
+      Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
+    } catch (ClassNotFoundException e) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("eXo Social components not found!", e);
+      }
+      return;
+    }
+    if (calendarId == null || calendarId.indexOf(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX) < 0) {
+      return;
+    }
+    try{
+      ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
+      SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+      String spacePrettyName = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
+      Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
+      if (space != null && event.getActivityId() != null) {
+        activityM.deleteActivity(event.getActivityId());
+      }
+    } catch (ExoSocialException e){ //getSpaceByPrettyName
+      if (LOG.isDebugEnabled())
+        LOG.error("Can not delete Activity for space when event deleted ", e);
+    }
+  }
+  private Map<String, String> buildParams(CalendarEvent oldEvent, CalendarEvent newEvent){
+    Map<String, String> messagesParams = new LinkedHashMap<String, String>();
+    try {
+      if(CalendarEvent.TYPE_EVENT.equals(newEvent.getEventType())) {
+        if(!oldEvent.getSummary().equals(newEvent.getSummary())) {
+          messagesParams.put(SUMMARY_UPDATED,newEvent.getSummary()) ;
+        }
+        if(newEvent.getDescription() != null && !newEvent.getDescription().equals(oldEvent.getDescription())) {
+          messagesParams.put(DESCRIPTION_UPDATED,newEvent.getDescription()) ;
+        }
+        if(newEvent.getLocation()!= null && !newEvent.getLocation().equals(oldEvent.getLocation())) {
+          messagesParams.put(LOCATION_UPDATED,newEvent.getLocation()) ;
+        }
+        if(newEvent.getPriority()!= null && !newEvent.getPriority().equals(oldEvent.getPriority())) {
+          messagesParams.put(PRIORITY_UPDATED,newEvent.getPriority()) ;
+        }
+        if(newEvent.getAttachment() != null) if(oldEvent.getAttachment() == null ){
+          messagesParams.put(ATTACH_UPDATED,"") ;
+        } else if(newEvent.getAttachment().size() != oldEvent.getAttachment().size()) {
+          messagesParams.put(ATTACH_UPDATED,"") ;
+        }
+        if(isAllDayEvent(newEvent) && !isAllDayEvent(oldEvent) && CalendarEvent.TYPE_EVENT.equals(oldEvent.getEventType())) {
+          messagesParams.put(ALLDAY_UPDATED,"") ;
+        } else if (!isAllDayEvent(newEvent)) {
+          if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
+            messagesParams.put(FROM_UPDATED,String.valueOf(newEvent.getFromDateTime().getTime())) ;
+          }
+          if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
+            messagesParams.put(TO_UPDATED,String.valueOf(newEvent.getToDateTime().getTime())) ; 
+          }
+        }
+
+        /*=== compare the repeat type ===*/
+        String repeatSummary = buildRepeatSummary(newEvent);
+        if (!repeatSummary.equals(buildRepeatSummary(oldEvent)))
+        {
+          messagesParams.put(REPEAT_UPDATED, repeatSummary) ;
+        }
+
+        /*=== compare the activity id ===*/
+        // oldEvent -- occurrence or instance of repetitive event -- no activity
+        // newEvent -- repetitiveEvent - with activity
+        if (!newEvent.getActivityId().equals(oldEvent.getActivityId()))
+        {
+          messagesParams.put(REPEAT_EVENT_INSTANCE_REMOVED, getDateFormattedAfterUserSetting(oldEvent.getRecurrenceId())) ;
+        }
+
+      } else {
+        if(!oldEvent.getSummary().equals(newEvent.getSummary())) {
+          messagesParams.put(NAME_UPDATED,newEvent.getSummary()) ;
+        }
+        if(newEvent.getDescription() != null && !newEvent.getDescription().equals(oldEvent.getDescription())) {
+          messagesParams.put(NOTE_UPDATED,newEvent.getDescription()) ;
+        }
+        
+        if (!isAllDayEvent(newEvent)) {
+          if(newEvent.getFromDateTime().compareTo(oldEvent.getFromDateTime()) != 0) {
+            messagesParams.put(FROM_UPDATED, String.valueOf(newEvent.getFromDateTime().getTime()));
+          }
+          if(newEvent.getToDateTime().compareTo(oldEvent.getToDateTime()) != 0) {
+            messagesParams.put(TO_UPDATED, String.valueOf(newEvent.getToDateTime().getTime())); 
+          }
+        }
+        if(newEvent.getPriority()!= null && !newEvent.getPriority().equals(oldEvent.getPriority())) {
+          messagesParams.put(PRIORITY_UPDATED,newEvent.getPriority()) ;
+        }
+        if(newEvent.getAttachment() != null) if(oldEvent.getAttachment() == null ){
+          messagesParams.put(TASK_ATTACH_UPDATED,"") ;
+        } else if(newEvent.getAttachment().size() != oldEvent.getAttachment().size()) {
+          messagesParams.put(TASK_ATTACH_UPDATED,"") ;
+        }
+        if(newEvent.getEventState() != null && !newEvent.getEventState().equals(oldEvent.getEventState())) {
+          if(CalendarEvent.NEEDS_ACTION.equals(newEvent.getEventState())) {
+            messagesParams.put(TASK_NEED_ACTION, newEvent.getEventState()) ;
+          } else if(CalendarEvent.IN_PROCESS.equals(newEvent.getEventState())) {
+            messagesParams.put(TASK_IN_PROCESS_ACTION, newEvent.getEventState()) ;
+          } else if(CalendarEvent.COMPLETED.equals(newEvent.getEventState())) {
+            messagesParams.put(TASK_COMPLETED_ACTION, newEvent.getEventState()) ;
+          } else if(CalendarEvent.CANCELLED.equals(newEvent.getEventState())) {
+            messagesParams.put(TASK_CANCELLED_ACTION, newEvent.getEventState()) ;
+          }
+        }
+      }
+    } catch (Exception e) {
+      if (LOG.isDebugEnabled())
+        LOG.error("Can not build message for space when event updated ", e);
+    }
+    return messagesParams;
+  }
+
+  /**
+   * convert date to user date format using calendar setting
+   *
+   * @param date
+   * @return
+   */
+  private String getDateFormattedAfterUserSetting(String date)
+  {
+    try
+    {
+      String userId = ConversationState.getCurrent().getIdentity().getUserId();
+      calService_ = (CalendarService)PortalContainer.getInstance().getComponentInstance(CalendarService.class);   // not null
+      CalendarSetting calSetting = calService_.getCalendarSetting(userId);  // not null
+      WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance() ;
+      Locale locale = requestContext.getParentAppRequestContext().getLocale() ;
+      DateFormat format = new SimpleDateFormat(calSetting.getDateFormat(), locale);
+
+      /* recurrenceId to Date then re-convert it to user date format */
+      DateFormat format1 = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+      Date eventDate = format1.parse(date);
+
+      return format.format(eventDate);
+    }
+    catch (Exception e)
+    {
+      LOG.debug(e.getMessage());
+    }
+    return null;
+  }
+
+  /**
+   * Build the repeating summary, i.e: daily every 2 days, until 02/03/2011. <br/>
+   * The summary structure is defined in resource bundle, it contains some parameters and </br>
+   * will be replaced by values from repeatEvent. <br/>
+   * <p>There are 6 parameters: {count}, {until}, {interval}, {byDays}, {theDay}, {theNumber}.<br/>
+   * Some labels in resource bundle to define numbers (the first, the second, ...) which were used in summary
+   * @param repeatEvent the repeating event
+   * @return summary string about repeating event
+   * @throws Exception
+   */
+  public String buildRepeatSummary(CalendarEvent repeatEvent)
+  {
+    if (repeatEvent == null) return "";
+    String repeatType = repeatEvent.getRepeatType();
+    if (CalendarEvent.RP_NOREPEAT.equals(repeatType) || repeatType == null) return "";
+
+    try {
+    String userId = ConversationState.getCurrent().getIdentity().getUserId();
+    calService_ = (CalendarService)PortalContainer.getInstance().getComponentInstance(CalendarService.class);
+    CalendarSetting calSetting = calService_.getCalendarSetting(userId);
+    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance() ;
+
+    Locale locale = requestContext.getParentAppRequestContext().getLocale() ;
+    DateFormat format = new SimpleDateFormat(calSetting.getDateFormat(), locale);
+    DateFormatSymbols symbols = new DateFormatSymbols(locale);
+    String[] dayOfWeeks = symbols.getWeekdays();
+
+    int interval = (int)repeatEvent.getRepeatInterval();
+    int count = (int)repeatEvent.getRepeatCount();
+    Date until = repeatEvent.getRepeatUntilDate();
+    String endType = RP_END_NEVER;
+    if (count > 0) endType = RP_END_AFTER;
+    if (until != null) endType = RP_END_BYDATE;
+
+    StringBuilder pattern = new StringBuilder("");
+    if (repeatType.equals(CalendarEvent.RP_DAILY)) {
+      if (interval == 1) {
+        //pattern = "Daily";
+        pattern.append(CalendarUIActivity.getUICalendarLabel("daily"));
+      } else {
+        //pattern = "Every {interval} days";
+        pattern.append(CalendarUIActivity.getUICalendarLabel("every-day"));
+      }
+      if (endType.equals(RP_END_AFTER)) {
+        //pattern = "Daily, {count} times";
+        //pattern = "Every {interval} days, {count} times";
+        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("count-times"));
+      }
+      if (endType.equals(RP_END_BYDATE)) {
+        //pattern = "Daily, until {until}";
+        //pattern = "Every {interval} days, until {until}";
+        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("until"));
+      }
+
+      return new String(pattern).replace("{interval}", String.valueOf(interval))
+          .replace("{count}", String.valueOf(repeatEvent.getRepeatCount()))
+          .replace("{until}", repeatEvent.getRepeatUntilDate()==null?"":format.format(repeatEvent.getRepeatUntilDate()));
+    }
+
+    if (repeatType.equals(CalendarEvent.RP_WEEKLY)) {
+      if (interval == 1) {
+        //pattern = "Weekly on {byDays}";
+        pattern.append(CalendarUIActivity.getUICalendarLabel("weekly"));
+      } else {
+        //pattern = "Every {interval} weeks on {byDays}";
+        pattern.append(CalendarUIActivity.getUICalendarLabel("every-week"));
+      }
+      if (endType.equals(RP_END_AFTER)) {
+        //pattern = "Weekly on {byDays}, {count} times";
+        //pattern = "Every {interval} weeks on {byDays}, {count} times";
+        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("count-times"));
+      }
+      if (endType.equals(RP_END_BYDATE)) {
+        //pattern = "Weekly on {byDays}, until {until}";
+        //pattern = "Every {interval} weeks on {byDays}, until {until}";
+        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("until"));
+      }
+
+      String[] weeklyByDays = repeatEvent.getRepeatByDay();
+      StringBuffer byDays = new StringBuffer();
+      for (int i = 0; i < weeklyByDays.length; i++) {
+        if (i == 0) {
+          byDays.append(dayOfWeeks[convertToDayOfWeek(weeklyByDays[0])]);
+        } else {
+          byDays.append(", ");
+          byDays.append(dayOfWeeks[convertToDayOfWeek(weeklyByDays[i])]);
+        }
+      }
+      return new String(pattern).replace("{interval}", String.valueOf(interval))
+          .replace("{count}", String.valueOf(repeatEvent.getRepeatCount()))
+          .replace("{until}", repeatEvent.getRepeatUntilDate()==null?"":format.format(repeatEvent.getRepeatUntilDate()))
+          .replace("{byDays}", byDays.toString());
+    }
+
+    if (repeatType.equals(CalendarEvent.RP_MONTHLY)) {
+      String monthlyType = RP_MONTHLY_BYMONTHDAY;
+      if (repeatEvent.getRepeatByDay() != null && repeatEvent.getRepeatByDay().length > 0) monthlyType = RP_MONTHLY_BYDAY;
+
+      if (interval == 1) {
+        // pattern = "Monthly on"
+        pattern.append(CalendarUIActivity.getUICalendarLabel("monthly"));
+      } else {
+        // pattern = "Every {interval} months on
+        pattern.append(CalendarUIActivity.getUICalendarLabel("every-month"));
+      }
+
+      if (monthlyType.equals(RP_MONTHLY_BYDAY)) {
+        // pattern = "Monthly on {theNumber} {theDay}
+        // pattern = "Every {interval} months on {theNumber} {theDay}
+        pattern.append(" " + CalendarUIActivity.getUICalendarLabel("monthly-by-day"));
+      } else {
+        // pattern = "Monthly on day {theDay}
+        // pattern = "Every {interval} months on day {theDay}
+        pattern.append(" " + CalendarUIActivity.getUICalendarLabel("monthly-by-month-day"));
+      }
+
+      if (endType.equals(RP_END_AFTER)) {
+        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("count-times"));
+      }
+      if (endType.equals(RP_END_BYDATE)) {
+        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("until"));
+      }
+
+      String theNumber = ""; // the first, the second, the third, ...
+      String theDay = ""; // in monthly by day, it's Monday, Tuesday, ... (day of week), in monthly by monthday, it's 1-31 (day of month)
+      if (monthlyType.equals(RP_MONTHLY_BYDAY)) {
+        java.util.Calendar temp = getCalendarInstanceBySetting(calSetting);
+        temp.setTime(repeatEvent.getFromDateTime());
+        int weekOfMonth = temp.get(java.util.Calendar.WEEK_OF_MONTH);
+        java.util.Calendar temp2 = getCalendarInstanceBySetting(calSetting);
+        temp2.setTime(temp.getTime());
+        temp2.add(java.util.Calendar.DATE, 7);
+        if (temp2.get(java.util.Calendar.MONTH) != temp.get(java.util.Calendar.MONTH)) weekOfMonth = 5;
+        int dayOfWeek = temp.get(java.util.Calendar.DAY_OF_WEEK);
+        String[] weekOfMonths = new String[] {CalendarUIActivity.getUICalendarLabel("summary-the-first"), CalendarUIActivity.getUICalendarLabel("summary-the-second"), CalendarUIActivity.getUICalendarLabel("summary-the-third"),
+            CalendarUIActivity.getUICalendarLabel("summary-the-fourth"), CalendarUIActivity.getUICalendarLabel("summary-the-last")};
+        theNumber = weekOfMonths[weekOfMonth-1];
+        theDay = dayOfWeeks[dayOfWeek];
+      } else {
+        java.util.Calendar temp = getCalendarInstanceBySetting(calSetting);
+        temp.setTime(repeatEvent.getFromDateTime());
+        int dayOfMonth = temp.get(java.util.Calendar.DAY_OF_MONTH);
+        theDay = String.valueOf(dayOfMonth);
+      }
+      return new String(pattern).replace("{interval}", String.valueOf(interval))
+          .replace("{count}", String.valueOf(repeatEvent.getRepeatCount()))
+          .replace("{until}", repeatEvent.getRepeatUntilDate()==null?"":format.format(repeatEvent.getRepeatUntilDate()))
+          .replace("{theDay}", theDay).replace("{theNumber}", theNumber);
+    }
+
+    if (repeatType.equals(CalendarEvent.RP_YEARLY)) {
+      if (interval == 1) {
+        // pattern = "Yearly on {theDay}"
+        pattern.append(CalendarUIActivity.getUICalendarLabel("yearly"));
+      } else {
+        // pattern = "Every {interval} years on {theDay}"
+        pattern.append(CalendarUIActivity.getUICalendarLabel("every-year"));
+      }
+
+      if (endType.equals(RP_END_AFTER)) {
+        // pattern = "Yearly on {theDay}, {count} times"
+        // pattern = "Every {interval} years on {theDay}, {count} times"
+        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("count-times"));
+      }
+      if (endType.equals(RP_END_BYDATE)) {
+        // pattern = "Yearly on {theDay}, until {until}"
+        // pattern = "Every {interval} years on {theDay}, until {until}"
+        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("until"));
+      }
+
+      String theDay = format.format(repeatEvent.getFromDateTime()); //
+      return new String(pattern).replace("{interval}", String.valueOf(interval))
+          .replace("{count}", String.valueOf(repeatEvent.getRepeatCount()))
+          .replace("{until}", repeatEvent.getRepeatUntilDate()==null?"":format.format(repeatEvent.getRepeatUntilDate()))
+          .replace("{theDay}", theDay);
+    }
+    }
+    catch (Exception e)
+    {
+      LOG.info(e.getLocalizedMessage());
+    }
+    return null;
+  }
+
+  public static int convertToDayOfWeek(String day) {
+    int dayOfWeek = (day.equals("MO")?2:
+        (day.equals("TU")?3:
+            (day.equals("WE")?4:
+                (day.equals("TH")?5:
+                    (day.equals("FR")?6:
+                        (day.equals("SA")?7:
+                            (day.equals("SU")?1:0)
+                        ))))));
+    return dayOfWeek;
+  }
+
+  /**
+   * get calendar by user setting (timezone, first day of week)
+   * @param calendarSetting
+   * @return calendar object
+   */
+  public static Calendar getCalendarInstanceBySetting(CalendarSetting calendarSetting) {
+    Calendar calendar = GregorianCalendar.getInstance() ;
+    calendar.setLenient(false);
+    calendar.setTimeZone(TimeZone.getTimeZone(calendarSetting.getTimeZone()));
+    calendar.setFirstDayOfWeek(Integer.parseInt(calendarSetting.getWeekStartOn()));
+    calendar.setMinimalDaysInFirstWeek(4);
+    return calendar;
+  }
+
+  private boolean isAllDayEvent(CalendarEvent eventCalendar) {
+    try {
+      TimeZone tz = getUserTimeZone() ;
+      Calendar cal1 = new GregorianCalendar(tz) ;
+      Calendar cal2 = new GregorianCalendar(tz) ;
+      cal1.setLenient(false);
+      cal1.setTime(eventCalendar.getFromDateTime()) ;
+      //cal1.setTimeZone(tz);
+      cal2.setLenient(false);
+      cal2.setTime(eventCalendar.getToDateTime()) ;
+      //cal2.setTimeZone(tz);
+      return (cal1.get(Calendar.HOUR_OF_DAY) == 0  && 
+          cal1.get(Calendar.MINUTE) == 0 &&
+          cal2.get(Calendar.HOUR_OF_DAY) == cal2.getActualMaximum(Calendar.HOUR_OF_DAY)&& 
+          cal2.get(Calendar.MINUTE) == cal2.getActualMaximum(Calendar.MINUTE) );
+    } catch (Exception e) {
+      if (LOG.isDebugEnabled())
+        LOG.error("Can not check all day event when event updated ", e);
+    }
+    return false;
+  }
+
+  private TimeZone getUserTimeZone() {
+    try {
+      String username = ConversationState.getCurrent().getIdentity().getUserId();      
+      CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+      CalendarSetting setting = calService.getCalendarSetting(username);
+      return TimeZone.getTimeZone(setting.getTimeZone());
+    } catch (Exception e) {
+      if (LOG.isDebugEnabled())
+        LOG.error("Can not get time zone from user setting ", e);
+      return null ;
+    }
+  }
+
   public void savePublicEvent(CalendarEvent event, String calendarId) {
     String eventType = event.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
     publishActivity(event, calendarId, eventType);
   }
 
-  public void updatePublicEvent(CalendarEvent event, String calendarId) {
-    String eventType = event.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_UPDATED : TASK_UPDATED;
-    publishActivity(event, calendarId, eventType);
+  /**
+   * update to activity by creating a new comment and posting into activity
+   *
+   * @param oldEvent
+   * @param newEvent
+   * @param calendarId
+   */
+  public void updatePublicEvent(CalendarEvent oldEvent, CalendarEvent newEvent, String calendarId) {
+    String eventType = newEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
+    Map<String, String> messagesParams = buildParams(oldEvent, newEvent);
+    if(messagesParams.size() > 0) {
+      updateToActivity(newEvent, calendarId, eventType, messagesParams);
+    }
+  }
+
+  /**
+   * create new event and publish event activity
+   *
+   * @param newEvent
+   * @param calendarId
+   */
+  public void updatePublicEvent(CalendarEvent newEvent, String calendarId) {
+    String eventType = newEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
+    //Map<String, String> messagesParams = buildParams(oldEvent, newEvent);
+    //updateToActivity(newEvent, calendarId, eventType, messagesParams);
+    publishActivity(newEvent, calendarId, eventType);
+  }
+
+  /**
+   * remove the event activity
+   *
+   * @param event
+   * @param calendarId
+   */
+  public void deletePublicEvent(CalendarEvent event, String calendarId) {
+    String eventType = event.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
+    deleteActivity(event, calendarId, eventType) ;
   }
 
 }

@@ -72,6 +72,10 @@ public class UIDocActivityBuilder extends BaseUIActivityBuilder {
       }
 
     }
+    
+    docActivity.repository = repository;
+    docActivity.workspace = workspace;
+    
     //escape node name for special characters
     docActivity.docPath = escapeIllegalJcrCharsOnNodeName(docActivity.docPath);
   }
