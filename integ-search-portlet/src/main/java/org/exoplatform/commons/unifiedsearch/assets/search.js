@@ -12,14 +12,14 @@ function initSearch() {
     var RESULT_CACHE, CACHE_OFFSET, SERVER_OFFSET, NUM_RESULTS_RENDERED;
 
     var SEARCH_RESULT_TEMPLATE = " \
-      <div class='SearchResult %{type}'> \
-        <div class='Avatar Clickable'> \
+      <div class='resultBox clearfix %{type}'> \
+        <span class='avatar pull-left'> \
           %{avatar} \
-        </div> \
-        <div class='Content'> \
-          <div class='Title Ellipsis'><a href='%{url}'>%{title}</a></div> \
-          <div class='Excerpt Ellipsis'>%{excerpt}</div> \
-          <div class='Detail'>%{detail}</div> \
+        </span> \
+        <div class='content pull-left'> \
+          <h6><a href='%{url}'>%{title}</a></h6> \
+          <p class='excerpt'>%{excerpt}</p> \
+          <div class='detail'>%{detail}</div> \
         </div> \
       </div> \
     ";
