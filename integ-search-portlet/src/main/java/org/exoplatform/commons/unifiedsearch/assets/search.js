@@ -16,7 +16,7 @@ function initSearch() {
         <span class='avatar pull-left'> \
           %{avatar} \
         </span> \
-        <div class='content pull-left'> \
+        <div class='content'> \
           <h6><a href='%{url}'>%{title}</a></h6> \
           <p class='excerpt'>%{excerpt}</p> \
           <div class='detail'>%{detail}</div> \
