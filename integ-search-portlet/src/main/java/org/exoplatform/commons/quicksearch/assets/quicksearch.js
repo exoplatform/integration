@@ -80,12 +80,23 @@ function initQuickSearch(portletId) {
 
     function quickSearch() {
       var query = $(txtQuickSearchQuery_id).val();
-      var sites = QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all";
       var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
-      var restUrl = "/rest/search?q=" + query+"&sites="+sites+"&types="+types+"&offset=0"+"&limit="+QUICKSEARCH_SETTING.resultsPerPage+"&sort=relevancy"+"&order=desc";
+      
+      var searchParams = {
+        searchContext: {
+          siteName:parent.eXo.env.portal.portalName
+        },
+        q: query,
+        sites: QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all",
+        types: types,
+        offset: 0,
+        limit: QUICKSEARCH_SETTING.resultsPerPage,
+        sort: "relevancy",
+        order: "desc"
+      };
 
       // get results of all search types in a map
-      $.getJSON(restUrl, function(resultMap){
+      $.getJSON("/rest/search", searchParams, function(resultMap){
         var rows = []; //one row per type
         $.each(SEARCH_TYPES, function(i, searchType){
           var results = resultMap[searchType]; //get all results of this type
@@ -116,11 +127,6 @@ function initQuickSearch(portletId) {
 
       var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>"; //render the image provided by the connector (by default)
 
-      // custom handle for Calendar result (event/task)
-      if("event"==result.type || "task"==result.type) {
-        result.url = "/portal/intranet/calendar" + result.url;
-      }
-
       if("event"==result.type) {
         var date = new Date(result.fromDateTime).toString().split(/\s+/g);
         avatar = " \
@@ -128,14 +134,6 @@ function initQuickSearch(portletId) {
             <div class='heading' style='font-size: 8px; padding: 0px; border-width: 0px; height: 10px;'>" + date[1] + "</div> \
             <div class='content' style='font-size: 10px; padding: 0px 2px; border-top-width: 0px; height: 13px;'>" + date[2] + "</div> \
           </div> \
-        ";
-      }
-
-      if("task"==result.type){
-        avatar = "\
-          <div class='statusTask'> \
-            <i class='"+result.imageUrl+"Icon quicksearch'></i> \
-          </div>\
         ";
       }
 

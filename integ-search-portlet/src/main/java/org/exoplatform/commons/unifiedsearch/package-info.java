@@ -22,7 +22,7 @@
         @Script(id = "jquery", src = "jquery-1.7.1.min.js", location = AssetLocation.CLASSPATH),
         @Script(id = "search.js", src = "search.js", location = AssetLocation.CLASSPATH),
         @Script(id = "search-setting.js", src = "search-setting.js", location = AssetLocation.CLASSPATH)
-    }
+    }  
 )
 package org.exoplatform.commons.unifiedsearch;
 

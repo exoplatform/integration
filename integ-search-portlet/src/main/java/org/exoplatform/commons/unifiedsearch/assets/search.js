@@ -132,10 +132,6 @@ function initSearch() {
 
       var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
 
-      if("event"==result.type || "task"==result.type) {
-        result.url = "/portal/intranet/calendar" + result.url;
-      }
-
       if("event"==result.type) {
         var date = new Date(result.fromDateTime).toString().split(/\s+/g);
         avatar = " \
@@ -143,14 +139,6 @@ function initSearch() {
             <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[1] + "</div> \
             <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[2] + "</div> \
           </div> \
-        ";
-      }
-
-      if ("task"==result.type){
-        avatar = "\
-          <div class='statusTask'>\
-            <i class='"+result.imageUrl+"Icon'></i>\
-          </div>\
         ";
       }
 
@@ -245,8 +233,20 @@ function initSearch() {
 
       setWaitingStatus(true);
 
-      var restUrl = "/rest/search?q="+ query+"&sites="+getSelectedSites()+"&types="+getSelectedTypes()+"&offset="+SERVER_OFFSET+"&limit="+LIMIT+"&sort="+sort+"&order="+order;
-      $.getJSON(restUrl, function(resultMap){
+      var searchParams = {
+        searchContext: {
+          siteName:parent.eXo.env.portal.portalName
+        },
+        q: query,
+        sites: getSelectedSites(),
+        types: getSelectedTypes(),
+        offset: SERVER_OFFSET,
+        limit: LIMIT,
+        sort: sort,
+        order: order
+      };
+
+      $.getJSON("/rest/search", searchParams, function(resultMap){
         RESULT_CACHE = [];
         $.each(resultMap, function(searchType, results){
           results.map(function(result){result.type = searchType;});
@@ -306,7 +306,6 @@ function initSearch() {
       renderCachedResults(true);
       $("#searchPage").animate({ scrollTop: $("#resultPage")[0].scrollHeight}, "slow");
     });
-
 
     $(":checkbox[name='contentType']").live("click", function(){
       if("all"==this.value){ //All Content Types checked

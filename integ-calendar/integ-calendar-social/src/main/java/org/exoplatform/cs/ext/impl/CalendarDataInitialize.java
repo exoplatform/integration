@@ -58,7 +58,6 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
 
   @Override
   public void applicationActivated(SpaceLifeCycleEvent event) {
-
   }
 
   @Override
@@ -83,7 +82,7 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
       Space space = event.getSpace();
       CalendarService calService = (CalendarService) PortalContainer.getInstance()
                                                                     .getComponentInstanceOfType(CalendarService.class);
-      String calendarId = space.getPrettyName() + SPACE_CALENDAR_ID_SUFFIX;
+      String calendarId = space.getId() + SPACE_CALENDAR_ID_SUFFIX;
       String username = space.getGroupId();
       Calendar calendar = null;
       try {
@@ -154,8 +153,32 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
 
   }
 
+  /**
+   * handles event space renamed
+   * rename the calendar's display name after display name of space
+   *
+   * @param event
+   */
   @Override
-  public void spaceRenamed(SpaceLifeCycleEvent event) {}
+  public void spaceRenamed(SpaceLifeCycleEvent event) {
+    CalendarService calService = (CalendarService) PortalContainer.getInstance()
+        .getComponentInstanceOfType(CalendarService.class);
+    Space space = event.getSpace();
+    String calendarId = space.getId() + SPACE_CALENDAR_ID_SUFFIX;
+    String username = space.getGroupId();
+    Calendar calendar = null;
+
+    try {
+      calendar = calService.getGroupCalendar(calendarId);
+      calendar.setName(space.getDisplayName());
+      calService.savePublicCalendar(calendar, false);
+    } catch (Exception pfe) {
+      if (LOG.isDebugEnabled()) {
+        LOG.warn("Can not rename calendar " + space.getDisplayName());
+      }
+      return ;
+    }
+  }
 
   @Override
   public void spaceDescriptionEdited(SpaceLifeCycleEvent event) {}
