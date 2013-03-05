@@ -232,11 +232,11 @@
 								<p><%= uicomponent.getDescription();%> </p>
 								<%
 									if (uicomponent.getTypeOfEvent().contains("Task")) {
-									def fullTask = uicomponent.getEventEndTime() ;
+									def fullTask = uicomponent.getEventEndTime(_ctx) ;
 								%>
 									<span class="dateTime">Due for: $fullTask</span> 
 								<% } else {
-									def full = uicomponent.getEventStartTime() ;
+									def full = uicomponent.getEventStartTime(_ctx) ;
 								%>  
 									<span class="dateTime">$full</span><br/>
 									<span class="location"><%= uicomponent.getLocation();%> <br></span>	
