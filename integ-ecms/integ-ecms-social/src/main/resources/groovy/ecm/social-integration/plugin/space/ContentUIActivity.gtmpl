@@ -227,7 +227,7 @@
 				<div class="uiBox roundedBottom introBox contentShare">	
 					<div class="clearfix">
 						<div class="pull-left">
-							<img alt="<%=uicomponent.getDocIconClass();%> type" rel="tooltip" data-placement="bottom" src=""/> <!-- hackcode-->
+							<i class="uiIcon64x64Template<%=uicomponent.getDocIconClass();%>"></i>
 						</div>
 						<div class="text">
 							<%if (currentNode) {%>
@@ -280,10 +280,10 @@
 						<div class="listLiked">
 						<%
 						displayedIdentityLikes.each({
-						  def id = Utils.getIdentityManager().getIdentity(it);
-						  personLikeFullName = id.profile.fullName;
-						  personLikeProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-						  personLikeAvatarImageSource = id.profile.avatarUrl;
+						  def likeId = Utils.getIdentityManager().getIdentity(it);
+						  personLikeFullName = likeId.profile.fullName;
+						  personLikeProfileUri = LinkProvider.getUserProfileUri(likeId.getRemoteId());
+						  personLikeAvatarImageSource = likeId.profile.avatarUrl;
 						  if (!personLikeAvatarImageSource) personLikeAvatarImageSource = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
 						  %>
 							<a class="avatarXSmall" rel="tooltip" data-placement="bottom" title="$personLikeFullName" href="$personLikeProfileUri">
@@ -311,100 +311,88 @@
 					 <% } %>
 					<div class="commentList">	
 				    <%
-				    def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
-				    def first = true, commentContentClass;
-				    def commentCounter = 0;
- 				   commentList.each({
- 				     commentCounter++;
- 				     if (first & !uicomponent.commentListToggleable()) {
- 				       commentContentClass = "commentContent";
-  				      first = false;
- 				     } else {
- 				       commentContentClass = "";
- 				     }
-
- 				     def id = Utils.getIdentityManager().getIdentity(it.userId);
-				      commenterFullName = id.profile.fullName;
-  				    commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-  				    //VinhNT, new spec for ActivityTypes
-					def activityParams = it.getTemplateParams();
- 				     def systemComment = uicomponent.getSystemCommentBundle(activityParams);
- 				     def systemCommentTitle ;
- 				     StringBuffer commentBuffer = new StringBuffer();
- 				     if (systemComment!=null) {
-   				     systemCommentTitle = uicomponent.getSystemCommentTitle(activityParams);
-  				      if (systemComment!=null) {
- 				         if (systemComment.length>0) {
- 				           for (def count=0; count<systemComment.length; count++) {
- 				             commentMessage = _ctx.appRes(systemComment[count]);
- 				             if (systemCommentTitle!=null) {
- 				               if (systemCommentTitle.length>count) {
-  				                commentMessage = commentMessage.replace("{0}", systemCommentTitle[count]);
-  				              }
- 				             }
-  				            if (systemComment!=null) {
-  				              if (systemComment.length>1) {
-  				                commentBuffer.append("<p>").append(commentMessage).append("</p>");
-  				              }else {
-   				               commentBuffer.append(commentMessage);
-   				             }
-    				          }else {
-   				             commentBuffer.append(commentMessage);
-    				          }
-     				       }
-      				    }
-  				        commentMessage = commentBuffer.toString(); 
- 				       }else {
- 				         commentMessage = it.title;
-  				      }
-  				    } else {
-  				      commentMessage = it.title;
-  				    }
-					def id = Utils.getIdentityManager().getIdentity(it.userId);
-					commenterFullName = id.profile.fullName;
-					commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-					commentMessage = it.title;
-					commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
-					commenterAvatarImgSrc = id.profile.avatarUrl;
-					if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
-					%>
-					  <% if (commentCounter == commentList.size()) {%>
-					  <div id="CommentBlock${activity.id}${commentCounter}" class="commentItem commentItemLast">
-					  <% } else { %>
-					  <div id="CommentBlock${activity.id}${commentCounter}" class="commentItem">
-					  <% } %>
-						<div class="commmentLeft">
-						  <a class="avatarXSmall" href="$commenterProfileUri" rel="tooltip" data-placement="bottom" title="$commenterFullName" >
-							<img alt="$commenterFullName" src="$commenterAvatarImgSrc" />
-						  </a>
-						</div><!--end commentLeft-->     
-						<div class="commentRight">
-							<div class="author">
-								<a href="$commenterProfileUri">$commenterFullName</a>
-								<span class="dateTime">
-									 $commentPostedTime
-								 </span>
-							</div>
-							<p class="contentComment">
-								$commentMessage
-							</p>          
-						</div><!--end commentRight-->
-					  <%
-						if (uicomponent.isCommentDeletable(it.userId)) {
-					  %>
-						<a class="uiIconClose uiIconLightGray" href="javascript:void(0)" id="DeleteCommentButton${activity.id}${commentCounter}"  onclick="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"></a>
-					  <% } %>					  
-					  
-					  </div><!--end commentItem-->
-					<% }) %>				
-					</div> <!--end commentlist-->
-				    <div class="commentList inputContainer" id="InputContainer${activity.id}">
-					<%
-					  def currentCommenterIdentity = Utils.getOwnerIdentity();
-					  def currentCommenterUri = LinkProvider.getUserProfileUri(currentCommenterIdentity.getRemoteId());
-					  def currentCommenterAvatar = currentCommenterIdentity.profile.avatarUrl;
-					  def currentCommenterName = currentCommenterIdentity.profile.fullName;
-					  if (!currentCommenterAvatar) currentCommenterAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
+            def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
+            def first = true, commentContentClass;
+            def commentCounter = 0;
+            commentList.each({
+              commentCounter++;
+              if (first & !uicomponent.commentListToggleable()) {
+                commentContentClass = "commentContent";
+                first = false;
+              } else {
+                commentContentClass = "";
+              }
+              def commentId = Utils.getIdentityManager().getIdentity(it.userId);
+              commenterFullName = commentId.profile.fullName;
+              commenterProfileUri = LinkProvider.getUserProfileUri(commentId.getRemoteId());
+              def activityParams = it.getTemplateParams();
+              def systemComment = uicomponent.getSystemCommentBundle(activityParams);
+              def systemCommentTitle ;
+              StringBuffer commentBuffer = new StringBuffer();
+              if (systemComment!=null) {
+                systemCommentTitle = uicomponent.getSystemCommentTitle(activityParams);
+                if (systemComment!=null) {
+                  if (systemComment.length>0) {
+                    for (def count=0; count<systemComment.length; count++) {
+                      commentMessage = _ctx.appRes(systemComment[count]);
+                      if (systemCommentTitle!=null) {
+                        if (systemCommentTitle.length>count) {
+                          commentMessage = commentMessage.replace("{0}", systemCommentTitle[count]);
+                        }
+                      }
+                      if (systemComment!=null) {
+                        if (systemComment.length>1) {
+                          commentBuffer.append("<p>").append(commentMessage).append("</p>");
+                        }else {
+                          commentBuffer.append(commentMessage);
+                        }
+                      }else {
+                        commentBuffer.append(commentMessage);
+                      }
+                    }
+                  }
+                  commentMessage = commentBuffer.toString(); 
+                }else {
+                  commentMessage = it.title;
+                }
+              } else {
+                commentMessage = it.title;
+              }
+              commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
+              commenterAvatarImgSrc = commentId.profile.avatarUrl;
+              if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
+              %>
+              <% if (commentCounter == commentList.size()) {%>
+                <div id="CommentBlock${activity.id}${commentCounter}" class="commentItem commentItemLast">
+              <% } else { %>
+                <div id="CommentBlock${activity.id}${commentCounter}" class="commentItem">
+              <% } %>
+              <div class="commmentLeft">
+                <a class="avatarXSmall" href="$commenterProfileUri" rel="tooltip" data-placement="bottom" title="$commenterFullName" >
+                  <img alt="$commenterFullName" src="$commenterAvatarImgSrc" />
+                </a>
+            </div><!--end commentLeft-->     
+            <div class="commentRight">
+              <div class="author">
+                <a href="$commenterProfileUri">$commenterFullName</a>
+                <span class="dateTime">$commentPostedTime</span>
+              </div>
+              <p class="contentComment">$commentMessage</p>
+            </div><!--end commentRight-->
+            <%if (uicomponent.isCommentDeletable(it.userId)) {
+            %>
+              <a class="uiIconClose uiIconLightGray" href="javascript:void(0)" id="DeleteCommentButton${activity.id}${commentCounter}"  onclick="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"></a>
+            <% } %>
+              </div><!--end commentItem-->
+          <% }) %>
+          </div> <!--end commentlist-->
+          <div class="commentList inputContainer" id="InputContainer${activity.id}">
+          <%
+            def currentCommenterIdentity = Utils.getOwnerIdentity();
+            def currentCommenterUri = LinkProvider.getUserProfileUri(currentCommenterIdentity.getRemoteId());
+            def currentCommenterAvatar = currentCommenterIdentity.profile.avatarUrl;
+            def currentCommenterName = currentCommenterIdentity.profile.fullName;
+            if (!currentCommenterAvatar) currentCommenterAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
 					%>
 					<% if (commentList.size() == 0) { %>
 					  <div class="commentItem noCommentFormBox" id="CommentFormBlock${activity.id}">

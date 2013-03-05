@@ -31,11 +31,7 @@ function initQuickSearch(portletId) {
             <col width='30%'> \
             <col width='70%'> \
             %{resultRows} \
-            <tr> \
-              <th colspan='2' class='message'> \
-                <a id='seeAll-" + portletId + "' class='' href='#'>%{message}</a> \
-              </th> \
-            </tr> \
+            %{messageRow} \
           </table> \
         ";
 
@@ -50,6 +46,21 @@ function initQuickSearch(portletId) {
           </tr> \
         ";
 
+    var QUICKSEARCH_SEE_ALL=" \
+        <tr> \
+          <td colspan='2' class='message'> \
+            <a id='seeAll-" + portletId + "' class='' href='#'>See All Search Results</a> \
+          </td> \
+        </tr> \
+        ";
+
+    var QUICKSEARCH_NO_RESULT=" \
+        <tr> \
+          <td colspan='2'> \
+            <a id='seeAll-" + portletId + "' class='' href='#'>No result for <strong>%{query}<strong></a> \
+          </td> \
+        </tr> \
+        ";
 
     //*** Utility functions ***
     // Highlight the specified text in a string
@@ -110,8 +121,8 @@ function initQuickSearch(portletId) {
             rows.push(row);
           }
         });
-        var message = rows.length==0 ? "No result for <strong>" + query + "<strong>" : "See All Search Results";
-        $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{message}/g, message));
+        var messageRow = rows.length==0 ? QUICKSEARCH_NO_RESULT.replace(/%{query}/, query) : QUICKSEARCH_SEE_ALL;
+        $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
         var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
         $(quickSearchResult_id).width(width);
         $(quickSearchResult_id).show();
