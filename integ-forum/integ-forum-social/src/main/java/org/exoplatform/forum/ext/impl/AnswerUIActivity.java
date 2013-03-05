@@ -58,14 +58,7 @@ public class AnswerUIActivity extends BaseKSActivity {
   
   @SuppressWarnings("unused")
   private String getViewCommentLink(ExoSocialActivity comment) {
-    Map<String, String> params = comment.getTemplateParams();
-    String itemId = params.get(AnswersSpaceActivityPublisher.LINK_KEY);
-    if (itemId == null || itemId.length() == 0)
-      return "";
-    String linkQuestion = getLink();
-    String commentLink = String.format("%s/%s", linkQuestion, itemId);
-    return commentLink;
-    
+    return getLink();
   }
   
   public String getSpaceHomeURL(String spaceGroupId) {
@@ -88,7 +81,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       return getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY);
     }
     String[] tab = getQuestionId().split("/");
-    String answerLink = String.format("%s/answer/%s", spaceLink, tab[tab.length-1]);
+    String answerLink = String.format("..%s/answer/%s", spaceLink, tab[tab.length-1]);
     return answerLink;
   }
   
