@@ -86,8 +86,15 @@ public class AnswerUIActivity extends BaseKSActivity {
   }
   
   @SuppressWarnings("unused")
-  private String getNumberOfAnswers() {
-    return getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_ANSWERS);
+  private String getNumberOfAnswers() throws Exception {
+    int number = Integer.parseInt(getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_ANSWERS));
+    if (number == 0) {
+      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noAnswer");
+    } else if (number == 1) {
+      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.answer");
+    } else {
+      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.answers").replace("{0}", String.valueOf(number));
+    }
   }
   
   @SuppressWarnings("unused")
@@ -96,8 +103,16 @@ public class AnswerUIActivity extends BaseKSActivity {
   }
   
   @SuppressWarnings("unused")
-  private String getNumberOfComments() {
-    return getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS);
+  private String getNumberOfComments() throws Exception {
+    int number = Integer.parseInt(getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS));
+
+    if (number == 0) {
+      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noComment");
+    } else if (number == 1) {
+      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.comment");
+    } else {
+      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.comments").replace("{0}", String.valueOf(number));
+    }
   }
   
   private String getSpaceGroupId() {
@@ -239,7 +254,8 @@ public class AnswerUIActivity extends BaseKSActivity {
       ActivityManager activityM = (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
       ExoSocialActivity activity = activityM.getActivity(faqService.getActivityIdForQuestion(question.getPath()));
       Map<String, String> templateParams = activity.getTemplateParams();
-      templateParams.put(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS, String.valueOf(question.getComments().length+1));
+      question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
+      templateParams.put(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS, getNbOfComments(question));
       activity.setTemplateParams(templateParams);
       activity.setBody(formatBody(question.getDetail()));
       activityM.updateActivity(activity);
@@ -255,6 +271,11 @@ public class AnswerUIActivity extends BaseKSActivity {
       uiActivity.getParent().broadcast(event, event.getExecutionPhase());
     }
 
+  }
+  
+  private static String getNbOfComments(Question question) {
+    int numberOfComments = (question.getComments() != null) ? question.getComments().length : 0;
+    return String.valueOf(numberOfComments);
   }
   
   @Override

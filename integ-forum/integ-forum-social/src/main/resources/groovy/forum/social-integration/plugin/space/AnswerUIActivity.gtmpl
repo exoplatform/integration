@@ -218,7 +218,7 @@
 						<p class="text">$activity.body</p>	
 					</div>
           <% def numberOfAnswers = uicomponent.getNumberOfAnswers();
-             def numberOfComments = uicomponent.getNumberOfComments(); 
+             def numberOfComments = uicomponent.getNumberOfComments();
           %>
 					<span>$numberOfAnswers</span><span>&nbsp;-&nbsp;</span><span>$numberOfComments</span>
 				  </div>

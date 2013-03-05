@@ -446,26 +446,12 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   
   private String getNbOfAnswers(Question question) {
     int numberOfAnswers = (question.getAnswers() != null) ? question.getAnswers().length : 0;
-    switch (numberOfAnswers) {
-    case 0:
-      return "No Answer";
-    case 1:
-      return "1 Answer";
-    default:
-      return String.format("%s Answers", String.valueOf(numberOfAnswers));
-    }
+    return String.valueOf(numberOfAnswers);
   }
   
   private String getNbOfComments(Question question) {
     int numberOfComments = (question.getComments() != null) ? question.getComments().length : 0;
-    switch (numberOfComments) {
-    case 0:
-      return "No Comment";
-    case 1:
-      return "1 Comment";
-    default:
-      return String.format("%s Comments", String.valueOf(numberOfComments));
-    }
+    return String.valueOf(numberOfComments);
   }
 
   private String getQuestionMessage(PropertyChangeEvent e, Question question, ExoSocialActivity comment) {
