@@ -43,6 +43,15 @@ function initSearch() {
     };
 
 
+    // Remove all HTML tags except <strong>, </strong> (for highlighting)
+    String.prototype.escapeHtml = function() {
+      return this.
+        replace(/<(\/?strong)>/g,"{\$1}"). //save <strong>, </strong> as {strong}, {/strong}
+        replace(/<.+?>/g,"").              //remove all HTML tags
+        replace(/{(\/?strong)}/g,"<\$1>"); //restore {strong}, {/strong} back to <strong>, </strong>
+    }
+
+
     function setWaitingStatus(status) {
       if(status) {
         $("body").css("cursor", "wait");
@@ -146,7 +155,7 @@ function initSearch() {
         replace(/%{type}/g, result.type).
         replace(/%{url}/g, result.url).
         replace(/%{title}/g, (result.title||"").highlight(terms)).
-        replace(/%{excerpt}/g, (result.excerpt||"").highlight(terms)).
+        replace(/%{excerpt}/g, (result.excerpt||"").escapeHtml().highlight(terms)).
         replace(/%{detail}/g, (result.detail||"").highlight(terms)).
         replace(/%{avatar}/g, avatar);
 
