@@ -228,7 +228,7 @@
 						<% } else { %>
 						<li>
 							<a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">
-							   <i class="uiIconThumbDown uiIconLightGray "></i>&nbsp;3<!-- hackcode add dynamic later-->
+							   <i class="uiIconThumbUp uiIconLightGray "></i>&nbsp;3<!-- hackcode add dynamic later-->
 							</a>
 						</li>
 						<% }%>

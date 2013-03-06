@@ -203,11 +203,11 @@
 					<div class="clearfix headingContainer">
 						<div class="pull-right sumaryRate">
 							<% def rating = uicomponent.getRating(); %>
-							<i class="uiIconStarUp"></i><!--hack code-->	
-							<i class="uiIconStarUp"></i><!--hack code-->	
-							<i class="uiIconStarDown"></i><!--hack code-->	
-							<i class="uiIconStarDown"></i><!--hack code-->	
-							<i class="uiIconStarDown"></i><!--hack code-->	
+							<i class="uiIconVote"></i><!--hack code-->	
+							<i class="uiIconVote"></i><!--hack code-->	
+							<i class="uiIconVote"></i><!--hack code-->	
+							<i class="uiIconVote"></i><!--hack code-->	
+							<i class="uiIconUnVote"></i><!--hack code-->	
 						</div>
 						<div class="titleAnswer">
 							<a class="linkTitle" href="${uicomponent.getLink()}" title="">$activity.title</a>

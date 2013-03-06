@@ -200,14 +200,14 @@
 				<div class="uiBox roundedBottom introBox forumShare">	
 					<div class="clearfix headingContainer">
 						<div class="pull-right sumaryRate">
-            <%
-            def rate = uicomponent.getRate();
+								<%
+								def rate = uicomponent.getRate();
             %>
-							<i class="uiIconStarUp"></i><!--hack code-->	
-							<i class="uiIconStarUp"></i><!--hack code-->	
-							<i class="uiIconStarDown"></i><!--hack code-->	
-							<i class="uiIconStarDown"></i><!--hack code-->	
-							<i class="uiIconStarDown"></i><!--hack code-->	
+							<i class="uiIconVote"></i><!--hack code-->	
+							<i class="uiIconVote"></i><!--hack code-->	
+							<i class="uiIconVote"></i><!--hack code-->	
+							<i class="uiIconVote"></i><!--hack code-->	
+							<i class="uiIconUnVote"></i><!--hack code-->	
 						</div>
 						<div class="titleForum">
 						  <%
