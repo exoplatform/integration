@@ -416,7 +416,8 @@ public class ContentUIActivity extends BaseUIActivity {
   }
   public String getViewLink() {
     try {
-    return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
+      String result = org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
+      return result;
     }catch (Exception e) {
       return "";
     }
