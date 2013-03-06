@@ -166,7 +166,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
               faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
               
               //update question activity content
-              Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+              Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), String.valueOf(question.getAnswers().length), String.valueOf(question.getComments().length), question.getLanguage(), question.getLink());
               activity.setTemplateParams(activityTemplateParams);
               activityM.updateActivity(activity);
             } else {
@@ -181,7 +181,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             comment.setTitle("Answer has been submitted: "+answerContent);
             I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
             
-            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), String.valueOf(question.getAnswers().length), String.valueOf(question.getComments().length), question.getLanguage(), question.getLink());
             activity.setTemplateParams(activityTemplateParams);
             activity.setBody(formatBody(question.getDetail()));
             activityM.updateActivity(activity);
@@ -246,7 +246,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             comment.setTemplateParams(commentTemplateParams);
             comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(cm.getComments(), (List<String>) Collections.EMPTY_LIST)));
             comment.setUserId(userIdentity.getId());
-            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), String.valueOf(question.getAnswers().length), String.valueOf(question.getComments().length), question.getLanguage(), question.getLink());
             activity.setTemplateParams(activityTemplateParams);
             activity.setBody(formatBody(question.getDetail()));
             activityM.updateActivity(activity);
@@ -284,7 +284,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,question.getAuthor(),false);
-      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), String.valueOf(question.getAnswers().length), String.valueOf(question.getComments().length), question.getLanguage(), question.getLink());
       String activityId = faqS.getActivityIdForQuestion(question.getId());
       
       //in case deleted activity, if isUpdate, we will re-create new activity and add a comment associated
@@ -444,16 +444,6 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     return String.valueOf(question.getMarkVote());
   }
   
-  private String getNbOfAnswers(Question question) {
-    int numberOfAnswers = (question.getAnswers() != null) ? question.getAnswers().length : 0;
-    return String.valueOf(numberOfAnswers);
-  }
-  
-  private String getNbOfComments(Question question) {
-    int numberOfComments = (question.getComments() != null) ? question.getComments().length : 0;
-    return String.valueOf(numberOfComments);
-  }
-
   private String getQuestionMessage(PropertyChangeEvent e, Question question, ExoSocialActivity comment) {
     if ("questionName".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "question-update-title", question.getQuestion());
@@ -513,7 +503,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       Question question = faqS.getQuestionById(questionId);
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       ExoSocialActivity activity = activityM.getActivity(questionActivityId);
-      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), String.valueOf(question.getAnswers().length), String.valueOf(question.getComments().length), question.getLanguage(), question.getLink());
       activity.setTemplateParams(templateParams);
       activity.setBody(formatBody(question.getDetail()));
       activityM.updateActivity(activity);

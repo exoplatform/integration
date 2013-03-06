@@ -81,7 +81,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       return getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY);
     }
     String[] tab = getQuestionId().split("/");
-    String answerLink = String.format("..%s/answer/%s", spaceLink, tab[tab.length-1]);
+    String answerLink = String.format("%s/answer/%s", spaceLink, tab[tab.length-1]);
     return answerLink;
   }
   
@@ -91,7 +91,7 @@ public class AnswerUIActivity extends BaseKSActivity {
     if (number == 0) {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noAnswer");
     } else if (number == 1) {
-      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.answer");
+      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.answer").replace("{0}", String.valueOf(number));
     } else {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.answers").replace("{0}", String.valueOf(number));
     }
@@ -109,7 +109,7 @@ public class AnswerUIActivity extends BaseKSActivity {
     if (number == 0) {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noComment");
     } else if (number == 1) {
-      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.comment");
+      return WebUIUtils.getLabel(null, "AnswerUIActivity.label.comment").replace("{0}", String.valueOf(number));
     } else {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.comments").replace("{0}", String.valueOf(number));
     }
@@ -255,7 +255,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       ExoSocialActivity activity = activityM.getActivity(faqService.getActivityIdForQuestion(question.getPath()));
       Map<String, String> templateParams = activity.getTemplateParams();
       question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
-      templateParams.put(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS, getNbOfComments(question));
+      templateParams.put(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS, String.valueOf(question.getComments().length));
       activity.setTemplateParams(templateParams);
       activity.setBody(formatBody(question.getDetail()));
       activityM.updateActivity(activity);
