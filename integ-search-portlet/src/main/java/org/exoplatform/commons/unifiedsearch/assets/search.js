@@ -13,9 +13,7 @@ function initSearch() {
 
     var SEARCH_RESULT_TEMPLATE = " \
       <div class='resultBox clearfix %{type}'> \
-        <span class='avatar pull-left'> \
-          %{avatar} \
-        </span> \
+        %{avatar} \
         <div class='content'> \
           <h6><a href='%{url}'>%{title}</a></h6> \
           <p class='excerpt'>%{excerpt}</p> \
@@ -24,6 +22,34 @@ function initSearch() {
       </div> \
     ";
 
+    var IMAGE_AVATAR_TEMPLATE = " \
+      <span class='avatar pull-left'> \
+        <img src='%{imageSrc}'> \
+      </span> \
+    ";
+
+    var CSS_AVATAR_TEMPLATE = " \
+      <span class='avatar pull-left'> \
+        <i class='%{cssClass}'></i> \
+      </span> \
+    ";
+
+    var EVENT_AVATAR_TEMPLATE = " \
+      <div class='uiCalendarActivity'> \
+        <div class='pull-left calendarBox'> \
+          <div class='heading'> %{month} </div> \
+          <div class='content' style='margin-left: 0px;'> %{date} </div> \
+        </div> \
+      </div> \
+    ";
+
+    var TASK_AVATAR_TEMPLATE = " \
+      <div class='uiCalendarActivity'> \
+        <div class='pull-left statusTask'> \
+          <i class='%{statusIcon}'></i> \
+        </div> \
+      </div> \
+    ";
 
     //*** Utility functions ***
 
@@ -138,17 +164,26 @@ function initSearch() {
     function renderSearchResult(result) {
       var query = $("#txtQuery").val();
       var terms = query.split(/\s+/g);
+      var avatar = "";
 
-      var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>";
+      switch(result.type) {
+        case "event":
+          var date = new Date(result.fromDateTime).toString().split(/\s+/g);
+          avatar = EVENT_AVATAR_TEMPLATE.
+            replace(/%{month}/g, date[1]).
+            replace(/%{date}/g, date[2]);
+          break;
 
-      if("event"==result.type) {
-        var date = new Date(result.fromDateTime).toString().split(/\s+/g);
-        avatar = " \
-          <div class='calendarBox'> \
-            <div class='heading' style='padding-top: 0px; padding-bottom: 0px; border-width: 0px;'>" + date[1] + "</div> \
-            <div class='content' style='padding: 0px 6px; padding-bottom: 0px; border-top-width: 0px;'>" + date[2] + "</div> \
-          </div> \
-        ";
+        case "task":
+          avatar = TASK_AVATAR_TEMPLATE.replace(/%{statusIcon}/g, result.imageUrl);
+          break;
+
+        default:
+          if(-1!=result.imageUrl.indexOf("/")) { //it is the path to an image
+            avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
+          } else { //it is a CSS class name
+            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, result.imageUrl);
+          }
       }
 
       var html = SEARCH_RESULT_TEMPLATE.
