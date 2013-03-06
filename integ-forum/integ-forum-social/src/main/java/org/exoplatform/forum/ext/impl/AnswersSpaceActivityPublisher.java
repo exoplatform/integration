@@ -34,6 +34,7 @@ import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
+import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -64,7 +65,6 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   public static final String NUMBER_OF_ANSWERS  = "NumberOfAnswers";
   public static final String NUMBER_OF_COMMENTS = "NumberOfComments";
   public static final String SPACE_GROUP_ID     = "SpaceGroupId";
-  public static final int NUMBER_CHAR_IN_LINE   = 70;
   
   private final static Log LOG = ExoLogger.getExoLogger(AnswersSpaceActivityPublisher.class);
   
@@ -157,7 +157,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
           
           if (!comment.getTitle().equals("")) { //Case update answer or promote comment to answer
-            String answerContent = formatBody(answer.getResponses());
+            String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
             String promotedAnswer = "Comment "+answerContent+" has been promoted as an answer";
             if (promotedAnswer.equals(comment.getTitle())) {
               //promote a comment to an answer
@@ -177,13 +177,13 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             }
           } else {
             //Case submit new answer
-            String answerContent = formatBody(answer.getResponses());
+            String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
             comment.setTitle("Answer has been submitted: "+answerContent);
             I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
             
             Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), String.valueOf(question.getAnswers().length), String.valueOf(question.getComments().length), question.getLanguage(), question.getLink());
             activity.setTemplateParams(activityTemplateParams);
-            activity.setBody(formatBody(question.getDetail()));
+            activity.setBody(ForumActivityBuilder.getFourFirstLines(question.getDetail()));
             activityM.updateActivity(activity);
             
             updateCommentTemplateParms(comment, answer.getId());
@@ -203,8 +203,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         ExoSocialActivity activity = activityM.getActivity(newActivityId);
         ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
         if (comment.getTitle().equals("")) {
-          String answerContent = formatBody(answer.getResponses());
-          comment.setTitle("Answer has been submitted: "+answerContent);
+          String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
+          comment.setTitle("Answer has been submitted: " + answerContent);
           I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
           updateCommentTemplateParms(comment, answer.getId());
         }
@@ -248,7 +248,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             comment.setUserId(userIdentity.getId());
             Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), String.valueOf(question.getAnswers().length), String.valueOf(question.getComments().length), question.getLanguage(), question.getLink());
             activity.setTemplateParams(activityTemplateParams);
-            activity.setBody(formatBody(question.getDetail()));
+            activity.setBody(ForumActivityBuilder.getFourFirstLines(question.getDetail()));
             activityM.updateActivity(activity);
             activityM.saveComment(activity, comment);
             faqS.saveActivityIdForComment(questionId, cm.getId(), language, comment.getId());
@@ -295,7 +295,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         try {
           ExoSocialActivity activity = activityM.getActivity(activityId);
           activity.setTitle(question.getQuestion());
-          activity.setBody(formatBody(question.getDetail()));
+          activity.setBody(ForumActivityBuilder.getFourFirstLines(question.getDetail()));
           activity.setTemplateParams(templateParams);
           activityM.updateActivity(activity);
           
@@ -322,7 +322,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         if (streamOwner == null) {
           streamOwner = userIdentity;
         }
-        ExoSocialActivity activity = newActivity(userIdentity,question.getQuestion(),formatBody(question.getDetail()),templateParams);
+        ExoSocialActivity activity = newActivity(userIdentity,question.getQuestion(),ForumActivityBuilder.getFourFirstLines(question.getDetail()),templateParams);
         activityM.saveActivityNoReturn(streamOwner, activity);
         faqS.saveActivityIdForQuestion(question.getId(),activity.getId());
         
@@ -379,7 +379,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       question.setEditedQuestionRating(question.getMarkVote());
       saveQuestion(question, false);
     } catch (Exception e) {
-      LOG.debug("Fail to unvote question "+e.getMessage());
+      LOG.debug("Fail to unvote question " + e.getMessage());
     }
   }
   
@@ -423,23 +423,6 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     }
   }
   
-  private String formatBody(String body) {
-    String[] tab = TransformHTML.getPlainText(body).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
-    int length = tab.length;
-    if (length > 4) length = 4;
-    StringBuilder sb = new StringBuilder();
-    String prefix = "";
-    for (int i=0; i<length; i++) {
-      sb.append(prefix);
-      prefix = "<br/>";
-      String s = tab[i];
-      if (s.length() > NUMBER_CHAR_IN_LINE)
-        s = s.substring(0, NUMBER_CHAR_IN_LINE) + "...";
-      sb.append(StringEscapeUtils.unescapeHtml(s));
-    }
-    return sb.toString();
-  }
-  
   private String getQuestionRate(Question question) {
     return String.valueOf(question.getMarkVote());
   }
@@ -447,10 +430,10 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   private String getQuestionMessage(PropertyChangeEvent e, Question question, ExoSocialActivity comment) {
     if ("questionName".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "question-update-title", question.getQuestion());
-      return "Title has been updated to: "+question.getQuestion();
+      return "Title has been updated to: " + question.getQuestion();
     } else if ("questionDetail".equals(e.getPropertyName())) {
-      I18NActivityUtils.addResourceKey(comment, "question-update-detail", formatBody(question.getDetail()));
-      return "Details has been edited to: "+formatBody(question.getDetail());
+      I18NActivityUtils.addResourceKey(comment, "question-update-detail", ForumActivityBuilder.getFourFirstLines(question.getDetail()));
+      return "Details has been edited to: " + ForumActivityBuilder.getFourFirstLines(question.getDetail());
     } else if ("questionActivated".equals(e.getPropertyName())) {
       if (question.isActivated()) {
         I18NActivityUtils.addResourceKey(comment, "question-activated", null);
@@ -470,20 +453,20 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private String getAnswerMessage(PropertyChangeEvent e, Answer answer, ExoSocialActivity comment) {
-    String answerContent = formatBody(answer.getResponses());
+    String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
     if ("answerEdit".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "answer-update-content", answerContent);
-      return "Answer has been edited to: "+answerContent;
+      return "Answer has been edited to: " + answerContent;
     } else if ("answerPromoted".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "answer-promoted", answerContent);
-      return "Comment "+answerContent+" has been promoted as an answer";
+      return "Comment "+answerContent + " has been promoted as an answer";
     } else if ("answerActivated".equals(e.getPropertyName())) {
       if (answer.getActivateAnswers()) {
         I18NActivityUtils.addResourceKey(comment, "answer-activated", answerContent);
-        return "Answer has been activated: "+answerContent+".";
+        return "Answer has been activated: " + answerContent + ".";
       } else {
         I18NActivityUtils.addResourceKey(comment, "answer-unactivated", answerContent);
-        return "Answer has been unactivated: "+answerContent+".";
+        return "Answer has been unactivated: " + answerContent + ".";
       }
     } else  {
       if (answer.getApprovedAnswers()) {
@@ -491,7 +474,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         return "Answer has been approved: "+answerContent+".";
       } else {
         I18NActivityUtils.addResourceKey(comment, "answer-disapproved", answerContent);
-        return "Answer has been disapproved: "+answerContent+".";
+        return "Answer has been disapproved: " + answerContent + ".";
       }
     }
   }
@@ -505,7 +488,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ExoSocialActivity activity = activityM.getActivity(questionActivityId);
       Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), String.valueOf(question.getAnswers().length), String.valueOf(question.getComments().length), question.getLanguage(), question.getLink());
       activity.setTemplateParams(templateParams);
-      activity.setBody(formatBody(question.getDetail()));
+      activity.setBody(ForumActivityBuilder.getFourFirstLines(question.getDetail()));
       activityM.updateActivity(activity);
     } catch (Exception e) {
       LOG.debug("Fail to refresh activity "+e.getMessage());

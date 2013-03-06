@@ -109,10 +109,10 @@ public class PostActivityTest extends AbstractActivityTypeTest {
     
     //Comment associated with this post exist --> update
     comment = task.processComment(ctx, comment);
-    assertPostTitle(comment, "Edited his reply to: edited post content1<br/>2<br/>3");
+    assertPostTitle(comment, "Edited his reply to: edited post content1<br/>2<br/>3<br/>4...");
     
     //Comment associated with this post has been deleted --> add new
     comment = task.processComment(ctx, null);
-    assertPostTitle(comment, "Edited his reply to: edited post content1<br/>2<br/>3");
+    assertPostTitle(comment, "Edited his reply to: edited post content1<br/>2<br/>3<br/>4...");
   }
 }

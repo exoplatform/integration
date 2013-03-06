@@ -331,7 +331,7 @@ public class ForumUIActivity extends BaseKSActivity {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
     comment.setUserId(org.exoplatform.social.webui.Utils.getViewerIdentity().getId());
-    comment.setTitle(ForumActivityBuilder.getThreeFirstLines(post));
+    comment.setTitle(ForumActivityBuilder.getFourFirstLines(post.getMessage()));
     comment.setBody(post.getMessage());
     org.exoplatform.social.webui.Utils.getActivityManager().saveComment(getActivity(), comment);
     //

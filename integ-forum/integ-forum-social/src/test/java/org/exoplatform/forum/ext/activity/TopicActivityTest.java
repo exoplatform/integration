@@ -157,17 +157,17 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     
     ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
     ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
-    assertTopicContent(a, "1<br/>2<br/>3<br/>4");
+    assertTopicContent(a, "1<br/>2<br/>3<br/>4...");
     
     topic = updateTopicContent(topic, "1<br/>2<br/>3<br/>4<br/>5");
     ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
     a = ForumActivityBuilder.createActivity(topic, ctx);
-    assertTopicContent(a, "1<br/>2<br/>3<br/>4");
+    assertTopicContent(a, "1<br/>2<br/>3<br/>4...");
     
     topic = updateTopicContent(topic, "<p>1</p><br/><p>2</p><br/><p>3</p><br/><p>4</p><br/><p>5</p>");
     ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
     a = ForumActivityBuilder.createActivity(topic, ctx);
-    assertTopicContent(a, "1<br/>2<br/>3<br/>4");
+    assertTopicContent(a, "1<br/>2<br/>3<br/>4...");
   }
   
   public void testUpdateTopicContentWithJob() throws Exception {

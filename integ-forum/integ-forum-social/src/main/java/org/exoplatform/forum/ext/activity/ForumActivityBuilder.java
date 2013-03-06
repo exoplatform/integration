@@ -60,7 +60,8 @@ public class ForumActivityBuilder {
   
   public static final String TOPIC_VOTE_RATE_KEY    = "TopicVoteRate";
 
-  private static final int NUMBER_CHAR_IN_LINE    = 70;
+  private static final int NUMBER_CHARS    = 430;
+  private static final int NUMBER_OF_LINES    = 4;
   
   public static final String SPACE_GROUP_ID  = "SpaceGroupId";
   
@@ -70,7 +71,7 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivityComment(Post post, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String title = getThreeFirstLines(post);
+    String title = getFourFirstLines(post.getMessage());
 
     //activity.setUserId(post.getOwner());
     activity.setTitle(title);
@@ -97,7 +98,7 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivityComment(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = getFourFirstLines(topic);
+    String body = getFourFirstLines(topic.getDescription());
     
     //activity.setUserId(topic.getOwner());
     String title = StringEscapeUtils.unescapeHtml(topic.getTopicName());
@@ -109,39 +110,74 @@ public class ForumActivityBuilder {
     return activity;
   }
   
-  public static String getFourFirstLines(Topic topic) {
-    return getNumberFirstLines(topic.getDescription().replaceAll("&nbsp;", ""), 4);
+  public static String getFourFirstLines(String str) {
+    return getNumberFirstLines(str.replaceAll("&nbsp;", ""), 4);
   }
 
+  /**
+   * No more than 4 lines
+   * No more than 430 characters
+   * If the content is larger than these limits, we add "..." at the end of the abstract.
+   * @param content
+   * @param line
+   * @return
+   */
   public static String getNumberFirstLines(String content, int line) {
     String[] tab = TransformHTML.getPlainText(content).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
-    int length = tab.length;
-    if (length > line) length = line;
+    
+    //
+    int numberOfLine = Math.min(NUMBER_OF_LINES, tab.length);
     StringBuilder sb = new StringBuilder();
-    String prefix = "";
-    for (int i=0; i<length; i++) {
-      sb.append(prefix);
-      prefix = "<br/>";
-      String s = tab[i];
-      if (s.length() > NUMBER_CHAR_IN_LINE)
-        s = s.substring(0, NUMBER_CHAR_IN_LINE) + "...";
-      sb.append(StringEscapeUtils.unescapeHtml(s));
+    
+    //
+    for (int i=0; i<numberOfLine; i++) {
+      sb.append(StringEscapeUtils.unescapeHtml(tab[i]));
+      
+      //
+      if(i + 1 < numberOfLine) {
+        sb.append("<br/>");
+      }
     }
-    return sb.toString();
-    /*int maxL = NUMBER_CHAR_IN_LINE * line;
-    if (content.length() > maxL) {
-      return content.substring(0, maxL) + "...";
-    }
-    return content;*/
+    
+    //
+    return trunc(sb.toString(), NUMBER_CHARS, tab.length > NUMBER_OF_LINES);
   }
   
-  public static String getThreeFirstLines(Post post) {
-    return getNumberFirstLines(post.getMessage().replaceAll("&nbsp;", ""), 3);
+  /**
+   * Truncates large Strings showing a portion of the String's head and tail
+   * with the head cut out and replaced with '...'.
+   * 
+   * @param str
+   *            the string to truncate
+   * @param head
+   *            the amount of the head to display
+   * @return the head truncated string
+   */
+  public static final String trunc(String str, int head, boolean needTail) {
+    StringBuffer buf = null;
+
+    // Return as-is if String is smaller than or equal to the head plus the
+    // tail plus the number of characters added to the trunc representation
+    // plus the number of digits in the string length.
+    buf = new StringBuffer();
+    
+    if (str.length() <= (head + 7 + str.length() / 10)) {
+      buf.append(str);
+      if (needTail) {
+        buf.append("...");
+      }
+      
+      return buf.toString();
+    }
+
+    //
+    buf.append(str.substring(0, head)).append("...");
+    return buf.toString();
   }
   
   public static ExoSocialActivity createActivity(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = getFourFirstLines(topic);
+    String body = getFourFirstLines(topic.getDescription());
     
     
     //processing in execute of task.

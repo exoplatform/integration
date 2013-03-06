@@ -217,7 +217,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.setBody(ForumActivityBuilder.getFourFirstLines(ctx.getTopic()));
+      activity.setBody(ForumActivityBuilder.getFourFirstLines(ctx.getTopic().getDescription()));
       //processTitle(ctx, activity);
       return activity;
     };

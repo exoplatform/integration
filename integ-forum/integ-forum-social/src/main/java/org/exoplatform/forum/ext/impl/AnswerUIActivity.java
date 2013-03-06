@@ -13,6 +13,7 @@ import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
+import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
@@ -257,7 +258,6 @@ public class AnswerUIActivity extends BaseKSActivity {
       question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
       templateParams.put(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS, String.valueOf(question.getComments().length));
       activity.setTemplateParams(templateParams);
-      activity.setBody(formatBody(question.getDetail()));
       activityM.updateActivity(activity);
       
       Map<String, String> commentTemplateParams = new HashMap<String, String>();
@@ -289,20 +289,4 @@ public class AnswerUIActivity extends BaseKSActivity {
     return activity;
   }
   
-  private static String formatBody(String body) {
-    String[] tab = TransformHTML.getPlainText(body).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
-    int length = tab.length;
-    if (length > 4) length = 4;
-    StringBuilder sb = new StringBuilder();
-    String prefix = "";
-    for (int i=0; i<length; i++) {
-      sb.append(prefix);
-      prefix = "<br/>";
-      String s = tab[i];
-      if (s.length() > AnswersSpaceActivityPublisher.NUMBER_CHAR_IN_LINE)
-        s = s.substring(0, AnswersSpaceActivityPublisher.NUMBER_CHAR_IN_LINE) + "...";
-      sb.append(StringEscapeUtils.unescapeHtml(s));
-    }
-    return sb.toString();
-  }
 }

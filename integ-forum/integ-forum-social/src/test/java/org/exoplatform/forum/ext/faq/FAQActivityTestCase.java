@@ -127,7 +127,7 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     activity = getManager().getActivity(activityId);
     comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
     assertEquals(2,comments.size());
-    assertEquals("Details has been edited to: new question's detail<br/>1<br/>2<br/>3", comments.get(1).getTitle());
+    assertEquals("Details has been edited to: new question's detail<br/>1<br/>2<br/>3...", comments.get(1).getTitle());
     
     //unactivate question
     question = faqService_.getQuestionById(question.getId());
