@@ -126,8 +126,9 @@ public class CalendarUIActivity extends BaseUIActivity {
     }
   }
 
-  /*
-   * used by the template, line 164 CalendarUIActivity.gtmpl
+  /**
+   * used by template
+   * @see <code>CalendarUIActivity.gtmpl</code>
    */
   private String getTitleTemplate() {
     String typeOfEvent = getTypeOfEvent();
@@ -146,15 +147,19 @@ public class CalendarUIActivity extends BaseUIActivity {
                               .getString(titleKey);
   }
 
-  /*
-   * used by the template, line 165 CalendarUIActivity.gtmpl
+  /**
+   *
+   * used by template
+   * @see <code>CalendarUIActivity.gtmpl</code>
    */
   private String getSummary() {
     return getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_SUMMARY_KEY);
   }
 
-  /*
-   * used by the template, line 165 CalendarUIActivity.gtmpl
+  /**
+   *
+   * used by template
+   * @see <code>CalendarUIActivity.gtmpl</code>
    */
   private String getEventLink() {
     String value = null;
@@ -329,14 +334,20 @@ public class CalendarUIActivity extends BaseUIActivity {
     sb.append(str.substring(1));
     return sb.toString();
   }
+
+
   /**
    * builds localized string for comment content
+   *
+   * used in template
+   * @see <code>CalendarUIActivity.gtmpl</code>
+   *
    * @param comment
    * @return localized string for comment
    * @since activity-type
    */
   public String buildComment(WebuiBindingContext ctx, ExoSocialActivity comment) {
-	  StringBuilder commentMessage = new StringBuilder();
+    StringBuilder commentMessage = new StringBuilder();
 	  Map<String,String> tempParams = comment.getTemplateParams();
 	  // get updated fields in format {field1,field2,...}
 	  String fieldsChanged = tempParams.get(CalendarSpaceActivityPublisher.CALENDAR_FIELDS_CHANGED);

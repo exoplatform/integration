@@ -165,7 +165,6 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
         .getComponentInstanceOfType(CalendarService.class);
     Space space = event.getSpace();
     String calendarId = space.getId() + SPACE_CALENDAR_ID_SUFFIX;
-    String username = space.getGroupId();
     Calendar calendar = null;
 
     try {

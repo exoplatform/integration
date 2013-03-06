@@ -23,9 +23,7 @@
 <%
   import java.text.SimpleDateFormat;
   import org.exoplatform.portal.webui.util.Util;
-  import org.exoplatform.social.core.activity.model.ExoSocialActivity;
   import org.exoplatform.webui.form.UIFormTextAreaInput;
-  import org.exoplatform.social.core.service.LinkProvider;
   import org.exoplatform.social.core.space.model.Space;
   import org.exoplatform.social.webui.Utils;
   import org.exoplatform.social.core.service.LinkProvider;
@@ -55,70 +53,84 @@
   def inputWriteAComment = _ctx.appRes("UIActivity.input.Write_A_Comment");
   def labelShowAllComments = _ctx.appRes("UIActivity.label.Show_All_Comments");
   def labelHideAllComments = _ctx.appRes("UIActivity.label.Hide_All_Comments");
+  def labelShowPreviousComments = _ctx.appRes("UIActivity.label.Show_Previous_Comments");
+
   def labelOnePersonLikeThis = _ctx.appRes("UIActivity.label.One_Person_Like_This");
-  def labelPeopleLikeThis = _ctx.appRes("UIActivity.label.People_Like_This");
+  def labelTwoPersonLikeThis=_ctx.appRes("UIActivity.label.Two_Person_Like_This");
+  def labelOneAndOthersLikeThis=_ctx.appRes("UIActivity.label.One_And_Others_Like_This");
   def labelYouLikeThis = _ctx.appRes("UIActivity.label.You_Like_This");
   def labelYouAndOnePersonLikeThis = _ctx.appRes("UIActivity.label.You_And_One_Person_Like_This");
   def labelYouAndPeopleLikeThis = _ctx.appRes("UIActivity.label.You_And_People_Like_This");
 
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
+
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
-  
-  if (allComments.size() > 0) {
-    labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
-    labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
+  if (allComments) {
+	  labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
+	  labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
 
   }
+
+  def totalComments = allComments.size();
+  def commentsHidden = allComments.size()-commentList.size();
   def displayedIdentityLikes = uicomponent.getDisplayedIdentityLikes();
   def identityLikesNum = 0;
+  def totalLikesNum = uicomponent.getIdentityLikes().length;
   def labelLikes = null;
-  def toggleDisplayLikesAction = uicomponent.event("LoadLikesActionListener");
-  def startTag = "<a onclick=\"$toggleDisplayLikesAction\" id=\"ToggleDisplayListPeopleLikes${activity.id}\" href=\"#ToggleDisplayListPeopleLikes\">";
-  def endTag = "</a>";
+  def loadLikesAction = uicomponent.event("LoadLikes");
+
+  def hasMore = (totalLikesNum > uicomponent.LIKES_NUM_DEFAULT) && !uicomponent.isAllLoaded();
   if (displayedIdentityLikes != null) {
-    identityLikesNum = displayedIdentityLikes.length;
+	  identityLikesNum = displayedIdentityLikes.length;
   }
+
   def commentListStatus = uicomponent.getCommentListStatus();
   def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
   def likesDisplayed = uicomponent.isAllLoaded();
   //params for init UIActivity javascript object
-	def params = """ {
+
+  def params = """ {
 	  activityId: '${activity.id}',
-	    inputWriteAComment: '$inputWriteAComment',
-	    commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
-	    commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
-	    commentFormDisplayed: '$commentFormDisplayed',
-	    allCommentSize: '${allComments.size()}',
-	    commentFormFocused: '${uicomponent.isCommentFormFocused()}'
+	  inputWriteAComment: '$inputWriteAComment',
+	  commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
+	  commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
+	  commentFormDisplayed: '$commentFormDisplayed',
+	  allCommentSize: '${allComments.size()}',
+	  commentFormFocused: '${uicomponent.isCommentFormFocused()}'
 	} """
-	
-  //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
-  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
-  
-  //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
+
+  jsManager.require("SHARED/jquery", "jq")
+           .require("SHARED/bts_tooltip").addScripts("jq('*[rel=\"tooltip\"]').tooltip();")
+           .require("SHARED/social-ui-activity", "activity").addScripts("activity.onLoad($params);");
+
+//make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
   def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
   def listPeopleLikeBlockClass = "", listPeopleBGClass = "";
 
-  if (!likesDisplayed) {
-    listPeopleLikeBlockClass = "displayNone";
-  }
-
   if (uicomponent.isLiked()) {
-    if (identityLikesNum > 1) {
-      labelLikes = labelYouAndPeopleLikeThis.replace("{start}", startTag).replace("{end}", endTag).replace("{0}", identityLikesNum + "");
-    } else if (identityLikesNum == 1) {
-      labelLikes = labelYouAndOnePersonLikeThis.replace("{start}", startTag).replace("{end}", endTag);
+    if (totalLikesNum > 2) {
+      labelLikes = labelYouAndOthersLikeThis.replace("{0}", totalLikesNum + "");
+    } else if (totalLikesNum == 2) {
+      def likeId = (displayedIdentityLikes[0] == Utils.getViewerIdentity().getId()) ? displayedIdentityLikes[1] : displayedIdentityLikes[0];
+      def id = Utils.getIdentityManager().getIdentity(likeId);
+      labelLikes = labelYouAndOnePersonLikeThis.replace("{0}", id.profile.fullName);
     } else {
       labelLikes = labelYouLikeThis;
     }
   } else {
-    if (identityLikesNum > 1) {
-        labelLikes = labelPeopleLikeThis.replace("{start}", startTag).replace("{end}", endTag).replace("{0}", identityLikesNum + "");
-    } else if (identityLikesNum == 1) {
-        labelLikes = labelOnePersonLikeThis.replace("{start}", startTag).replace("{end}", endTag);
+    if (totalLikesNum > 2) {
+      def id = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[0]);
+      labelLikes = labelOneAndOthersLikeThis.replace("{0}", id.profile.fullName).replace("{1}", totalLikesNum + "");
+    } else if (totalLikesNum == 1) {
+      def id = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[0]);
+      labelLikes = labelOnePersonLikeThis.replace("{0}", id.profile.fullName);
+    } else if (totalLikesNum == 2) {
+      def id1 = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[0]);
+      def id2 = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[1]);
+      labelLikes = labelTwoPersonLikeThis.replace("{0}", id1.profile.fullName).replace("{1}", id2.profile.fullName);
     }
   }
 
@@ -135,25 +147,29 @@
     ownerAvatar = ownerIdentity.profile.avatarUrl;
     ownerName = ownerIdentity.profile.fullName;
     if (!ownerAvatar) ownerAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
-  } else {
+  } else if(uicomponent.isSpaceActivity()){
     Space space = Utils.getSpaceService().getSpaceByPrettyName(ownerIdentity.remoteId);
-    ownerUri = LinkProvider.getSpaceUri(space.url);
+    ownerUri = Utils.getSpaceHomeURL(space);
     ownerAvatar = space.avatarUrl;
     ownerName = space.displayName;
     if (!ownerAvatar) ownerAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+  } else {
+    ownerUri = ownerIdentity.profile.url;
+    ownerAvatar = ownerIdentity.profile.avatarUrl;
+    ownerName = ownerIdentity.profile.fullName;
   }
+
 %>
 
 <div class="activityStream uiCalendarActivity"> 
   <% uiform.begin() %>
-
   <%
-  def calendarIconClass = "eventActivityIcon";
-  def typeCalenderIconClass = "uiIconCalendarMini";
-  if (uicomponent.getTypeOfEvent().contains("Task")) {
-	calendarIconClass = "taskActivityIcon";
-	typeCalenderIconClass = "uiIconTaskSharing";
-  } 
+    def calendarIconClass = "eventActivityIcon";
+    def typeCalenderIconClass = "uiIconCalendarMini";
+    if (uicomponent.getTypeOfEvent().contains("Task")) {
+	    calendarIconClass = "taskActivityIcon";
+	    typeCalenderIconClass = "uiIconTaskSharing";
+    }
   %>
   <% /* end the block for rendering the calendar activity content */ %>
 	<div class="activityTimeLine pull-left">
@@ -185,18 +201,13 @@
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
 								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
-									def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
-									def spaceName = spaceSource.displayName;
+							  def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+								def spaceName = spaceSource.displayName;
 						%>
 						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconGroup uiIconLightGray"></i>&nbsp;$spaceName</a>
 						<%} %>
 					</div>
 				</div><!--end heading-->
-				<%
-					if (uicomponent.getTypeOfEvent().contains("Event")) {
-				%>		
-				<div class="description">First version of Juzu website after many days of hard work, now time for CRaSH website.</div><!--hackcode check if if exist description if no remove this line-->
-				<% } %>
 				<div class="uiBox roundedBottom introBox CalendarShare">
 					<div class="clearfix">
 						<%
@@ -234,12 +245,12 @@
 									if (uicomponent.getTypeOfEvent().contains("Task")) {
 									def fullTask = uicomponent.getEventEndTime(_ctx) ;
 								%>
-									<span class="dateTime">Due for: $fullTask</span> 
+									<span class="dateTime"><%=_ctx.appRes("CalendarUIActivity.label.due-for")%>: $fullTask</span>
 								<% } else {
 									def full = uicomponent.getEventStartTime(_ctx) ;
 								%>  
 									<span class="dateTime">$full</span><br/>
-									<span class="location"><%= uicomponent.getLocation();%> <br></span>	
+									<span class="location"><%=uicomponent.getLocation();%><br></span>
 									<%}%>
 								<% } %>  
 						  </div>
@@ -253,63 +264,72 @@
 					<ul class="pull-right statusAction">						
 						<li>
 							<a class="$commentLink" onclick="$toggleDisplayCommentAction" id="CommentLink${activity.id}" href="#comment">
-								<i class="uiIconComment uiIconLightGray"></i>&nbsp;2<!-- hackcode add dynamic later-->
+								<i class="uiIconComment uiIconLightGray"></i>&nbsp;$totalComments
 							</a>
 						</li>
 					  <% if (uicomponent.isLiked()) { %>
 						<li>
 							<a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="#unlike">
-							   <i class="uiIconThumbUp uiIconBlue"></i>&nbsp;3<!-- hackcode add dynamic later-->
-							</a> 
+							   <i class="uiIconThumbUp uiIconLightGray"></i>&nbsp;$totalLikesNum
+							</a>
 						</li>
 					  <% } else { %>
 						<li>
 							<a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">
-							  <i class="uiIconThumbUp uiIconLightGray"></i>&nbsp;3<!-- hackcode add dynamic later-->
+							  <i class="uiIconThumbDown uiIconLightGray"></i>&nbsp;$totalLikesNum
 							</a>
 						</li>
 					  <% }%>											 
 					</ul>  
 				 <% }%>	
 				</div><!--end actionBar-->
-				<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>				
-				<div class="listLikedBox $listPeopleBGClass">		
-						<div class="listPeopleContent">
-				  <% if (!labelLikes) labelLikes = ""; %>
-							<p>Liked by you, Thomas and Marry</p><!--hackcode-->
-						<% if (identityLikesNum > 0) {%>
-						<div class="listLiked">
-						<%
-						displayedIdentityLikes.each({
-						  def id = Utils.getIdentityManager().getIdentity(it);
-						  personLikeFullName = id.profile.fullName;
-						  personLikeProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-						  personLikeAvatarImageSource = id.profile.avatarUrl;
-						  if (!personLikeAvatarImageSource) personLikeAvatarImageSource = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
-						  %>
-							<a class="avatarXSmall" rel="tooltip" data-placement="bottom" title="$personLikeFullName" href="$personLikeProfileUri">
-							  <img src="$personLikeAvatarImageSource" alt="$personLikeFullName" />
-							</a>
-						 <% })%>
-						</div>
-						<% }%>
-					  </div>
-				</div><!--end list like people--> 
+			<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>
+			<div class="listLikedBox $listPeopleBGClass">
+				  <div class="listPeopleContent">
+				  <% if (!labelLikes) { labelLikes = ""; } %>
+							<p>$labelLikes</p>
+
+					<% if (identityLikesNum > 0) {%>
+					<div class="listLiked">
+					<%
+					displayedIdentityLikes.each({
+					  def id = Utils.getIdentityManager().getIdentity(it);
+					  personLikeFullName = id.profile.fullName;
+					  personLikeProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
+					  personLikeAvatarImageSource = id.profile.avatarUrl;
+					  if (!personLikeAvatarImageSource) { personLikeAvatarImageSource = LinkProvider.PROFILE_DEFAULT_AVATAR_URL; }
+					  %>
+						<a class="avatarXSmall" rel="tooltip" data-placement="bottom" title="$personLikeFullName" href="$personLikeProfileUri">
+						  <img src="$personLikeAvatarImageSource" alt="$personLikeFullName" />
+						</a>
+					 <% })%>
+					 <% if ( hasMore ) { %>
+             <button onclick="$loadLikesAction" class="btn">...</button>
+           <% } %>
+					</div>
+					<% }%>
+				 </div>
+			  </div><!--end list like people-->
 				<%}%>       
 				<div id="CommentBlockBound${activity.id}" class="commentBox">					
-					  <% if (uicomponent.commentListToggleable()) {
+					<% if (uicomponent.commentListToggleable()) {
 					  def showAllCommentsAction = uicomponent.event("SetCommentListStatus", "all");
 					  def hideAllCommentsAction = uicomponent.event("SetCommentListStatus", "none");
-					  %> 
+					  def loadPreviousCommentsAction = uicomponent.event("SetCommentListStatus", "all");
+					  %>
 					<div class="commentListInfo clearfix">
-						<div class="pull-right numberComment">0/31 </div><!--hackcode-->
+						<div class="pull-right numberComment">$commentsHidden/$totalComments</div>
 						<% if (commentListStatus.getStatus().equals("latest") || commentListStatus.getStatus().equals("none")) { %>
-						  <a onclick="$showAllCommentsAction" href="#show-all-comments">
-						   view previous comments
-						  </a>
-						<% } %>
-					 </div>
-					 <% } %>
+						  <a onclick="$showAllCommentsAction" href="javascript:void(0);">$labelShowAllComments</a>
+				    <% } else if (commentListStatus.getStatus().equals("all")) { %>
+				      <% if (commentsHidden > 0) { %>
+                <a onclick="$loadPreviousCommentsAction" href="javascript:void(0);">$labelShowPreviousComments</a>
+              <% } else { %>
+                <a onclick="$hideAllCommentsAction" href="javascript:void(0);">$labelHideAllComments</a>
+              <% } %>
+			      <% } %>
+			      </div>
+			    <% } %>
 					<div class="commentList">	
 					<%
 					def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;

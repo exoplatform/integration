@@ -168,6 +168,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     return params;
   }
 
+  /**
+   * publish a new event activity
+   *
+   * @param event
+   * @param calendarId
+   * @param eventType
+   */
   private void publishActivity(CalendarEvent event, String calendarId, String eventType) {
     try {
       Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
@@ -184,6 +191,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
       IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
       ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
       SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+
+      /* space calendar id contains id of the space */
       String spaceId = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
       Space space = spaceService.getSpaceById(spaceId);
       if (space != null) {
@@ -199,20 +208,22 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         activityM.saveActivityNoReturn(spaceIdentity, activity);
         event.setActivityId(activity.getId());
       }
-    }catch(ExoSocialException e){ //getSpaceByPrettyName
+    }catch(ExoSocialException e){
       if (LOG.isDebugEnabled())
         LOG.error("Can not record Activity for space when event added ", e);
     }
   }
+
   /**
-   * adds comment to activity of a calendar event each time it's updated
+   * adds comment to existing event activity
+   *
    * @param event
    * @param calendarId
    * @param eventType
    * @param messagesParams
    */
   private void updateToActivity(CalendarEvent event, String calendarId, String eventType, Map<String, String> messagesParams){
-	  try {
+    try {
 		  Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
 	  } catch (ClassNotFoundException e) {
 		  if (LOG.isDebugEnabled()) {
@@ -227,11 +238,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 		  IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
 		  ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
 		  SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
-		  String spacePrettyName = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
-		  Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
-		  
+
+      /* space calendar id contains id of the space */
+      String spaceId = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
+		  Space space = spaceService.getSpaceById(spaceId);
+
 		  if (space != null && event.getActivityId() != null) {
-			  String userId = ConversationState.getCurrent().getIdentity().getUserId();
+        String userId = ConversationState.getCurrent().getIdentity().getUserId();
 			  Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
 			  Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
 			  ExoSocialActivity activity = activityM.getActivity(event.getActivityId()) ;
@@ -273,6 +286,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   }
   /**
    * creates a comment associated to updated fields
+   *
    * @param userId
    * @param messagesParams
    * @return a comment object
@@ -299,7 +313,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     return newComment;
   }
 
-
+  /**
+   * delete the event activity
+   *
+   * @param event
+   * @param calendarId
+   * @param eventType
+   */
   private void deleteActivity(CalendarEvent event, String calendarId, String eventType){
     try {
       Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
@@ -315,12 +335,12 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     try{
       ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
       SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
-      String spacePrettyName = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
-      Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
+      String spaceId = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
+      Space space = spaceService.getSpaceById(spaceId);
       if (space != null && event.getActivityId() != null) {
         activityM.deleteActivity(event.getActivityId());
       }
-    } catch (ExoSocialException e){ //getSpaceByPrettyName
+    } catch (ExoSocialException e){
       if (LOG.isDebugEnabled())
         LOG.error("Can not delete Activity for space when event deleted ", e);
     }
@@ -690,13 +710,19 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     }
   }
 
+  /**
+   * publish new event activity
+   *
+   * @param event
+   * @param calendarId
+   */
   public void savePublicEvent(CalendarEvent event, String calendarId) {
     String eventType = event.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
     publishActivity(event, calendarId, eventType);
   }
 
   /**
-   * update to activity by creating a new comment and posting into activity
+   * update existing event activity by creating a new comment in activity
    *
    * @param oldEvent
    * @param newEvent
@@ -711,7 +737,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   }
 
   /**
-   * create new event and publish event activity
+   * publish new event activity
    *
    * @param newEvent
    * @param calendarId
