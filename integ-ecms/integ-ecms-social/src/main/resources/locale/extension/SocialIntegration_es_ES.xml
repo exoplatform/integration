@@ -66,6 +66,8 @@
       <published>Publicado</published>
       <live>Publicado</live>
     </publicationStates>
+    <view>View</view>
+    <edit>Edit</edit>
   </SocialIntegration>
   <UIPopupWindow>
     <title>

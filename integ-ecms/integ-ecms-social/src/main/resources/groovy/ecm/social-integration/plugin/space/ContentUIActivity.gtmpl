@@ -95,11 +95,14 @@
   def inputWriteAComment = _ctx.appRes("UIActivity.input.Write_A_Comment");
   def labelShowAllComments = _ctx.appRes("UIActivity.label.Show_All_Comments");
   def labelHideAllComments = _ctx.appRes("UIActivity.label.Hide_All_Comments");
-  def labelOnePersonLikeThis = _ctx.appRes("UIActivity.label.One_Person_Like_This");
-  def labelPeopleLikeThis = _ctx.appRes("UIActivity.label.People_Like_This");
-  def labelYouLikeThis = _ctx.appRes("UIActivity.label.You_Like_This");
-  def labelYouAndOnePersonLikeThis = _ctx.appRes("UIActivity.label.You_And_One_Person_Like_This");
-  def labelYouAndPeopleLikeThis = _ctx.appRes("UIActivity.label.You_And_People_Like_This");
+  def labelShowPreviousComments = _ctx.appRes("UIActivity.label.Show_Previous_Comments");
+  
+  def labelOnePersonLikeThis=_ctx.appRes("UIActivity.label.One_Person_Like_This");
+  def labelTwoPersonLikeThis=_ctx.appRes("UIActivity.label.Two_Person_Like_This");
+  def labelOneAndOthersLikeThis=_ctx.appRes("UIActivity.label.One_And_Others_Like_This");
+  def labelYouLikeThis=_ctx.appRes("UIActivity.label.You_Like_This");
+  def labelYouAndOnePersonLikeThis=_ctx.appRes("UIActivity.label.You_And_One_Person_Like_This");
+  def labelYouAndOthersLikeThis=_ctx.appRes("UIActivity.label.You_And_Others_Like_This");
 
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
@@ -114,15 +117,20 @@
   def editLink = uicomponent.getEditLink();
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
-  def commentCount = 0;
   if (allComments) {
-    commentCount = allComments.size();
     labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
     labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
   }
+  
+  def totalComments = allComments.size();
+  def commentsHidden = allComments.size()-commentList.size();
   def displayedIdentityLikes = uicomponent.getDisplayedIdentityLikes();
   def identityLikesNum = 0;
+  def totalLikesNum = uicomponent.getIdentityLikes().length;
   def labelLikes = null;
+  def loadLikesAction = uicomponent.event("LoadLikes");
+  def hasMore = (totalLikesNum > uicomponent.LIKES_NUM_DEFAULT) && !uicomponent.isAllLoaded();
+
   def toggleDisplayLikesAction = uicomponent.event("ToggleDisplayLikes");
   def startTag = "<a onclick=\"$toggleDisplayLikesAction\" id=\"ToggleDisplayListPeopleLikes${activity.id}\" href=\"#ToggleDisplayListPeopleLikes\">";
   def endTag = "</a>";
@@ -154,18 +162,26 @@
   }
 
   if (uicomponent.isLiked()) {
-    if (identityLikesNum > 1) {
-      labelLikes = labelYouAndPeopleLikeThis.replace("{start}", startTag).replace("{end}", endTag).replace("{0}", identityLikesNum + "");
-    } else if (identityLikesNum == 1) {
-      labelLikes = labelYouAndOnePersonLikeThis.replace("{start}", startTag).replace("{end}", endTag);
+    if (totalLikesNum > 2) {
+      labelLikes = labelYouAndOthersLikeThis.replace("{0}", totalLikesNum-1 + "");
+    } else if (totalLikesNum == 2) {
+      def likeId = (displayedIdentityLikes[0] == Utils.getViewerIdentity().getId()) ? displayedIdentityLikes[1] : displayedIdentityLikes[0];
+      def id = Utils.getIdentityManager().getIdentity(likeId);
+      labelLikes = labelYouAndOnePersonLikeThis.replace("{0}", id.profile.fullName);
     } else {
       labelLikes = labelYouLikeThis;
     }
   } else {
-    if (identityLikesNum > 1) {
-        labelLikes = labelPeopleLikeThis.replace("{start}", startTag).replace("{end}", endTag).replace("{0}", identityLikesNum + "");
-    } else if (identityLikesNum == 1) {
-        labelLikes = labelOnePersonLikeThis.replace("{start}", startTag).replace("{end}", endTag);
+    if (totalLikesNum > 2) {
+      def id = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[0]);
+      labelLikes = labelOneAndOthersLikeThis.replace("{0}", id.profile.fullName).replace("{1}", totalLikesNum + "");
+    } else if (totalLikesNum == 1) {
+      def id = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[0]);
+      labelLikes = labelOnePersonLikeThis.replace("{0}", id.profile.fullName);
+    } else if (totalLikesNum == 2) {
+      def id1 = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[0]);
+      def id2 = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[1]);
+      labelLikes = labelTwoPersonLikeThis.replace("{0}", id1.profile.fullName).replace("{1}", id2.profile.fullName);
     }
   }
 
@@ -209,9 +225,7 @@
 						  <a href="javascript:void(0)" onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="uiIconClose uiIconLightGray" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 					<div class="author">
-						<a rel="tooltip" data-placement="bottom" title="$ownerName" href="$ownerUri">
-						$ownerName
-						</a>         
+						<a rel="tooltip" data-placement="bottom" title="$ownerName" href="$ownerUri">$ownerName</a>
 					</div>	
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
@@ -220,7 +234,8 @@
 									def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
 									def spaceName = spaceSource.displayName;
 						%>
-						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconGroup uiIconLightGray"></i>&nbsp;$spaceName</a>
+						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI">
+						  <i class="uiIconGroup uiIconLightGray"></i>&nbsp;$spaceName</a>
 						<%} %>
 					</div>
 				</div><!--end heading-->
@@ -244,73 +259,74 @@
 				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 					 def commentLink = "";
 				  %>
-				 <% if (activityCommentAndLikable) { %>						 
-					<ul class="pull-right statusAction">						
-						<li>
-							<a class="$commentLink" onclick="$toggleDisplayCommentAction" id="CommentLink${activity.id}" href="#comment">
-								<i class="uiIconComment uiIconLightGray"></i>&nbsp;2<!-- hackcode add dynamic later-->
-							</a>
-						</li>
-					  <% if (uicomponent.isLiked()) { %>
-						<li>
-							<a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="#unlike">
-							   <i class="uiIconThumbUp uiIconLightGray"></i>&nbsp;3<!-- hackcode add dynamic later-->
-							</a> 
-						</li>
-					  <% } else { %>
-						<li>
-							<a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">
-							  <i class="uiIconThumbDown uiIconLightGray"></i>&nbsp;3<!-- hackcode add dynamic later-->
-							</a>
-						</li>
-					  <% }%>											 
-					</ul>  
-				 <% }%>	
-					 <ul class="pull-left statusAction">					 
-						<li><a href="#"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;View</a></li> <!-- hackcode-->
-						<li><a href="#"><i class="uiIconEdit uiIconLightGray"></i>&nbsp;Edit</a></li><!-- hackcode-->
-					 </ul><!-- hackcode-->
-				</div><!--end actionBar-->
-				<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>				
-				<div class="listLikedBox $listPeopleBGClass">		
-						<div class="listPeopleContent">
-				  <% if (!labelLikes) labelLikes = ""; %>
-							<p>Liked by you, Thomas and Marry</p><!--hackcode-->
-						<% if (identityLikesNum > 0) {%>
-						<div class="listLiked">
-						<%
-						displayedIdentityLikes.each({
-						  def likeId = Utils.getIdentityManager().getIdentity(it);
-						  personLikeFullName = likeId.profile.fullName;
-						  personLikeProfileUri = LinkProvider.getUserProfileUri(likeId.getRemoteId());
-						  personLikeAvatarImageSource = likeId.profile.avatarUrl;
-						  if (!personLikeAvatarImageSource) personLikeAvatarImageSource = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
-						  %>
-							<a class="avatarXSmall" rel="tooltip" data-placement="bottom" title="$personLikeFullName" href="$personLikeProfileUri">
-							  <img src="$personLikeAvatarImageSource" alt="$personLikeFullName" />
-							</a>
-						 <% })%>
-						</div>
-						<% }%>
-					  </div>
-				</div><!--end list like people--> 
-				<%}%>
-				<div id="CommentBlockBound${activity.id}" class="commentBox">					
-					  <% if (uicomponent.commentListToggleable()) {
-					  def showAllCommentsAction = uicomponent.event("SetCommentListStatus", "all");
-					  def hideAllCommentsAction = uicomponent.event("SetCommentListStatus", "none");
-					  %> 
-					<div class="commentListInfo clearfix">
-						<div class="pull-right numberComment">0/31 </div><!--hackcode-->
-						<% if (commentListStatus.getStatus().equals("latest") || commentListStatus.getStatus().equals("none")) { %>
-						  <a onclick="$showAllCommentsAction" href="#show-all-comments">
-						   view previous comments
-						  </a>
-						<% } %>
-					 </div>
-					 <% } %>
-					<div class="commentList">	
-				    <%
+          <% if (activityCommentAndLikable) { %>
+            <ul class="pull-right statusAction">
+              <li>
+                <a class="$commentLink" onclick="$toggleDisplayCommentAction" id="CommentLink${activity.id}" href="#comment">
+                  <i class="uiIconComment uiIconLightGray"></i>&nbsp;<%=commentList.size();%>
+                </a>
+              </li>
+          <% if (uicomponent.isLiked()) { %>
+              <li>
+                <a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="#unlike">
+                  <i class="uiIconThumbUp uiIconLightGray"></i>&nbsp;$totalLikesNum
+                </a>
+              </li>
+          <% } else { %>
+              <li>
+                <a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="#like">
+                  <i class="uiIconThumbDown uiIconLightGray"></i>&nbsp;$totalLikesNum
+                </a>
+              </li>
+          <% }%>
+            </ul>
+          <% }%>	
+          <ul class="pull-left statusAction">
+            <li><a href="$viewLink"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
+            <li><a href="$editLink"><i class="uiIconEdit uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.edit");%></a></li>
+          </ul>
+        </div><!--end actionBar-->
+        <% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>       
+        <div class="listLikedBox $listPeopleBGClass">   
+            <div class="listPeopleContent">
+            <% if (!labelLikes) { labelLikes = ""; } %>
+                <p>$labelLikes</p>
+            <% if (identityLikesNum > 0) {%>
+            <div class="listLiked">
+            <%
+            displayedIdentityLikes.each({
+              def id = Utils.getIdentityManager().getIdentity(it);
+              personLikeFullName = id.profile.fullName;
+              personLikeProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
+              personLikeAvatarImageSource = id.profile.avatarUrl;
+              if (!personLikeAvatarImageSource) { personLikeAvatarImageSource = LinkProvider.PROFILE_DEFAULT_AVATAR_URL; }
+              %>
+              <a class="avatarXSmall" rel="tooltip" data-placement="bottom" title="$personLikeFullName" href="$personLikeProfileUri">
+                <img src="$personLikeAvatarImageSource" alt="$personLikeFullName" />
+              </a>
+             <% })%>
+             <% if ( hasMore ) { %>
+               <button onclick="$loadLikesAction" class="btn">...</button>
+             <% } %>
+            </div>
+            <% }%>
+           </div>       
+        </div><!--end list like people--> 
+        <%}%> 
+        <div id="CommentBlockBound${activity.id}" class="commentBox">
+          <% if (uicomponent.commentListToggleable()) {
+            def showAllCommentsAction = uicomponent.event("SetCommentListStatus", "all");
+            def hideAllCommentsAction = uicomponent.event("SetCommentListStatus", "none");
+          %> 
+          <div class="commentListInfo clearfix">
+          <div class="pull-right numberComment">0/31 </div><!--hackcode-->
+            <% if (commentListStatus.getStatus().equals("latest") || commentListStatus.getStatus().equals("none")) { %>
+              <a onclick="$showAllCommentsAction" href="#show-all-comments">$labelShowPreviousComments</a>
+            <% } %>
+          </div>
+          <% } %>
+          <div class="commentList">	
+            <%
             def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
             def first = true, commentContentClass;
             def commentCounter = 0;
