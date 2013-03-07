@@ -35,8 +35,8 @@ function initSearch() {
     ";
 
     var EVENT_AVATAR_TEMPLATE = " \
-      <div class='uiCalendarActivity'> \
-        <div class='pull-left calendarBox'> \
+      <div class='uiCalendarActivity avatar pull-left'> \
+        <div class='calendarBox'> \
           <div class='heading'> %{month} </div> \
           <div class='content' style='margin-left: 0px;'> %{date} </div> \
         </div> \
