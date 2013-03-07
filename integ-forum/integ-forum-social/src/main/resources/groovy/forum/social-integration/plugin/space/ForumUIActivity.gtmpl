@@ -199,15 +199,17 @@
 				</div><!--end heading-->
 				<div class="uiBox roundedBottom introBox forumShare">	
 					<div class="clearfix headingContainer">
-						<div class="pull-right avgRatingImages sumaryRate">
+						<div class="pull-right uiVote">
+							<div class="avgRatingImages sumaryRate">
 								<%
-								def rate = uicomponent.getRate();
-            %>
-							<i class="uiIconVote"></i><!--hack code-->	
-							<i class="uiIconVote"></i><!--hack code-->	
-							<i class="uiIconVote"></i><!--hack code-->	
-							<i class="uiIconVote"></i><!--hack code-->	
-							<i class="uiIconUnVote"></i><!--hack code-->	
+									def rate = uicomponent.getRate();
+								%>
+								<i class="voted"></i><!--hack code-->	
+								<i class="voted"></i><!--hack code-->	
+								<i class="voted"></i><!--hack code-->	
+								<i class="voted"></i><!--hack code-->	
+								<i class="unvoted"></i><!--hack code-->	
+							</div>
 						</div>
 						<div class="titleForum">
 						  <%

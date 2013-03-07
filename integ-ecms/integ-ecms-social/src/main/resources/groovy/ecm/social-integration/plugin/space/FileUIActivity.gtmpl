@@ -285,7 +285,7 @@
 				</div><!--end heading-->
 				
 				
-				<div class="uiBox roundedBottom introBox docShare">	
+				<div class="uiBox roundedBottom introBox FileShare">	
 					<div class="clearfix isPreviewable">
 						
 						<%if (mimeType != null && mimeType.length() > 0 && fileSize > 0){%>
