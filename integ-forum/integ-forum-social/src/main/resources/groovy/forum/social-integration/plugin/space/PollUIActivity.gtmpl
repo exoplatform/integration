@@ -216,46 +216,29 @@
 					</h5>
 				</div>
 				<!--begin hardcode-->
-			     <div class="infoVote">				
-				     <div class="voteRow clearfix">
-						<div class="titleVote">
-							Solution 1 : 
-						</div>
-						<div class="progressBar">
-							<div class="progress">
-								<div class="bar" style="width: 25%;"></div>
-							</div>
-						</div>
-						<div class="progressing">
-							25% (2 votes)
-						</div>						
-					 </div>	<!--end voteRow-->	
-					<div class="voteRow clearfix">
-						<div class="pull-left titleVote">
-							Solution 1 : 
-						</div>
-						<div class="pull-left">
-							<div class="progress">
-								<div class="bar" style="width: 60%;"></div>
-							</div>
-						</div>
-						<div class="pull-left progressing">
-							60% (2 votes)
-						</div>						
-					 </div>	<!--end voteRow-->
-					 <div class="voteRow clearfix">
-						<div class="pull-left titleVote">
-							Solution 1 : 
-						</div>
-						<div class="pull-left">
-							<div class="progress">
-								<div class="bar" style="width: 64%;"></div>
-							</div>
-						</div>
-						<div class="pull-left progressing">
-							40% (2 votes)
-						</div>						
-					 </div>	<!--end voteRow-->
+			     <div class="infoVote">			
+			     
+			     	<% def votes = uicomponent.getVotes(activity.body);
+			         for (vote in votes) {
+			           def solution = vote.split(":")[0];
+			           def percent = vote.split(":")[1];
+			           def nbVotes = vote.split(":")[2];
+            %>
+						     <div class="voteRow clearfix">
+									<div class="titleVote">
+										$solution 
+									</div>
+									<div class="progressBar">
+										<div class="progress">
+											<div class="bar" style="width: ${percent};"></div>
+										</div>
+									</div>
+									<div class="progressing">
+										$percent ($nbVotes)
+									</div>						
+							 </div>	<!--end voteRow-->
+						<% } %>	
+					
 				</div>		<!--end hardcode-->
 			</div><!--end pollShare-->
 		<div class="actionBar clearfix ">			

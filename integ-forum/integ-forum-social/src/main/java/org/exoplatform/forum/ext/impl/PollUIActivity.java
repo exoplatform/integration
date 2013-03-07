@@ -18,6 +18,7 @@ package org.exoplatform.forum.ext.impl;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.portal.mop.SiteType;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
@@ -44,13 +45,32 @@ public class PollUIActivity extends BaseKSActivity {
   private String[] getVotes(String infoVote) {
     String[] tab = infoVote.split("\\|");
     tab = (String[]) ArrayUtils.removeElement(tab, tab[tab.length-1]);
+    for (int i = 0; i< tab.length; i++) {
+      String option = tab[i].split(":")[0];
+      String percent = tab[i].split(":")[1];
+      String nbVotes = tab[i].split(":")[2];
+      int number = Integer.parseInt(nbVotes);
+      if (number <= 1) {
+        nbVotes = WebUIUtils.getLabel(null, "PollUIActivity.label.vote").replace("{0}", String.valueOf(number));
+      } else {
+        nbVotes = WebUIUtils.getLabel(null, "PollUIActivity.label.votes").replace("{0}", String.valueOf(number));
+      }
+      StringBuilder sb = new StringBuilder();
+      sb.append(option).append(":").append(percent).append(":").append(nbVotes);
+      tab[i] = sb.toString();
+    }
     return tab;
   }
   
   @SuppressWarnings("unused")
   private String getNumberOfVotes(String infoVote) {
     String[] tab = infoVote.split("\\|");
-    return tab[tab.length-1];
+    int number = Integer.parseInt(tab[tab.length-1]);
+    if (number <= 1) {
+      return WebUIUtils.getLabel(null, "PollUIActivity.label.vote").replace("{0}", String.valueOf(number));
+    } else {
+      return WebUIUtils.getLabel(null, "PollUIActivity.label.votes").replace("{0}", String.valueOf(number));
+    }
   }
   
   @SuppressWarnings("unused")
