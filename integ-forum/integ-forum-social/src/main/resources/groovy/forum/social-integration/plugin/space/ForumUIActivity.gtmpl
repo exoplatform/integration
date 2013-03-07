@@ -199,7 +199,7 @@
 				</div><!--end heading-->
 				<div class="uiBox roundedBottom introBox forumShare">	
 					<div class="clearfix headingContainer">
-						<div class="pull-right sumaryRate">
+						<div class="pull-right avgRatingImages sumaryRate">
 								<%
 								def rate = uicomponent.getRate();
             %>

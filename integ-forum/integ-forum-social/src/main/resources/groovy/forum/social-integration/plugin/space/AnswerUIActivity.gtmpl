@@ -201,7 +201,7 @@
 				</div><!--end heading-->
 				<div class="uiBox roundedBottom introBox ">	
 					<div class="clearfix headingContainer">
-						<div class="pull-right sumaryRate">
+						<div class="pull-right avgRatingImages sumaryRate">
 							<% def rating = uicomponent.getRating(); %>
 							<i class="uiIconVote"></i><!--hack code-->	
 							<i class="uiIconVote"></i><!--hack code-->	
