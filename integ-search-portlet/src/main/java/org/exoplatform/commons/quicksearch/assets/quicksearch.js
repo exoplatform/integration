@@ -56,8 +56,8 @@ function initQuickSearch(portletId) {
 
     var QUICKSEARCH_NO_RESULT=" \
         <tr> \
-          <td colspan='2'> \
-            <a id='seeAll-" + portletId + "' class='' href='#'>No result for <strong>%{query}<strong></a> \
+          <td colspan='2' class='noResult'> \
+            <span id='seeAll-" + portletId + "' class='' href='#'>No result for <strong>%{query}<strong></span> \
           </td> \
         </tr> \
         ";
