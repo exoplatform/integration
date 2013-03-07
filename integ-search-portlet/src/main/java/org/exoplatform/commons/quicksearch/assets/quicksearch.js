@@ -22,7 +22,7 @@ function initQuickSearch(portletId) {
         <span class='avatar'> \
           %{avatar} \
         </span> \
-       	<a href='%{url}' class='name text-overflow'>%{title}</a> \
+       	<a href='%{url}' class='name'>%{title}</a> \
       </div> \
     ";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \
 

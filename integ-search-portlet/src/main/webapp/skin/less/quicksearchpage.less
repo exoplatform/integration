@@ -29,6 +29,10 @@
 	  	background: white;
 	  }  
 		tbody {
+			tr td,
+			tr th {
+				padding: 0 10px;
+			}
 			tr:hover td,
 			tr:hover th {
 				#gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 15%));
@@ -76,10 +80,11 @@
 	}
 
 	.quickSearchResult {
+		margin: 5px 0;
 		.avatar {
 			display: inline-block;
 			.square(20px);
-			vertical-align: middle;
+			vertical-align: top;
 			overflow: hidden;
 			img {
 				.square(20px);
@@ -89,7 +94,7 @@
 			display: inline-block;
 			margin-left: 5px;
 	    max-width: 145px;
-	    white-space: nowrap;
+	    .text-overflow();
 		}
 	}
 
