@@ -82,31 +82,33 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     String oldValue = "";
     String newValue = "";
     String commentValue = "";
-    try {      
-    	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
-    		Value[] values = currentNode.getProperty(propertyName).getValues();
-    		if(values != null && values.length > 0) {
-    			for (Value value : values) {
-						newValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
-						commentValue += value.getString() + ", ";
-					}
-    			if(newValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
-    				newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
-    			if(commentValue.length() >=2) commentValue = commentValue.substring(0, commentValue.length() - 2);
-    		}
-    		values = (Value[]) properties.get(nodeUUID + "_" + propertyName);
-    		if(values != null && values.length > 0) {
-    			for (Value value : values) {
-    				oldValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
-					}
-    			if(oldValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
-    				oldValue = oldValue.substring(0, oldValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
-    		}
-    	} else {
-    		newValue= currentNode.getProperty(propertyName).getString();
-    		commentValue = newValue;
-    		if(properties.containsKey(nodeUUID + "_" + propertyName)) 
-    			oldValue = properties.get(nodeUUID + "_" + propertyName).toString();
+    try {
+    	if(!propertyName.equals(NodetypeConstant.JCR_DATA)) {
+	    	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
+	    		Value[] values = currentNode.getProperty(propertyName).getValues();
+	    		if(values != null && values.length > 0) {
+	    			for (Value value : values) {
+							newValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
+							commentValue += value.getString() + ", ";
+						}
+	    			if(newValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
+	    				newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
+	    			if(commentValue.length() >=2) commentValue = commentValue.substring(0, commentValue.length() - 2);
+	    		}
+	    		values = (Value[]) properties.get(nodeUUID + "_" + propertyName);
+	    		if(values != null && values.length > 0) {
+	    			for (Value value : values) {
+	    				oldValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
+						}
+	    			if(oldValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
+	    				oldValue = oldValue.substring(0, oldValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
+	    		}
+	    	} else {
+	    		newValue= currentNode.getProperty(propertyName).getString();
+	    		commentValue = newValue;
+	    		if(properties.containsKey(nodeUUID + "_" + propertyName)) 
+	    			oldValue = properties.get(nodeUUID + "_" + propertyName).toString();
+	    	}
     	}
     }catch (Exception e) {
     }

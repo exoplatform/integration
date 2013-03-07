@@ -311,7 +311,7 @@
 									   %>
 									   <a onclick="javascript:window.open('$binarySrc');" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="$activityContentTitle" /></a>
 									 </div><%
-		            } else if( mimeType.startsWith("application/pdf") || mimeType.startsWith("application/msword") || mimeType.startsWith("application/vnd.oasis.opendocument.text") ){%>
+		            } else if( mimeType.startsWith("application/pdf") || mimeType.startsWith("application/msword") || mimeType.startsWith("application/vnd.oasis.opendocument.text") || mimeType.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || mimeType.startsWith("application/rtf") ){%>
 		               <div id="MediaContent${activity.id}" class="MediaContent">
 		                 <%
 		                   def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
