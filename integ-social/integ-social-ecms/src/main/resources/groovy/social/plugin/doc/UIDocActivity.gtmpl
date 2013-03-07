@@ -198,7 +198,7 @@
 							def spaceName = spaceSource.displayName;
 							activityPostedTimeInSpace = uicomponent.getPostedTimeInSpaceString(_ctx, activity.postedTime);
 						 %>
-						  <a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconLightGray uiIconGroup"></i>&nbsp;$spaceName</a>
+						  <a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconSocLightGray uiIconSocGroup"></i>&nbsp;$spaceName</a>
 						<%} %>						
 					</div>
 				</div><!--end heading-->

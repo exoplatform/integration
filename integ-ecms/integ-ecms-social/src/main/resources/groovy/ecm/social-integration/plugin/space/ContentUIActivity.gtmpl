@@ -235,7 +235,7 @@
 									def spaceName = spaceSource.displayName;
 						%>
 						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI">
-						  <i class="uiIconGroup uiIconLightGray"></i>&nbsp;$spaceName</a>
+						  <i class="uiIconSocGroup uiIconSocLightGray"></i>&nbsp;$spaceName</a>
 						<%} %>
 					</div>
 				</div><!--end heading-->

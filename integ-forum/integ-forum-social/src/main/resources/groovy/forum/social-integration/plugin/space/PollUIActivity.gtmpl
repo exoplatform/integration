@@ -215,6 +215,7 @@
 						  </a>
 					</h5>
 				</div>
+				<!--begin hardcode-->
 			     <div class="infoVote">				
 				     <div class="voteRow clearfix">
 						<div class="titleVote">
@@ -255,7 +256,7 @@
 							40% (2 votes)
 						</div>						
 					 </div>	<!--end voteRow-->
-				</div>		
+				</div>		<!--end hardcode-->
 			</div><!--end pollShare-->
 		<div class="actionBar clearfix ">			
 			 <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);

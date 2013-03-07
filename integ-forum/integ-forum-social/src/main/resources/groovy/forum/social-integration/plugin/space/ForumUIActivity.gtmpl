@@ -193,7 +193,7 @@
 									def spaceName = spaceSource.displayName;
 									activityPostedTimeInSpace = uicomponent.getPostedTimeInSpaceString(_ctx, activity.postedTime);
 						%>
-						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconGroup uiIconLightGray"></i>&nbsp;$spaceName</a>
+						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconSocGroup uiIconSocLightGray"></i>&nbsp;$spaceName</a>
 						<%} %>
 					</div>
 				</div><!--end heading-->
@@ -211,10 +211,10 @@
 						</div>
 						<div class="titleForum">
 						  <%
-			          def href = "<a class='TextBold' href=\"%s\">%s</a>";
+			          def href = "<a class='textBold linkTitle' href=\"%s\">%s</a>";
 			          def activityContentTitle = uicomponent.getActivityContentTitle(_ctx, href);
 			        %>
-							<a class="linkTitle" href="" title="">$activityContentTitle</a>
+							$activityContentTitle
 						</div>
 					</div>	
 				  <div class="contentForum theContent">
