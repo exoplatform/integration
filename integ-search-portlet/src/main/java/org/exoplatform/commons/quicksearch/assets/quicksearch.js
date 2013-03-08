@@ -62,6 +62,36 @@ function initQuickSearch(portletId) {
         </tr> \
         ";
 
+    var IMAGE_AVATAR_TEMPLATE = " \
+      <span class='avatar pull-left'> \
+        <img src='%{imageSrc}'> \
+      </span> \
+    ";
+
+    var CSS_AVATAR_TEMPLATE = " \
+      <span class='avatar pull-left'> \
+        <i class='%{cssClass}'></i> \
+      </span> \
+    ";
+
+    var EVENT_AVATAR_TEMPLATE = " \
+      <div class='uiCalendarActivity avatar pull-left'> \
+        <div class='calendarBox'> \
+          <div class='heading'> %{month} </div> \
+          <div class='content' style='margin-left: 0px;'> %{date} </div> \
+        </div> \
+      </div> \
+    ";
+
+    var TASK_AVATAR_TEMPLATE = " \
+      <div class='uiCalendarActivity'> \
+        <div class='pull-left statusTask'> \
+          <i class='%{taskStatus}Icon'></i> \
+        </div> \
+      </div> \
+    ";
+
+
     //*** Utility functions ***
     // Highlight the specified text in a string
     String.prototype.highlight = function(words) {
@@ -92,7 +122,7 @@ function initQuickSearch(portletId) {
     function quickSearch() {
       var query = $(txtQuickSearchQuery_id).val();
       var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
-      
+
       var searchParams = {
         searchContext: {
           siteName:parent.eXo.env.portal.portalName
@@ -135,18 +165,28 @@ function initQuickSearch(portletId) {
     function renderQuickSearchResult(result) {
       var query = $(txtQuickSearchQuery_id).val();
       var terms = query.split(/\s+/g); //for highlighting
+      var avatar = "";
 
-      var avatar = "<img src='"+result.imageUrl+"' alt='"+ result.imageUrl+"'>"; //render the image provided by the connector (by default)
+      switch(result.type) {
+        case "event":
+          var date = new Date(result.fromDateTime).toString().split(/\s+/g);
+          avatar = EVENT_AVATAR_TEMPLATE.
+            replace(/%{month}/g, date[1]).
+            replace(/%{date}/g, date[2]);
+          break;
 
-      if("event"==result.type) {
-        var date = new Date(result.fromDateTime).toString().split(/\s+/g);
-        avatar = " \
-          <div class='calendarBox'> \
-            <div class='heading' style='font-size: 8px; padding: 0px; border-width: 0px; height: 10px;'>" + date[1] + "</div> \
-            <div class='content' style='font-size: 10px; padding: 0px 2px; border-top-width: 0px; height: 13px;'>" + date[2] + "</div> \
-          </div> \
-        ";
+        case "task":
+          avatar = TASK_AVATAR_TEMPLATE.replace(/%{taskStatus}/g, result.taskStatus);
+          break;
+
+        default:
+          if(-1!=result.imageUrl.indexOf("/")) { //it is the path to an image
+            avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
+          } else { //it is a CSS class name
+            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIcon24x24FileDefault");
+          }
       }
+
 
       var html = QUICKSEARCH_RESULT_TEMPLATE.
         replace(/%{type}/g, result.type).

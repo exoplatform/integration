@@ -46,7 +46,7 @@ function initSearch() {
     var TASK_AVATAR_TEMPLATE = " \
       <div class='uiCalendarActivity'> \
         <div class='pull-left statusTask'> \
-          <i class='%{statusIcon}'></i> \
+          <i class='%{taskStatus}Icon'></i> \
         </div> \
       </div> \
     ";
@@ -175,14 +175,14 @@ function initSearch() {
           break;
 
         case "task":
-          avatar = TASK_AVATAR_TEMPLATE.replace(/%{statusIcon}/g, result.imageUrl);
+          avatar = TASK_AVATAR_TEMPLATE.replace(/%{taskStatus}/g, result.taskStatus);
           break;
 
         default:
           if(-1!=result.imageUrl.indexOf("/")) { //it is the path to an image
             avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
           } else { //it is a CSS class name
-            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, result.imageUrl);
+            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIcon64x64FileDefault");
           }
       }
 
