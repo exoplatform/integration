@@ -99,8 +99,9 @@ public class AnswerUIActivity extends BaseKSActivity {
   }
   
   @SuppressWarnings("unused")
-  private String getRating() {
-    return getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_RATING);
+  private double getRating() {
+    String rate = getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_RATING);
+    return  Double.parseDouble(rate);
   }
   
   @SuppressWarnings("unused")

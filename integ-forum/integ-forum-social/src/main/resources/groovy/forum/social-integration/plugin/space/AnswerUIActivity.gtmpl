@@ -202,17 +202,20 @@
 				<div class="uiBox roundedBottom introBox ">	
 					<div class="clearfix headingContainer">
 						<div class="pull-right uiVote">
-							<div class="avgRatingImages sumaryRate">
-								<%
-									def rate = uicomponent.getRate();
-								%>
-								<i class="voted"></i><!--hack code-->	
-								<i class="voted"></i><!--hack code-->	
-								<i class="voted"></i><!--hack code-->	
-								<i class="voted"></i><!--hack code-->	
-								<i class="unvoted"></i><!--hack code-->	
-							</div>
-						</div>			
+              <div class="avgRatingImages sumaryRate">
+                <%
+                 int rateInt = (Integer) uicomponent.getRating();
+                 //double diff = uicomponent.getRating() - rateInt;
+                 for (int i = 1; i<=5; i++) {
+                   if (i <= rateInt) { %>
+                     <i class="voted"></i>
+                   <% } else { %>
+                     <i class="unvoted"></i>
+                   <% }  
+                 }
+                %>
+              </div>
+            </div>
 						<div class="titleAnswer">
 							<a class="linkTitle" href="${uicomponent.getLink()}" title="">$activity.title</a>
 						</div>
