@@ -41,17 +41,21 @@
     <!-- Project Dependencies                     -->
     <!-- **************************************** -->
     <org.exoplatform.depmgt.version>3</org.exoplatform.depmgt.version>
+    <!-- JCR Project Dependencies -->
     <org.exoplatform.kernel.version>2.4.2-GA</org.exoplatform.kernel.version>
     <org.exoplatform.core.version>2.5.2-GA</org.exoplatform.core.version>
     <org.exoplatform.jcr.version>1.15.2-GA</org.exoplatform.jcr.version>
-    <org.gatein.portal.version>3.5.2.Final</org.gatein.portal.version>
+    <!-- GateIn Project Dependencies -->
     <org.gatein.shindig.version>2.0.2.Final-gatein-4</org.gatein.shindig.version>
+    <org.gatein.portal.version>3.5.3.Final</org.gatein.portal.version>
+    <!-- Platform Project Dependencies -->
     <org.exoplatform.commons.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.commons.version>
     <org.exoplatform.ecms.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.ecms.version>
     <org.exoplatform.social.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.social.version>
     <org.exoplatform.forum.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.forum.version>
     <org.exoplatform.wiki.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.wiki.version>
     <org.exoplatform.calendar.version>4.0.0-relooking-SNAPSHOT</org.exoplatform.calendar.version>
+    <!-- Platform Project 3rd party Dependencies -->
   </properties>
   <dependencyManagement>
     <dependencies>
