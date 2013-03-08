@@ -59,7 +59,10 @@ public class AnswerUIActivity extends BaseKSActivity {
   
   @SuppressWarnings("unused")
   private String getViewCommentLink(ExoSocialActivity comment) {
-    return getLink();
+    String questionLink = getLink();
+    Map<String, String> templateParams = comment.getTemplateParams();
+    String itemId = templateParams.get(AnswersSpaceActivityPublisher.LINK_KEY);
+    return String.format("%s#%s", questionLink, itemId);
   }
   
   public String getSpaceHomeURL(String spaceGroupId) {
