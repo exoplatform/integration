@@ -169,7 +169,7 @@
 			  <img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<div class="activityType"><span><i class="uiIconAnswer uiIconWhite"></i></span></div>					
+		<div class="activityType"><span><i class="uiIconSocAnswersMini uiIconSocWhite"></i></span></div>				
 	</div><!--end activityTimeLine-->
 
 
@@ -205,15 +205,22 @@
               <div class="avgRatingImages sumaryRate">
                 <%
                  int rateInt = (Integer) uicomponent.getRating();
-                 //double diff = uicomponent.getRating() - rateInt;
+                 double diff = uicomponent.getRating() - rateInt;
                  for (int i = 1; i<=5; i++) {
                    if (i <= rateInt) { %>
                      <i class="voted"></i>
+                <% } else if (i == (rateInt + 1)) { 
+                     if (diff > 0.7) { %>
+                        <i class="voted"></i>
+                   <% } else if (diff < 0.3) { %>
+                        <i class="unvoted"></i>
                    <% } else { %>
-                     <i class="unvoted"></i>
-                   <% }  
-                 }
-                %>
+                        <i class="votedHaft"></i>
+                   <% }
+                    } else {  %>
+                      <i class="unvoted"></i>
+                 <% }
+                 } %>
               </div>
             </div>
 						<div class="titleAnswer">
