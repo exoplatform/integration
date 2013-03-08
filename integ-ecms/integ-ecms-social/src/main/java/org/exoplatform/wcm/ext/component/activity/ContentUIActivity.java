@@ -113,7 +113,7 @@ public class ContentUIActivity extends BaseUIActivity {
   
   public static final String SYSTEM_COMMENT     = "systemComment";
   
-  
+  public static final String MIX_VERSION       = "mix:versionable";
 
   private String             contentLink;
 
@@ -218,8 +218,13 @@ public class ContentUIActivity extends BaseUIActivity {
   public String getDocTitle() {
     return docTitle;
   }
-  public String getDocVersion() {
+  public String getDocVersion() throws RepositoryException{
+    Node node = getContentNode();
+    if (!node.isNodeType(MIX_VERSION)) {
+      return null;
+    }
     return docVersion;
+    
   }
   public String getDocSummary() {
     return docSummary;
@@ -334,7 +339,7 @@ public class ContentUIActivity extends BaseUIActivity {
     this.mimeType = activityParams.get(ContentUIActivity.MIME_TYPE);
     this.imagePath = activityParams.get(ContentUIActivity.IMAGE_PATH);
     this.docTypeName = activityParams.get(ContentUIActivity.DOCUMENT_TYPE_LABEL);
-    this.docTitle = activityParams.get(ContentUIActivity.DOCUMENT_TITLE);  
+    this.docTitle = activityParams.get(ContentUIActivity.DOCUMENT_TITLE);
     this.docVersion = activityParams.get(ContentUIActivity.DOCUMENT_VERSION);
     this.docSummary = activityParams.get(ContentUIActivity.DOCUMENT_SUMMARY);
   }

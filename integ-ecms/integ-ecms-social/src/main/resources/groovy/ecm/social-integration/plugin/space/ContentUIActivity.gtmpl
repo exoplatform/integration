@@ -111,7 +111,11 @@
   def docTitle = uicomponent.getDocTitle();
   def docVersionNo = uicomponent.getDocVersion();
   def docVersion = _ctx.appRes("SocialIntegration.messages.version");
-  docVersion = docVersion.replace("{0}", docVersionNo);
+  if (docVersionNo !=null) {
+    docVersion = docVersion.replace("{0}", docVersionNo);
+  } else {
+    docVersion = null;
+  }
   def docSummary = uicomponent.getDocSummary();
   def viewLink = uicomponent.getViewLink();
   def editLink = uicomponent.getEditLink();
@@ -239,26 +243,35 @@
 						<%} %>
 					</div>
 				</div><!--end heading-->
-				<div class="uiBox roundedBottom introBox contentShare">	
-					<div class="clearfix">
-						<div class="pull-left">
-							<i class="uiIcon64x64Template<%=uicomponent.getDocIconClass();%>"></i>
-						</div>
-						<div class="text">
-							<%if (currentNode) {%>
-							  <a class="linkTitle" title="$activityContentTitle" href="$contentActivityUri"> $activityContentTitle </a>
-							<%} else {%>
-							  <span>$docTitle</span>
-							<%}%>
-							<p>$docSummary</p>
-							<span class="versionFile">$docTypeName - $docVersion - $state</span>
-						</div>
-					</div>	
-				</div><!--end introBox,contentShare-->	
-				<div class="actionBar clearfix ContentActivityIcon">
-				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
-					 def commentLink = "";
-				  %>
+        <div class="uiBox roundedBottom introBox contentShare">	
+          <div class="clearfix">
+            <div class="pull-left">
+              <i class="uiIcon64x64Template<%=uicomponent.getDocIconClass();%>"></i>
+            </div>
+            <div class="text">
+              <%if (currentNode) {%>
+                <a class="linkTitle" title="$activityContentTitle" href="$contentActivityUri"> $activityContentTitle </a>
+              <%} else {%>
+                <span>$docTitle</span>
+              <%}%>
+              <p>$docSummary</p>
+              <%
+                def publishInfo = docTypeName;
+                if (docVersion) {
+                  publishInfo = publishInfo + " - " +  docVersion;
+                }
+                if (state!=null && state.length() > 0) {
+                  publishInfo = publishInfo + " - " +  state;
+                }
+              %>
+              <span class="versionFile">$publishInfo</span>
+            </div>
+          </div>	
+        </div><!--end introBox,contentShare-->	
+        <div class="actionBar clearfix ContentActivityIcon">
+          <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
+             def commentLink = "";
+          %>
           <% if (activityCommentAndLikable) { %>
             <ul class="pull-right statusAction">
               <li>
