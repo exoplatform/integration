@@ -75,20 +75,14 @@ function initQuickSearch(portletId) {
     ";
 
     var EVENT_AVATAR_TEMPLATE = " \
-      <div class='uiCalendarActivity avatar pull-left'> \
-        <div class='calendarBox'> \
-          <div class='heading'> %{month} </div> \
-          <div class='content' style='margin-left: 0px;'> %{date} </div> \
-        </div> \
+      <div class='calendarBox calendarBox-mini'> \
+        <div class='heading'> %{month} </div> \
+        <div class='content' style='margin-left: 0px;'> %{date} </div> \
       </div> \
     ";
 
     var TASK_AVATAR_TEMPLATE = " \
-      <div class='uiCalendarActivity'> \
-        <div class='pull-left statusTask'> \
-          <i class='%{taskStatus}Icon'></i> \
-        </div> \
-      </div> \
+      <i class='uiIconStatus-20-%{taskStatus}'></i> \
     ";
 
 

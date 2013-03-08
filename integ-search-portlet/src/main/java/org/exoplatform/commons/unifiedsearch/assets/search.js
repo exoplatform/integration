@@ -35,7 +35,7 @@ function initSearch() {
     ";
 
     var EVENT_AVATAR_TEMPLATE = " \
-      <div class='uiCalendarActivity avatar pull-left'> \
+      <div class='pull-left'> \
         <div class='calendarBox'> \
           <div class='heading'> %{month} </div> \
           <div class='content' style='margin-left: 0px;'> %{date} </div> \
@@ -44,10 +44,8 @@ function initSearch() {
     ";
 
     var TASK_AVATAR_TEMPLATE = " \
-      <div class='uiCalendarActivity'> \
-        <div class='pull-left statusTask'> \
-          <i class='%{taskStatus}Icon'></i> \
-        </div> \
+      <div class='pull-left'> \
+        <i class='uiIconStatus-64-%{taskStatus}'></i> \
       </div> \
     ";
 
