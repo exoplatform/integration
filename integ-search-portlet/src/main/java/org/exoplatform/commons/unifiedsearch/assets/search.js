@@ -181,7 +181,8 @@ function initSearch() {
         case "file":
         case "document":
         case "page":
-          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIcon64x64FileDefault");
+          var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64" + type}).join(" ");
+          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
           break;
 
         default:

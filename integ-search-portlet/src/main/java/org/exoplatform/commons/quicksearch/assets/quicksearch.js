@@ -182,9 +182,10 @@ function initQuickSearch(portletId) {
         case "file":
         case "document":
         case "page":
-          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIcon24x24FileDefault");
+          var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon24x24" + type}).join(" ");
+          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
           break;
-          
+
         default:
           avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
       }
