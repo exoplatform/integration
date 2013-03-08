@@ -180,18 +180,9 @@
 			</div><!--end heading-->
 			<div class="uiBox roundedBottom introBox wikiShare">
 					<div class="headingContainer clearfix">
-					    <!-- Version number-->
-					    <% 
-					      if (version > 1) { 
-                            String viewChangeURL1 = uicomponent.getViewChangeURL();
-                        %>
-                            <div class="pull-right versionLabel"><a href="$viewChangeURL1">$versionLabel</a></div>
-                        <%} else {%>
-                            <div class="pull-right versionLabel">$versionLabel</div>
-                        <%}%>
-					
+                        <div class="pull-right versionLabel">$versionLabel</div>
 						<div class="titleWiki">
-							<a class='linkTitle' href='<%=uicomponent.getPageURL()%>'><%=uicomponent.getPageName()%></a>
+						  <a class='linkTitle' href='<%=uicomponent.getPageURL()%>'><%=uicomponent.getPageName()%></a>
 						</div>		
 					</div>
 					<div class="contentWiki theContent">
@@ -205,6 +196,12 @@
 				    def commentLink = ""; %> 
 				 <% if (activityCommentAndLikable) { %>					 
 				<ul class="pull-right statusAction">
+				    <% if (version > 1) { %>
+				      <li>
+                        <a href="<%=uicomponent.getViewChangeURL();%>"><i class="uiIconViewChange uiIconLightGray"></i>&nbsp;</a>
+                      </li>
+                    <%}%>
+				
 					<li>
 						<a class="$commentLink" onclick="$toggleDisplayCommentAction" id="CommentLink${activity.id}" href="#comment">
 							<i class="uiIconComment uiIconLightGray"></i>&nbsp;<%=commentList.size();%></a>  <!-- number of comments-->
