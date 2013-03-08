@@ -240,12 +240,12 @@ public class ForumUIActivity extends BaseKSActivity {
     }
   }
   
-  public String getRate() {
+  public double getRate() {
     ExoSocialActivity activity = getActivity();
     Map<String, String> templateParams = activity.getTemplateParams();
     
     String got = templateParams.get(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY);
-    return String.format("Rate: %s", got);
+    return Double.parseDouble(got);
   }
   
   public boolean isTopicActivity() {
