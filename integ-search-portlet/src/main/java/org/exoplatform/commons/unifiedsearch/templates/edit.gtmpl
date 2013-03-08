@@ -13,7 +13,7 @@
           <td><span>Search in</span></td>
           <td>
             <input type="text" id="txtSearchIn" value="Everything" readonly/>
-            <ul id="lstSearchInOptions"></ul>
+            <ul id="lstSearchInOptions" style="display: none;"></ul>
           </td>
         </tr>
       </table>
