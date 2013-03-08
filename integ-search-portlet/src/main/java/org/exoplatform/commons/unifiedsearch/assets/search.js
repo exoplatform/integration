@@ -178,12 +178,14 @@ function initSearch() {
           avatar = TASK_AVATAR_TEMPLATE.replace(/%{taskStatus}/g, result.taskStatus);
           break;
 
+        case "file":
+        case "document":
+        case "page":
+          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIcon64x64FileDefault");
+          break;
+
         default:
-          if(-1!=result.imageUrl.indexOf("/")) { //it is the path to an image
-            avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
-          } else { //it is a CSS class name
-            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIcon64x64FileDefault");
-          }
+          avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
       }
 
       var html = SEARCH_RESULT_TEMPLATE.

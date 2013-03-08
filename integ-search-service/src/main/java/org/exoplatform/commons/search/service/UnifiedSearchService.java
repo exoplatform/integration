@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -25,6 +26,7 @@ import javax.ws.rs.ext.RuntimeDelegate;
 import org.exoplatform.commons.api.search.SearchService;
 import org.exoplatform.commons.api.search.SearchServiceConnector;
 import org.exoplatform.commons.api.search.data.SearchContext;
+import org.exoplatform.commons.api.search.data.SearchResult;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
@@ -107,7 +109,21 @@ public class UnifiedSearchService implements ResourceContainer {
       int offset = Integer.parseInt(sOffset);
       int limit = null==sLimit || sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
 
-      return Response.ok(searchService.search(context, query, sites, types, offset, limit, sort, order), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+      Map<String, Collection<SearchResult>> results = searchService.search(context, query, sites, types, offset, limit, sort, order);
+      
+      // get the base URI - http://<host>:<port>
+      String baseUri = uriInfo.getBaseUri().toString(); // http://<host>:<port>/rest
+      baseUri = baseUri.substring(0, baseUri.lastIndexOf("/"));
+      
+      // use absolute path for URLs in search results
+      for(Collection<SearchResult> connectorResults:results.values()){
+        for(SearchResult result:connectorResults){
+          result.setUrl(baseUri + result.getUrl());
+          result.setImageUrl(baseUri + result.getImageUrl());          
+        }        
+      }
+      
+      return Response.ok(results, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
       return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).cacheControl(cacheControl).build();
