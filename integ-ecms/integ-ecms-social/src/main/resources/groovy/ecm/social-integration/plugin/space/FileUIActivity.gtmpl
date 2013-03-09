@@ -119,8 +119,10 @@
   def allComments = uicomponent.getAllComments();
   def description = uicomponent.getSummary(currentNode); 
   def commentCount = 0;
+  def commentHidden = 0;
   if (allComments) {
     commentCount = allComments.size();
+    commentHidden = commentCount-commentList.size();
     labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
     labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
   }
@@ -286,7 +288,7 @@
 		           	     encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                 String defaultImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/default.gif";               
 		               %>
-		               <a href="$contentActivityUri"><image src="$defaultImage" /></a>
+		               <a href="$contentActivityUri"><i rel="tooltip" data-placement="bottom" class="uiIcon64x64Templatent_file" data-original-title="File"></i></a>
 					  </div>
 		            <%
 		            }%>		    
@@ -395,7 +397,8 @@
 					 <% if (commentListStatus.getStatus().equals("none")) {%>
 			      <div class="commentListInfo hideBottomLine">
 			      <% } else {%>
-			      <div class="commentListInfo clearfix">
+			        <div class="commentListInfo clearfix">
+			        <div class="pull-right numberComment">$commentHidden/$commentCount</div>
 			      <% } %>
 			            <% if (commentListStatus.getStatus().equals("latest") || commentListStatus.getStatus().equals("none")) { %>
 			              <a onclick="$showAllCommentsAction" href="#show-all-comments">
@@ -414,7 +417,7 @@
 				    <%
             def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
             def first = true, commentContentClass;
-            def commentCounter = 0;
+            def commentCounter = 0;            
             commentList.each({
               commentCounter++;
               if (first & !uicomponent.commentListToggleable()) {
