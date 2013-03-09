@@ -210,7 +210,7 @@
 	<% uiform.begin() %>
 	<div class="activityTimeLine pull-left">
 		<div class="activityAvatar avatarCircle">
-			<a rel="tooltip" data-placement="bottom" title="$ownerName" href="$ownerUri">
+			<a title="$ownerName" href="$ownerUri">
 				<img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
@@ -225,7 +225,7 @@
 						  <a href="javascript:void(0)" onclick="<%= uicomponent.event("DeleteActivity", uicomponent.getId(), ""); %>" class="uiIconClose uiIconLightGray" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 					<div class="author">
-						<a rel="tooltip" data-placement="bottom" title="$ownerName" href="$ownerUri">
+						<a title="$ownerName" href="$ownerUri">
 						$ownerName
 						</a>         
 					</div>	
@@ -236,7 +236,7 @@
 									def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
 									def spaceName = spaceSource.displayName;
 						%>
-						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconGroup uiIconLightGray"></i>&nbsp;$spaceName</a>
+						<a class="spaceName" title="$spaceName" href="$spaceSourceURI"><i class="uiIconGroup uiIconLightGray"></i>&nbsp;$spaceName</a>
 						<%} %>
 					</div>
 				</div><!--end heading-->
