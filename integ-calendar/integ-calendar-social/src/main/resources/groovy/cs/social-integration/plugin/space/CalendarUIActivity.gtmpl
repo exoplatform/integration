@@ -165,10 +165,10 @@
   <% uiform.begin() %>
   <%
     def calendarIconClass = "eventActivityIcon";
-    def typeCalenderIconClass = "uiIconCalendarMini";
+    def typeCalenderIconClass = "uiIconSocCalendarMini";
     if (uicomponent.getTypeOfEvent().contains("Task")) {
 	    calendarIconClass = "taskActivityIcon";
-	    typeCalenderIconClass = "uiIconTaskSharing";
+	    typeCalenderIconClass = "uiIconSocTaskSharing";
     }
   %>
   <% /* end the block for rendering the calendar activity content */ %>
@@ -180,7 +180,7 @@
 		</div>
 		<div class="activityType">
 			<span>
-				<i class="$typeCalenderIconClass uiIconWhite"></i>
+				<i class="$typeCalenderIconClass uiIconSocWhite"></i>
 			</span>
 		</div>					
 	</div><!--end activityTimeLine-->	
@@ -208,12 +208,12 @@
 						<%} %>
 					</div>
 				</div><!--end heading-->
-				<div class="uiBox roundedBottom introBox CalendarShare">
+				<div class="uiBox roundedBottom introBox calendarShare">
 					<div class="clearfix">
 						<%
 							if (uicomponent.getTypeOfEvent().contains("Task")) {
 						%>
-						<div class="pull-left statusTask"><i class="<%=event.getEventState()%>Icon"  ></i></div>
+						<div class="pull-left statusTask"><i class="uiIconStatus-<%=event.getEventState()%>"  ></i></div>
 						<%} else { 
 					    SimpleDateFormat sdf = new SimpleDateFormat("MMM");   
 						def month = sdf.format(event.getFromDateTime());    
