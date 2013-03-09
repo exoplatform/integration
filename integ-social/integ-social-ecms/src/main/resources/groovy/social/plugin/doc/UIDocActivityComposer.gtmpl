@@ -32,19 +32,17 @@
                .addScripts("composer.activeShareButton();");
       %>
 
-      <span class="TopInputLink"></span>
-      <div class="InputDoc">
-        <span class="BrowsedDocument"><%=uicomponent.getDocumentName()%></span>
-        <a class="CloseIconLink" href="<%= uicomponent.event("RemoveDocument")%>">&nbsp;</a><br/>
+      <div class="inputDoc">
+        <i class="uiIconFile uiIconLightGray"></i>&nbsp;<%=uicomponent.getDocumentName()%>&nbsp;
+        <a  class="uiIconLightGray uiIconClose" href="<%= uicomponent.event("RemoveDocument")%>"></a>
       </div>
       
       <%
     } else {
       %>
 	  
-        <span class="TopInputLink"></span>
-        <div class="InputDoc">
-          <a class="BrowseFile" href="<%= uicomponent.event("SelectDocument")%>">$selectFileLabel</a>
+        <div class="inputDoc" style="display:none">
+          <a class="browseFile" href="<%= uicomponent.event("SelectDocument")%>">$selectFileLabel</a>
         </div>
 		
       <%
