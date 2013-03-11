@@ -59,8 +59,8 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
     @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
     @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
     @EventConfig(listeners = ForumUIActivity.PostCommentActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
-    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment") })
+    @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) })
 public class ForumUIActivity extends BaseKSActivity {
 
   private static final Log LOG = ExoLogger.getLogger(ForumUIActivity.class);
