@@ -11,12 +11,16 @@
   <name>eXo Integration - Search - Service</name>
   <dependencies>
     <dependency>
+      <groupId>org.exoplatform.calendar</groupId>
+      <artifactId>calendar-service</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.exoplatform.commons</groupId>
       <artifactId>commons-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.exoplatform.ws</groupId>
-      <artifactId>exo.ws.rest.core</artifactId>
+      <groupId>org.exoplatform.forum</groupId>
+      <artifactId>forum-forum-service</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.jcr</groupId>
@@ -27,16 +31,12 @@
       <artifactId>social-component-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.exoplatform.forum</groupId>
-      <artifactId>forum-forum-service</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.exoplatform.wiki</groupId>
       <artifactId>wiki-service</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.exoplatform.calendar</groupId>
-      <artifactId>calendar-service</artifactId>
+      <groupId>org.exoplatform.ws</groupId>
+      <artifactId>exo.ws.rest.core</artifactId>
     </dependency>
   </dependencies>
 </project>
