@@ -58,7 +58,7 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   private static SearchSetting defaultSearchSetting = new SearchSetting(10, Arrays.asList("all"), false, false, false);
-  private static SearchSetting anonymousSearchSetting = new SearchSetting(10, Arrays.asList("page", "file", "document", "discussion"), true, false, true);
+  private static SearchSetting anonymousSearchSetting = new SearchSetting(10, Arrays.asList("page", "file", "document", "post"), true, false, true);
   private static SearchSetting defaultQuicksearchSetting = new SearchSetting(5, Arrays.asList("all"), true, true, true);
   
   private SearchService searchService;
@@ -101,13 +101,14 @@ public class UnifiedSearchService implements ResourceContainer {
       if(null==query || query.isEmpty()) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   
       String userId = ConversationState.getCurrent().getIdentity().getUserId();
-      SearchSetting searchSetting = userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting();
+      boolean isAnonymous = null==userId || userId.isEmpty() || userId.equals("__anonim");
+      SearchSetting searchSetting = isAnonymous ? anonymousSearchSetting : getSearchSetting();
       
       List<String> sites = Arrays.asList(sSites.split(",\\s*"));      
       if(sites.contains("all")) sites = userPortalConfigService.getAllPortalNames();      
-      List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
+      List<String> types = isAnonymous||null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
       int offset = Integer.parseInt(sOffset);
-      int limit = null==sLimit || sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
+      int limit = isAnonymous||null==sLimit||sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
 
       Map<String, Collection<SearchResult>> results = searchService.search(context, query, sites, types, offset, limit, sort, order);
       
