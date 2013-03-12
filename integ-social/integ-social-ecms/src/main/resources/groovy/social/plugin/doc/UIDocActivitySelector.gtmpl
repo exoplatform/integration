@@ -29,12 +29,10 @@
   String cancel = uicomponent.event(uicomponent.CANCEL);
   String select = uicomponent.event(uicomponent.SELECTEDFILE);
 %>
-<div class="UIDocActivitySelector" id="$uicomponent.id">
+<div class="uiDocActivitySelector" id="$uicomponent.id">
   <% uicomponent.renderChild(uicomponent.UIDOCUMENTSELECTOR); %>
-  <center>
-    <div class="Action">
-      <input name="selectbtn" type="button" onclick="$select" value="<%=_ctx.appRes(uicomponent.id + ".label.selectedfile");%>" />
-      <input name="cancelbtn" type="button" onclick="$cancel" value ="<%=_ctx.appRes(uicomponent.id + ".label.cancel");%>"/>
+    <div class="uiAction uiActionBorder">
+      <button class="btn" type="button" onclick="$select"><%=_ctx.appRes(uicomponent.id + ".label.selectedfile");%></button>
+	  <button class="btn" type="button" onclick="$cancel"><%=_ctx.appRes(uicomponent.id + ".label.cancel");%></button>
     </div>
-  </center>
 </div>
