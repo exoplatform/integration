@@ -704,7 +704,7 @@ public class Utils {
     }
     if (index <0) {
       if (result.length()>MAX_SUMMARY_CHAR_COUNT)
-      return  result.substring(0, MAX_SUMMARY_CHAR_COUNT-1); 
+      return  result.substring(0, MAX_SUMMARY_CHAR_COUNT-1) + "...";
       return result;
     }
     if (index>MAX_SUMMARY_CHAR_COUNT) index = MAX_SUMMARY_CHAR_COUNT-1;
