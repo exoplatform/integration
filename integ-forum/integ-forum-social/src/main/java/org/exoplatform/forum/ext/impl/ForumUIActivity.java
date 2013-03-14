@@ -225,11 +225,8 @@ public class ForumUIActivity extends BaseKSActivity {
   }
   
   public String getNumberOfReplies() {
-    ExoSocialActivity activity = getActivity();
-    Map<String, String> templateParams = activity.getTemplateParams();
-    
-    String got = templateParams.get(ForumActivityBuilder.TOPIC_POST_COUNT_KEY);
-    int nbReplies = Integer.parseInt(got);
+    String got = getActivityParamValue(ForumActivityBuilder.TOPIC_POST_COUNT_KEY);
+    int nbReplies = Integer.parseInt(Utils.isEmpty(got) ? "0" : got);
     switch (nbReplies) {
       case 0:
         return "No Reply";
@@ -241,16 +238,16 @@ public class ForumUIActivity extends BaseKSActivity {
   }
   
   public double getRate() {
-    ExoSocialActivity activity = getActivity();
-    Map<String, String> templateParams = activity.getTemplateParams();
-    
-    String got = templateParams.get(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY);
-    return Double.parseDouble(got);
+    String got = getActivityParamValue(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY);
+    try {
+      return Double.parseDouble(got);
+    } catch (NumberFormatException e) {
+      return 0.0;
+    }
   }
   
   public boolean isTopicActivity() {
-    String value = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
-    if (value != null && value.length() > 0) {
+    if (Utils.isEmpty(getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY)) == false) {
       return true;
     }
     return false;
