@@ -319,6 +319,8 @@ public class FileUIActivity extends BaseUIActivity {
       return StringUtils.EMPTY;
     } catch (RepositoryException e) {
       return StringUtils.EMPTY;
+    } catch(NullPointerException e) {
+    	return StringUtils.EMPTY;
     }
     return StringUtils.EMPTY;    
   }
