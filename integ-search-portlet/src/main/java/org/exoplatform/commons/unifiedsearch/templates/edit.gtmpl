@@ -1,33 +1,39 @@
 
-<div id="searchSetting">
-  <h3 style="margin-left: 3px;">Search Settings</h3>
-  <hr>
-  <div style="margin-left: 10px; margin-bottom: 40px;">
-    <div style="margin-bottom: 25px;">
-      <table>
-        <tr>
-          <td><span>Results per page</span></td>
-          <td><select id="resultsPerPage"></select></td>
-        </tr>
-        <tr>
-          <td><span>Search in</span></td>
-          <td>
-            <input type="text" id="txtSearchIn" value="Everything" readonly/>
-            <ul id="lstSearchInOptions" style="display: none;"></ul>
-          </td>
-        </tr>
-      </table>
+<div id="searchSetting" class="uiSearchSetting">
+  <h4 class="titleWithBorder">Search Settings</h4>
+
+  <div class="uiForm">
+  
+    <div style="form-horizontal">
+    
+      <div class="control-group">
+          <label class="control-label">Results per page</label>
+          <div class="controls"><select id="resultsPerPage"></select></div>
+        </div>
+			<div class="control-group">
+				<label class="control-label">Search in</label>
+				<div class="controls">
+					<input type="text" id="txtSearchIn" value="Everything" readonly/>
+					<ul id="lstSearchInOptions" style="display: none;"></ul>
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="searchCurrentSiteOnly" class="checkbox"><span>Search in current site only</span></span></div>
+			</div>
+			<div class="control-group">
+				<div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="hideSearchForm" class="checkbox"><span>Hide search form</span></span></div>
+			</div>
+			<div class="control-group">
+				<div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="hideFacetsFilter" class="checkbox"><span>Hide facets filter</span></span></div>
+			</div>
+			
     </div>
 
-    <div><label><input type="checkbox" id="searchCurrentSiteOnly" style="margin-left: 0px;">Search in current site only</label></div>
-    <div><label><input type="checkbox" id="hideSearchForm" style="margin-left: 0px;">Hide search form</label></div>
-    <div><label><input type="checkbox" id="hideFacetsFilter" style="margin-left: 0px;">Hide facets filter</label></div>
-
-    <div style="margin-top: 20px; margin-left: 20px;">
-      <input type="button" value="Save Settings" id="btnSave">
+    <div class="uiAction">
+      <button type="button" value="Save Settings" class="btn" id="btnSave">Save Settings</button>
     </div>
 
-  </div>
+	</div>
 </div>
 
 <script>

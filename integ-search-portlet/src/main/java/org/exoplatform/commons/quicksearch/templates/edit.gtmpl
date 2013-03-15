@@ -1,30 +1,32 @@
 
-<div id="quickSearchSetting">
-  <h3 style="margin-left: 3px;">Quick Search Settings</h3>
-  <hr>
-  <div style="margin-left: 10px; margin-bottom: 40px;">
-    <div style="margin-bottom: 25px;">
-      <table>
-        <tr>
-          <td><span>Results per type</span></td>
-          <td><select id="resultsPerPage"></select></td>
-        </tr>
-        <tr>
-          <td><span>Search in</span></td>
-          <td>
+<div id="quickSearchSetting" class="uiQuickSearchSetting">
+  <h4 class="titleWithBorder">Quick Search Settings</h4>
+  
+  <div class="uiForm">
+    <div style="form-horizontal">
+      <div class="control-group">
+          <label class="control-label">Results per type</label>
+          <div class="controls">
+          	<span class="uiSelectbox"><select id="resultsPerPage" class="selectbox"></select></span>
+          </div>
+      </div>
+      <div class="control-group">
+          <label class="control-label">Search in</label>
+          <div class="controls">
             <input type="text" id="txtSearchIn" value="Everything" readonly/>
             <ul id="lstSearchInOptions" style="display: none;"></ul>
-          </td>
-        </tr>
-      </table>
+          </div>
+      </div>
+      <div class="control-group">
+				<div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="searchCurrentSiteOnly" class="checkbox"><span>Search in current site only</span></span></div>
+			</div>
+      
     </div>
-
-    <div><label><input type="checkbox" id="searchCurrentSiteOnly" style="margin-left: 0px;">Search in current site only</label></div>
-
-    <div style="margin-top: 20px; margin-left: 20px;">
-      <input type="button" value="Save Settings" id="btnSave">
+		
+		<div class="uiAction">
+      <button type="button" value="Save Settings" class="btn" id="btnSave">Save Settings</button>
     </div>
-
+		
   </div>
 </div>
 
