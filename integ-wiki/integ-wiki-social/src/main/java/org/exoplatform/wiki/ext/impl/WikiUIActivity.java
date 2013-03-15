@@ -3,6 +3,8 @@ package org.exoplatform.wiki.ext.impl;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.model.Space;
@@ -13,6 +15,9 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
+import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.resolver.PageResolver;
+import org.exoplatform.wiki.service.WikiService;
 
 @ComponentConfig (
     lifecycle = UIFormLifecycle.class,
@@ -36,7 +41,7 @@ public class WikiUIActivity extends BaseUIActivity {
   public String getUriOfAuthor() {   
     if (getOwnerIdentity() == null){
       if (LOG.isDebugEnabled()) {
-        LOG.debug("Failed to get Url of user, author isn't set");        
+        LOG.debug("Failed to get Url of user, author isn't set");
       }       
       return "";
     }        
@@ -105,6 +110,20 @@ public class WikiUIActivity extends BaseUIActivity {
   }
   
   String getPageVersion(){
-    return getActivityParamValue(WikiSpaceActivityPublisher.WIKI_PAGE_VERSION);
+    String version = getActivityParamValue(WikiSpaceActivityPublisher.WIKI_PAGE_VERSION);
+    if (StringUtils.isEmpty(version)) {
+      version = "1";
+      String pageUrl = getPageURL();
+      PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+      WikiService wikiService = (WikiService) PortalContainer.getInstance().getComponentInstanceOfType(WikiService.class);
+      try {
+        Page wikiHome = pageResolver.resolve(pageUrl, Util.getUIPortal().getSelectedUserNode());
+        Page page = wikiService.getPageById(wikiHome.getWiki().getType(), wikiHome.getWiki().getOwner(), pageUrl.substring(pageUrl.lastIndexOf('/') + 1));
+        version = String.valueOf(page.getVersionableMixin().getVersionHistory().getChildren().size() - 1);
+      } catch (Exception e) {
+        LOG.warn("Failed to get version of wiki page", e);
+      }
+    }
+    return version;
   }
 }
