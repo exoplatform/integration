@@ -15,7 +15,7 @@ function initSearch() {
       <div class='resultBox clearfix %{type}'> \
         %{avatar} \
         <div class='content'> \
-          <h6><a href='%{url}'>%{title}</a></h6> \
+          <h6><a href='%{url}'>%{title}</a>%{rating}</h6> \
           <p class='excerpt'>%{excerpt}</p> \
           <div class='detail'>%{detail}</div> \
         </div> \
@@ -46,6 +46,14 @@ function initSearch() {
     var TASK_AVATAR_TEMPLATE = " \
       <div class='pull-left'> \
         <i class='uiIconStatus-64-%{taskStatus}'></i> \
+      </div> \
+    ";
+
+    var RATING_TEMPLATE = " \
+      <div class='uiVote pull-right'> \
+        <div class='avgRatingImages clearfix'> \
+          %{rating} \
+        </div> \
       </div> \
     ";
 
@@ -163,6 +171,7 @@ function initSearch() {
       var query = $("#txtQuery").val();
       var terms = query.split(/\s+/g);
       var avatar = "";
+      var rating = "";
 
       switch(result.type) {
         case "event":
@@ -183,6 +192,28 @@ function initSearch() {
           avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
           break;
 
+        case "post":
+        case "answer":
+          //render rating
+          var voted = Math.floor(result.rating);
+          var remainder = result.rating - voted;
+          var votedHalf = (0.3<remainder && remainder<0.7) ? 1 : 0;
+          if(remainder>0.7) voted++;
+          var unvoted = 5 - voted - votedHalf;
+
+          rating = Array(voted+1).join("<i class='voted'></i>");
+          rating += Array(votedHalf+1).join("<i class='votedHaft'></i>");
+          rating += Array(unvoted+1).join("<i class='unvoted'></i>");
+
+          rating = RATING_TEMPLATE.replace(/%{rating}/g, rating);
+
+          if("post"==result.type) {
+            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconAppForumPortlet");
+          } else {
+            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconAppAnswersPortlet");
+          }
+          break;
+
         default:
           avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
       }
@@ -193,7 +224,8 @@ function initSearch() {
         replace(/%{title}/g, (result.title||"").highlight(terms)).
         replace(/%{excerpt}/g, (result.excerpt||"").escapeHtml().highlight(terms)).
         replace(/%{detail}/g, (result.detail||"").highlight(terms)).
-        replace(/%{avatar}/g, avatar);
+        replace(/%{avatar}/g, avatar).
+        replace(/%{rating}/g, rating);
 
       $("#result").append(html);
     }

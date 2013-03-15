@@ -180,6 +180,14 @@ function initQuickSearch(portletId) {
           avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
           break;
 
+        case "post":
+          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconUIForms");
+          break;
+
+        case "answer":
+          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconSocAnswersMini");
+          break;
+
         default:
           avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
       }
