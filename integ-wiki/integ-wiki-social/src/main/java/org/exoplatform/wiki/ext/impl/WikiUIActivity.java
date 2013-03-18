@@ -114,12 +114,20 @@ public class WikiUIActivity extends BaseUIActivity {
     if (StringUtils.isEmpty(version)) {
       version = "1";
       String pageUrl = getPageURL();
+      if (pageUrl == null) {
+        return version;
+      }
+      
       PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
       WikiService wikiService = (WikiService) PortalContainer.getInstance().getComponentInstanceOfType(WikiService.class);
       try {
         Page wikiHome = pageResolver.resolve(pageUrl, Util.getUIPortal().getSelectedUserNode());
-        Page page = wikiService.getPageById(wikiHome.getWiki().getType(), wikiHome.getWiki().getOwner(), pageUrl.substring(pageUrl.lastIndexOf('/') + 1));
-        version = String.valueOf(page.getVersionableMixin().getVersionHistory().getChildren().size() - 1);
+        if (wikiHome != null) {
+          Page page = wikiService.getPageById(wikiHome.getWiki().getType(), wikiHome.getWiki().getOwner(), pageUrl.substring(pageUrl.lastIndexOf('/') + 1));
+          if (page != null) {
+            version = String.valueOf(page.getVersionableMixin().getVersionHistory().getChildren().size() - 1);
+          }
+        }
       } catch (Exception e) {
         LOG.warn("Failed to get version of wiki page", e);
       }
