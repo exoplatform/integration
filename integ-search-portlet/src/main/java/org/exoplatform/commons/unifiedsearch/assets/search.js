@@ -235,7 +235,7 @@ function initSearch() {
       $("#result").html("");
       $("#resultHeader").html(message?message:"");
       $("#resultSort").hide();
-      $("#showMore").hide();
+      $("#resultPage").hide();
       setWaitingStatus(false);
       return;
     }
@@ -352,11 +352,12 @@ function initSearch() {
         }
         return;
       }
-
+      
       NUM_RESULTS_RENDERED = NUM_RESULTS_RENDERED + current.length;
       var resultHeader = "Results " + 1 + " to " + NUM_RESULTS_RENDERED + " for <strong>" + $("#txtQuery").val() + "<strong>";
       $("#resultHeader").html(resultHeader);
       $("#resultSort").show();
+      $("#resultPage").show();
 
       if(!append) $("#result").html("");
       $.each(current, function(i, result){

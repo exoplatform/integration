@@ -3,7 +3,7 @@
 
   <div id="searchPage">
 
-    <div id="searchForm" class="searchContainer" style="display: none;">
+    <div id="searchForm" class="searchContainer">
       <div class="searchForm">
         <input type="text" id="txtQuery" style="width: 250px;">
         <button type="button" class="btn btn-primary" id="btnSearch" value="Search">Search</button>
@@ -11,7 +11,7 @@
 
       <div class="result clearfix">
         <div id="resultHeader" class="pull-left resultHeader"></div>
-        <div id="resultSort" class="pull-right resultSort" style="display: none;">
+        <div id="resultSort" class="pull-right resultSort">
           <div class="btn-group uiDropdownWithIcon pull-right">
             <a data-toggle="dropdown" class="btn dropdown-toggle">
               <span id="sortField" >Relevancy</span>
@@ -31,7 +31,7 @@
     </div>
       <div class="clearfix">
 
-        <div id="facetsFilter" style="display: none;" class="filterContainer pull-left">
+        <div id="facetsFilter" class="filterContainer pull-left">
           <div class="uiBox">
             <h5 class="title">Filter By</h5>
             <div class="uiContentBox">
