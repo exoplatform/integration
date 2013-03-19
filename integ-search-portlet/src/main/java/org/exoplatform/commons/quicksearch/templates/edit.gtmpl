@@ -1,32 +1,45 @@
 
 <div id="quickSearchSetting" class="uiQuickSearchSetting">
   <h4 class="titleWithBorder">Quick Search Settings</h4>
-  
+
   <div class="uiForm">
     <div style="form-horizontal">
       <div class="control-group">
-          <label class="control-label">Results per type</label>
-          <div class="controls">
-          	<span class="uiSelectbox"><select id="resultsPerPage" class="selectbox"></select></span>
-          </div>
+        <label class="control-label">Results per type</label>
+        <div class="controls">
+          <span class="uiSelectbox">
+            <select id="resultsPerPage" class="selectbox">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+              <option>10</option>
+            </select>
+          </span>
+        </div>
       </div>
+
       <div class="control-group">
-          <label class="control-label">Search in</label>
-          <div class="controls">
-            <input type="text" id="txtSearchIn" value="Everything" readonly/>
-            <ul id="lstSearchInOptions" style="display: none;"></ul>
-          </div>
+        <div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="searchCurrentSiteOnly" class="checkbox"><span>Search in current site only</span></span></div>
       </div>
+
       <div class="control-group">
-				<div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="searchCurrentSiteOnly" class="checkbox"><span>Search in current site only</span></span></div>
-			</div>
-      
+        <label class="control-label">Search in</label>
+        <div class="controls">
+          <ul id="lstSearchInOptions"></ul>
+        </div>
+      </div>
     </div>
-		
-		<div class="uiAction">
+
+    <div class="uiAction">
       <button type="button" value="Save Settings" class="btn" id="btnSave">Save Settings</button>
     </div>
-		
+
   </div>
 </div>
 

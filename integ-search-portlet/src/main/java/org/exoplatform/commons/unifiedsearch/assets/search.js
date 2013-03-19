@@ -127,7 +127,7 @@ function initSearch() {
       if(0!=contentTypes.length) {
         $("#lstContentTypes").html(contentTypes.join(""));
       } else {
-        $(":checkbox[name='contentType'][value='all']").attr("checked", false).attr("disabled", "disabled");
+        $(":checkbox[name='contentType'][value='all']").attr("disabled", "disabled");
       }
     }
 
@@ -141,7 +141,11 @@ function initSearch() {
           $.each(sites, function(i, site){
             siteNames.push("<li><span class='uiCheckbox'><input type='checkbox' class='checkbox' name='site' value='" + site + "'><span></span></span>" + site.toProperCase() + "</li>");
           });
-          $("#lstSites").html(siteNames.join(""));
+          if(0!=siteNames.length) {
+            $("#lstSites").html(siteNames.join(""));
+          } else {
+            $(":checkbox[name='site'][value='all']").attr("disabled", "disabled");
+          }
           if(callback) callback();
         });
       }
@@ -352,7 +356,7 @@ function initSearch() {
         }
         return;
       }
-      
+
       NUM_RESULTS_RENDERED = NUM_RESULTS_RENDERED + current.length;
       var resultHeader = "Results " + 1 + " to " + NUM_RESULTS_RENDERED + " for <strong>" + $("#txtQuery").val() + "<strong>";
       $("#resultHeader").html(resultHeader);
@@ -479,7 +483,7 @@ function initSearch() {
               $(this).attr('checked', -1!=sites.indexOf(this.value) || -1!=sites.indexOf("all"));
             });
           } else {
-            $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
+            $(":checkbox[name='site'][value!='all']").attr('checked', true);  //check all sites by default
           }
 
           if(query && !setting.searchCurrentSiteOnly) search();
@@ -503,7 +507,7 @@ function initSearch() {
             $(this).attr('checked', -1!=types.indexOf(this.value) || -1!=types.indexOf("all"));
           });
         } else {
-          $(":checkbox[name='contentType']").attr('checked', true); //check all types by default
+          $(":checkbox[name='contentType'][value!='all']").attr('checked', true); //check all types by default
         }
 
         $("#sortField").text((getUrlParam("sort")||"relevancy").toProperCase());

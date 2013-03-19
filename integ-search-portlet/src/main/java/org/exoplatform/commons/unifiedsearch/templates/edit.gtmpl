@@ -3,37 +3,43 @@
   <h4 class="titleWithBorder">Search Settings</h4>
 
   <div class="uiForm">
-  
     <div style="form-horizontal">
-    
       <div class="control-group">
-          <label class="control-label">Results per page</label>
-          <div class="controls"><select id="resultsPerPage"></select></div>
+        <label class="control-label">Results per page</label>
+        <div class="controls">
+          <select id="resultsPerPage">
+            <option>5</option>
+            <option>10</option>
+            <option>20</option>
+            <option>50</option>
+            <option>100</option>
+          </select>
         </div>
-			<div class="control-group">
-				<label class="control-label">Search in</label>
-				<div class="controls">
-					<input type="text" id="txtSearchIn" value="Everything" readonly/>
-					<ul id="lstSearchInOptions" style="display: none;"></ul>
-				</div>
-			</div>
-			<div class="control-group">
-				<div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="searchCurrentSiteOnly" class="checkbox"><span>Search in current site only</span></span></div>
-			</div>
-			<div class="control-group">
-				<div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="hideSearchForm" class="checkbox"><span>Hide search form</span></span></div>
-			</div>
-			<div class="control-group">
-				<div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="hideFacetsFilter" class="checkbox"><span>Hide facets filter</span></span></div>
-			</div>
-			
+      </div>
+
+      <div class="control-group">
+        <div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="searchCurrentSiteOnly" class="checkbox"><span>Search in current site only</span></span></div>
+      </div>
+      <div class="control-group">
+        <div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="hideSearchForm" class="checkbox"><span>Hide search form</span></span></div>
+      </div>
+      <div class="control-group">
+        <div class="controls-full"><span class="uiCheckbox"><input type="checkbox" id="hideFacetsFilter" class="checkbox"><span>Hide facets filter</span></span></div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Search in</label>
+        <div class="controls">
+          <ul id="lstSearchInOptions"></ul>
+        </div>
+      </div>
     </div>
 
     <div class="uiAction">
       <button type="button" value="Save Settings" class="btn" id="btnSave">Save Settings</button>
     </div>
 
-	</div>
+  </div>
 </div>
 
 <script>
