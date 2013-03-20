@@ -9,8 +9,8 @@ function initQuickSearch(portletId) {
     var SEARCH_TYPES; //enabled search types
     var QUICKSEARCH_SETTING; //quick search setting
 
-    var txtQuickSearchQuery_id = "#adminkeyword";
-    var linkQuickSearchQuery_id = "#adminSearchLink";
+    var txtQuickSearchQuery_id = "#adminkeyword-" + portletId;
+    var linkQuickSearchQuery_id = "#adminSearchLink-" + portletId;
     var quickSearchResult_id = "#quickSearchResult-" + portletId;
     var seeAll_id = "#seeAll-" + portletId;
     var isAlt = false;
