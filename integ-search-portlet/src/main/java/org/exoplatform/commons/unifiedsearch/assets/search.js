@@ -483,7 +483,7 @@ function initSearch() {
               $(this).attr('checked', -1!=sites.indexOf(this.value) || -1!=sites.indexOf("all"));
             });
           } else {
-            $(":checkbox[name='site'][value!='all']").attr('checked', true);  //check all sites by default
+            $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
           }
 
           if(query && !setting.searchCurrentSiteOnly) search();
@@ -507,7 +507,7 @@ function initSearch() {
             $(this).attr('checked', -1!=types.indexOf(this.value) || -1!=types.indexOf("all"));
           });
         } else {
-          $(":checkbox[name='contentType'][value!='all']").attr('checked', true); //check all types by default
+          $(":checkbox[name='contentType']").attr('checked', true); //check all types by default
         }
 
         $("#sortField").text((getUrlParam("sort")||"relevancy").toProperCase());
