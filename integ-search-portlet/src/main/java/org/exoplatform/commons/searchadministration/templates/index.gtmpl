@@ -1,13 +1,13 @@
 
 <div id="searchAdmin" class="uiSearchAdmin">
-  <h4 class="titleWithBorder">Search Administration</h4>
+  <h4 class="titleWithBorder">${searchadministration}</h4>
  
   <table class="uiGrid table  table-hover table-striped">
     <thead>
 	    <tr>
-	      <th>Content Type</th>
-	      <th>Description</th>
-	      <th>Action</th>
+	      <th>${contentType}</th>
+	      <th>${description}</th>
+	      <th>${action}</th>
 	    </tr>
 	  </thead>
 	  

@@ -13,5 +13,5 @@
 </div>
 
 <script>
-  initQuickSearch(${portletId});
+  initQuickSearch(${portletId},"${seeAll}","${noResults}");
 </script>

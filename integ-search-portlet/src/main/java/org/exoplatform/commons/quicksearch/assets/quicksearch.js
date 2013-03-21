@@ -1,6 +1,6 @@
 
 // Function to be called when the quick search template is ready
-function initQuickSearch(portletId) {
+function initQuickSearch(portletId,seeAllMsg, noResultMsg) {
   jQuery.noConflict();
 
   (function($){
@@ -49,7 +49,7 @@ function initQuickSearch(portletId) {
     var QUICKSEARCH_SEE_ALL=" \
         <tr> \
           <td colspan='2' class='message'> \
-            <a id='seeAll-" + portletId + "' class='' href='#'>See All Search Results</a> \
+            <a id='seeAll-" + portletId + "' class='' href='#'>"+seeAllMsg+"</a> \
           </td> \
         </tr> \
         ";
@@ -57,7 +57,7 @@ function initQuickSearch(portletId) {
     var QUICKSEARCH_NO_RESULT=" \
         <tr> \
           <td colspan='2' class='noResult'> \
-            <span id='seeAll-" + portletId + "' class='' href='#'>No result for <strong>%{query}<strong></span> \
+            <span id='seeAll-" + portletId + "' class='' href='#'>"+noResultMsg+" <strong>%{query}<strong></span> \
           </td> \
         </tr> \
         ";

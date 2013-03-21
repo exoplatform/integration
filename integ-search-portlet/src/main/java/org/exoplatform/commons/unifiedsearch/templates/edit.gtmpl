@@ -1,11 +1,11 @@
 
 <div id="searchSetting" class="uiSearchSetting">
-  <h4 class="titleWithBorder">Search Settings</h4>
+  <h4 class="titleWithBorder">${unifiedsearch}</h4>
 
   <div class="uiForm">
     <div class="form-horizontal">
       <div class="control-group">
-        <label class="control-label">Results per page:</label>
+        <label class="control-label">${resultsPerPage}</label>
         <div class="controls">
           <span class="uiSelectbox">
             <select id="resultsPerPage" class="selectbox">
@@ -20,20 +20,20 @@
       </div>
 
       <div class="control-group">
-        <label class="control-label">Search in current site only:</label>
+        <label class="control-label">${currentsite}</label>
         <div class="controls"><span class="uiCheckbox"><input type="checkbox" id="searchCurrentSiteOnly" class="checkbox"><span></span></span></div>
       </div>
       <div class="control-group">
-        <label class="control-label">Hide search form:</label>
+        <label class="control-label">${hideSearchForm}</label>
         <div class="controls"><span class="uiCheckbox"><input type="checkbox" id="hideSearchForm" class="checkbox"><span></span></span></div>
       </div>
       <div class="control-group">
-        <label class="control-label">Hide facets filter:</label>
+        <label class="control-label">${hideFacetsFilter}</label>
         <div class="controls"><span class="uiCheckbox"><input type="checkbox" id="hideFacetsFilter" class="checkbox"><span></span></span></div>
       </div>
 
       <div class="control-group">
-        <label class="control-label">Search in:</label>
+        <label class="control-label">${searchIn}</label>
         <div class="controls">
           <ul id="lstSearchInOptions"></ul>
         </div>
@@ -41,12 +41,12 @@
     </div>
 
     <div class="uiAction">
-      <button type="button" value="Save Settings" class="btn" id="btnSave">Save Settings</button>
+      <button type="button" value="Save Settings" class="btn" id="btnSave">${saveSettings}</button>
     </div>
 
   </div>
 </div>
 
 <script>
-  initSearchSetting();
+  initSearchSetting("${everything}");
 </script>

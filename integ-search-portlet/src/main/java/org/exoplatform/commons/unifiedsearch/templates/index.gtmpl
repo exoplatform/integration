@@ -6,7 +6,7 @@
     <div id="searchForm" class="searchContainer">
       <div class="searchForm">
         <input type="text" id="txtQuery" style="width: 250px;">
-        <button type="button" class="btn btn-primary" id="btnSearch" value="Search">Search</button>
+        <button type="button" class="btn btn-primary" id="btnSearch" value="Search">${unifiedsearch}</button>
       </div>
 
       <div class="result clearfix">
@@ -14,14 +14,14 @@
         <div id="resultSort" class="pull-right resultSort">
           <div class="btn-group uiDropdownWithIcon pull-right">
             <a data-toggle="dropdown" class="btn dropdown-toggle">
-              <span id="sortField" >Relevancy</span>
+              <span id="sortField" >${relevancy}</span>
               <span class="spiter"></span>
               <span class="caret"></span>
             </a>
             <ul id="sortOptions" class="dropdown-menu">
-              <li><a href="#">Relevancy<i class="uiIconSortDown"></i></a></li>
-              <li><a href="#">Date</i></a></li>
-              <li><a href="#">Title</a></li>
+              <li><a href="#">${relevancy}<i class="uiIconSortDown"></i></a></li>
+              <li><a href="#">${date}</i></a></li>
+              <li><a href="#">${title}</a></li>
             </ul>
           </div>
           <span>Sort By:</span>
@@ -33,15 +33,15 @@
 
         <div id="facetsFilter" class="filterContainer pull-left">
           <div class="uiBox">
-            <h5 class="title">Filter By</h5>
+            <h5 class="title">${filterBy}</h5>
             <div class="uiContentBox">
               <div id="siteFilter" class="siteFilter">
-                <h6><span class="uiCheckbox"><input type="checkbox" class="checkbox" name="site" value="all"><span></span></span>All Sites</h6>
+                <h6><span class="uiCheckbox"><input type="checkbox" class="checkbox" name="site" value="all"><span></span></span>${allsites}</h6>
                 <ul id="lstSites" class="listFilter"></ul>
               </div>
 
               <div class="contentTypeFilter">
-                <h6><span class="uiCheckbox"><input class="checkbox" type="checkbox" name="contentType" value="all"><span></span></span>All Content Types</h6>
+                <h6><span class="uiCheckbox"><input class="checkbox" type="checkbox" name="contentType" value="all"><span></span></span>${contentTypes}</h6>
                 <ul id="lstContentTypes" class="listFilter"></ul>
               </div>
             </div>
@@ -50,7 +50,7 @@
 
         <div id="resultPage" class="resultPage uiBox">
           <div id="result"></div>
-          <div id="showMore" class="showMore"><button type="button" class="btn" id="btnShowMore" value="Show More Results">Show More Results</button></div>
+          <div id="showMore" class="showMore"><button type="button" class="btn" id="btnShowMore" value="Show More Results">${showmore}</button></div>
         </div>
 
       </div>

@@ -1,5 +1,5 @@
 // Function to be called when the search setting template is ready
-function initSearchSetting(){
+function initSearchSetting(allMsg){
   jQuery.noConflict();
 
   (function($){
@@ -66,7 +66,7 @@ function initSearchSetting(){
       searchInOpts.push(CHECKBOX_TEMPLATE.
         replace(/%{name}/g, "searchInOption").
         replace(/%{value}/g, "all").
-        replace(/%{text}/g, "All"));
+        replace(/%{text}/g, allMsg));
       $.each(registry[1], function(i, type){
         if(CONNECTORS[type]) searchInOpts.push(CHECKBOX_TEMPLATE.
           replace(/%{name}/g, "searchInOption").

@@ -1,11 +1,11 @@
 
 <div id="quickSearchSetting" class="uiQuickSearchSetting">
-  <h4 class="titleWithBorder">Quick Search Settings</h4>
+  <h4 class="titleWithBorder">${quicksearch}</h4>
 
   <div class="uiForm">
     <div class="form-horizontal">
       <div class="control-group">
-        <label class="control-label">Results per type</label>
+        <label class="control-label">${resultsPerType}</label>
         <div class="controls">
           <span class="uiSelectbox">
             <select id="resultsPerPage" class="selectbox">
@@ -25,12 +25,12 @@
       </div>
 
       <div class="control-group">
-        <label class="control-label">Search in current site only:</label>
+        <label class="control-label">${currentsite}</label>
         <div class="controls"><span class="uiCheckbox"><input type="checkbox" id="searchCurrentSiteOnly" class="checkbox"><span></span></span></div>
       </div>
 
       <div class="control-group">
-        <label class="control-label">Search in:</label>
+        <label class="control-label">${searchIn}</label>
         <div class="controls">
           <ul id="lstSearchInOptions"></ul>
         </div>
@@ -38,12 +38,12 @@
     </div>
 
     <div class="uiAction">
-      <button type="button" value="Save Settings" class="btn" id="btnSave">Save Settings</button>
+      <button type="button" value="Save Settings" class="btn" id="btnSave">${saveSettings}</button>
     </div>
 
   </div>
 </div>
 
 <script>
-  initQuickSearchSetting();
+  initQuickSearchSetting("${everything}");
 </script>
