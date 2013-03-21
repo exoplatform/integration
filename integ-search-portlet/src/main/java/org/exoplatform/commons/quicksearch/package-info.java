@@ -19,9 +19,9 @@
 @Portlet
 @Assets(
     scripts = {
-        @Script(id = "jquery", src = "jquery-1.7.1.min.js", location = AssetLocation.APPLICATION),
-        @Script(id = "quicksearch", src = "quicksearch.js", location = AssetLocation.APPLICATION),
-        @Script(id = "quicksearch-setting", src = "quicksearch-setting.js", location = AssetLocation.APPLICATION)
+        @Script(id = "jquery", src = "js/common/jquery-1.8.3.js", location = AssetLocation.SERVER),
+        @Script(id = "quicksearch", src = "quicksearch.js"),
+        @Script(id = "quicksearch-setting", src = "quicksearch-setting.js")
     }     
 )
 package org.exoplatform.commons.quicksearch;
