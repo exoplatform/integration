@@ -4,12 +4,11 @@ function initSearch() {
 
   (function($){
     //*** Global variables ***
-    var CONNECTORS;
-    var SEARCH_TYPES;
-    var SEARCH_SETTING;
-    var LIMIT;
+    var CONNECTORS; //all registered SearchService connectors
+    var SEARCH_TYPES; //enabled search types
+    var SEARCH_SETTING; //search setting
 
-    var RESULT_CACHE, CACHE_OFFSET, SERVER_OFFSET, NUM_RESULTS_RENDERED;
+    var LIMIT, RESULT_CACHE, CACHE_OFFSET, SERVER_OFFSET, NUM_RESULTS_RENDERED;
 
     var SEARCH_RESULT_TEMPLATE = " \
       <div class='resultBox clearfix %{type}'> \
@@ -127,28 +126,26 @@ function initSearch() {
       if(0!=contentTypes.length) {
         $("#lstContentTypes").html(contentTypes.join(""));
       } else {
+        // Disable All Content Types checkbox if there's no content type to show
         $(":checkbox[name='contentType'][value='all']").attr("disabled", "disabled");
       }
     }
 
 
-    function loadSiteFilter(searchSetting, callback) {
-      if(searchSetting.searchCurrentSiteOnly) {
-        $("#siteFilter").hide();
-      } else {
-        $.getJSON("/rest/search/sites", function(sites){
-          var siteNames = [];
-          $.each(sites, function(i, site){
-            siteNames.push("<li><span class='uiCheckbox'><input type='checkbox' class='checkbox' name='site' value='" + site + "'><span></span></span>" + site.toProperCase() + "</li>");
-          });
-          if(0!=siteNames.length) {
-            $("#lstSites").html(siteNames.join(""));
-          } else {
-            $(":checkbox[name='site'][value='all']").attr("disabled", "disabled");
-          }
-          if(callback) callback();
+    function loadSiteFilter(callback) {
+      $.getJSON("/rest/search/sites", function(sites){
+        var siteNames = [];
+        $.each(sites, function(i, site){
+          siteNames.push("<li><span class='uiCheckbox'><input type='checkbox' class='checkbox' name='site' value='" + site + "'><span></span></span>" + site.toProperCase() + "</li>");
         });
-      }
+        if(0!=siteNames.length) {
+          $("#lstSites").html(siteNames.join(""));
+        } else {
+          // Disable All Sites checkbox if there's no site to show
+          $(":checkbox[name='site'][value='all']").attr("disabled", "disabled");
+        }
+        if(callback) callback(sites); //pass the available sites to be used in the callback function
+      });
     }
 
 
@@ -400,7 +397,7 @@ function initSearch() {
         $(":checkbox[name='contentType'][value='all']").attr('checked', false); //uncheck All Content Types
       }
 
-      search();
+      search(); //perform search again to update the results
     });
 
 
@@ -415,7 +412,7 @@ function initSearch() {
         $(":checkbox[name='site'][value='all']").attr('checked', false); //uncheck All Sites
       }
 
-      search();
+      search(); //perform search again to update the results
     });
 
 
@@ -469,25 +466,13 @@ function initSearch() {
 
 
     //*** The entry point ***
-    getRegistry(function(registry){
+    getRegistry(function(registry){ //load all configuration from the registry
       CONNECTORS = registry[0];
       SEARCH_TYPES = registry[1];
       getSearchSetting(function(setting){
         SEARCH_SETTING = setting;
 
-        loadContentFilter(CONNECTORS, setting);
-        loadSiteFilter(setting, function(){
-          var sites = getUrlParam("sites");
-          if(sites) {
-            $.each($(":checkbox[name='site']"), function(){
-              $(this).attr('checked', -1!=sites.indexOf(this.value) || -1!=sites.indexOf("all"));
-            });
-          } else {
-            $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
-          }
-
-          if(query && !setting.searchCurrentSiteOnly) search();
-        });
+        // Display search page elements base on the configurations in search setting
 
         if(!setting.hideFacetsFilter) {
           $("#facetsFilter").show();
@@ -495,30 +480,50 @@ function initSearch() {
 
         if(!setting.hideSearchForm) {
           $("#searchForm").show();
-          $("#txtQuery").focus();
         }
 
-        var query = getUrlParam("q");
-        $("#txtQuery").val(query);
+        loadContentFilter(CONNECTORS, setting);
 
-        var types = getUrlParam("types");
-        if(types) {
-          $.each($(":checkbox[name='contentType']"), function(){
-            $(this).attr('checked', -1!=types.indexOf(this.value) || -1!=types.indexOf("all"));
-          });
-        } else {
-          $(":checkbox[name='contentType']").attr('checked', true); //check all types by default
+        if(0!=SEARCH_TYPES.join().length && 0!=SEARCH_SETTING.searchTypes.join().length) { //there're content types to show
+          var types = getUrlParam("types"); //get the requested content types from url
+          if(types) {
+            $.each($(":checkbox[name='contentType']"), function(){
+              $(this).attr('checked', -1!=types.indexOf(this.value) || -1!=types.indexOf("all")); //check the according options
+            });
+          } else {
+            $(":checkbox[name='contentType']").attr("checked", true); //check all types by default
+          }
         }
 
-        $("#sortField").text((getUrlParam("sort")||"relevancy").toProperCase());
-        $("#sortField").attr("order", getUrlParam("order") || "desc");
+        // Render the search page's query, limit, sort, order with their values got from url (or default values)
+
+        $("#txtQuery").val(getUrlParam("q"));
+        $("#txtQuery").focus();
 
         var limit = getUrlParam("limit");
         LIMIT = limit && !isNaN(parseInt(limit)) ? parseInt(limit) : setting.resultsPerPage;
 
-        $("#txtQuery").focus();
+        $("#sortField").text((getUrlParam("sort")||"relevancy").toProperCase());
+        $("#sortField").attr("order", getUrlParam("order") || "desc");
 
-        if(query && setting.searchCurrentSiteOnly) search();
+        if(setting.searchCurrentSiteOnly) { //search without site filter
+          $("#siteFilter").hide();
+          search();
+        } else { //search with site filter
+          loadSiteFilter(function(availableSites){ //show site filter
+            if(0!=availableSites.join().length) { //there're sites to show
+              var sites = getUrlParam("sites"); //get the requested sites from url
+              if(sites) {
+                $.each($(":checkbox[name='site']"), function(){
+                  $(this).attr('checked', -1!=sites.indexOf(this.value) || -1!=sites.indexOf("all")); //check the according options
+                });
+              } else {
+                $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
+              }
+            }
+            search();
+          });
+        }
 
       });
     });
