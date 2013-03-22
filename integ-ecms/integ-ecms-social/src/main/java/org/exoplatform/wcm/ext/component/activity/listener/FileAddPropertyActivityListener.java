@@ -17,6 +17,8 @@
 package org.exoplatform.wcm.ext.component.activity.listener;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
 
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.listener.Event;
@@ -65,7 +67,14 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
     			  newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
     			if(commentValue.length() >=2) commentValue = commentValue.substring(0, commentValue.length() - 2);
     		}
-    	} else newValue= currentNode.getProperty(propertyName).getString();      
+    	} else {
+    	  Property prop = currentNode.getProperty(propertyName);
+    	  if (prop.getDefinition().getRequiredType() == PropertyType.BINARY) {
+    	    newValue = "";
+    	  } else {
+    	    newValue= currentNode.getProperty(propertyName).getString();
+    	  }
+    	}
     }catch (Exception e) {
       newValue = "";
       commentValue = "";
