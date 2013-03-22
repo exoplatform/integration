@@ -29,7 +29,15 @@
   import org.exoplatform.social.core.space.model.Space;
   import org.exoplatform.social.webui.Utils;
   import org.apache.commons.lang.StringUtils;
-
+  
+  import org.exoplatform.wcm.ext.component.activity.ContentPresentation;
+  import org.exoplatform.services.jcr.util.Text;
+  import org.exoplatform.services.jcr.core.ManageableRepository;
+  import org.exoplatform.container.ExoContainer;
+  import org.exoplatform.container.ExoContainerContext;
+  import org.exoplatform.container.xml.PortalContainerInfo;
+  import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
+  
   def pcontext = Util.getPortalRequestContext();
   def jsManager = pcontext.getJavascriptManager();
  
@@ -166,12 +174,34 @@
   def title = uicomponent.getTitle();
   def summary = uicomponent.getSummary();
   
+  def currentNode = uicomponent.getDocNode();
+  def mimeType = uicomponent.getMimeType();
+  def binarySrc;
+  def uicontentpresentation = uicomponent.addChild(ContentPresentation.class, null, null);
+  String repository;
+  def preferenceWS;
+  def fileComponent;
+  if (currentNode) {
+    binarySrc = uicomponent.getWebdavURL();
+    summary =  uicomponent.getSummary();
+    uicontentpresentation.setNode(currentNode);
+    repository = ((ManageableRepository)currentNode.getSession().getRepository()).getConfiguration().getName();
+    preferenceWS  = currentNode.getSession().getWorkspace().getName();
+    fileComponent = uicontentpresentation.getUIComponent(mimeType);
+  }
+  
   def downloadFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.Download");
   def viewFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.View_File");
   def versionLabel = _ctx.appRes("UIComposerDocumentExtension.label.Version");
+  
+  ExoContainer container = ExoContainerContext.getCurrentContainer();
+  PortalContainerInfo containerInfo = (PortalContainerInfo) container.getComponentInstanceOfType(PortalContainerInfo.class);
+  String portalName = containerInfo.getContainerName();
+  
+  String restContextName = org.exoplatform.ecm.webui.utils.Utils.getRestContextName(portalName);
 %>
 
-<div class="activityStream uiDocActivity" id="activityContainer${activity.id}">
+<div class="activityStream fileActivity uiContentActivity uiDocActivity" id="activityContainer${activity.id}">
   <% uiform.begin() %>
 	<div class="activityTimeLine pull-left">
 		<div class="activityAvatar avatarCircle">
@@ -206,57 +236,64 @@
 					</div>
 				</div><!--end heading-->
 				<div class="description">$dMessage</div><!--end description-->
-				<div class="uiBox roundedBottom introBox docShare">                 
+				<div class="uiBox roundedBottom introBox fileShare">                 
 			    <% 
-            if(uicomponent.isPreviewable() || uicomponent.isImageFile()) {
+             if(mimeType.startsWith("image")) {
           %>
           <div class="clearfix isPreviewable">
-                <a class="pull-left" href="<%= uicomponent.event("ViewDocument")%>" title="$dName">      
+                <a class="pull-left" href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>" title="$dName">      
                     <img src="<%= uicomponent.docThumbnail %>" />
-               </a>
-              <div class="text">
-                <a class="linkTitle" href="<%= uicomponent.event("ViewDocument")%>">
-	                <% if (title == null) { %>
-	                $dName
-	                <% } else { %>
-	                $title
-	                <% } %>
                 </a>
-                <p class="linkDescription">$summary</p>
-                <span class="versionFile">
-	                <% if (version != 0) { %>
-	                $versionLabel $version - 
-	                <% } %>
-	                $fileSize
-	              </span>
-              </div>
-          </div>
-              
+          <%
+            } else if( mimeType.startsWith("application/pdf") || mimeType.startsWith("application/msword") || mimeType.startsWith("application/vnd.oasis.opendocument.text") || mimeType.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || mimeType.startsWith("application/rtf") ) {
+          %>
+          <div class="clearfix isPreviewable">
+            <div id="MediaContent${activity.id}" class="pull-left mediaContent docTypeContent">
+	             <%
+	               def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
+	               encodedPath = encodedPath.replaceAll ("%2F", "/");
+	               String docThumbnail = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
+	             %>
+	             <a href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>" title="$title"><image src="$docThumbnail" class="pdfImageBorder"/></a>
+	          </div>
+	        <%
+	          } else if(fileComponent != null) { 
+	        %>
+	        <div class="clearfix isPreviewable">
+            <div id="MediaContent${activity.id}" class="pull-left PlayerContianer">
+              <% uicontentpresentation.renderUIComponent(fileComponent);%>
+            </div>
           <%
             } else {
           %>
-            <div class="clearfix">
-                <div class="pull-left ">$dName</div>
-                <div class="text">
-                    <a class="linkTitle" href="<%= uicomponent.event("ViewDocument")%>">
-	                    <% if (title == null) { %>
-	                    $dName
-	                    <% } else { %>
-	                    $title
-	                    <% } %>
-                    </a>
-                    <p class="linkDescription">$summary</p>
-                    <span class="versionFile">
-	                    <% if (version != 0) { %>
-	                    $versionLabel $version - 
-	                    <% } %>
-	                    $fileSize
-                    </span>
-                  </div>
-            </div>
+            <div class="clearfix isPreviewable">
+                <div id="MediaContent${activity.id}" class="fileTypeContent">
+	               <%
+	                 String defaultImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/default.gif";               
+	               %>
+	               <a href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>"><i rel="tooltip" data-placement="bottom" class="uiIcon64x64Templatent_file" data-original-title="File"></i></a>
+	              </div>
           <%
             }
-          %>             
+          %>  
+              <div class="text">
+                <a class="linkTitle" href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>">
+                    <% if (title == null) { %>
+                    $dName
+                    <% } else { %>
+                    $title
+                    <% } %>
+                </a>
+                <p class="linkDescription">$summary</p>
+                <span class="versionFile">
+                    <% if (version != 0) { %>
+                    $versionLabel $version - 
+                    <% } %>
+                    $fileSize
+                </span>
+              </div>
+          </div><!--end clearfix -->       
+               
 			    </div><!--end introBox,linkShare-->     
 				  <div class="actionBar clearfix docActivityIcon">	
 						<% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
