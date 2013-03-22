@@ -63,6 +63,13 @@
       <artifactId>portlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- We want to be sure to use the right version in the dependency plugin but it's not required in the package -->
+    <dependency>
+      <groupId>org.exoplatform.platform-ui</groupId>
+      <artifactId>platform-ui-web-eXoResources</artifactId>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>integ-search-service</artifactId>
