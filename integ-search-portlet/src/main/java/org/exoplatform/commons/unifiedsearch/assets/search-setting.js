@@ -1,5 +1,5 @@
 // Function to be called when the search setting template is ready
-function initSearchSetting(allMsg){
+function initSearchSetting(allMsg,alertOk,alertNotOk){
   jQuery.noConflict();
 
   (function($){

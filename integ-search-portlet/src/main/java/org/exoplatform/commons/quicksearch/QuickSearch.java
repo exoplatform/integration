@@ -65,7 +65,9 @@ public class QuickSearch {
       parameters.put("searchIn", rs.getString("quicksearch.searchIn.label"));
       parameters.put("everything", rs.getString("quicksearch.everything.label"));
       parameters.put("currentsite", rs.getString("quicksearch.currentsite.label"));
-      parameters.put("saveSettings", rs.getString("quicksearch.saveSettings.label"));       
+      parameters.put("saveSettings", rs.getString("quicksearch.saveSettings.label"));
+      parameters.put("alertOk", rs.getString("quicksearch.alert.saveSetting"));
+      parameters.put("alertNotOk", rs.getString("quicksearch.alert.error.saveSetting"));
       edit.render(parameters);
     }else {
       parameters.put("SearchInInput", rs.getString("quicksearch.input.label"));

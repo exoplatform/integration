@@ -68,6 +68,8 @@ public class Search {
       parameters.put("hideFacetsFilter", rs.getString("unifiedsearch.edit.hideFacetsFilter.label"));
       parameters.put("saveSettings", rs.getString("unifiedsearch.edit.saveSettings.label"));
       parameters.put("everything", rs.getString("unifiedsearch.edit.everything.label"));
+      parameters.put("alertOk", rs.getString("unifiedsearch.edit.alert.saveSettings"));
+      parameters.put("alertNotOk", rs.getString("unifiedsearch.edit.alert.error.saveSettings"));
       
       edit.render(parameters);
     }else {

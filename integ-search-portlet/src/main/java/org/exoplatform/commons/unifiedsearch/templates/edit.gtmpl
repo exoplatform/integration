@@ -48,5 +48,5 @@
 </div>
 
 <script>
-  initSearchSetting("${everything}");
+  initSearchSetting("${everything}","${alertOk}","${alertNotOk}");
 </script>

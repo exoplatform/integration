@@ -1,6 +1,6 @@
 
 // Function to be called when the quick search setting template is ready
-function initQuickSearchSetting(allMsg){
+function initQuickSearchSetting(allMsg,alertOk,alertNotOk){
   jQuery.noConflict();
 
   (function($){
@@ -39,7 +39,7 @@ function initQuickSearchSetting(allMsg){
       });
 
       jqxhr.complete(function(data) {
-        alert("ok"==data.responseText?"Your setting has been saved.":"Problem occurred when saving your setting: "+data.responseText);
+        alert("ok"==data.responseText?alertOk:alertNotOk+data.responseText);
       });
     });
 
