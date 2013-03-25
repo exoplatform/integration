@@ -64,6 +64,7 @@
   def currentNode = uicomponent.getContentNode();
   def fileComponent;
   if (currentNode) {
+    activityContentTitle = uicomponent.getTitle(currentNode);
     binarySrc = uicomponent.getWebdavURL();
     summary =  uicomponent.getSummary(currentNode);
     uicontentpresentation.setNode(currentNode);
@@ -295,7 +296,6 @@
 		            <%
 		            }%>		    
 		        <% }%>          
-						
 						
 						
 						
