@@ -18,6 +18,7 @@ package org.exoplatform.cs.ext.impl;
 
 import org.exoplatform.calendar.service.Calendar;
 import org.exoplatform.calendar.service.CalendarService;
+import org.exoplatform.calendar.service.Utils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
@@ -82,8 +83,8 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
       Space space = event.getSpace();
       CalendarService calService = (CalendarService) PortalContainer.getInstance()
                                                                     .getComponentInstanceOfType(CalendarService.class);
-      String calendarId = space.getId() + SPACE_CALENDAR_ID_SUFFIX;
-      String username = space.getGroupId();
+      String groupId = space.getGroupId();
+      String calendarId = Utils.getCalendarIdFromSpace(groupId);
       Calendar calendar = null;
       try {
         calendar = calService.getGroupCalendar(calendarId);
@@ -104,7 +105,7 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
         calendar.setGroups((new String[] { space.getGroupId() }));
         calendar.setName(space.getDisplayName());
         calendar.setEditPermission(new String[] { space.getGroupId() + SLASH_COLON + ANY });
-        calendar.setCalendarOwner(username);
+        calendar.setCalendarOwner(groupId);
         calService.savePublicCalendar(calendar, true);
       }
     } catch (Exception e) {
@@ -164,7 +165,7 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
     CalendarService calService = (CalendarService) PortalContainer.getInstance()
         .getComponentInstanceOfType(CalendarService.class);
     Space space = event.getSpace();
-    String calendarId = space.getId() + SPACE_CALENDAR_ID_SUFFIX;
+    String calendarId = Utils.getCalendarIdFromSpace(space.getGroupId());
     Calendar calendar = null;
 
     try {
@@ -189,5 +190,4 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
   public void spaceAccessEdited(SpaceLifeCycleEvent event) {
     
   }
-
 }
