@@ -55,7 +55,7 @@ public class PollSpaceActivityPublisher extends PollEventListener{
   private ExoSocialActivity activity(Identity author, String title, String body, Map<String, String> templateParams) throws Exception {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setUserId(author.getId());
-    activity.setTitle(title);
+    activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(title));
     activity.setBody(body);
     activity.setType(POLL_APP_ID);
     activity.setTemplateParams(templateParams);
