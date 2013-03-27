@@ -855,8 +855,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   
   protected Identity getOwnerStream(ForumActivityContext ctx) {
     Identity ownerStream = null;
-    ForumService fs = ForumActivityUtils.getForumService();
-    
+
     Topic topic = ctx.getTopic();
     Identity userIdentity = ForumActivityUtils.getIdentity(topic.getOwner());
     
@@ -867,12 +866,20 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         // publish the activity in the space stream.
         ownerStream = ForumActivityUtils.getSpaceIdentity(topic.getForumId());
       }
-      if (ownerStream == null
+      
+      //For issue FORUM-284: a forum with restricted permission is not public forum
+      //but we allow user to create an activity if he creates a topic in this forum
+      
+      /*if (ownerStream == null
           && ForumActivityUtils.isCategoryPublic(fs.getCategory(topic.getCategoryId()))
           && ForumActivityUtils.isForumPublic(fs.getForum(topic.getCategoryId(), topic.getForumId()))) {
         ownerStream = userIdentity;
-       }
-       return ownerStream;
+       }*/
+      
+      if (ownerStream == null) {
+        ownerStream = userIdentity;
+      }
+      return ownerStream;
     } catch (Exception e) { // ForumService
       LOG.error("Can not get OwnerStream for topic " + ctx.getTopic().getId(), e);
     }
