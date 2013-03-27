@@ -75,9 +75,8 @@ import org.exoplatform.webui.event.EventListener;
     @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
     @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
     @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
-    
-    @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
-    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment") })
+    @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) })
 public class FileUIActivity extends BaseUIActivity {
 
   private static final String NEW_DATE_FORMAT = "hh:mm:ss MMM d, yyyy";
@@ -320,6 +319,8 @@ public class FileUIActivity extends BaseUIActivity {
       return StringUtils.EMPTY;
     } catch (RepositoryException e) {
       return StringUtils.EMPTY;
+    } catch(NullPointerException e) {
+    	return StringUtils.EMPTY;
     }
     return StringUtils.EMPTY;    
   }

@@ -74,6 +74,40 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
   public void testFAQService() throws Exception {
     assertNotNull(faqService_);
   }
+  
+  public void testQuestionTitle() throws Exception {
+    Category cate = createCategory("Category to test question", 6);
+    String categoryId = Utils.CATEGORY_HOME + "/" + cate.getId();
+    faqService_.saveCategory(Utils.CATEGORY_HOME, cate, true);
+    Question question = createQuestion(categoryId);
+    
+    //save new question
+    faqService_.saveQuestion(question, true, faqSetting_);
+    
+    //an activity is created
+    String activityId = faqService_.getActivityIdForQuestion(question.getCategoryPath() + "/" + question.getId());
+    ExoSocialActivity activity = getManager().getActivity(activityId);
+    assertEquals(question.getQuestion(), activity.getTitle());
+    
+    //update question's title
+    question = faqService_.getQuestionById(question.getId());
+    question.setQuestion("&-*()");
+    faqService_.saveQuestion(question, false, faqSetting_);
+    activity = getManager().getActivity(activityId);
+    assertEquals("&-*()", activity.getTitle());
+    
+    //update question's title
+    question.setQuestion("&-*() / --- == coucou #@");
+    faqService_.saveQuestion(question, false, faqSetting_);
+    activity = getManager().getActivity(activityId);
+    assertEquals("&-*() / --- == coucou #@", activity.getTitle());
+
+    String questionPath = question.getCategoryPath()+ "/" + Utils.QUESTION_HOME + "/" + question.getId();
+    //delete question will delete the activity
+    faqService_.removeQuestion(questionPath);
+    activity = getManager().getActivity(activityId);
+    assertNull(activity);
+  }
 
   public void testCreateQuestion() throws Exception {
     Category cate = createCategory("Category to test question", 6);

@@ -21,6 +21,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFormatException;
+import javax.portlet.PortletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -30,8 +31,12 @@ import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
+import org.exoplatform.services.wcm.friendly.FriendlyService;
+import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
+import org.exoplatform.webui.application.WebuiRequestContext;
+import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupWindow;
@@ -57,10 +62,8 @@ import org.exoplatform.webui.event.EventListener;
      @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
      @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
      @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
-     @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class,
-                  confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
-     @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class,
-                  confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment")
+     @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
+     @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class)
    }
  )
 public class UIDocActivity extends BaseUIActivity {
@@ -191,9 +194,44 @@ public class UIDocActivity extends BaseUIActivity {
     }
   }
   
-  private Node getDocNode() {
+  protected Node getDocNode() {
     NodeLocation nodeLocation = new NodeLocation(repository, workspace, docPath);
     return NodeLocation.getNodeByLocation(nodeLocation);
+  }
+  
+  /**
+   * Gets the webdav url.
+   * 
+   * @param node the node
+   * @return the webdav url
+   * @throws Exception the exception
+   */
+  public String getWebdavURL() throws Exception {
+    Node contentNode = getDocNode();
+    NodeLocation nodeLocation = new NodeLocation(repository, workspace, docPath);
+    PortletRequestContext portletRequestContext = WebuiRequestContext.getCurrentInstance();
+    PortletRequest portletRequest = portletRequestContext.getRequest();
+    String repository = nodeLocation.getRepository();
+    String workspace = nodeLocation.getWorkspace();
+    String baseURI = portletRequest.getScheme() + "://" + portletRequest.getServerName() + ":"
+        + String.format("%s", portletRequest.getServerPort());
+
+    FriendlyService friendlyService = WCMCoreUtils.getService(FriendlyService.class);
+    String link = "#";
+
+    String portalName = PortalContainer.getCurrentPortalContainerName();
+    String restContextName = PortalContainer.getCurrentRestContextName();
+    if (contentNode.isNodeType("nt:frozenNode")) {
+      String uuid = contentNode.getProperty("jcr:frozenUuid").getString();
+      Node originalNode = contentNode.getSession().getNodeByUUID(uuid);
+      link = baseURI + "/" + portalName + "/" + restContextName + "/jcr/" + repository + "/"
+          + workspace + originalNode.getPath() + "?version=" + contentNode.getParent().getName();
+    } else {
+      link = baseURI + "/" + portalName + "/" + restContextName + "/jcr/" + repository + "/"
+          + workspace + contentNode.getPath();
+    }
+
+    return friendlyService.getFriendlyUri(link);
   }
   
   /**

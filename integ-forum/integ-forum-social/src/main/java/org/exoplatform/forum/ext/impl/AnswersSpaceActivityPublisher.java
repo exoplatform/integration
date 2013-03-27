@@ -91,7 +91,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   
   private ExoSocialActivity newActivity(Identity author, String title, String body, Map<String, String> templateParams) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    activity.setTitle(title);
+    activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(title));
     activity.setBody(body);
     activity.setType(SPACE_APP_ID);
     activity.setTemplateParams(templateParams);

@@ -18,6 +18,7 @@ package org.exoplatform.forum.ext.impl;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.portal.mop.SiteType;
 import org.exoplatform.social.core.space.SpaceUtils;
@@ -37,8 +38,8 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
   @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
   @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
   @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
-  @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
-  @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment") })
+  @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
+  @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) })
 public class PollUIActivity extends BaseKSActivity {
 
   @SuppressWarnings("unused")
@@ -56,7 +57,7 @@ public class PollUIActivity extends BaseKSActivity {
         nbVotes = WebUIUtils.getLabel(null, "PollUIActivity.label.votes").replace("{0}", String.valueOf(number));
       }
       StringBuilder sb = new StringBuilder();
-      sb.append(option).append(":").append(percent).append(":").append(nbVotes);
+      sb.append(CommonUtils.decodeSpecialCharToHTMLnumber(option)).append(":").append(percent).append(":").append(nbVotes);
       tab[i] = sb.toString();
     }
     return tab;

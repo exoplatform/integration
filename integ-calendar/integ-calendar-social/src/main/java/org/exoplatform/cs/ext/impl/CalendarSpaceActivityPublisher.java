@@ -31,6 +31,7 @@ import java.util.TimeZone;
 import org.exoplatform.calendar.service.CalendarEvent;
 import org.exoplatform.calendar.service.CalendarService;
 import org.exoplatform.calendar.service.CalendarSetting;
+import org.exoplatform.calendar.service.Utils;
 import org.exoplatform.calendar.service.impl.CalendarEventListener;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
@@ -192,9 +193,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
       ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
       SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
 
-      /* space calendar id contains id of the space */
-      String spaceId = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
-      Space space = spaceService.getSpaceById(spaceId);
+      String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
+      Space space = spaceService.getSpaceByGroupId(spaceGroupId);
       if (space != null) {
         String userId = ConversationState.getCurrent().getIdentity().getUserId();
         Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
@@ -239,10 +239,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 		  ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
 		  SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
 
-      /* space calendar id contains id of the space */
-      String spaceId = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
-		  Space space = spaceService.getSpaceById(spaceId);
-
+		  String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
+		  Space space = spaceService.getSpaceByGroupId(spaceGroupId);
 		  if (space != null && event.getActivityId() != null) {
         String userId = ConversationState.getCurrent().getIdentity().getUserId();
 			  Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
@@ -335,8 +333,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     try{
       ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
       SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
-      String spaceId = calendarId.split(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX)[0];
-      Space space = spaceService.getSpaceById(spaceId);
+      String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
+      Space space = spaceService.getSpaceByGroupId(spaceGroupId);
       if (space != null && event.getActivityId() != null) {
         activityM.deleteActivity(event.getActivityId());
       }

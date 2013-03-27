@@ -1,6 +1,6 @@
 
 // Function to be called when the quick search template is ready
-function initQuickSearch(portletId) {
+function initQuickSearch(portletId,seeAllMsg, noResultMsg) {
   jQuery.noConflict();
 
   (function($){
@@ -9,8 +9,8 @@ function initQuickSearch(portletId) {
     var SEARCH_TYPES; //enabled search types
     var QUICKSEARCH_SETTING; //quick search setting
 
-    var txtQuickSearchQuery_id = "#adminkeyword";
-    var linkQuickSearchQuery_id = "#adminSearchLink";
+    var txtQuickSearchQuery_id = "#adminkeyword-" + portletId;
+    var linkQuickSearchQuery_id = "#adminSearchLink-" + portletId;
     var quickSearchResult_id = "#quickSearchResult-" + portletId;
     var seeAll_id = "#seeAll-" + portletId;
     var isAlt = false;
@@ -49,7 +49,7 @@ function initQuickSearch(portletId) {
     var QUICKSEARCH_SEE_ALL=" \
         <tr> \
           <td colspan='2' class='message'> \
-            <a id='seeAll-" + portletId + "' class='' href='#'>See All Search Results</a> \
+            <a id='seeAll-" + portletId + "' class='' href='#'>"+seeAllMsg+"</a> \
           </td> \
         </tr> \
         ";
@@ -57,7 +57,7 @@ function initQuickSearch(portletId) {
     var QUICKSEARCH_NO_RESULT=" \
         <tr> \
           <td colspan='2' class='noResult'> \
-            <span id='seeAll-" + portletId + "' class='' href='#'>No result for <strong>%{query}<strong></span> \
+            <span id='seeAll-" + portletId + "' class='' href='#'>"+noResultMsg+" <strong>%{query}<strong></span> \
           </td> \
         </tr> \
         ";
@@ -178,6 +178,14 @@ function initQuickSearch(portletId) {
         case "page":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon24x24" + type}).join(" ");
           avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+          break;
+
+        case "post":
+          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconUIForms");
+          break;
+
+        case "answer":
+          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconSocAnswersMini");
           break;
 
         default:

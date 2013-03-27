@@ -59,8 +59,8 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
     @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
     @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
     @EventConfig(listeners = ForumUIActivity.PostCommentActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"),
-    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class, confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment") })
+    @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) })
 public class ForumUIActivity extends BaseKSActivity {
 
   private static final Log LOG = ExoLogger.getLogger(ForumUIActivity.class);
@@ -225,11 +225,8 @@ public class ForumUIActivity extends BaseKSActivity {
   }
   
   public String getNumberOfReplies() {
-    ExoSocialActivity activity = getActivity();
-    Map<String, String> templateParams = activity.getTemplateParams();
-    
-    String got = templateParams.get(ForumActivityBuilder.TOPIC_POST_COUNT_KEY);
-    int nbReplies = Integer.parseInt(got);
+    String got = getActivityParamValue(ForumActivityBuilder.TOPIC_POST_COUNT_KEY);
+    int nbReplies = Integer.parseInt(Utils.isEmpty(got) ? "0" : got);
     switch (nbReplies) {
       case 0:
         return "No Reply";
@@ -241,16 +238,16 @@ public class ForumUIActivity extends BaseKSActivity {
   }
   
   public double getRate() {
-    ExoSocialActivity activity = getActivity();
-    Map<String, String> templateParams = activity.getTemplateParams();
-    
-    String got = templateParams.get(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY);
-    return Double.parseDouble(got);
+    String got = getActivityParamValue(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY);
+    try {
+      return Double.parseDouble(got);
+    } catch (NumberFormatException e) {
+      return 0.0;
+    }
   }
   
   public boolean isTopicActivity() {
-    String value = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
-    if (value != null && value.length() > 0) {
+    if (Utils.isEmpty(getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY)) == false) {
       return true;
     }
     return false;

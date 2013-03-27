@@ -19,8 +19,8 @@
 @Portlet
 @Assets(
     scripts = {
-        @Script(id = "jquery", src = "jquery-1.7.1.min.js", location = AssetLocation.CLASSPATH),
-        @Script(id = "searchAdmin", src = "searchAdmin.js", location = AssetLocation.CLASSPATH)
+            @Script(id = "jquery", src = "js/common/jquery-1.8.3.js", location = AssetLocation.SERVER),
+        @Script(id = "searchAdmin", src = "searchAdmin.js")
     }
 )
 package org.exoplatform.commons.searchadministration;

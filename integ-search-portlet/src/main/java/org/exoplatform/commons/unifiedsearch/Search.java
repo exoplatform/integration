@@ -26,6 +26,10 @@ import juzu.bridge.portlet.JuzuPortlet;
 import juzu.impl.request.Request;
 import juzu.request.RequestContext;
 import juzu.template.Template;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by The eXo Platform SAS
@@ -43,16 +47,42 @@ public class Search {
   @Path("edit.gtmpl")
   Template edit;
   
+  @Inject
+  ResourceBundle bundle;    
+  
   @View
   public void index(){
     RequestContext requestContext = Request.getCurrent().getContext();
+    Map<String, Object> parameters = new HashMap<String, Object>();
+    Locale locale = bundle.getLocale();      
+    ResourceBundle rs = ResourceBundle.getBundle("unifiedsearch/unifiedsearch", locale);    
     
     Search_.index().setProperty(JuzuPortlet.PORTLET_MODE, PortletMode.EDIT);
     PortletMode mode = requestContext.getProperty(JuzuPortlet.PORTLET_MODE);
     if (PortletMode.EDIT == mode){      
-      edit.render();
+      parameters.put("unifiedsearch", rs.getString("unifiedsearch.edit.label"));
+      parameters.put("resultsPerPage", rs.getString("unifiedsearch.edit.resultsPerPage.label"));
+      parameters.put("searchIn", rs.getString("unifiedsearch.edit.searchIn.label"));
+      parameters.put("currentsite", rs.getString("unifiedsearch.edit.currentsite.label"));
+      parameters.put("hideSearchForm", rs.getString("unifiedsearch.edit.hideSearchForm.label"));
+      parameters.put("hideFacetsFilter", rs.getString("unifiedsearch.edit.hideFacetsFilter.label"));
+      parameters.put("saveSettings", rs.getString("unifiedsearch.edit.saveSettings.label"));
+      parameters.put("everything", rs.getString("unifiedsearch.edit.everything.label"));
+      parameters.put("alertOk", rs.getString("unifiedsearch.edit.alert.saveSettings"));
+      parameters.put("alertNotOk", rs.getString("unifiedsearch.edit.alert.error.saveSettings"));
+      
+      edit.render(parameters);
     }else {
-      index.render();
+      parameters.put("unifiedsearch", rs.getString("unifiedsearch.index.label"));
+      parameters.put("relevancy", rs.getString("unifiedsearch.index.relevancy.label"));
+      parameters.put("date", rs.getString("unifiedsearch.index.date.label"));
+      parameters.put("title", rs.getString("unifiedsearch.index.title.label"));
+      parameters.put("sortBy", rs.getString("unifiedsearch.index.sortBy.label"));
+      parameters.put("filterBy", rs.getString("unifiedsearch.index.filterBy.label"));
+      parameters.put("allsites", rs.getString("unifiedsearch.index.allsites.label"));
+      parameters.put("contentTypes", rs.getString("unifiedsearch.index.contentTypes.label"));
+      parameters.put("showmore", rs.getString("unifiedsearch.index.showmore.label"));      
+      index.render(parameters);      
     }
   }  
 }

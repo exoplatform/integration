@@ -6,10 +6,10 @@ function initSearchAdmin() {
     $.getJSON("/rest/search/registry", function(registry){
       var row_template = " \
         <tr> \
-          <td style='padding-left: 6px;'>%{displayName}</td> \
-          <td style='padding-left: 6px;'>%{description}</td> \
-          <td style='text-align: center;'> \
-            <input type='button' class='ContentType' id='%{id}' value='Enable'> \
+          <td>%{displayName}</td> \
+          <td>%{description}</td> \
+          <td class='center'> \
+            <input type='button' class='btn btn-mini contentType' id='%{id}' value='Enable'> \
           </td> \
         </tr> \
       ";
@@ -23,13 +23,13 @@ function initSearchAdmin() {
       });
 
       $.each(searchTypes, function(i, type){
-        $(".ContentType#"+type).val("Disable");
+        $(".contentType#"+type).val("Disable");
         //$(".ContentType#"+type).next().attr("disabled", false);
       });
     });
 
 
-    $(".ContentType").live("click", function(){
+    $(".contentType").live("click", function(){
       if("Enable"==$(this).val()) {
         $(this).val("Disable");
         //$(this).next().attr("disabled", false);
@@ -39,7 +39,7 @@ function initSearchAdmin() {
       }
 
       var enabledTypes = [];
-      $.each($(".ContentType"), function(){
+      $.each($(".contentType"), function(){
         if("Disable"==this.value) enabledTypes.push(this.id);
       });
 

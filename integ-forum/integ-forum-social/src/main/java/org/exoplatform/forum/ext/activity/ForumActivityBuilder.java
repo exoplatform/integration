@@ -16,12 +16,11 @@
  */
 package org.exoplatform.forum.ext.activity;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
@@ -113,7 +112,7 @@ public class ForumActivityBuilder {
   public static String getFourFirstLines(String str) {
     return getNumberFirstLines(str.replaceAll("&nbsp;", ""), 4);
   }
-
+  
   /**
    * No more than 4 lines
    * No more than 430 characters
@@ -183,8 +182,7 @@ public class ForumActivityBuilder {
     //processing in execute of task.
     //avoid get Identity here to write UT
     //activity.setUserId(topic.getOwner());
-    String title = StringEscapeUtils.unescapeHtml(topic.getTopicName());
-    activity.setTitle(title);
+    activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName()));
     activity.setBody(body);
     activity.isComment(false);
     activity.isHidden(false);

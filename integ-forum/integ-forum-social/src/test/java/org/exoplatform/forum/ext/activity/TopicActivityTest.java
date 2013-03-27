@@ -99,6 +99,26 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     assertEquals(newComment.getTitle(), "Title has been updated to: edited to new title for topic.\nContent has been edited.");
   }
   
+  public void testUpdateTopicTitleWithSpecialCharacters() throws Exception {
+    Topic topic = createdTopic("demo");
+    topic = updateTopicTitle(topic, "&-*()");
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_NAME, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    assertTopicTitle(a, "&-*()");
+    
+    topic = updateTopicTitle(topic, "&-*() / --- == coucou #@");
+    assertEquals(2, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_NAME, topic.getChangeEvent()[0].getPropertyName());
+    
+    ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    a = ForumActivityBuilder.createActivity(topic, ctx);
+    assertTopicTitle(a, "&-*() / --- == coucou #@");
+    
+  }
+  
   public void testUpdateTopicTitle() throws Exception {
     Topic topic = createdTopic("demo");
     topic = updateTopicTitle(topic, "edited to new title for topic.");

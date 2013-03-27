@@ -4,6 +4,7 @@
 .uiSearchPortlet {
   padding: 20px;
   .searchContainer {
+    display: none;
     margin-bottom: 20px;
     border-bottom: 1px solid #cccccc;
     .searchForm > input[type="text"] {
@@ -14,6 +15,10 @@
       #resultHeader {
         padding-top: 8px;
       }
+    }
+
+    .resultSort {
+      display: none;
     }
 
     .resultSort > span {
@@ -29,15 +34,20 @@
   }
 
   .filterContainer {
+    display: none;
     width: 220px;
     float: left;
     margin: 0;
     ul.listFilter {
       padding-left: 20px;
     }
+    .uiCheckbox {
+    	width: 16px;
+    }
   }
 
   .resultPage {
+    display: none;  
     padding: 0 20px;
     margin-left: 240px;
     .resultBox {
@@ -46,6 +56,7 @@
       .avatar {
         width: 64px;
         overflow: hidden;
+        text-align: center;
         > img {
           width: 64px;
         }

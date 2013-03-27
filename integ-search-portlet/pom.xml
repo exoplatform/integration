@@ -13,47 +13,37 @@
   <description>Integration search portlet</description>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>integ-search-service</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.portlet</groupId>
-      <artifactId>portlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.juzu</groupId>
       <artifactId>juzu-bom-core</artifactId>
       <exclusions>
-	<exclusion>
-	  <artifactId>weld-core</artifactId>
-	  <groupId>org.jboss.weld</groupId>
-	</exclusion>
-	<exclusion>
-	  <artifactId>spring-core</artifactId>
-	  <groupId>org.springframework</groupId>
-	</exclusion>
-	<exclusion>
-	  <artifactId>spring-beans</artifactId>
-	  <groupId>org.springframework</groupId>
-	</exclusion>
-	<exclusion>
-	  <artifactId>spring-web</artifactId>
-	  <groupId>org.springframework</groupId>
-	</exclusion>
-	<exclusion>
-	  <artifactId>slf4j-simple</artifactId>
-	  <groupId>org.slf4j</groupId>
-	</exclusion>
-	<exclusion>
-	  <artifactId>slf4j-ext</artifactId>
-	  <groupId>org.slf4j</groupId>
-	</exclusion>
-	<exclusion>
-	  <artifactId>commons-logging</artifactId>
-	  <groupId>commons-logging</groupId>
-	</exclusion>
+        <exclusion>
+          <artifactId>weld-core</artifactId>
+          <groupId>org.jboss.weld</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-core</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-beans</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-web</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-simple</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-ext</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -68,8 +58,24 @@
       <groupId>org.juzu</groupId>
       <artifactId>juzu-plugins-portlet</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.portlet</groupId>
+      <artifactId>portlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!-- We want to be sure to use the right version in the dependency plugin but it's not required in the package -->
+    <dependency>
+      <groupId>org.exoplatform.platform-ui</groupId>
+      <artifactId>platform-ui-web-eXoResources</artifactId>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>integ-search-service</artifactId>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
-  
   <build>
     <plugins>
       <plugin>
@@ -95,7 +101,6 @@
           </execution>
         </executions>
       </plugin>
-      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -121,7 +126,6 @@
           </execution>
         </executions>
       </plugin>
-      
       <plugin>
         <groupId>org.lesscss</groupId>
         <artifactId>lesscss-maven-plugin</artifactId>
@@ -143,7 +147,6 @@
           </execution>
         </executions>
       </plugin>
-      
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
@@ -158,7 +161,6 @@
           </sources>
         </configuration>
       </plugin>
-      
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
@@ -186,7 +188,6 @@
           <attach>true</attach>
         </configuration>
       </plugin>
-   
     </plugins>
   </build>
 </project>

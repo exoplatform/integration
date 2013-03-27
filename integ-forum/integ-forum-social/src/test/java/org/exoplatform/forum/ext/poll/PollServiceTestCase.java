@@ -65,6 +65,31 @@ public class PollServiceTestCase extends BaseTestCase {
   public void testPollService() throws Exception {
     assertNotNull(getPollService());
   }
+  
+  public void testPollTitleWithSpecialCharacters() throws Exception {
+    Poll pollTopic = new Poll();
+    pollTopic.setQuestion("&-*()");
+    String[] options = { "red", "blue" };
+    pollTopic.setOption(options);
+    pollTopic.setOwner(rootIdentity.getRemoteId());
+    pollTopic.setParentPath(topicPath);
+    pollTopic.setInTopic(false);
+
+    // When create poll, an activity will be save
+    pollService.savePoll(pollTopic, true, false);
+    String activityId = pollService.getActivityIdForOwner(pollTopic.getParentPath() + "/"+ pollTopic.getId());
+    ExoSocialActivity activity = getManager().getActivity(activityId);
+    assertNotNull(activity);
+    assertEquals("&-*()", activity.getTitle());
+    
+    pollTopic.setQuestion("&-*() / --- == coucou #@");
+    pollService.savePoll(pollTopic, false, false);
+    activity = getManager().getActivity(activityId);
+    assertEquals("&-*() / --- == coucou #@", activity.getTitle());
+    
+    // remove poll will remove activity
+    pollService.removePoll(pollTopic.getId());
+  }
 
   /**
   * testSavePollWithActivity

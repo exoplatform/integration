@@ -17,11 +17,16 @@
 package org.exoplatform.commons.searchadministration;
 
 
+import java.util.ResourceBundle;
+
 import javax.inject.Inject;
 
 import juzu.Path;
 import juzu.View;
 import juzu.template.Template;
+import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Created by The eXo Platform SAS
@@ -34,9 +39,21 @@ public class SearchAdministration {
   @Inject
   @Path("index.gtmpl")
   Template index;
+  
+  @Inject
+  ResourceBundle bundle;  
     
   @View
   public void index(){
-      index.render();
+    Map<String, Object> parameters = new HashMap<String, Object>();
+    Locale locale = bundle.getLocale();      
+    ResourceBundle rs = ResourceBundle.getBundle("searchadministration/searchadministration", locale);
+    parameters.put("searchadministration", rs.getString("searchadministration.label"));
+    parameters.put("contentType", rs.getString("searchadministration.contentType.label"));
+    parameters.put("description", rs.getString("searchadministration.description.label"));
+    parameters.put("action", rs.getString("searchadministration.action.label"));
+    parameters.put("disable", rs.getString("searchadministration.disable.label"));
+    
+    index.render(parameters);      
   }  
 }
