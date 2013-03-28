@@ -241,15 +241,26 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 
 		  String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
 		  Space space = spaceService.getSpaceByGroupId(spaceGroupId);
-		  if (space != null && event.getActivityId() != null) {
+		  if (space != null) {
         String userId = ConversationState.getCurrent().getIdentity().getUserId();
 			  Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
 			  Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
-			  ExoSocialActivity activity = activityM.getActivity(event.getActivityId()) ;
-			  // if the activity was deleted, create new activity and add comments
+			  
+			  ExoSocialActivity activity = null;
+			  
+			  if(event.getActivityId() != null) {
+			    activity = activityM.getActivity(event.getActivityId());
+			  }
+			  
+			  /*
+			   * if activity is still null, that means:
+			   * - activity was deleted
+			   * - or this event is a public event from plf 3.5, it has no activityId
+			   * In this case, we create new activity and add comments about the changes to the activity
+			   */
 			  if(activity == null) {
 	        
-			    // re-create activity
+			    // create activity
 			    ExoSocialActivity newActivity = new ExoSocialActivityImpl();
 	        newActivity.setUserId(userIdentity.getId());
 	        newActivity.setTitle(event.getSummary());
@@ -274,14 +285,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 	        activityM.saveComment(activity, newComment);
 	        LOG.info(String.format("[CALENDAR] successfully added comment to activity of event: %s", event.getSummary()));
 			  }
-			  
 		  }
-
 	  } catch (ExoSocialException e){  
 		  if (LOG.isDebugEnabled())
 			  LOG.error("Can not update Activity for space when event modified ", e);
 	  }
   }
+  
   /**
    * creates a comment associated to updated fields
    *
