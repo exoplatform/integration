@@ -504,6 +504,8 @@ function initSearch() {
 
         var limit = getUrlParam("limit");
         LIMIT = limit && !isNaN(parseInt(limit)) ? parseInt(limit) : setting.resultsPerPage;
+        var offset = getUrlParam("offset");
+        SERVER_OFFSET = offset && !isNaN(parseInt(offset)) ? parseInt(offset) : SERVER_OFFSET;
         var sort = getUrlParam("sort")||"relevancy";
         var order = getUrlParam("order") || "desc";
         $("#sortField").text($("#sortOptions > li > a[sort='" + sort + "']").text());
@@ -514,7 +516,12 @@ function initSearch() {
 
         if(setting.searchCurrentSiteOnly) { //search without site filter
           $("#siteFilter").hide();
-          search();
+          //search();
+          NUM_RESULTS_RENDERED = 0;
+          getFromServer(function(){
+            renderCachedResults();
+          });          
+          
         } else { //search with site filter
           loadSiteFilter(function(availableSites){ //show site filter
             if(0!=availableSites.join().length) { //there're sites to show
@@ -527,7 +534,11 @@ function initSearch() {
                 $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
               }
             }
-            search();
+            //search();
+            NUM_RESULTS_RENDERED = 0;
+            getFromServer(function(){
+              renderCachedResults();
+            });            
           });
         }
 
