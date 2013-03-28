@@ -306,7 +306,7 @@ function initSearch() {
         return;
       }
 
-      var sort = $("#sortField").text();
+      var sort = $("#sortField").attr("sort");
       var order = $("#sortField").attr("order");
 
       setWaitingStatus(true);
@@ -428,25 +428,27 @@ function initSearch() {
 
 
     $("#sortOptions > li > a").on("click", function(){
-      var oldOption = $("#sortField").text();
-      var newOption = $(this).text();
+      var oldOption = $("#sortField").attr("sort");
+      var newOption = $(this).attr("sort");
 
       if(newOption==oldOption) { //click a same option again
         $(this).children("i").toggleClass("uiIconSortUp uiIconSortDown"); //toggle the arrow
       } else {
-        $("#sortField").text(newOption);
+        $("#sortField").text($(this).text());
+        $("#sortField").attr("sort", newOption);
+
         $("#sortOptions > li > a > i").remove(); //remove the arrows from other options
 
         // Select the default sort order: DESC for Relevancy, ASC for Date & Title
         var sortByIcon;
         switch(newOption) {
-          case "Relevancy":
+          case "relevancy":
             sortByIcon = 'uiIconSortDown';
             break;
-          case "Date":
+          case "date":
             sortByIcon = 'uiIconSortUp';
             break;
-          case "Title":
+          case "title":
             sortByIcon = 'uiIconSortUp';
             break;
         }
@@ -502,9 +504,13 @@ function initSearch() {
 
         var limit = getUrlParam("limit");
         LIMIT = limit && !isNaN(parseInt(limit)) ? parseInt(limit) : setting.resultsPerPage;
-
-        $("#sortField").text((getUrlParam("sort")||"relevancy").toProperCase());
-        $("#sortField").attr("order", getUrlParam("order") || "desc");
+        var sort = getUrlParam("sort")||"relevancy";
+        var order = getUrlParam("order") || "desc";
+        $("#sortField").text($("#sortOptions > li > a[sort='" + sort + "']").text());
+        $("#sortField").attr("sort", sort);
+        $("#sortField").attr("order", order);
+        $("#sortOptions > li > a > i").remove(); //remove the arrows from other options
+        $("#sortOptions > li > a[sort='" + sort + "']").append("<i class='" + (order=="asc"?"uiIconSortUp":"uiIconSortDown") + "'></i>"); //add the arrow to this option
 
         if(setting.searchCurrentSiteOnly) { //search without site filter
           $("#siteFilter").hide();
