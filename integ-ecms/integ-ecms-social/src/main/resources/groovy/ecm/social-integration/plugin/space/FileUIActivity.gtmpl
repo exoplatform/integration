@@ -249,7 +249,8 @@
 					<div class="clearfix isPreviewable">
 						
 						<%if (mimeType != null && mimeType.length() > 0 && fileSize > 0){%>
-		        <%   if(mimeType.startsWith("image")  && currentNode != null){%>
+						
+		        <%   if( (mimeType.startsWith("image") || mimeType.indexOf("icon") >=0)  && currentNode != null){%>
 		               <div id="MediaContent${activity.id}" class=" pull-left mediaContent ">
 		           	     <%
 		           	       def imageWidth = uicomponent.getImageHeight(currentNode);
@@ -266,7 +267,8 @@
 		           	       }
 		           	       def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
-		                   String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/"+imageWidth+"x"+imageHeight+"/" + repository + "/" + preferenceWS + encodedPath;              
+		                   String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/"+imageWidth+"x"+imageHeight+"/" + repository + "/" + preferenceWS + encodedPath;
+		                   if(mimeType.indexOf("icon") >=0) thumbnailImage = binarySrc;           
 									   %>
 									   <a onclick="javascript:window.open('$binarySrc');" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="$activityContentTitle" /></a>
 									 </div><%
