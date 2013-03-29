@@ -862,9 +862,11 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     try {
 
       //if (ForumActivityUtils.isTopicPublic(topic)) {
-      if (ForumActivityUtils.hasSpace(topic.getForumId())) {
+      String[] tab = topic.getPath().split("/");
+      String forumId = tab[tab.length-2];
+      if (ForumActivityUtils.hasSpace(forumId)) {
         // publish the activity in the space stream.
-        ownerStream = ForumActivityUtils.getSpaceIdentity(topic.getForumId());
+        ownerStream = ForumActivityUtils.getSpaceIdentity(forumId);
       }
       
       //For issue FORUM-284: a forum with restricted permission is not public forum
