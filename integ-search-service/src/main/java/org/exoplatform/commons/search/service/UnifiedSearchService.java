@@ -95,6 +95,7 @@ public class UnifiedSearchService implements ResourceContainer {
    * @param order Sort order (asc, desc)
    * 
    * @return a map of connector with their search result
+   * @LevelAPI Experimental
    * 
    * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.search
    */
@@ -154,6 +155,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * Get all connectors registered in the system and which are enabled
   *
   * @return List of connectors and names of the enabled ones (in JSON)
+  * @LevelAPI Experimental
   *
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.registry
   */    
@@ -172,6 +174,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * Get all available sites in the system
   *
   * @return List of site names in JSON
+  * @LevelAPI Experimental
   *
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.sites
   */  
@@ -205,7 +208,8 @@ public class UnifiedSearchService implements ResourceContainer {
   /**
   * Get current user's setting for Search portlet
   *
-  * @return Search setting of the current logging in (or anonymous) user 
+  * @return Search setting of the current logging in (or anonymous) user
+  * @LevelAPI Experimental
   *
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.setting
   */    
@@ -219,7 +223,8 @@ public class UnifiedSearchService implements ResourceContainer {
   /**
   * Save current user's setting for Search portlet
   *
-  * @return "ok" if succeed
+  * @return "ok" when succeed
+  * @LevelAPI Experimental
   *
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.setting.post
   */    
@@ -252,7 +257,8 @@ public class UnifiedSearchService implements ResourceContainer {
   /**
   * Get current user's setting for Quick search portlet
   *
-  * @return Quick search setting of the current logging in user 
+  * @return Quick search setting of the current logging in user
+  * @LevelAPI Experimental
   *
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.quicksearchsetting
   */    
@@ -265,7 +271,8 @@ public class UnifiedSearchService implements ResourceContainer {
   /**
   * Save current user's setting for Quick search portlet
   *
-  * @return "ok" if succeed
+  * @return "ok" when succeed
+  * @LevelAPI Experimental
   *
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.quicksearchsetting.post
   */    
@@ -299,6 +306,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * @param searchTypes List of search types in the form of a comma-separated string
   *
   * @return Success if the caller's role is administrator, Failure otherwise
+  * @LevelAPI Experimental
   *
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.enabled-searchtypes
   */
