@@ -82,6 +82,22 @@ public class UnifiedSearchService implements ResourceContainer {
     
   }
   
+  /**
+   * Search for a query, with (optional) parameters (sites, content types...)
+   * 
+   * @param context Search context
+   * @param query The user-input query to search for
+   * @param sites Search on these specified sites only (e.g acme, intranet...)
+   * @param types Search for these specified content types only (e.g people, discussion, event, task, wiki, activity, social, file, document...)
+   * @param offset Start offset of the result set
+   * @param limit Maximum size of the result set 
+   * @param sort Sort type (relevancy, date, title)
+   * @param order Sort order (asc, desc)
+   * 
+   * @return a map of connector with their search result
+   * 
+   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.search
+   */
   @GET
   public Response REST_search(
       @javax.ws.rs.core.Context UriInfo uriInfo,
@@ -134,6 +150,13 @@ public class UnifiedSearchService implements ResourceContainer {
     }
   }
 
+  /**
+  * Get all connectors registered in the system and which are enabled
+  *
+  * @return List of connectors and names of the enabled ones (in JSON)
+  *
+  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.registry
+  */    
   @GET
   @Path("/registry")
   public Response REST_getRegistry() {
@@ -145,6 +168,13 @@ public class UnifiedSearchService implements ResourceContainer {
   }
 
   
+  /**
+  * Get all available sites in the system
+  *
+  * @return List of site names in JSON
+  *
+  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.sites
+  */  
   @GET
   @Path("/sites")
   public Response REST_getSites() {
@@ -172,6 +202,13 @@ public class UnifiedSearchService implements ResourceContainer {
     }
   }
 
+  /**
+  * Get current user's setting for Search portlet
+  *
+  * @return Search setting of the current logging in (or anonymous) user 
+  *
+  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.setting
+  */    
   @GET
   @Path("/setting")
   public Response REST_getSearchSetting() {
@@ -179,6 +216,13 @@ public class UnifiedSearchService implements ResourceContainer {
     return Response.ok(userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   }
   
+  /**
+  * Save current user's setting for Search portlet
+  *
+  * @return "ok" if succeed
+  *
+  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.setting.post
+  */    
   @POST
   @Path("/setting")
   public Response REST_setSearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @FormParam("hideSearchForm") boolean hideSearchForm, @FormParam("hideFacetsFilter") boolean hideFacetsFilter) {
@@ -205,12 +249,26 @@ public class UnifiedSearchService implements ResourceContainer {
     }
   }
 
+  /**
+  * Get current user's setting for Quick search portlet
+  *
+  * @return Quick search setting of the current logging in user 
+  *
+  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.quicksearchsetting
+  */    
   @GET
   @Path("/setting/quicksearch")
   public Response REST_getQuicksearchSetting() {
     return Response.ok(getQuickSearchSetting(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   }
   
+  /**
+  * Save current user's setting for Quick search portlet
+  *
+  * @return "ok" if succeed
+  *
+  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.quicksearchsetting.post
+  */    
   @POST
   @Path("/setting/quicksearch")
   public Response REST_setQuicksearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly) {
@@ -235,6 +293,15 @@ public class UnifiedSearchService implements ResourceContainer {
     return allSearchTypes;      
   }
   
+  /**
+  * Set "enabledSearchTypes" global variable
+  *
+  * @param searchTypes List of search types in the form of a comma-separated string
+  *
+  * @return Success if the caller's role is administrator, Failure otherwise
+  *
+  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.enabled-searchtypes
+  */
   @POST
   @Path("/enabled-searchtypes")
   public Response REST_setEnabledSearchtypes(@FormParam("searchTypes") String searchTypes) {
