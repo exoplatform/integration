@@ -32,13 +32,13 @@ import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.portal.config.UserPortalConfigService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.impl.RuntimeDelegateImpl;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.settings.impl.SettingServiceImpl;
 import org.exoplatform.web.WebAppController;
 import org.exoplatform.web.controller.metadata.ControllerDescriptor;
 import org.exoplatform.web.controller.metadata.DescriptorBuilder;
@@ -131,7 +131,8 @@ public class UnifiedSearchService implements ResourceContainer {
       
       // get the base URI - http://<host>:<port>
       String baseUri = uriInfo.getBaseUri().toString(); // http://<host>:<port>/rest
-      baseUri = baseUri.substring(0, baseUri.lastIndexOf("/"));
+      if (baseUri.lastIndexOf("/") != -1)
+        baseUri = baseUri.substring(0, baseUri.lastIndexOf("/"));
       String resultUrl, imageUrl;      
       
       // use absolute path for URLs in search results
@@ -288,7 +289,7 @@ public class UnifiedSearchService implements ResourceContainer {
   
   @SuppressWarnings("unchecked")
   public static List<String> getEnabledSearchTypes(){
-    SettingService settingService = (SettingServiceImpl)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingServiceImpl.class);
+    SettingService settingService = (SettingService)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingService.class);
     SettingValue<String> enabledSearchTypes = (SettingValue<String>) settingService.get(Context.GLOBAL, Scope.APPLICATION, "enabledSearchTypes");
     if(null!=enabledSearchTypes) return Arrays.asList(enabledSearchTypes.getValue().split(",\\s*"));
 
@@ -313,8 +314,9 @@ public class UnifiedSearchService implements ResourceContainer {
   @POST
   @Path("/enabled-searchtypes")
   public Response REST_setEnabledSearchtypes(@FormParam("searchTypes") String searchTypes) {
-    Collection<String> roles = ConversationState.getCurrent().getIdentity().getRoles();    
-    if(!roles.isEmpty() && roles.contains("administrators")) {//only administrators can set this
+    UserACL userAcl = (UserACL)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(UserACL.class);
+    
+    if(ConversationState.getCurrent().getIdentity().isMemberOf(userAcl.getAdminGroups())) {//only administrators can set this
       settingService.set(Context.GLOBAL, Scope.APPLICATION, "enabledSearchTypes", new SettingValue<String>(searchTypes));      
       return Response.ok("ok", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     }
