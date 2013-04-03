@@ -116,8 +116,6 @@ public class UnifiedSearchServiceTest extends AbstractServiceTest implements Res
   }
   
   public void testSearch() throws Exception {
-    unifiedSearchService.REST_setEnabledSearchtypes("people,event");    
-    
     ContainerResponse response = service("GET", BASE_URL + REST_CONTEXT + "/search?q=root&types=all", "", null, null);
     assertEquals(200, response.getStatus());
     assertEquals(MediaType.APPLICATION_JSON, response.getContentType().toString());
@@ -179,9 +177,12 @@ public class UnifiedSearchServiceTest extends AbstractServiceTest implements Res
   
   public void testSearchSetting() throws Exception{    
     ByteArrayContainerResponseWriter writer = new ByteArrayContainerResponseWriter();
-    ContainerResponse response = service("GET", BASE_URL + REST_CONTEXT + "/search/setting", "", null,null, writer);
+    ContainerResponse response = service("POST", BASE_URL + REST_CONTEXT + "/search/setting/10/people/false/false/false", "", null,null);
     assertEquals(200, response.getStatus());   
     
+    ContainerResponse responseGet = service("GET", BASE_URL + REST_CONTEXT + "/search/setting", "", null,null, writer);
+    
+    assertEquals(200, responseGet.getStatus());
     JSONObject obj = new JSONObject(new String(writer.getBody()));
     String resultsPerPage = obj.get("resultsPerPage").toString();
     String searchTypes = obj.get("searchTypes").toString();
@@ -196,24 +197,21 @@ public class UnifiedSearchServiceTest extends AbstractServiceTest implements Res
     assertEquals(false, Boolean.parseBoolean(hideFacetsFilter));
   }
   
-  public void testQuickSetting() throws Exception{
-    unifiedSearchService.REST_setSearchSetting(5, "all", true, true, true);
+  public void testQuickSetting() throws Exception{    
     ByteArrayContainerResponseWriter writer = new ByteArrayContainerResponseWriter();
-    ContainerResponse response = service("GET", BASE_URL + REST_CONTEXT + "/search/setting/quicksearch", "", null,null, writer);
+    ContainerResponse response = service("POST", BASE_URL + REST_CONTEXT + "/search/setting/quicksearch/5/all/true", "", null,null);
     assertEquals(200, response.getStatus());   
     
+    ContainerResponse responseGet = service("GET", BASE_URL + REST_CONTEXT + "/search/setting/quicksearch", "", null,null,writer);        
+    assertEquals(200, responseGet.getStatus());
     JSONObject obj = new JSONObject(new String(writer.getBody()));    
     String resultsPerPage = obj.get("resultsPerPage").toString();
     String searchTypes = obj.get("searchTypes").toString();
     String searchCurrentSiteOnly = obj.get("searchCurrentSiteOnly").toString();
-    String hideSearchForm = obj.get("hideSearchForm").toString();
-    String hideFacetsFilter = obj.get("hideFacetsFilter").toString();     
 
     assertEquals(5, Integer.parseInt(resultsPerPage));
     assertEquals("all", searchTypes.substring(searchTypes.indexOf("all"),searchTypes.indexOf("all") + "all".length()));
     assertEquals(true, Boolean.parseBoolean(searchCurrentSiteOnly));
-    assertEquals(true, Boolean.parseBoolean(hideSearchForm));
-    assertEquals(true, Boolean.parseBoolean(hideFacetsFilter));    
   }
   
   public void testEnabledSearchtypes() throws Exception{    
