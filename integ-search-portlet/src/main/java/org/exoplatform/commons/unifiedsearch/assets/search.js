@@ -7,8 +7,8 @@ function initSearch() {
     var CONNECTORS; //all registered SearchService connectors
     var SEARCH_TYPES; //enabled search types
     var SEARCH_SETTING; //search setting
-
-    var LIMIT, RESULT_CACHE, CACHE_OFFSET, SERVER_OFFSET, NUM_RESULTS_RENDERED;
+    var SERVER_OFFSET = 0;
+    var LIMIT, RESULT_CACHE, CACHE_OFFSET, NUM_RESULTS_RENDERED;
 
     var SEARCH_RESULT_TEMPLATE = " \
       <div class='resultBox clearfix %{type}'> \
@@ -310,7 +310,7 @@ function initSearch() {
       var order = $("#sortField").attr("order");
 
       setWaitingStatus(true);
-
+      
       var searchParams = {
         searchContext: {
           siteName:parent.eXo.env.portal.portalName
@@ -371,10 +371,9 @@ function initSearch() {
 
     $("#btnShowMore").click(function(){
       CACHE_OFFSET = CACHE_OFFSET + LIMIT;
-      var remaining = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);
-
+      var remaining = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);      
       if(remaining.length < LIMIT) {
-        SERVER_OFFSET = SERVER_OFFSET + LIMIT;
+        SERVER_OFFSET = SERVER_OFFSET + LIMIT;        
         getFromServer(function(){
           RESULT_CACHE = remaining.concat(RESULT_CACHE);
           renderCachedResults(true);
@@ -505,7 +504,7 @@ function initSearch() {
         var limit = getUrlParam("limit");
         LIMIT = limit && !isNaN(parseInt(limit)) ? parseInt(limit) : setting.resultsPerPage;
         var offset = getUrlParam("offset");
-        SERVER_OFFSET = offset && !isNaN(parseInt(offset)) ? parseInt(offset) : SERVER_OFFSET;
+        SERVER_OFFSET = offset && !isNaN(parseInt(offset)) ? parseInt(offset) : SERVER_OFFSET;        
         var sort = getUrlParam("sort")||"relevancy";
         var order = getUrlParam("order") || "desc";
         $("#sortField").text($("#sortOptions > li > a[sort='" + sort + "']").text());
@@ -517,7 +516,7 @@ function initSearch() {
         if(setting.searchCurrentSiteOnly) { //search without site filter
           $("#siteFilter").hide();
           //search();
-          NUM_RESULTS_RENDERED = 0;
+          NUM_RESULTS_RENDERED = 0;          
           getFromServer(function(){
             renderCachedResults();
           });          
