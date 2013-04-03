@@ -31,7 +31,8 @@ function initSearchSetting(allMsg,alertOk,alertNotOk){
 
     // Call REST service to save the setting
     $("#btnSave").click(function(){
-      var jqxhr = $.post("/rest/search/setting", {
+      var url = "/rest/search/setting/"+$("#resultsPerPage").val()+"/"+getSelectedTypes()+"/"+$("#searchCurrentSiteOnly").is(":checked").toString()+"/"+$("#hideSearchForm").is(":checked").toString()+"/"+$("#hideFacetsFilter").is(":checked").toString();      
+      var jqxhr = $.post(url, {
         resultsPerPage: $("#resultsPerPage").val(),
         searchTypes: getSelectedTypes(),
         searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked"),

@@ -216,8 +216,8 @@ public class UnifiedSearchServiceTest extends AbstractServiceTest implements Res
     assertEquals(true, Boolean.parseBoolean(hideFacetsFilter));    
   }
   
-  public void testEnabledSearchtypes() throws Exception{
-    Response response = unifiedSearchService.REST_setEnabledSearchtypes("people");
+  public void testEnabledSearchtypes() throws Exception{    
+    ContainerResponse response = service("POST", BASE_URL + REST_CONTEXT + "/search/enabled-searchtypes/people", "", null,null);    
     assertEquals(200, response.getStatus());
     assertEquals("ok", response.getEntity().toString());
   }

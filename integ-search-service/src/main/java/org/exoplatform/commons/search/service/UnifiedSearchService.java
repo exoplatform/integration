@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
@@ -230,8 +230,8 @@ public class UnifiedSearchService implements ResourceContainer {
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.setting.post
   */    
   @POST
-  @Path("/setting")
-  public Response REST_setSearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @FormParam("hideSearchForm") boolean hideSearchForm, @FormParam("hideFacetsFilter") boolean hideFacetsFilter) {
+  @Path("/setting/{resultsPerPage}/{searchTypes}/{searchCurrentSiteOnly}/{hideSearchForm}/{hideFacetsFilter}")
+  public Response REST_setSearchSetting(@PathParam("resultsPerPage") long resultsPerPage, @PathParam("searchTypes") String searchTypes, @PathParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @PathParam("hideSearchForm") boolean hideSearchForm, @PathParam("hideFacetsFilter") boolean hideFacetsFilter) {
     settingService.set(Context.USER, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));
     settingService.set(Context.USER, Scope.WINDOWS, "searchTypes", new SettingValue<String>(searchTypes));
     settingService.set(Context.USER, Scope.WINDOWS, "searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
@@ -278,8 +278,8 @@ public class UnifiedSearchService implements ResourceContainer {
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.quicksearchsetting.post
   */    
   @POST
-  @Path("/setting/quicksearch")
-  public Response REST_setQuicksearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly) {
+  @Path("/setting/quicksearch/{resultsPerPage}/{searchTypes}/{searchCurrentSiteOnly}")
+  public Response REST_setQuicksearchSetting(@PathParam("resultsPerPage") long resultsPerPage, @PathParam("searchTypes") String searchTypes, @PathParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly) {
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchTypes", new SettingValue<String>(searchTypes));
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
@@ -312,8 +312,8 @@ public class UnifiedSearchService implements ResourceContainer {
   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.enabled-searchtypes
   */
   @POST
-  @Path("/enabled-searchtypes")
-  public Response REST_setEnabledSearchtypes(@FormParam("searchTypes") String searchTypes) {
+  @Path("/enabled-searchtypes/{searchTypes}")
+  public Response REST_setEnabledSearchtypes(@PathParam("searchTypes") String searchTypes) {
     UserACL userAcl = (UserACL)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(UserACL.class);
     
     if(ConversationState.getCurrent().getIdentity().isMemberOf(userAcl.getAdminGroups())) {//only administrators can set this
