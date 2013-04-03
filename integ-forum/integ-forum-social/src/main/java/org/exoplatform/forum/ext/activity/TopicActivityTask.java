@@ -19,6 +19,7 @@ package org.exoplatform.forum.ext.activity;
 import java.util.Map;
 
 import org.exoplatform.commons.utils.PropertyChangeSupport;
+import org.exoplatform.forum.common.UserHelper;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.log.ExoLogger;
@@ -740,7 +741,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         ExoSocialActivity newComment = processComment(ctx);
         
         //
-        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        String currentUser = UserHelper.getCurrentUser();
+        Identity poster = ForumActivityUtils.getIdentity(currentUser);
         newComment.setUserId(poster.getId());
         
         //
