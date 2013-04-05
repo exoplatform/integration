@@ -1,6 +1,6 @@
 
 // Function to be called when the quick search template is ready
-function initQuickSearch(portletId,seeAllMsg, noResultMsg) {
+function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
   jQuery.noConflict();
 
   (function($){
@@ -83,8 +83,19 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg) {
 
     var TASK_AVATAR_TEMPLATE = " \
       <i class='uiIconStatus-20-%{taskStatus}'></i> \
-    ";
-
+    ";  
+    
+    var QUICKSEARCH_WAITING_TEMPLATE=" \
+        <table class='uiGrid table  table-hover table-striped  rounded-corners'> \
+          <col width='30%'> \
+          <col width='70%'> \
+	        <tr> \
+	          <td colspan='2' class='noResult'> \
+	            <span id='seeAll-" + portletId + "' class='' href='#'>"+searching+" </span> \
+	          </td> \
+	        </tr> \
+        </table> \
+      ";    
 
     //*** Utility functions ***
     // Highlight the specified text in a string
@@ -112,9 +123,18 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg) {
       });
     }
 
+    function setWaitingStatus(status) {
+    	if (status){        		    	
+            $(quickSearchResult_id).html(QUICKSEARCH_WAITING_TEMPLATE);
+            var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
+            $(quickSearchResult_id).width(width);
+            $(quickSearchResult_id).show();
+    	}
+    }
 
     function quickSearch() {
       var query = $(txtQuickSearchQuery_id).val();
+      setWaitingStatus(true);
       var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
 
       var searchParams = {
@@ -145,6 +165,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg) {
             rows.push(row);
           }
         });
+        setWaitingStatus(false);
         var messageRow = rows.length==0 ? QUICKSEARCH_NO_RESULT.replace(/%{query}/, query) : QUICKSEARCH_SEE_ALL;
         $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
         var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
@@ -155,6 +176,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg) {
       });
     }
 
+    
 
     function renderQuickSearchResult(result) {
       var query = $(txtQuickSearchQuery_id).val();

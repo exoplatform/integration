@@ -73,6 +73,7 @@ public class QuickSearch {
       parameters.put("SearchInInput", rs.getString("quicksearch.input.label"));
       parameters.put("seeAll", rs.getString("quicksearch.seeAll.label"));
       parameters.put("noResults", rs.getString("quicksearch.noResults.label"));      
+      parameters.put("searching", rs.getString("quicksearch.searching.label"));
       index.render(parameters);
     }
   }  
