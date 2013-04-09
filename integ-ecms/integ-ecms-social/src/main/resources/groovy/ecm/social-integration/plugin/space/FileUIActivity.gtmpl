@@ -279,7 +279,7 @@
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
 		                 %>
-		                 <a href="#" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="pdfImageBorder"/></a>
+		                 <a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="pdfImageBorder"/></a>
 		               </div><%
 		            } else if(fileComponent != null) { %>
 					 <div id="MediaContent${activity.id}" class=" pull-left PlayerContianer">
