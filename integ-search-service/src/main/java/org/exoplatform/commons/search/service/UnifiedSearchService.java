@@ -61,13 +61,10 @@ import org.exoplatform.web.controller.metadata.DescriptorBuilder;
 import org.exoplatform.web.controller.router.Router;
 
 /**
- * Created by The eXo Platform SAS
- * Author : Tung Vu Minh
- *          tungvm@exoplatform.com
- * Nov 21, 2012  
  * This class provides end points help all external components call unified search service by Restful service standard.
  * These services are search, search setting, quick search setting, registry, sites and enable search type
  * @LevelAPI Experimental
+ * @anchor UnifiedSearchService
  */
 @Path("/search")
 @Produces(MediaType.APPLICATION_JSON)
@@ -130,7 +127,7 @@ public class UnifiedSearchService implements ResourceContainer {
    * @return a map of connector with their search result
    * @LevelAPI Experimental
    * 
-   * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.search
+   * @anchor UnifiedSearchService.search
    */
   @GET
   public Response REST_search(
@@ -191,7 +188,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * @return List of connectors and names of the enabled ones (in JSON)
   * @LevelAPI Experimental
   *
-  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.registry
+  * @anchor UnifiedSearchService.getRegistry
   */    
   @GET
   @Path("/registry")
@@ -210,7 +207,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * @return List of site names in JSON
   * @LevelAPI Experimental
   *
-  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.sites
+  * @anchor UnifiedSearchService.getSites
   */  
   @GET
   @Path("/sites")
@@ -245,7 +242,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * @return Search setting of the current logging in (or anonymous) user
   * @LevelAPI Experimental
   *
-  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.setting
+  * @anchor UnifiedSearchService.getSearchSetting
   */    
   @GET
   @Path("/setting")
@@ -260,7 +257,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * @return "ok" when succeed
   * @LevelAPI Experimental
   *
-  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.setting.post
+  * @anchor UnifiedSearchService.setSearchSetting
   */    
   @POST
   @Path("/setting/{resultsPerPage}/{searchTypes}/{searchCurrentSiteOnly}/{hideSearchForm}/{hideFacetsFilter}")
@@ -294,7 +291,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * @return Quick search setting of the current logging in user
   * @LevelAPI Experimental
   *
-  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.quicksearchsetting
+  * @anchor UnifiedSearchService.getQuicksearchSetting
   */    
   @GET
   @Path("/setting/quicksearch")
@@ -308,7 +305,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * @return "ok" when succeed
   * @LevelAPI Experimental
   *
-  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.quicksearchsetting.post
+  * @anchor UnifiedSearchService.setQuicksearchSetting
   */    
   @POST
   @Path("/setting/quicksearch/{resultsPerPage}/{searchTypes}/{searchCurrentSiteOnly}")
@@ -342,7 +339,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * @return Success if the caller's role is administrator, Failure otherwise
   * @LevelAPI Experimental
   *
-  * @anchor UnifiedSearch.PublicRestAPIs.UnifiedSearchService.enabled-searchtypes
+  * @anchor UnifiedSearchService.setEnabledSearchtypes
   */
   @POST
   @Path("/enabled-searchtypes/{searchTypes}")
