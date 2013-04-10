@@ -97,9 +97,11 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 
   public static final String SUMMARY_UPDATED = "summary_updated";
   public static final String DESCRIPTION_UPDATED = "description_updated";
+  public static final String DESCRIPTION_REMOVED = "description_removed";
   public static final String FROM_UPDATED = "fromDateTime_updated";
   public static final String TO_UPDATED = "toDateTime_updated";
   public static final String LOCATION_UPDATED = "location_updated";
+  public static final String LOCATION_REMOVED = "location_removed";
   public static final String ALLDAY_UPDATED = "allDay_updated";
   public static final String REPEAT_UPDATED = "repeatType_updated";
   public static final String ATTACH_UPDATED = "attachment_updated";
@@ -119,6 +121,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 
   public static final String NAME_UPDATED = "name_updated";
   public static final String NOTE_UPDATED = "note_updated";
+  public static final String NOTE_REMOVED = "note_removed";
   public static final String TASK_CATEGORY_UPDATED = "taskCategoryName_updated";
   public static final String TASK_CALENDAR_UPDATED = "task_CalendarId_updated";
   public static final String TASK_ATTACH_UPDATED = "task_attachment_updated";
@@ -241,15 +244,26 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 
 		  String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
 		  Space space = spaceService.getSpaceByGroupId(spaceGroupId);
-		  if (space != null && event.getActivityId() != null) {
+		  if (space != null) {
         String userId = ConversationState.getCurrent().getIdentity().getUserId();
 			  Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
 			  Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
-			  ExoSocialActivity activity = activityM.getActivity(event.getActivityId()) ;
-			  // if the activity was deleted, create new activity and add comments
+			  
+			  ExoSocialActivity activity = null;
+			  
+			  if(event.getActivityId() != null) {
+			    activity = activityM.getActivity(event.getActivityId());
+			  }
+			  
+			  /*
+			   * if activity is still null, that means:
+			   * - activity was deleted
+			   * - or this event is a public event from plf 3.5, it has no activityId
+			   * In this case, we create new activity and add comments about the changes to the activity
+			   */
 			  if(activity == null) {
 	        
-			    // re-create activity
+			    // create activity
 			    ExoSocialActivity newActivity = new ExoSocialActivityImpl();
 	        newActivity.setUserId(userIdentity.getId());
 	        newActivity.setTitle(event.getSummary());
@@ -274,14 +288,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 	        activityM.saveComment(activity, newComment);
 	        LOG.info(String.format("[CALENDAR] successfully added comment to activity of event: %s", event.getSummary()));
 			  }
-			  
 		  }
-
 	  } catch (ExoSocialException e){  
 		  if (LOG.isDebugEnabled())
 			  LOG.error("Can not update Activity for space when event modified ", e);
 	  }
   }
+  
   /**
    * creates a comment associated to updated fields
    *
@@ -350,12 +363,25 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         if(!oldEvent.getSummary().equals(newEvent.getSummary())) {
           messagesParams.put(SUMMARY_UPDATED,newEvent.getSummary()) ;
         }
-        if(newEvent.getDescription() != null && !newEvent.getDescription().equals(oldEvent.getDescription())) {
+
+        /* change description */
+        if (newEvent.getDescription() != null && !newEvent.getDescription().equals(oldEvent.getDescription())) {
           messagesParams.put(DESCRIPTION_UPDATED,newEvent.getDescription()) ;
         }
-        if(newEvent.getLocation()!= null && !newEvent.getLocation().equals(oldEvent.getLocation())) {
+        /* remove description */
+        else if ((newEvent.getDescription() == null) && (oldEvent.getDescription() != null)) {
+          messagesParams.put(DESCRIPTION_REMOVED, "") ;
+        }
+
+        /* change location */
+        if (newEvent.getLocation()!= null && !newEvent.getLocation().equals(oldEvent.getLocation())) {
           messagesParams.put(LOCATION_UPDATED,newEvent.getLocation()) ;
         }
+        /* remove location */
+        else if ((newEvent.getLocation() == null) && (oldEvent.getLocation() !=null)) {
+          messagesParams.put(LOCATION_REMOVED, "") ;
+        }
+
         if(newEvent.getPriority()!= null && !newEvent.getPriority().equals(oldEvent.getPriority())) {
           messagesParams.put(PRIORITY_UPDATED,newEvent.getPriority()) ;
         }
@@ -394,8 +420,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         if(!oldEvent.getSummary().equals(newEvent.getSummary())) {
           messagesParams.put(NAME_UPDATED,newEvent.getSummary()) ;
         }
+        /* change note */
         if(newEvent.getDescription() != null && !newEvent.getDescription().equals(oldEvent.getDescription())) {
           messagesParams.put(NOTE_UPDATED,newEvent.getDescription()) ;
+        }
+        /* removed note */
+        else if ((newEvent.getDescription() == null) && (oldEvent.getDescription() != null)) {
+          messagesParams.put(NOTE_REMOVED, "") ;
         }
         
         if (!isAllDayEvent(newEvent)) {
@@ -727,6 +758,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * @param calendarId
    */
   public void updatePublicEvent(CalendarEvent oldEvent, CalendarEvent newEvent, String calendarId) {
+    LOG.info("updatePublicEvent");
     String eventType = newEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
     Map<String, String> messagesParams = buildParams(oldEvent, newEvent);
     if(messagesParams.size() > 0) {

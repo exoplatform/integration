@@ -106,6 +106,7 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
         calendar.setName(space.getDisplayName());
         calendar.setEditPermission(new String[] { space.getGroupId() + SLASH_COLON + ANY });
         calendar.setCalendarOwner(groupId);
+        calendar.setCalendarColor(Calendar.COLORS[0]);
         calService.savePublicCalendar(calendar, true);
       }
     } catch (Exception e) {

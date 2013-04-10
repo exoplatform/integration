@@ -42,8 +42,8 @@ function initSearchAdmin() {
       $.each($(".contentType"), function(){
         if("Disable"==this.value) enabledTypes.push(this.id);
       });
-
-      var jqxhr = $.post("/rest/search/enabled-searchtypes", {
+      
+      var jqxhr = $.post("/rest/search/enabled-searchtypes/"+enabledTypes, {
         searchTypes:enabledTypes.join(",")
       });
 

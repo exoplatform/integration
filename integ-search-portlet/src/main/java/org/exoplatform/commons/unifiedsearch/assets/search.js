@@ -7,8 +7,8 @@ function initSearch() {
     var CONNECTORS; //all registered SearchService connectors
     var SEARCH_TYPES; //enabled search types
     var SEARCH_SETTING; //search setting
-
-    var LIMIT, RESULT_CACHE, CACHE_OFFSET, SERVER_OFFSET, NUM_RESULTS_RENDERED;
+    var SERVER_OFFSET = 0;
+    var LIMIT, RESULT_CACHE, CACHE_OFFSET, NUM_RESULTS_RENDERED;
 
     var SEARCH_RESULT_TEMPLATE = " \
       <div class='resultBox clearfix %{type}'> \
@@ -306,11 +306,11 @@ function initSearch() {
         return;
       }
 
-      var sort = $("#sortField").text();
+      var sort = $("#sortField").attr("sort");
       var order = $("#sortField").attr("order");
 
       setWaitingStatus(true);
-
+      
       var searchParams = {
         searchContext: {
           siteName:parent.eXo.env.portal.portalName
@@ -371,10 +371,9 @@ function initSearch() {
 
     $("#btnShowMore").click(function(){
       CACHE_OFFSET = CACHE_OFFSET + LIMIT;
-      var remaining = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);
-
+      var remaining = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);      
       if(remaining.length < LIMIT) {
-        SERVER_OFFSET = SERVER_OFFSET + LIMIT;
+        SERVER_OFFSET = SERVER_OFFSET + LIMIT;        
         getFromServer(function(){
           RESULT_CACHE = remaining.concat(RESULT_CACHE);
           renderCachedResults(true);
@@ -428,25 +427,27 @@ function initSearch() {
 
 
     $("#sortOptions > li > a").on("click", function(){
-      var oldOption = $("#sortField").text();
-      var newOption = $(this).text();
+      var oldOption = $("#sortField").attr("sort");
+      var newOption = $(this).attr("sort");
 
       if(newOption==oldOption) { //click a same option again
         $(this).children("i").toggleClass("uiIconSortUp uiIconSortDown"); //toggle the arrow
       } else {
-        $("#sortField").text(newOption);
+        $("#sortField").text($(this).text());
+        $("#sortField").attr("sort", newOption);
+
         $("#sortOptions > li > a > i").remove(); //remove the arrows from other options
 
         // Select the default sort order: DESC for Relevancy, ASC for Date & Title
         var sortByIcon;
         switch(newOption) {
-          case "Relevancy":
+          case "relevancy":
             sortByIcon = 'uiIconSortDown';
             break;
-          case "Date":
+          case "date":
             sortByIcon = 'uiIconSortUp';
             break;
-          case "Title":
+          case "title":
             sortByIcon = 'uiIconSortUp';
             break;
         }
@@ -502,13 +503,24 @@ function initSearch() {
 
         var limit = getUrlParam("limit");
         LIMIT = limit && !isNaN(parseInt(limit)) ? parseInt(limit) : setting.resultsPerPage;
-
-        $("#sortField").text((getUrlParam("sort")||"relevancy").toProperCase());
-        $("#sortField").attr("order", getUrlParam("order") || "desc");
+        var offset = getUrlParam("offset");
+        SERVER_OFFSET = offset && !isNaN(parseInt(offset)) ? parseInt(offset) : SERVER_OFFSET;        
+        var sort = getUrlParam("sort")||"relevancy";
+        var order = getUrlParam("order") || "desc";
+        $("#sortField").text($("#sortOptions > li > a[sort='" + sort + "']").text());
+        $("#sortField").attr("sort", sort);
+        $("#sortField").attr("order", order);
+        $("#sortOptions > li > a > i").remove(); //remove the arrows from other options
+        $("#sortOptions > li > a[sort='" + sort + "']").append("<i class='" + (order=="asc"?"uiIconSortUp":"uiIconSortDown") + "'></i>"); //add the arrow to this option
 
         if(setting.searchCurrentSiteOnly) { //search without site filter
           $("#siteFilter").hide();
-          search();
+          //search();
+          NUM_RESULTS_RENDERED = 0;          
+          getFromServer(function(){
+            renderCachedResults();
+          });          
+          
         } else { //search with site filter
           loadSiteFilter(function(availableSites){ //show site filter
             if(0!=availableSites.join().length) { //there're sites to show
@@ -521,7 +533,11 @@ function initSearch() {
                 $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
               }
             }
-            search();
+            //search();
+            NUM_RESULTS_RENDERED = 0;
+            getFromServer(function(){
+              renderCachedResults();
+            });            
           });
         }
 

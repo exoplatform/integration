@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2003-2012 eXo Platform SAS.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.exoplatform.commons.search.service;
 
 import java.io.File;
@@ -10,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
@@ -32,18 +48,24 @@ import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.portal.config.UserPortalConfigService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.impl.RuntimeDelegateImpl;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.settings.impl.SettingServiceImpl;
 import org.exoplatform.web.WebAppController;
 import org.exoplatform.web.controller.metadata.ControllerDescriptor;
 import org.exoplatform.web.controller.metadata.DescriptorBuilder;
 import org.exoplatform.web.controller.router.Router;
 
+/**
+ * This class provides end points help all external components call unified search service by Restful service standard.
+ * These services are search, search setting, quick search setting, registry, sites and enable search type
+ * @LevelAPI Experimental
+ * @anchor UnifiedSearchService
+ */
 @Path("/search")
 @Produces(MediaType.APPLICATION_JSON)
 public class UnifiedSearchService implements ResourceContainer {
@@ -66,6 +88,14 @@ public class UnifiedSearchService implements ResourceContainer {
   private SettingService settingService;
   private Router router;
   
+  /**
+   * A constructor creates a instance of unified search service with the specified parameters
+   * @param searchService a service to work with other connectors
+   * @param settingService a service to store and get the setting values 
+   * @param userPortalConfigService a service to get user information from portal
+   * @param webAppController a controller to get configuration path
+   * @LevelAPI Experimental
+   */
   public UnifiedSearchService(SearchService searchService, SettingService settingService, UserPortalConfigService userPortalConfigService, WebAppController webAppController){
     this.searchService = searchService;
     this.settingService = settingService;
@@ -82,6 +112,23 @@ public class UnifiedSearchService implements ResourceContainer {
     
   }
   
+  /**
+   * Search for a query, with (optional) parameters (sites, content types...)
+   * 
+   * @param context Search context
+   * @param query The user-input query to search for
+   * @param sites Search on these specified sites only (e.g acme, intranet...)
+   * @param types Search for these specified content types only (e.g people, discussion, event, task, wiki, activity, social, file, document...)
+   * @param offset Start offset of the result set
+   * @param limit Maximum size of the result set 
+   * @param sort Sort type (relevancy, date, title)
+   * @param order Sort order (asc, desc)
+   * 
+   * @return a map of connector with their search result
+   * @LevelAPI Experimental
+   * 
+   * @anchor UnifiedSearchService.search
+   */
   @GET
   public Response REST_search(
       @javax.ws.rs.core.Context UriInfo uriInfo,
@@ -114,7 +161,8 @@ public class UnifiedSearchService implements ResourceContainer {
       
       // get the base URI - http://<host>:<port>
       String baseUri = uriInfo.getBaseUri().toString(); // http://<host>:<port>/rest
-      baseUri = baseUri.substring(0, baseUri.lastIndexOf("/"));
+      if (baseUri.lastIndexOf("/") != -1)
+        baseUri = baseUri.substring(0, baseUri.lastIndexOf("/"));
       String resultUrl, imageUrl;      
       
       // use absolute path for URLs in search results
@@ -134,6 +182,14 @@ public class UnifiedSearchService implements ResourceContainer {
     }
   }
 
+  /**
+  * Get all connectors registered in the system and which are enabled
+  *
+  * @return List of connectors and names of the enabled ones (in JSON)
+  * @LevelAPI Experimental
+  *
+  * @anchor UnifiedSearchService.getRegistry
+  */    
   @GET
   @Path("/registry")
   public Response REST_getRegistry() {
@@ -145,6 +201,14 @@ public class UnifiedSearchService implements ResourceContainer {
   }
 
   
+  /**
+  * Get all available sites in the system
+  *
+  * @return List of site names in JSON
+  * @LevelAPI Experimental
+  *
+  * @anchor UnifiedSearchService.getSites
+  */  
   @GET
   @Path("/sites")
   public Response REST_getSites() {
@@ -156,7 +220,7 @@ public class UnifiedSearchService implements ResourceContainer {
     }
   }
 
-  
+    
   @SuppressWarnings("unchecked")
   private SearchSetting getSearchSetting() {
     try {
@@ -172,6 +236,14 @@ public class UnifiedSearchService implements ResourceContainer {
     }
   }
 
+  /**
+  * Get current user's setting for Search portlet
+  *
+  * @return Search setting of the current logging in (or anonymous) user
+  * @LevelAPI Experimental
+  *
+  * @anchor UnifiedSearchService.getSearchSetting
+  */    
   @GET
   @Path("/setting")
   public Response REST_getSearchSetting() {
@@ -179,9 +251,17 @@ public class UnifiedSearchService implements ResourceContainer {
     return Response.ok(userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   }
   
+  /**
+  * Save current user's setting for Search portlet
+  *
+  * @return "ok" when succeed
+  * @LevelAPI Experimental
+  *
+  * @anchor UnifiedSearchService.setSearchSetting
+  */    
   @POST
-  @Path("/setting")
-  public Response REST_setSearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @FormParam("hideSearchForm") boolean hideSearchForm, @FormParam("hideFacetsFilter") boolean hideFacetsFilter) {
+  @Path("/setting/{resultsPerPage}/{searchTypes}/{searchCurrentSiteOnly}/{hideSearchForm}/{hideFacetsFilter}")
+  public Response REST_setSearchSetting(@PathParam("resultsPerPage") long resultsPerPage, @PathParam("searchTypes") String searchTypes, @PathParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @PathParam("hideSearchForm") boolean hideSearchForm, @PathParam("hideFacetsFilter") boolean hideFacetsFilter) {
     settingService.set(Context.USER, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));
     settingService.set(Context.USER, Scope.WINDOWS, "searchTypes", new SettingValue<String>(searchTypes));
     settingService.set(Context.USER, Scope.WINDOWS, "searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
@@ -205,15 +285,31 @@ public class UnifiedSearchService implements ResourceContainer {
     }
   }
 
+  /**
+  * Get current user's setting for Quick search portlet
+  *
+  * @return Quick search setting of the current logging in user
+  * @LevelAPI Experimental
+  *
+  * @anchor UnifiedSearchService.getQuicksearchSetting
+  */    
   @GET
   @Path("/setting/quicksearch")
   public Response REST_getQuicksearchSetting() {
     return Response.ok(getQuickSearchSetting(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   }
   
+  /**
+  * Save current user's setting for Quick search portlet
+  *
+  * @return "ok" when succeed
+  * @LevelAPI Experimental
+  *
+  * @anchor UnifiedSearchService.setQuicksearchSetting
+  */    
   @POST
-  @Path("/setting/quicksearch")
-  public Response REST_setQuicksearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly) {
+  @Path("/setting/quicksearch/{resultsPerPage}/{searchTypes}/{searchCurrentSiteOnly}")
+  public Response REST_setQuicksearchSetting(@PathParam("resultsPerPage") long resultsPerPage, @PathParam("searchTypes") String searchTypes, @PathParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly) {
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchTypes", new SettingValue<String>(searchTypes));
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
@@ -223,7 +319,7 @@ public class UnifiedSearchService implements ResourceContainer {
   
   @SuppressWarnings("unchecked")
   public static List<String> getEnabledSearchTypes(){
-    SettingService settingService = (SettingServiceImpl)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingServiceImpl.class);
+    SettingService settingService = (SettingService)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SettingService.class);
     SettingValue<String> enabledSearchTypes = (SettingValue<String>) settingService.get(Context.GLOBAL, Scope.APPLICATION, "enabledSearchTypes");
     if(null!=enabledSearchTypes) return Arrays.asList(enabledSearchTypes.getValue().split(",\\s*"));
 
@@ -235,11 +331,22 @@ public class UnifiedSearchService implements ResourceContainer {
     return allSearchTypes;      
   }
   
+  /**
+  * Set "enabledSearchTypes" global variable
+  *
+  * @param searchTypes List of search types in the form of a comma-separated string
+  *
+  * @return Success if the caller's role is administrator, Failure otherwise
+  * @LevelAPI Experimental
+  *
+  * @anchor UnifiedSearchService.setEnabledSearchtypes
+  */
   @POST
-  @Path("/enabled-searchtypes")
-  public Response REST_setEnabledSearchtypes(@FormParam("searchTypes") String searchTypes) {
-    Collection<String> roles = ConversationState.getCurrent().getIdentity().getRoles();    
-    if(!roles.isEmpty() && roles.contains("administrators")) {//only administrators can set this
+  @Path("/enabled-searchtypes/{searchTypes}")
+  public Response REST_setEnabledSearchtypes(@PathParam("searchTypes") String searchTypes) {
+    UserACL userAcl = (UserACL)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(UserACL.class);
+    
+    if(ConversationState.getCurrent().getIdentity().isMemberOf(userAcl.getAdminGroups())) {//only administrators can set this
       settingService.set(Context.GLOBAL, Scope.APPLICATION, "enabledSearchTypes", new SettingValue<String>(searchTypes));      
       return Response.ok("ok", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
     }

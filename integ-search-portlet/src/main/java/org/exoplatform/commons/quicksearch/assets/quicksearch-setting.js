@@ -32,7 +32,7 @@ function initQuickSearchSetting(allMsg,alertOk,alertNotOk){
 
     // Call REST service to save the setting
     $("#btnSave").click(function(){
-      var jqxhr = $.post("/rest/search/setting/quicksearch", {
+      var jqxhr = $.post("/rest/search/setting/quicksearch/"+$("#resultsPerPage").val()+"/"+getSelectedTypes()+"/"+$("#searchCurrentSiteOnly").is(":checked"), {
         resultsPerPage: $("#resultsPerPage").val(),
         searchTypes: getSelectedTypes(),
         searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked")

@@ -19,6 +19,7 @@ package org.exoplatform.forum.ext.activity;
 import java.util.Map;
 
 import org.exoplatform.commons.utils.PropertyChangeSupport;
+import org.exoplatform.forum.common.UserHelper;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.log.ExoLogger;
@@ -740,7 +741,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         ExoSocialActivity newComment = processComment(ctx);
         
         //
-        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        String currentUser = UserHelper.getCurrentUser();
+        Identity poster = ForumActivityUtils.getIdentity(currentUser);
         newComment.setUserId(poster.getId());
         
         //
@@ -855,24 +857,33 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
   
   protected Identity getOwnerStream(ForumActivityContext ctx) {
     Identity ownerStream = null;
-    ForumService fs = ForumActivityUtils.getForumService();
-    
+
     Topic topic = ctx.getTopic();
     Identity userIdentity = ForumActivityUtils.getIdentity(topic.getOwner());
     
     try {
 
       //if (ForumActivityUtils.isTopicPublic(topic)) {
-      if (ForumActivityUtils.hasSpace(topic.getForumId())) {
+      String[] tab = topic.getPath().split("/");
+      String forumId = tab[tab.length-2];
+      if (ForumActivityUtils.hasSpace(forumId)) {
         // publish the activity in the space stream.
-        ownerStream = ForumActivityUtils.getSpaceIdentity(topic.getForumId());
+        ownerStream = ForumActivityUtils.getSpaceIdentity(forumId);
       }
-      if (ownerStream == null
+      
+      //For issue FORUM-284: a forum with restricted permission is not public forum
+      //but we allow user to create an activity if he creates a topic in this forum
+      
+      /*if (ownerStream == null
           && ForumActivityUtils.isCategoryPublic(fs.getCategory(topic.getCategoryId()))
           && ForumActivityUtils.isForumPublic(fs.getForum(topic.getCategoryId(), topic.getForumId()))) {
         ownerStream = userIdentity;
-       }
-       return ownerStream;
+       }*/
+      
+      if (ownerStream == null) {
+        ownerStream = userIdentity;
+      }
+      return ownerStream;
     } catch (Exception e) { // ForumService
       LOG.error("Can not get OwnerStream for topic " + ctx.getTopic().getId(), e);
     }
