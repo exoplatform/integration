@@ -283,7 +283,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         ExoSocialActivity newComment = processComment(ctx);
         
         //
-        Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getModifiedBy());
+        Identity poster = ForumActivityUtils.getIdentity(UserHelper.getCurrentUser());
         newComment.setUserId(poster.getId());
         
         //

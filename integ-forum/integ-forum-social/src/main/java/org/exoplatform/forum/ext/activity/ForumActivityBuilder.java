@@ -110,6 +110,7 @@ public class ForumActivityBuilder {
   }
   
   public static String getFourFirstLines(String str) {
+    str = CommonUtils.decodeSpecialCharToHTMLnumber(str);
     return getNumberFirstLines(str.replaceAll("&nbsp;", ""), 4);
   }
   
