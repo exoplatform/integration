@@ -30,6 +30,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
@@ -152,8 +153,10 @@ public class UnifiedSearchService implements ResourceContainer {
       SearchSetting searchSetting = isAnonymous ? anonymousSearchSetting : getSearchSetting();
       
       List<String> sites = Arrays.asList(sSites.split(",\\s*"));      
-      if(sites.contains("all")) sites = userPortalConfigService.getAllPortalNames();      
+      if(sites.contains("all")) sites = userPortalConfigService.getAllPortalNames(); 
+      
       List<String> types = isAnonymous||null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
+      
       int offset = Integer.parseInt(sOffset);
       int limit = isAnonymous||null==sLimit||sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
 
@@ -225,7 +228,7 @@ public class UnifiedSearchService implements ResourceContainer {
   private SearchSetting getSearchSetting() {
     try {
       Long resultsPerPage = ((SettingValue<Long>)settingService.get(Context.USER, Scope.WINDOWS, "resultsPerPage")).getValue();
-      String searchTypes = ((SettingValue<String>) settingService.get(Context.USER, Scope.WINDOWS, "searchTypes")).getValue();
+      String searchTypes = ((SettingValue<String>) settingService.get(Context.USER, Scope.WINDOWS, "searchTypes")).getValue();      
       Boolean searchCurrentSiteOnly = ((SettingValue<Boolean>) settingService.get(Context.USER, Scope.WINDOWS, "searchCurrentSiteOnly")).getValue();
       Boolean hideSearchForm = ((SettingValue<Boolean>) settingService.get(Context.USER, Scope.WINDOWS, "hideSearchForm")).getValue();
       Boolean hideFacetsFilter = ((SettingValue<Boolean>) settingService.get(Context.USER, Scope.WINDOWS, "hideFacetsFilter")).getValue();
@@ -260,9 +263,9 @@ public class UnifiedSearchService implements ResourceContainer {
   * @anchor UnifiedSearchService.setSearchSetting
   */    
   @POST
-  @Path("/setting/{resultsPerPage}/{searchTypes}/{searchCurrentSiteOnly}/{hideSearchForm}/{hideFacetsFilter}")
-  public Response REST_setSearchSetting(@PathParam("resultsPerPage") long resultsPerPage, @PathParam("searchTypes") String searchTypes, @PathParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @PathParam("hideSearchForm") boolean hideSearchForm, @PathParam("hideFacetsFilter") boolean hideFacetsFilter) {
-    settingService.set(Context.USER, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));
+  @Path("/setting")
+  public Response REST_setSearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @FormParam("hideSearchForm") boolean hideSearchForm, @FormParam("hideFacetsFilter") boolean hideFacetsFilter) {
+    settingService.set(Context.USER, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));    
     settingService.set(Context.USER, Scope.WINDOWS, "searchTypes", new SettingValue<String>(searchTypes));
     settingService.set(Context.USER, Scope.WINDOWS, "searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
     settingService.set(Context.USER, Scope.WINDOWS, "hideSearchForm", new SettingValue<Boolean>(hideSearchForm));
@@ -308,9 +311,9 @@ public class UnifiedSearchService implements ResourceContainer {
   * @anchor UnifiedSearchService.setQuicksearchSetting
   */    
   @POST
-  @Path("/setting/quicksearch/{resultsPerPage}/{searchTypes}/{searchCurrentSiteOnly}")
-  public Response REST_setQuicksearchSetting(@PathParam("resultsPerPage") long resultsPerPage, @PathParam("searchTypes") String searchTypes, @PathParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly) {
-    settingService.set(Context.GLOBAL, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));
+  @Path("/setting/quicksearch")
+  public Response REST_setQuicksearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly) {
+    settingService.set(Context.GLOBAL, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));    
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchTypes", new SettingValue<String>(searchTypes));
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
     return Response.ok("ok", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();

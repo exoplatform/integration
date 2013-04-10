@@ -25,6 +25,9 @@ function initQuickSearchSetting(allMsg,alertOk,alertNotOk){
         $.each($(":checkbox[name='searchInOption'][value!='all']:checked"), function(){
           searchIn.push(this.value);
         });
+        if (searchIn.length==0){
+        	return "false";
+        }
         return searchIn.join(",");
       }
     }
@@ -32,7 +35,7 @@ function initQuickSearchSetting(allMsg,alertOk,alertNotOk){
 
     // Call REST service to save the setting
     $("#btnSave").click(function(){
-      var jqxhr = $.post("/rest/search/setting/quicksearch/"+$("#resultsPerPage").val()+"/"+getSelectedTypes()+"/"+$("#searchCurrentSiteOnly").is(":checked"), {
+      var jqxhr = $.post("/rest/search/setting/quicksearch", {
         resultsPerPage: $("#resultsPerPage").val(),
         searchTypes: getSelectedTypes(),
         searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked")
