@@ -24,6 +24,9 @@ function initSearchSetting(allMsg,alertOk,alertNotOk){
         $.each($(":checkbox[name='searchInOption'][value!='all']:checked"), function(){
           searchIn.push(this.value);
         });
+        if (searchIn.length==0){
+        	return "false";
+        }
         return searchIn.join(",");
       }
     }
@@ -31,8 +34,8 @@ function initSearchSetting(allMsg,alertOk,alertNotOk){
 
     // Call REST service to save the setting
     $("#btnSave").click(function(){
-      var url = "/rest/search/setting/"+$("#resultsPerPage").val()+"/"+getSelectedTypes()+"/"+$("#searchCurrentSiteOnly").is(":checked").toString()+"/"+$("#hideSearchForm").is(":checked").toString()+"/"+$("#hideFacetsFilter").is(":checked").toString();      
-      var jqxhr = $.post(url, {
+      //var url = "/rest/search/setting/"+$("#resultsPerPage").val()+"/"+getSelectedTypes()+"/"+$("#searchCurrentSiteOnly").is(":checked").toString()+"/"+$("#hideSearchForm").is(":checked").toString()+"/"+$("#hideFacetsFilter").is(":checked").toString();      
+      var jqxhr = $.post("/rest/search/setting", {
         resultsPerPage: $("#resultsPerPage").val(),
         searchTypes: getSelectedTypes(),
         searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked"),
