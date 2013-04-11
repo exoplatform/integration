@@ -249,9 +249,9 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     });
 
     // set th boolean variable isAlt to false  when Alt is released
-    document.onkeyup = function (e) {
+    $(document).keyup(function (e) {
       if (e.which == 18) isAlt = false;
-    }
+    });
 
     // show the input search field and place the control in it if Alt + Space are pressed
     $(document).keydown(function (e) {
