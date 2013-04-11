@@ -27,7 +27,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     ";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \
 
     var QUICKSEARCH_TABLE_TEMPLATE=" \
-          <table class='uiGrid table  table-hover table-striped  rounded-corners'> \
+          <table class='uiGrid table table-striped  rounded-corners'> \
             <col width='30%'> \
             <col width='70%'> \
             %{resultRows} \

@@ -1,6 +1,5 @@
 @import "variables.less";
 @import "mixins.less";
-
 .uiQuickSearchResult {
   position: absolute;
   background: white;
@@ -21,16 +20,11 @@
     tbody {
       tr td,
       tr th {
-        padding: 0 10px;
+        padding: 0;
       }
-      tr:hover td,
-      tr:hover th {
-        #gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 15%));
-        color: white;
-        border-color: #8ba6d5;
-      }
-      tr:hover td a {
-        color: white;
+      tr td:first-child,
+      tr th:first-child {
+      	padding: 0 5px;
       }
     }
 
@@ -70,14 +64,15 @@
   }
 
   .quickSearchResult {
-    margin: 5px 0;
+    padding: 5px 10px 7px;
+    display: block;	
     .avatar {
       display: inline-block;
-      .square(20px);
+      .square(24px);
       vertical-align: top;
       overflow: hidden;
       img {
-        .square(20px);
+        .square(24px);
       }
     }
     .name {
@@ -85,8 +80,17 @@
       margin-left: 5px;
       max-width: 145px;
       .text-overflow();
+      vertical-align: middle;
     }
   }
+  
+  .quickSearchResult:hover {
+	    #gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 15%));
+	    border-color: #8ba6d5;
+	    a {
+	    	color: white;
+	    }
+	  }
 
 }
 
