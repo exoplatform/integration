@@ -259,16 +259,16 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     });
 
     // set th boolean variable isAlt to false  when Alt is released
-    document.onkeyup = function (e) {
+    $(document).keyup(function (e) {
       if (e.which == 18) isAlt = false;
-    }
+    });
     
     // catch ennter key when search is running
-    document.onkeyup = function (e) {
+    $(document).keyup(function (e) {
       if (e.keyCode == 13 && window['isSearching']) {
     	  $(seeAll_id).click(); //go to main search page if Enter is pressed
       }
-    }    
+    });
 
     // show the input search field and place the control in it if Alt + Space are pressed
     $(document).keydown(function (e) {
