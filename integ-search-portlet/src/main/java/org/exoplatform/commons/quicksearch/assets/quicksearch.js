@@ -16,6 +16,8 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     var isAlt = false;
     var value = $(txtQuickSearchQuery_id).val();
     var isDefault = false;
+    var isEnterKey = false;
+    window['isSearching'] = false;
 
     var QUICKSEARCH_RESULT_TEMPLATE= " \
       <div class='quickSearchResult %{type}'> \
@@ -124,12 +126,16 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     }
 
     function setWaitingStatus(status) {
-    	if (status){        		    	
+    	if (status){
+    		window['isSearching'] = true;
             $(quickSearchResult_id).html(QUICKSEARCH_WAITING_TEMPLATE);
             var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
             $(quickSearchResult_id).width(width);
-            $(quickSearchResult_id).show();
+            $(quickSearchResult_id).show();            
+    	}else {
+    		window['isSearching'] = false;    		
     	}
+    	
     }
 
     function quickSearch() {
@@ -149,7 +155,9 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         sort: "relevancy",
         order: "desc"
       };
-
+      
+      
+      
       // get results of all search types in a map
       $.getJSON("/rest/search", searchParams, function(resultMap){
         var rows = []; //one row per type
@@ -166,14 +174,17 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
             rows.push(row);
           }
         });
-        setWaitingStatus(false);
+                        
         var messageRow = rows.length==0 ? QUICKSEARCH_NO_RESULT.replace(/%{query}/, query) : QUICKSEARCH_SEE_ALL;
         $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
         var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
         $(quickSearchResult_id).width(width);
         $(quickSearchResult_id).show();
+        
+        setWaitingStatus(false);
+        
         var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
-        $(seeAll_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page
+        $(seeAll_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page               
       });
     }
 
@@ -249,9 +260,16 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     });
 
     // set th boolean variable isAlt to false  when Alt is released
-    $(document).keyup(function (e) {
+    document.onkeyup = function (e) {
       if (e.which == 18) isAlt = false;
-    });
+    }
+    
+    // catch ennter key when search is running
+    document.onkeyup = function (e) {
+      if (e.keyCode == 13 && window['isSearching']) {
+    	  $(seeAll_id).click(); //go to main search page if Enter is pressed
+      }
+    }    
 
     // show the input search field and place the control in it if Alt + Space are pressed
     $(document).keydown(function (e) {
@@ -269,14 +287,15 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         $(txtQuickSearchQuery_id).val(value);
         $(txtQuickSearchQuery_id).css('color', '#555');
         isDefault = true;
-        $(txtQuickSearchQuery_id).show();
+        $(txtQuickSearchQuery_id).show();       
       }
       else
       if (isDefault == true) {
           $(txtQuickSearchQuery_id).hide();
       }
-      else
-        $(seeAll_id).click(); //go to main search page if Enter is pressed
+      else{
+        $(seeAll_id).click(); //go to main search page if Enter is pressed        
+      }
     });
 
     $(txtQuickSearchQuery_id).focus(function(){
