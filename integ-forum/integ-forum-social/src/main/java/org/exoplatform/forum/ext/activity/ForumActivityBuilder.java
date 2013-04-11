@@ -216,6 +216,19 @@ public class ForumActivityBuilder {
     return activity;
   }
   
+  public static ExoSocialActivity updateNumberOfReplies(ExoSocialActivity activity, boolean isDelete) {
+    //
+    Map<String, String> templateParams = activity.getTemplateParams();
+    int nbReplies = Integer.parseInt(templateParams.get(TOPIC_POST_COUNT_KEY));
+    if (isDelete == true) {
+      templateParams.put(TOPIC_POST_COUNT_KEY, "" + (nbReplies - 1));
+    } else {
+      templateParams.put(TOPIC_POST_COUNT_KEY, "" + (nbReplies + 1));
+    }
+    activity.setTemplateParams(templateParams);
+    return activity;
+  }
+  
   public static ExoSocialActivity updateVoteRate(Topic topic, ExoSocialActivity activity) {
     //
     Map<String, String> templateParams = activity.getTemplateParams();

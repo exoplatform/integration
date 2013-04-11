@@ -274,8 +274,8 @@
 						 </a>
 					</li> 
 					<li>
-						<a href="${uicomponent.getViewLink()}" id="View${activity.id}">
-						   <i class="uiIconSocLastestReply uiIconSocLightGray"></i>&nbsp;<%= _ctx.appRes("ForumUIActivity.label.view") %>
+						<a href="${uicomponent.getLastReplyLink()}" id="View${activity.id}">
+						   <i class="uiIconSocLastestReply uiIconSocLightGray"></i>&nbsp;<%= _ctx.appRes("ForumUIActivity.label.lastReply") %>
 						 </a>
 					</li>							
 				 </ul>

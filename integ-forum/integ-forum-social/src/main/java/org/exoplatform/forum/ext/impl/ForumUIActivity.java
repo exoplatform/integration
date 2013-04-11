@@ -281,10 +281,7 @@ public class ForumUIActivity extends BaseKSActivity {
 
       //
       ExoSocialActivity activity = getActivity();
-      Map<String, String> templateParams = activity.getTemplateParams();
-      templateParams.put(ForumActivityBuilder.TOPIC_POST_COUNT_KEY, String.valueOf(topic.getPostCount() + 1));
-
-      activity.setTemplateParams(templateParams);
+      activity = ForumActivityBuilder.updateNumberOfReplies(activity, false);
       ForumActivityUtils.updateActivities(activity);
 
       return post;

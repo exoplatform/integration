@@ -210,6 +210,11 @@ public class ForumActivityUtils {
    */
   public static void removeComment(String activityId, String commentId) {
     ActivityManager am = getActivityManager();
+    ExoSocialActivity activity = am.getActivity(activityId);
+    if (activity == null)
+      return;
+    activity = ForumActivityBuilder.updateNumberOfReplies(activity, true);
+    am.updateActivity(activity);
     am.deleteComment(activityId, commentId);
   }
 
