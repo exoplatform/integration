@@ -62,6 +62,7 @@ public abstract class AbstractActivityTypeTest extends TestCase {
   protected Topic closeTopic() {
     Topic topic = createdTopic("demo");
     topic.setEditedIsClosed(true);
+    topic.setIsActiveByForum(false);
     return topic;
   }
   
