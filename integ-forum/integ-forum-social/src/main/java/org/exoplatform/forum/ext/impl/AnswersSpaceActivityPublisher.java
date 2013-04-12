@@ -224,6 +224,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Question question = faqS.getQuestionById(questionId);
       String message = CommonUtils.decodeSpecialCharToHTMLnumber(cm.getComments());
+      message = ForumActivityBuilder.getFourFirstLines(message);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, cm.getCommentBy(), false);
       String activityId = faqS.getActivityIdForQuestion(questionId);
       if (activityId != null) {
@@ -237,7 +238,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             ExoSocialActivityImpl oldComment = (ExoSocialActivityImpl) activityM.getActivity(commentActivityId);
             if (oldComment != null) {
               comment = oldComment;
-              comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(message, (List<String>) Collections.EMPTY_LIST)));
+              comment.setTitle(message);
               activityM.updateActivity(comment);
             } else {
               commentActivityId = null;
@@ -245,7 +246,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           }
           if (commentActivityId == null) { //create new activity's comment
             comment.setTemplateParams(commentTemplateParams);
-            comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(message, (List<String>) Collections.EMPTY_LIST)));
+            comment.setTitle(message);
             comment.setUserId(userIdentity.getId());
             Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
             activity.setTemplateParams(activityTemplateParams);
@@ -267,7 +268,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         comment.setUserId(userIdentity.getId());
         Map<String, String> commentTemplateParams = new HashMap<String, String>();
         commentTemplateParams.put(LINK_KEY, cm.getId());
-        comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(message, (List<String>) Collections.EMPTY_LIST)));
+        comment.setTitle(message);
         comment.setTemplateParams(commentTemplateParams);
         activityM.saveComment(activity, comment);
       }
