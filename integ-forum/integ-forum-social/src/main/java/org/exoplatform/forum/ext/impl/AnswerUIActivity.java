@@ -196,7 +196,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       Comment comment = new Comment();
       comment.setNew(true);
       comment.setCommentBy(context.getRemoteUser());
-      comment.setComments(CommonUtils.decodeSpecialCharToHTMLnumber(message));
+      comment.setComments(ForumActivityBuilder.decodeHTMLInput(message));
       comment.setFullName(getFullName(context.getRemoteUser()));
       comment.setDateComment(new Date());
       // add new corresponding post to forum.

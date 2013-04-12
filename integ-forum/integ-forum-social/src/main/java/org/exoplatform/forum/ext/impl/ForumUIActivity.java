@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.ext.activity.ForumActivityContext;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
@@ -305,9 +306,10 @@ public class ForumUIActivity extends BaseKSActivity {
       uiFormComment.reset();
       
       //
-      Post post = uiActivity.createPost(message, requestContext);
+      Post post = uiActivity.createPost(ForumActivityBuilder.decodeHTMLInput(message), requestContext);
 
       //
+      post.setMessage(message);
       uiActivity.saveComment(post);
 
       uiActivity.setCommentFormFocused(true);
@@ -325,7 +327,7 @@ public class ForumUIActivity extends BaseKSActivity {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
     comment.setUserId(org.exoplatform.social.webui.Utils.getViewerIdentity().getId());
-    comment.setTitle(ForumActivityBuilder.getFourFirstLines(post.getMessage()));
+    comment.setTitle(post.getMessage());
     comment.setBody(post.getMessage());
     org.exoplatform.social.webui.Utils.getActivityManager().saveComment(getActivity(), comment);
     //

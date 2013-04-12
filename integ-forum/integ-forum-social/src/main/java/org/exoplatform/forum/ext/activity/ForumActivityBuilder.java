@@ -109,6 +109,17 @@ public class ForumActivityBuilder {
     return activity;
   }
   
+  public static String decodeHTMLInput(String message) {
+    message = CommonUtils.decodeSpecialCharToHTMLnumber(message);
+    String[] tab = TransformHTML.getPlainText(message).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
+    StringBuilder sb = new StringBuilder();
+    for (int i=0; i<tab.length; i++) {
+      sb.append(StringEscapeUtils.unescapeHtml(tab[i]));
+      sb.append("<br/>");
+    }
+    return sb.toString();
+  }
+  
   public static String getFourFirstLines(String str) {
     str = CommonUtils.decodeSpecialCharToHTMLnumber(str);
     return getNumberFirstLines(str.replaceAll("&nbsp;", ""), 4);
