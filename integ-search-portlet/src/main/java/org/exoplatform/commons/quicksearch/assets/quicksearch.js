@@ -161,10 +161,11 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       // get results of all search types in a map
       $.getJSON("/rest/search", searchParams, function(resultMap){
         var rows = []; //one row per type
-        $.each(SEARCH_TYPES, function(i, searchType){
+        $.each(SEARCH_TYPES, function(i, searchType){          
           var results = resultMap[searchType]; //get all results of this type
-          if(results && 0!=$(results).size()) { //show the type with result only
-            results.map(function(result){result.type = searchType;}); //assign type for each result
+          if(results && 0!=$(results).size()) { //show the type with result only        	 
+            //results.map(function(result){result.type = searchType;}); //assign type for each result
+            $.map(results, function(result){result.type = searchType;}); //assign type for each result
             var cell = []; //the cell contains results of this type (in the quick search result table)
             $.each(results, function(i, result){
               cell.push(renderQuickSearchResult(result)); //add this result to the cell

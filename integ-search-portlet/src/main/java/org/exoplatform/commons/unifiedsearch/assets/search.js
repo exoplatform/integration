@@ -327,7 +327,8 @@ function initSearch() {
       $.getJSON("/rest/search", searchParams, function(resultMap){
         RESULT_CACHE = [];
         $.each(resultMap, function(searchType, results){
-          results.map(function(result){result.type = searchType;});
+          //results.map(function(result){result.type = searchType;});
+          $.map(results, function(result){result.type = searchType;});
           RESULT_CACHE.push.apply(RESULT_CACHE, results);
         });
 
