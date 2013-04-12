@@ -245,7 +245,7 @@
 				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 					 def commentLink = "";
 				  %>
-				 <% if (activityCommentAndLikable) { %>						 
+				 <% if (! activity.isLocked()) { %>						 
 					<ul class="pull-right statusAction">						
 						<li>
 							<a class="$commentLink"  id="CommentLink${activity.id}" href="javascript:void(0);">
@@ -267,12 +267,14 @@
 					  <% }%>											 
 					</ul>  
 				 <% }%>	
-				<ul class="pull-left statusAction">					 
+				<ul class="pull-left statusAction">				
+				  <% if (! activity.isLocked()) { %>	 
 					<li>
 						<a href="${uicomponent.getReplyLink()}" id="ReplyLink${activity.id}">
 						   <i class="uiIconReply uiIconLightGray"></i>&nbsp;<%= _ctx.appRes("ForumUIActivity.label.reply")%>
 						 </a>
 					</li> 
+					<% } %>
 					<li>
 						<a href="${uicomponent.getLastReplyLink()}" id="View${activity.id}">
 						   <i class="uiIconSocLastestReply uiIconSocLightGray"></i>&nbsp;<%= _ctx.appRes("ForumUIActivity.label.lastReply") %>

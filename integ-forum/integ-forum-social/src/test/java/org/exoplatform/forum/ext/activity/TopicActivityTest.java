@@ -358,5 +358,58 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     assertEquals(false, a.isHidden());
   }
   
+  public void testLockTopicWhenLockForum() throws Exception {
+    Topic topic = lockTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATUS_LOCK, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    TopicActivityTask task = TopicActivityTask.UPDATE_FORUM_TOPIC;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertEquals(true, a.isLocked());
+    
+    //Unlock forum
+    topic = unlockTopic();
+    assertEquals(Topic.TOPIC_STATUS_LOCK, topic.getChangeEvent()[0].getPropertyName());
+    
+    ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    task = TopicActivityTask.UPDATE_FORUM_TOPIC;
+    a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    a = task.processActivity(ctx, a);
+    assertEquals(false, a.isLocked());
+  }
+  
+  public void testCloseTopicWhenCloseForum() throws Exception {
+    Topic topic = closeTopic();
+    assertEquals(1, topic.getChangeEvent().length);
+    assertEquals(Topic.TOPIC_STATE_CLOSED, topic.getChangeEvent()[0].getPropertyName());
+    
+    ForumActivityContext ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    TopicActivityTask task = TopicActivityTask.UPDATE_FORUM_TOPIC;
+    ExoSocialActivity a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    //activity
+    a = task.processActivity(ctx, a);
+    assertEquals(true, a.isLocked());
+    
+    //Open forum
+    topic = openTopic();
+    assertEquals(Topic.TOPIC_STATE_CLOSED, topic.getChangeEvent()[0].getPropertyName());
+    
+    ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
+    
+    task = TopicActivityTask.UPDATE_FORUM_TOPIC;
+    a = ForumActivityBuilder.createActivity(topic, ctx);
+    
+    a = task.processActivity(ctx, a);
+    assertEquals(false, a.isLocked());
+  }
   
 }

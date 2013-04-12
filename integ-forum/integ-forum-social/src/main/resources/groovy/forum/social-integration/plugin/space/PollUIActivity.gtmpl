@@ -248,7 +248,7 @@
 			 <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 						 def commentLink = "";
 					  %> 
-			 <% if (activityCommentAndLikable) { %>					 
+			 <% if (! activity.isLocked()) { %>					 
 			<ul class="pull-right statusAction">
 				<li>
 					<a class="$commentLink"  id="CommentLink${activity.id}" href="javascript:void(0);">

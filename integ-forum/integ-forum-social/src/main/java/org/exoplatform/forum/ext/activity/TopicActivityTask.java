@@ -848,6 +848,40 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     }
   };
   
+  public static TopicActivityTask UPDATE_FORUM_TOPIC = new TopicActivityTask() {
+    @Override
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return activity;
+    }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      Topic topic = ctx.getTopic();
+      if (! topic.getIsActiveByForum() || topic.getIsLock())
+        activity.isLocked(true);
+      else
+        activity.isLocked(false);
+      return activity;
+    }
+
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
+
+        a = processActivity(ctx, a);
+        am.updateActivity(a);
+        
+        return a;
+      } catch (Exception e) {
+        LOG.error("Can not record Activity for when add topic's title " + ctx.getTopic().getId(), e);
+      }
+      return null;
+    }
+    
+  };
+  
   @Override
   public void start(ForumActivityContext ctx) {}
   

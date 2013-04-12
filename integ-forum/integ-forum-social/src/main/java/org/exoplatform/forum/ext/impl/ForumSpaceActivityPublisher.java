@@ -17,6 +17,7 @@
 package org.exoplatform.forum.ext.impl;
 
 import java.beans.PropertyChangeEvent;
+import java.util.List;
 
 import org.exoplatform.commons.utils.PropertyChangeSupport;
 import org.exoplatform.forum.ext.activity.ActivityExecutor;
@@ -121,6 +122,16 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
     for (int i = 0; i < events.length; i++) {
       task = getTaskFromUpdateTopic(events[i]);
       ActivityExecutor.execute(task, ctx);
+    }
+  }
+  
+  @Override
+  public void updateTopics(List<Topic> topics, boolean isLock) {
+    for (Topic topic : topics) {
+      topic.setIsLock(isLock);
+      ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);
+      TopicActivityTask task = TopicActivityTask.UPDATE_FORUM_TOPIC;
+      ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
     }
   }
   
