@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.user.CommonContact;
 import org.exoplatform.forum.common.user.ContactProvider;
 import org.exoplatform.forum.common.user.DefaultContactProvider;
@@ -43,6 +44,11 @@ public class SocialContactProvider implements ContactProvider {
   @SuppressWarnings("unchecked")
   @Override
   public CommonContact getCommonContact(String userId) {
+    
+    OrganizationService orgService = (OrganizationService) ExoContainerContext.getCurrentContainer()
+                                                                              .getComponentInstanceOfType(OrganizationService.class);
+    CommonContact defaultContact = new DefaultContactProvider(orgService).getCommonContact(userId);
+    
     CommonContact contact = null;
     IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer()
                                                                      .getComponentInstanceOfType(IdentityManager.class);
@@ -86,14 +92,22 @@ public class SocialContactProvider implements ContactProvider {
         } else {
           contact.setWebSite(LinkProvider.getProfileUri(userId));
         }
+        if (CommonUtils.isEmpty(contact.getBirthday()))
+          contact.setBirthday(defaultContact.getBirthday());
+        if (CommonUtils.isEmpty(contact.getCountry()))
+          contact.setCountry(defaultContact.getCountry());
+        if (CommonUtils.isEmpty(contact.getCity()))
+          contact.setCity(defaultContact.getCity());
+        if (CommonUtils.isEmpty(contact.getHomePhone()))
+          contact.setHomePhone(defaultContact.getHomePhone());
+        if (CommonUtils.isEmpty(contact.getWorkPhone()))
+          contact.setWorkPhone(defaultContact.getWorkPhone());
       }
     }
     if (contact == null) {
       LOG.warn(String.format("Could not retrieve forum user profile for %s by SocialContactProvider, DefaultContactProvider will be used.",
                              userId));
-      OrganizationService orgService = (OrganizationService) ExoContainerContext.getCurrentContainer()
-                                                                                .getComponentInstanceOfType(OrganizationService.class);
-      contact = new DefaultContactProvider(orgService).getCommonContact(userId);
+      return defaultContact;
     }
     return contact;
   }
