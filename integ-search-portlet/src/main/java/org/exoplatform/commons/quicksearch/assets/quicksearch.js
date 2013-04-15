@@ -134,7 +134,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
             $(quickSearchResult_id).show();            
     	}else {
     		window['isSearching'] = false;    		
-    	}
+    	}    	    
     	
     }
 
@@ -181,6 +181,13 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         $(quickSearchResult_id).width(width);
         $(quickSearchResult_id).show();
         
+        // catch ennter key when search is running
+        $(document).keyup(function (e) {
+          if (e.keyCode == 13 && window['isSearching']) {    	  
+        	  $(linkQuickSearchQuery_id).click(); //go to main search page if Enter is pressed
+          }
+        });        
+        
         setWaitingStatus(false);
         
         var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
@@ -188,7 +195,6 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       });
     }
 
-    
 
     function renderQuickSearchResult(result) {
       var query = $(txtQuickSearchQuery_id).val();
@@ -260,16 +266,9 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     });
 
     // set th boolean variable isAlt to false  when Alt is released
-    document.onkeyup = function (e) {
+    $(document).keyup(function (e) {
       if (e.which == 18) isAlt = false;
-    }
-    
-    // catch ennter key when search is running
-    document.onkeyup = function (e) {
-      if (e.keyCode == 13 && window['isSearching']) {
-    	  $(seeAll_id).click(); //go to main search page if Enter is pressed
-      }
-    }    
+    });
 
     // show the input search field and place the control in it if Alt + Space are pressed
     $(document).keydown(function (e) {
@@ -293,10 +292,35 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       if (isDefault == true) {
           $(txtQuickSearchQuery_id).hide();
       }
-      else{
-        $(seeAll_id).click(); //go to main search page if Enter is pressed        
+      else {
+    	  //alert(window['isSearching']);
+    	  if(!window['isSearching']) {      
+    		  $(seeAll_id).click(); //go to main search page if Enter is pressed
+    	  }else if (window['isSearching']){    	  	 
+    	  $(txtQuickSearchQuery_id).hide();
+          
+          var query = $(txtQuickSearchQuery_id).val();
+          var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
+
+          var searchParams = {
+            searchContext: {
+              siteName:parent.eXo.env.portal.portalName
+            },
+            q: query,
+            sites: QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all",
+            types: types,
+            offset: 0,
+            limit: QUICKSEARCH_SETTING.resultsPerPage,
+            sort: "relevancy",
+            order: "desc"
+          };
+          
+          var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
+          $(linkQuickSearchQuery_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page
+          window['isSearching'] = false;
+    	  }
       }
-    });
+    });       
 
     $(txtQuickSearchQuery_id).focus(function(){
       $(this).val('');
