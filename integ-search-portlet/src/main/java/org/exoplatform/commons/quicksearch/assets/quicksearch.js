@@ -179,14 +179,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
         var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
         $(quickSearchResult_id).width(width);
-        $(quickSearchResult_id).show();
-        
-        // catch ennter key when search is running
-        $(document).keyup(function (e) {
-          if (e.keyCode == 13 && window['isSearching']) {    	  
-        	  $(linkQuickSearchQuery_id).click(); //go to main search page if Enter is pressed
-          }
-        });        
+        $(quickSearchResult_id).show();              
         
         setWaitingStatus(false);
         
@@ -270,6 +263,13 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       if (e.which == 18) isAlt = false;
     });
         
+    // catch ennter key when search is running
+    $(document).keyup(function (e) {
+      if (e.keyCode == 13 && window['isSearching']) {
+    	  $(quickSearchResult_id).focus();
+    	  $(linkQuickSearchQuery_id).click(); //go to main search page if Enter is pressed
+      }
+    });     
 
     // show the input search field and place the control in it if Alt + Space are pressed
     $(document).keydown(function (e) {
@@ -314,8 +314,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
             limit: QUICKSEARCH_SETTING.resultsPerPage,
             sort: "relevancy",
             order: "desc"
-          };
-          
+          };          
           var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
           $(linkQuickSearchQuery_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page
           window['isSearching'] = false;
