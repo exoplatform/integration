@@ -1,57 +1,57 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>Taille du fichier</fileSize>
     </titles>
     <messages>
       <createdBy>a été créé par</createdBy>
-      <editedBy>a été édité par</editedBy>
+      <editedBy>a été modifié par</editedBy>
       <system>le système</system>
       <readmore>...Lire la suite.</readmore>
       <editTitle>Le titre a été mis à jour: {0}</editTitle>
       <editName>Le nom a été mis à jour: {0}</editName>
       <editDescription>La description a été mise à jour: {0}</editDescription>
-      <singleCreator>Le créateur est {0}</singleCreator>
-      <multiCreator>Les Créateurs sont {0}</multiCreator>
+      <singleCreator>L'auteur est {0}</singleCreator>
+      <multiCreator>Les auteurs sont {0}</multiCreator>
+      <addSource>La source : {0} a été ajoutée</addSource>
+      <addMultiSource>Les sources: {0} ont été ajoutées</addMultiSource>
+      <removeSource>La source: {0} a été supprimée</removeSource>
+      <removeMultiSource>Les sources: {0} ont été supprimées</removeMultiSource>
+      <editSummary>Le sommaire a été mis à jour: {0}</editSummary>
+      <editLanguage>Le language a été mis à jour: {0}</editLanguage>
+      <editContent>Le contenu a été modifié.</editContent>
+      <editFile>Le fichier a été modifié.</editFile>
       <emptyTitle> Le titre a été supprimé.</emptyTitle>
       <emptySummary>Le sommaire a été supprimé.</emptySummary>
       <emptyContent>Le contenu a été supprimé.</emptyContent>
-      <addSource>File source: {0} has been added</addSource>
-      <addMultiSource>File sources: {0} have been added</addMultiSource>
-      <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>File sources have been removed</removeMultiSource>
-      <updateMetadata>La Metadonnée {0} a été mis à jour par: {1}</updateMetadata>
-      <removeMetadata>La Metadonnée {0} a été supprimée.</removeMetadata>
-      <removeName>Le titre a été supprimé.</removeName>
+      <updateMetadata>{0} a été mis à jour par: {1}</updateMetadata>
+      <removeMetadata>{0} a été supprimé.</removeMetadata>  
       <removeTitle>Le nom a été supprimé.</removeTitle>
+      <removeName>Le titre a été supprimé.</removeName>
       <removeSummary>Le sommaire a été supprimé.</removeSummary>
       <removeDescription>La description a été supprimé.</removeDescription>
-      <removeCreator>Creator: {0} has been removed.</removeCreator>
-      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
+      <removeCreator>L'auteur: {0} a été supprimé.</removeCreator>
+      <removeMultiCreator>Les auteurs: {0} ont été supprimés.</removeMultiCreator>
+      <removeLanguage>La langue a été supprimée.</removeLanguage>
       <removeContent>Le contenu a été supprimé.</removeContent>
-      <removeLanguage>Un language a été supprimé.</removeLanguage>
-      <editSummary>Le sommaire a été mis à jour: {0}</editSummary>
-      <editLanguage>Le language a été mis à jour: {0}</editLanguage>
-      <editContent>Le contenu a été mis à jour.</editContent>
-      <editFile>File has been updated.</editFile>
       <attachmentAdded>Des fichiers ont été attachés.</attachmentAdded>
       <attachmentRemoved>Des fichiers on été supprimés.</attachmentRemoved>
       <categoryAdded>La catégorie: {0} a été ajoutée.</categoryAdded>
       <categoryRemoved>La catégorie: {0} a été supprimée.</categoryRemoved>
-      <tagAdded>Tag: {0} a été ajouté.</tagAdded>
-      <tagsAdded>Tags: {0} ont été ajoutés.</tagsAdded>
-      <tagRemoved>Tag: {0} a été supprimé.</tagRemoved>
-      <tagsRemoved>Tags: {0} ont été supprimés.</tagsRemoved>
+      <tagAdded>Le tag: {0} a été ajouté.</tagAdded>
+      <tagsAdded>Les tags: {0} ont été ajoutés.</tagsAdded>
+      <tagRemoved>Le tag: {0} a été supprimé.</tagRemoved>
+      <tagsRemoved>Les tags: {0} ont été supprimés.</tagsRemoved>
       <stateChange>
-        <pending>La publication est maintenant en attente.</pending>
+        <pending>Prêt pour être publié.</pending>
         <approved>La publication a été approuvée.</approved>
         <staged>La publication est prête.</staged>
-        <published>La publication est publiée.</published>
+        <published>Le document est publié.</published>
       </stateChange>
-      <contentMoved>La publication a été déplacé: {0}</contentMoved>
+      <contentMoved>Le document est en attente de publication</contentMoved>
       <fileMoved>Le fichier a été déplacé: {0}</fileMoved>
-      <revisionChanged>La publication a été restauré à la version: {0}</revisionChanged>
+      <revisionChanged>Le document a été restauré à la version: {0}</revisionChanged>
       <version>Version: {0}</version>
     </messages>
     <publicationStates>
@@ -66,8 +66,8 @@
       <published>Publié</published>
       <live>Publié</live>
     </publicationStates>
-    <view>View</view>
-    <edit>Edit</edit>
+    <view>Voir</view>
+    <edit>Modifier</edit>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -77,7 +77,7 @@
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Resource Type</resourceType>        
+        <resourceType>Type de Ressource</resourceType>        
       </label>
     </dialog>
   </ElementSet>
