@@ -45,11 +45,11 @@
       <tagsRemoved>Les tags: {0} ont été supprimés.</tagsRemoved>
       <stateChange>
         <pending>Prêt pour être publié.</pending>
-        <approved>La publication a été approuvée.</approved>
+        <approved>Le document est validé.</approved>
         <staged>La publication est prête.</staged>
         <published>Le document est publié.</published>
       </stateChange>
-      <contentMoved>Le document est en attente de publication</contentMoved>
+      <contentMoved>Le document a été déplacé ici : {0}</contentMoved>
       <fileMoved>Le fichier a été déplacé: {0}</fileMoved>
       <revisionChanged>Le document a été restauré à la version: {0}</revisionChanged>
       <version>Version: {0}</version>
@@ -60,9 +60,9 @@
       <unpublished>Non Publié</unpublished>
       <draft>Brouillon</draft>
       <pending>En attente</pending>
-      <approved>Approuvé</approved>
+      <approved>Validé</approved>
       <inreview>En revue</inreview>
-      <staged>Prêt à publier</staged>
+      <staged>Prêt à Publier</staged>
       <published>Publié</published>
       <live>Publié</live>
     </publicationStates>
