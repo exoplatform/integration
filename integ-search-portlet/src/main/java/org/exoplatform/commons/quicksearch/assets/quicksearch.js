@@ -12,12 +12,25 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     var txtQuickSearchQuery_id = "#adminkeyword-" + portletId;
     var linkQuickSearchQuery_id = "#adminSearchLink-" + portletId;
     var quickSearchResult_id = "#quickSearchResult-" + portletId;
+    var quicksearchForm = "#quicksearch-" + portletId;
     var seeAll_id = "#seeAll-" + portletId;
     var isAlt = false;
     var value = $(txtQuickSearchQuery_id).val();
     var isDefault = false;
     var isEnterKey = false;
     window['isSearching'] = false;
+    var durationKeyup = 0;
+    var firstKeyup = 0;
+    var nextKeyup = 0;
+    var skipKeyup = 0;
+    var numberOfSearching = 0;
+    //var skipKeyUp = [9,16,17,18,19,20,33,34,35,36,37,38,39,40,45,49];
+    
+    var mapKeyUp = {"0":"48","1":"49","2":"50","3":"51","4":"52","5":"53","6":"54","7":"55","8":"56","9":"57",
+    		"a":"65","b":"66","c":"67","d":"68","e":"69","f":"70","g":"71","h":"72","i":"73","j":"74",
+    		"k":"75","l":"76","m":"77","n":"78","o":"79","p":"80","q":"81","r":"82","s":"83","t":"84",
+    		"u":"85","v":"86","w":"87","x":"88","y":"89","z":"90","numpad 0":"96","numpad 1":"97","numpad 2":"98",
+    		"numpad 3":"99","numpad 4":"100","numpad 5":"101","numpad 6":"102","numpad 7":"103"};
 
     var QUICKSEARCH_RESULT_TEMPLATE= " \
       <div class='quickSearchResult %{type}'> \
@@ -254,10 +267,10 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       if(13==e.keyCode) {
         $(seeAll_id).click(); //go to main search page if Enter is pressed
       } else {
-        quickSearch(); //search for the text just being typed in
+          quickSearch(); //search for the text just being typed in
       }
     });
-
+    
     // set th boolean variable isAlt to false  when Alt is released
     $(document).keyup(function (e) {
       if (e.which == 18) isAlt = false;
@@ -265,9 +278,11 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         
     // catch ennter key when search is running
     $(document).keyup(function (e) {
-      if (e.keyCode == 13 && window['isSearching']) {
-    	  $(quickSearchResult_id).focus();
-    	  $(linkQuickSearchQuery_id).click(); //go to main search page if Enter is pressed
+      if (e.keyCode == 13 && window['isSearching'] && !$(txtQuickSearchQuery_id).is(':hidden') ) {
+    	  //$(quickSearchResult_id).focus();
+          isDefault = false;
+          $(linkQuickSearchQuery_id).trigger('click');    	  
+    	  //$(linkQuickSearchQuery_id).click(); //go to main search page if Enter is pressed
       }
     });     
 
@@ -298,26 +313,25 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     	  if(!window['isSearching']) {      
     		  $(seeAll_id).click(); //go to main search page if Enter is pressed
     	  }else if (window['isSearching']){    	  	 
-    	  $(txtQuickSearchQuery_id).hide();
           
-          var query = $(txtQuickSearchQuery_id).val();
-          var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
-
-          var searchParams = {
-            searchContext: {
-              siteName:parent.eXo.env.portal.portalName
-            },
-            q: query,
-            sites: QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all",
-            types: types,
-            offset: 0,
-            limit: QUICKSEARCH_SETTING.resultsPerPage,
-            sort: "relevancy",
-            order: "desc"
-          };          
-          var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
-          $(linkQuickSearchQuery_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page
-          window['isSearching'] = false;
+	          var query = $(txtQuickSearchQuery_id).val();
+	          var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
+	
+	          var searchParams = {
+	            searchContext: {
+	              siteName:parent.eXo.env.portal.portalName
+	            },
+	            q: query,
+	            sites: QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all",
+	            types: types,
+	            offset: 0,
+	            limit: QUICKSEARCH_SETTING.resultsPerPage,
+	            sort: "relevancy",
+	            order: "desc"
+	          };          
+	          var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
+	          $(linkQuickSearchQuery_id).attr("onclick","window.location.href='"+searchPage +"?q="+query+"&types="+types+"'");
+	          window['isSearching'] = false;
     	  }
       }
     });       
