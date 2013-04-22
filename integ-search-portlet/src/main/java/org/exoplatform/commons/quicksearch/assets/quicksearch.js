@@ -12,7 +12,6 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     var txtQuickSearchQuery_id = "#adminkeyword-" + portletId;
     var linkQuickSearchQuery_id = "#adminSearchLink-" + portletId;
     var quickSearchResult_id = "#quickSearchResult-" + portletId;
-    var quicksearchForm = "#quicksearch-" + portletId;
     var seeAll_id = "#seeAll-" + portletId;
     var isAlt = false;
     var value = $(txtQuickSearchQuery_id).val();
@@ -267,7 +266,28 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       if(13==e.keyCode) {
         $(seeAll_id).click(); //go to main search page if Enter is pressed
       } else {
-          quickSearch(); //search for the text just being typed in
+          //quickSearch(); //search for the text just being typed in
+    	  $.each(mapKeyUp, function(key, value){
+	    	  if (value == e.keyCode){
+	    		var query = $(txtQuickSearchQuery_id).val();
+	    		nextKeyup = new Date().getTime();	    
+	    		
+		    	if (query.length <= 2)
+		      	{
+		    		quickSearch(); //search for the text just being typed in
+		      	}else if (nextKeyup - firstKeyup >= 1000){
+			    		firstKeyup = nextKeyup;	    		
+			    		quickSearch(); //search for the text just being typed in	    		
+			    }else skipKeyup ++;
+		    	
+	 		    if (skipKeyup == 2)
+			    {
+				   skipKeyup = 0;
+				   quickSearch();
+				   firstKeyup = nextKeyup;
+				}
+	    	  }    	 
+    	  });    	      	  
       }
     });
     
