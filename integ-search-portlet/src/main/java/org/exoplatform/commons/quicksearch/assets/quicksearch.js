@@ -275,9 +275,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     $(document).keyup(function (e) {
       if (e.which == 18) isAlt = false;
     });
-<<<<<<< HEAD
-=======
-        
+
     // catch ennter key when search is running
     $(document).keyup(function (e) {
       if (e.keyCode == 13 && window['isSearching'] && !$(txtQuickSearchQuery_id).is(':hidden') ) {
@@ -287,7 +285,6 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     	  //$(linkQuickSearchQuery_id).click(); //go to main search page if Enter is pressed
       }
     });     
->>>>>>> 4a93f3a... PLF-4821: QuickSearch blocker for to access Search page, fix bug
 
     // show the input search field and place the control in it if Alt + Space are pressed
     $(document).keydown(function (e) {
