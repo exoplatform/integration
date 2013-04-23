@@ -205,10 +205,15 @@
 				<div class="uiBox roundedBottom introBox ">	
 					<div class="clearfix headingContainer">
 						<div class="pull-right uiVote">
-              <div class="avgRatingImages sumaryRate">
-                <%
+						  <%
                  int rateInt = (Integer) uicomponent.getRating();
                  double diff = uicomponent.getRating() - rateInt;
+                 String labelRating = _ctx.appRes("ActivityRating.title.rank${rateInt}");
+                 if (rateInt == 0)
+                   labelRating = _ctx.appRes("ActivityRating.title.NotRateYet");
+              %>
+              <div class="avgRatingImages sumaryRate" rel="tooltip" data-placement="bottom" title="$labelRating">
+                <%
                  for (int i = 1; i<=5; i++) {
                    if (i <= rateInt) { %>
                      <i class="voted"></i>
