@@ -35,6 +35,7 @@ import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
+import org.exoplatform.social.webui.composer.PopupContainer;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -153,23 +154,19 @@ public class UIDocActivity extends BaseUIActivity {
     public void execute(Event<UIDocActivity> event) throws Exception {
       final UIDocActivity docActivity = event.getSource();
       final UIActivitiesContainer activitiesContainer = docActivity.getParent();
-      final UIPopupWindow popupWindow = activitiesContainer.getPopupWindow();
+      final PopupContainer popupContainer = activitiesContainer.getPopupContainer();
 
       if (docActivity.getChild(UIDocViewer.class) != null) {
         docActivity.removeChild(UIDocViewer.class);
       }
       
-      UIDocViewer docViewer = popupWindow.createUIComponent(UIDocViewer.class, null, "DocViewer");
+      UIDocViewer docViewer = popupContainer.createUIComponent(UIDocViewer.class, null, "DocViewer");
       docViewer.docPath = docActivity.docPath;
       docViewer.repository = docActivity.repository;
       docViewer.workspace = docActivity.workspace;
 
-      popupWindow.setUIComponent(docViewer);
-      popupWindow.setWindowSize(800, 600);
-      popupWindow.setShow(true);
-      popupWindow.setResizable(true);
-
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupWindow);
+      popupContainer.activate(docViewer, 800, 600, true);
+      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
     }
   }
   
