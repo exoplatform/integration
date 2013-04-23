@@ -9,7 +9,6 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.DataStorage;
 import org.exoplatform.faq.service.Question;
-import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.service.ForumService;
@@ -262,6 +261,8 @@ public class AnswerUIActivity extends BaseKSActivity {
       question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
       templateParams.put(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS, String.valueOf(question.getComments().length));
       activity.setTemplateParams(templateParams);
+      activity.setBody(null);
+      activity.setTitle(null);
       activityM.updateActivity(activity);
       
       Map<String, String> commentTemplateParams = new HashMap<String, String>();

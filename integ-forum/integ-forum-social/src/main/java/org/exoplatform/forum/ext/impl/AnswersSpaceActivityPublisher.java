@@ -33,7 +33,6 @@ import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
-import org.exoplatform.forum.ext.activity.ForumActivityUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -140,6 +139,13 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     return comment;
   }
   
+  private void updateActivity(ExoSocialActivity activity, Question question) {
+    Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+    activity.setTemplateParams(activityTemplateParams);
+    activity.setBody(null);
+    activity.setTitle(null);
+  }
+  
   @Override
   public void saveAnswer(String questionId, Answer answer, boolean isNew) {
     try {
@@ -169,8 +175,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
               faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
               
               //update question activity content
-              Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
-              activity.setTemplateParams(activityTemplateParams);
+              updateActivity(activity, question);
               activityM.updateActivity(activity);
             } else {
               //update answer
@@ -183,8 +188,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             comment.setTitle("Answer has been submitted: " + answerContent);
             I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
             
-            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
-            activity.setTemplateParams(activityTemplateParams);
+            updateActivity(activity, question);
             activityM.updateActivity(activity);
             
             updateCommentTemplateParms(comment, answer.getId());
@@ -248,8 +252,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             comment.setTemplateParams(commentTemplateParams);
             comment.setTitle(message);
             comment.setUserId(userIdentity.getId());
-            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
-            activity.setTemplateParams(activityTemplateParams);
+            updateActivity(activity, question);
             activityM.updateActivity(activity);
             activityM.saveComment(activity, comment);
             faqS.saveActivityIdForComment(questionId, cm.getId(), language, comment.getId());
@@ -503,8 +506,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       Question question = faqS.getQuestionById(questionId);
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       ExoSocialActivity activity = activityM.getActivity(questionActivityId);
-      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
-      activity.setTemplateParams(templateParams);
+      updateActivity(activity, question);
       activityM.updateActivity(activity);
     } catch (Exception e) {
       LOG.debug("Fail to refresh activity "+e.getMessage());
