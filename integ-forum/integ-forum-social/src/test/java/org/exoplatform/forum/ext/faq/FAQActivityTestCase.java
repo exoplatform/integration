@@ -88,6 +88,8 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     String activityId = faqService_.getActivityIdForQuestion(question.getCategoryPath() + "/" + question.getId());
     ExoSocialActivity activity = getManager().getActivity(activityId);
     assertEquals(question.getQuestion(), activity.getTitle());
+    List<ExoSocialActivity> comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
+    assertEquals(0, comments.size());
     
     //update question's title
     question = faqService_.getQuestionById(question.getId());
@@ -95,13 +97,32 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     faqService_.saveQuestion(question, false, faqSetting_);
     activity = getManager().getActivity(activityId);
     assertEquals("&-*()", activity.getTitle());
+    comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
+    assertEquals("Title has been updated to: &-*()", comments.get(0).getTitle());
     
     //update question's title
     question.setQuestion("&-*() / --- == coucou #@");
     faqService_.saveQuestion(question, false, faqSetting_);
     activity = getManager().getActivity(activityId);
     assertEquals("&-*() / --- == coucou #@", activity.getTitle());
+    comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
+    assertEquals("Title has been updated to: &-*() / --- == coucou #@", comments.get(1).getTitle());
+    
+    //update question with bbcode
+    question.setDetail("[url=https://jira.exoplatform.org/browse/INTEG-166]&-*() / --- == coucou #@[/url]");
+    faqService_.saveQuestion(question, false, faqSetting_);
+    activity = getManager().getActivity(activityId);
+    assertEquals("&-*() / --- == coucou #@", activity.getTitle());
+    comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
+    assertEquals("Details has been edited to: <a target=\"_blank\" href=\"https://jira.exoplatform.org/browse/INTEG-166\">&-*() / --- == coucou #@</a>", comments.get(2).getTitle());
 
+    question.setDetail("<strong>&-*() /</strong> and [B]@$#$%[/B]");
+    faqService_.saveQuestion(question, false, faqSetting_);
+    activity = getManager().getActivity(activityId);
+    assertEquals("&-*() / --- == coucou #@", activity.getTitle());
+    comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
+    assertEquals("Details has been edited to: <strong>&-*() /</strong> and <strong>@$#$%</strong>", comments.get(3).getTitle());
+    
     String questionPath = question.getCategoryPath()+ "/" + Utils.QUESTION_HOME + "/" + question.getId();
     //delete question will delete the activity
     faqService_.removeQuestion(questionPath);

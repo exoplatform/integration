@@ -37,6 +37,11 @@
   <component>
     <key>org.exoplatform.faq.service.FAQService</key>
     <type>org.exoplatform.faq.service.impl.FAQServiceImpl</type>
+  </component>
+  
+  <component>
+    <key>org.exoplatform.forum.rendering.MarkupRenderingService</key>
+    <type>org.exoplatform.forum.rendering.MarkupRenderingService</type>
   </component>    
   
   <component>
@@ -67,6 +72,27 @@
     <key>org.exoplatform.services.jdbc.DataSourceProvider</key>
     <type>org.exoplatform.services.jdbc.impl.DataSourceProviderImpl</type>
   </component>
+  
+  <external-component-plugins>
+    <target-component>org.exoplatform.forum.rendering.MarkupRenderingService</target-component>
+    <component-plugin>
+     <name>BBCodeRenderer</name>
+     <set-method>registerRenderer</set-method>
+     <type>org.exoplatform.forum.rendering.spi.RendererPlugin</type>
+     <description>BBCode renderer</description>
+     <init-params>
+       <object-param>
+        <name>renderer</name>
+        <description>Extended BBCodeRenderer</description>
+        <object type="org.exoplatform.forum.bbcode.core.BBCodeRenderer">
+          <field name="bbCodeProvider">
+            <object type="org.exoplatform.forum.bbcode.core.BuiltinBBCodeProvider"/>
+          </field>
+        </object>
+       </object-param>
+     </init-params>
+    </component-plugin>
+  </external-component-plugins>
 
   <external-component-plugins>
     <target-component>org.exoplatform.services.jcr.RepositoryService</target-component>

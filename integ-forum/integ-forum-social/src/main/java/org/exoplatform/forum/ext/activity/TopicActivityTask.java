@@ -19,8 +19,8 @@ package org.exoplatform.forum.ext.activity;
 import java.util.Map;
 
 import org.exoplatform.commons.utils.PropertyChangeSupport;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.UserHelper;
-import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -129,7 +129,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.setTitle(ctx.getTopic().getTopicName());
+      activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(ctx.getTopic().getTopicName()));
       activity.setBody(ctx.getTopic().getDescription());
       
       return activity;
@@ -174,7 +174,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.setTitle(ctx.getTopic().getTopicName());
+      activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(ctx.getTopic().getTopicName()));
       //processTitle(ctx, activity);
 
       return activity;
@@ -218,7 +218,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.setBody(ForumActivityBuilder.getFourFirstLines(ctx.getTopic().getDescription()));
+      activity.setBody(ctx.getTopic().getDescription());
       //processTitle(ctx, activity);
       return activity;
     };

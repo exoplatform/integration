@@ -56,6 +56,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void addPost(Post post) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     PostActivityTask task = PostActivityTask.ADD_POST;
+    ctx = ForumActivityUtils.processBBCode(ctx);
     ExoSocialActivity comment = ActivityExecutor.execute(task, ctx);
     
     //
@@ -66,6 +67,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void updatePost(Post post) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
     PostActivityTask task = PostActivityTask.UPDATE_POST;
+    ctx = ForumActivityUtils.processBBCode(ctx);
     ActivityExecutor.execute(task, ctx);
   }
 
@@ -103,6 +105,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void addTopic(Topic topic) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);
     TopicActivityTask task = TopicActivityTask.ADD_TOPIC;
+    ctx = ForumActivityUtils.processBBCode(ctx);
     ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
     
     //
@@ -120,7 +123,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
     PropertyChangeEvent[] events = topic.getChangeEvent();
     
     for (int i = 0; i < events.length; i++) {
-      task = getTaskFromUpdateTopic(events[i]);
+      task = getTaskFromUpdateTopic(events[i], ctx);
       ActivityExecutor.execute(task, ctx);
     }
   }
@@ -154,6 +157,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
       
       //1. executes task
       TopicActivityTask task = TopicActivityTask.UPDATE_TOPIC_PROPERTIES;
+      ctx = ForumActivityUtils.processBBCode(ctx);
       ActivityExecutor.execute(task, ctx);
       //2. remove events
       pcs.removePropertyChange(Topic.TOPIC_NAME);
@@ -202,12 +206,13 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
     ForumActivityUtils.removeComment(activityId, commentId);
   }
   
-  private TopicActivityTask getTaskFromUpdateTopic(PropertyChangeEvent event) {
+  private TopicActivityTask getTaskFromUpdateTopic(PropertyChangeEvent event, ForumActivityContext ctx) {
     TopicActivityTask got = null;
     if (Topic.TOPIC_NAME.equals(event.getPropertyName())) {
       got = TopicActivityTask.UPDATE_TOPIC_TITLE;
     } else if (Topic.TOPIC_CONTENT.equals(event.getPropertyName())) {
       got = TopicActivityTask.UPDATE_TOPIC_CONTENT;
+      ctx = ForumActivityUtils.processBBCode(ctx);
     } else if (Topic.TOPIC_RATING.equals(event.getPropertyName())) {
       got = TopicActivityTask.UPDATE_TOPIC_RATE;
     } else if (Topic.TOPIC_STATE_CLOSED.equals(event.getPropertyName())) {
