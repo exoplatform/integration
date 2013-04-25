@@ -335,7 +335,7 @@ public class FileUIActivity extends BaseUIActivity {
         	fileSize = contentNode.getProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA).getLength();
         }
       }
-    } catch(Exception ex) { }
+    } catch(Exception ex) { fileSize = 0; }
     return fileSize;    
   }
   
