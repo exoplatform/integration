@@ -13,7 +13,6 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     var linkQuickSearchQuery_id = "#adminSearchLink-" + portletId;
     var quickSearchResult_id = "#quickSearchResult-" + portletId;
     var seeAll_id = "#seeAll-" + portletId;
-    var isAlt = false;
     var value = $(txtQuickSearchQuery_id).val();
     var isDefault = false;
     var isEnterKey = false;
@@ -298,11 +297,6 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     	  });    	      	  
       }
     });
-    
-    // set th boolean variable isAlt to false  when Alt is released
-    $(document).keyup(function (e) {
-      if (e.which == 18) isAlt = false;
-    });
         
     // catch ennter key when search is running
     $(document).keyup(function (e) {
@@ -311,16 +305,6 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
           isDefault = false;
           $(linkQuickSearchQuery_id).trigger('click');    	  
     	  //$(linkQuickSearchQuery_id).click(); //go to main search page if Enter is pressed
-      }
-    });     
-
-    // show the input search field and place the control in it if Alt + Space are pressed
-    $(document).keydown(function (e) {
-      if (e.which == 18) isAlt = true;
-      if (isAlt == true && e.which == 32) {
-        $(txtQuickSearchQuery_id).show();
-        $(txtQuickSearchQuery_id).focus();
-        return false;
       }
     });
 
