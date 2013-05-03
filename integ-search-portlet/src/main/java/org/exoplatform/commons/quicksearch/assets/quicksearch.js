@@ -306,6 +306,16 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
           $(linkQuickSearchQuery_id).trigger('click');    	  
     	  //$(linkQuickSearchQuery_id).click(); //go to main search page if Enter is pressed
       }
+    });     
+
+    // show the input search field and place the control in it if Alt + Space are pressed
+    $(document).keydown(function (e) {
+      if (e.which == 18) isAlt = true;
+      if (isAlt == true && e.which == 32) {
+        $(txtQuickSearchQuery_id).show();
+        $(txtQuickSearchQuery_id).focus();
+        return false;
+      }
     });
 
     //show the input search or go to the main search page when search link is clicked
@@ -314,7 +324,8 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         $(txtQuickSearchQuery_id).val(value);
         $(txtQuickSearchQuery_id).css('color', '#555');
         isDefault = true;
-        $(txtQuickSearchQuery_id).show();       
+        $(txtQuickSearchQuery_id).show();
+        $(txtQuickSearchQuery_id).focus();
       }
       else
       if (isDefault == true) {
