@@ -94,7 +94,7 @@ public class PollSpaceActivityPublisher extends PollEventListener{
           
           //update activity's content
           activity.setBody(Utils.getInfoVote(poll));
-          activity.setTitle(poll.getQuestion());
+          activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(poll.getQuestion()));
           getManager().updateActivity(activity);
           
           if (! isVote) {

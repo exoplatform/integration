@@ -71,7 +71,7 @@
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Prévisualiser</DocViewer>
+      <DocViewer>Aperçu</DocViewer>
     </title>
   </UIPopupWindow>
   <ElementSet>

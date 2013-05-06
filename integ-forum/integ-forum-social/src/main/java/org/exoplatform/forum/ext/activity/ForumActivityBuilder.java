@@ -100,13 +100,24 @@ public class ForumActivityBuilder {
     String body = getFourFirstLines(topic.getDescription());
     
     //activity.setUserId(topic.getOwner());
-    String title = StringEscapeUtils.unescapeHtml(topic.getTopicName());
+    String title = CommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName());
     activity.setTitle(title);
     activity.setBody(body);
     activity.isComment(true);
     activity.setType(FORUM_ACTIVITY_TYPE);
 
     return activity;
+  }
+  
+  public static String decodeHTMLInput(String message) {
+    message = CommonUtils.decodeSpecialCharToHTMLnumber(message);
+    String[] tab = TransformHTML.getPlainText(message).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
+    StringBuilder sb = new StringBuilder();
+    for (int i=0; i<tab.length; i++) {
+      sb.append(StringEscapeUtils.unescapeHtml(tab[i]));
+      sb.append("<br/>");
+    }
+    return sb.toString();
   }
   
   public static String getFourFirstLines(String str) {
@@ -123,7 +134,7 @@ public class ForumActivityBuilder {
    * @return
    */
   public static String getNumberFirstLines(String content, int line) {
-    String[] tab = TransformHTML.getPlainText(content).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
+    String[] tab = TransformHTML.getPlainText(StringEscapeUtils.unescapeHtml(content)).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
     
     //
     int numberOfLine = Math.min(NUMBER_OF_LINES, tab.length);
@@ -131,7 +142,7 @@ public class ForumActivityBuilder {
     
     //
     for (int i=0; i<numberOfLine; i++) {
-      sb.append(StringEscapeUtils.unescapeHtml(tab[i]));
+      sb.append(tab[i]);
       
       //
       if(i + 1 < numberOfLine) {
@@ -213,6 +224,19 @@ public class ForumActivityBuilder {
     Map<String, String> templateParams = activity.getTemplateParams();
     
     templateParams.put(TOPIC_POST_COUNT_KEY, "" + topic.getPostCount());
+    return activity;
+  }
+  
+  public static ExoSocialActivity updateNumberOfReplies(ExoSocialActivity activity, boolean isDelete) {
+    //
+    Map<String, String> templateParams = activity.getTemplateParams();
+    int nbReplies = Integer.parseInt(templateParams.get(TOPIC_POST_COUNT_KEY));
+    if (isDelete == true) {
+      templateParams.put(TOPIC_POST_COUNT_KEY, "" + (nbReplies - 1));
+    } else {
+      templateParams.put(TOPIC_POST_COUNT_KEY, "" + (nbReplies + 1));
+    }
+    activity.setTemplateParams(templateParams);
     return activity;
   }
   

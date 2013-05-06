@@ -123,7 +123,9 @@ public class ForumActivityContext {
     return ctx;
   }
   
-  
+  public void setPost(Post post) {
+    this.post = post;
+  }
 
   public void setTopic(Topic topic) {
     this.topic = topic;

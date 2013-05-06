@@ -154,8 +154,30 @@ public class ForumActivityUtils {
       
     }
     
+    //title and body of activity may contain specials characters and when we get activity, the special character will be encoded
+    //To avoid activity use these encodes when update, we set title and body = null
+    got.setBody(null);
+    got.setTitle(null);
     
     return got;
+  }
+  
+  public static ForumActivityContext processBBCode(ForumActivityContext ctx) {
+    Topic topic = ctx.getTopic();
+    Post post = ctx.getPost();
+    if (topic != null) {
+      String description = topic.getDescription();
+      description = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumber(description));
+      topic.setDescription(ForumActivityBuilder.getFourFirstLines(description));
+      ctx.setTopic(topic);
+    }
+    if (post != null) {
+      String message = post.getMessage();
+      message = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumber(message));
+      post.setMessage(ForumActivityBuilder.getFourFirstLines(message));
+      ctx.setPost(post);
+    }
+    return ctx;
   }
   
   /**
@@ -210,9 +232,14 @@ public class ForumActivityUtils {
    */
   public static void removeComment(String activityId, String commentId) {
     ActivityManager am = getActivityManager();
+    ExoSocialActivity activity = am.getActivity(activityId);
+    if (activity == null)
+      return;
+    activity = ForumActivityBuilder.updateNumberOfReplies(activity, true);
+    am.updateActivity(activity);
     am.deleteComment(activityId, commentId);
   }
-
+  
   public static void updateActivities(ExoSocialActivity activity) {
     ActivityManager am = getActivityManager();
     am.updateActivity(activity);

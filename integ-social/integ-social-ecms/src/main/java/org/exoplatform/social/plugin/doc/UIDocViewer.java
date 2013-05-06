@@ -106,6 +106,7 @@ public class UIDocViewer extends UIBaseNodePresentation {
   }
 
   public String getTemplate() {
+  	if(getDocNode() == null) return null;
     TemplateService templateService = getApplicationComponent(TemplateService.class);
     String userName = Util.getPortalRequestContext().getRemoteUser() ;
     try {

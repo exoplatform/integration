@@ -12,9 +12,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     var txtQuickSearchQuery_id = "#adminkeyword-" + portletId;
     var linkQuickSearchQuery_id = "#adminSearchLink-" + portletId;
     var quickSearchResult_id = "#quickSearchResult-" + portletId;
-    var quicksearchForm = "#quicksearch-" + portletId;
     var seeAll_id = "#seeAll-" + portletId;
-    var isAlt = false;
     var value = $(txtQuickSearchQuery_id).val();
     var isDefault = false;
     var isEnterKey = false;
@@ -142,9 +140,13 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     	if (status){
     		window['isSearching'] = true;
             $(quickSearchResult_id).html(QUICKSEARCH_WAITING_TEMPLATE);
-            var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
-            $(quickSearchResult_id).width(width);
-            $(quickSearchResult_id).show();            
+            if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
+            	$(quickSearchResult_id).show();              
+            }else{
+            	var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
+            	$(quickSearchResult_id).width(width);
+            	$(quickSearchResult_id).show();                      	
+            }            
     	}else {
     		window['isSearching'] = false;    		
     	}    	    
@@ -190,9 +192,13 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
                         
         var messageRow = rows.length==0 ? QUICKSEARCH_NO_RESULT.replace(/%{query}/, query) : QUICKSEARCH_SEE_ALL;
         $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
-        var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
-        $(quickSearchResult_id).width(width);
-        $(quickSearchResult_id).show();              
+        if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
+        	$(quickSearchResult_id).show();              
+        }else{
+        	var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
+        	$(quickSearchResult_id).width(width);
+        	$(quickSearchResult_id).show();                      	
+        }              
         
         setWaitingStatus(false);
         
@@ -267,15 +273,31 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       if(13==e.keyCode) {
         $(seeAll_id).click(); //go to main search page if Enter is pressed
       } else {
-          quickSearch(); //search for the text just being typed in
+          //quickSearch(); //search for the text just being typed in
+    	  $.each(mapKeyUp, function(key, value){
+	    	  if (value == e.keyCode){
+	    		var query = $(txtQuickSearchQuery_id).val();
+	    		nextKeyup = new Date().getTime();	    
+	    		
+		    	if (query.length <= 2)
+		      	{
+		    		quickSearch(); //search for the text just being typed in
+		      	}else if (nextKeyup - firstKeyup >= 1000){
+			    		firstKeyup = nextKeyup;	    		
+			    		quickSearch(); //search for the text just being typed in	    		
+			    }else skipKeyup ++;
+		    	
+	 		    if (skipKeyup == 2)
+			    {
+				   skipKeyup = 0;
+				   quickSearch();
+				   firstKeyup = nextKeyup;
+				}
+	    	  }    	 
+    	  });    	      	  
       }
     });
-    
-    // set th boolean variable isAlt to false  when Alt is released
-    $(document).keyup(function (e) {
-      if (e.which == 18) isAlt = false;
-    });
-
+        
     // catch ennter key when search is running
     $(document).keyup(function (e) {
       if (e.keyCode == 13 && window['isSearching'] && !$(txtQuickSearchQuery_id).is(':hidden') ) {
@@ -302,7 +324,8 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         $(txtQuickSearchQuery_id).val(value);
         $(txtQuickSearchQuery_id).css('color', '#555');
         isDefault = true;
-        $(txtQuickSearchQuery_id).show();       
+        $(txtQuickSearchQuery_id).show();
+        $(txtQuickSearchQuery_id).focus();
       }
       else
       if (isDefault == true) {

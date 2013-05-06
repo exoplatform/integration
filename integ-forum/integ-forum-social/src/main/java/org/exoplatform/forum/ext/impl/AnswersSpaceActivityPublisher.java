@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Answer;
@@ -33,7 +32,6 @@ import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
 import org.exoplatform.forum.common.CommonUtils;
-import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -141,6 +139,13 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     return comment;
   }
   
+  private void updateActivity(ExoSocialActivity activity, Question question) {
+    Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+    activity.setTemplateParams(activityTemplateParams);
+    activity.setBody(null);
+    activity.setTitle(null);
+  }
+  
   @Override
   public void saveAnswer(String questionId, Answer answer, boolean isNew) {
     try {
@@ -151,13 +156,17 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       Question question = faqS.getQuestionById(questionId);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,answer.getResponseBy(),false);
       String activityId = faqS.getActivityIdForQuestion(questionId);
+      
+      //
+      String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
+      answerContent = CommonUtils.processBBCode(answerContent);
+      
       if (activityId != null) {
         try {
           ExoSocialActivity activity = activityM.getActivity(activityId);
           ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
           
           if (!comment.getTitle().equals("")) { //Case update answer or promote comment to answer
-            String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
             String promotedAnswer = "Comment "+answerContent+" has been promoted as an answer";
             if (promotedAnswer.equals(comment.getTitle())) {
               //promote a comment to an answer
@@ -166,8 +175,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
               faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());
               
               //update question activity content
-              Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
-              activity.setTemplateParams(activityTemplateParams);
+              updateActivity(activity, question);
               activityM.updateActivity(activity);
             } else {
               //update answer
@@ -177,13 +185,10 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             }
           } else {
             //Case submit new answer
-            String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
-            comment.setTitle("Answer has been submitted: "+answerContent);
+            comment.setTitle("Answer has been submitted: " + answerContent);
             I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
             
-            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
-            activity.setTemplateParams(activityTemplateParams);
-            activity.setBody(ForumActivityBuilder.getFourFirstLines(question.getDetail()));
+            updateActivity(activity, question);
             activityM.updateActivity(activity);
             
             updateCommentTemplateParms(comment, answer.getId());
@@ -203,7 +208,6 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         ExoSocialActivity activity = activityM.getActivity(newActivityId);
         ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
         if (comment.getTitle().equals("")) {
-          String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
           comment.setTitle("Answer has been submitted: " + answerContent);
           I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
           updateCommentTemplateParms(comment, answer.getId());
@@ -223,7 +227,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Question question = faqS.getQuestionById(questionId);
-      String message = CommonUtils.decodeSpecialCharToHTMLnumber(cm.getComments());
+      String message = ForumActivityBuilder.getFourFirstLines(cm.getComments());
+      message = CommonUtils.processBBCode(message);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, cm.getCommentBy(), false);
       String activityId = faqS.getActivityIdForQuestion(questionId);
       if (activityId != null) {
@@ -237,7 +242,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             ExoSocialActivityImpl oldComment = (ExoSocialActivityImpl) activityM.getActivity(commentActivityId);
             if (oldComment != null) {
               comment = oldComment;
-              comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(message, (List<String>) Collections.EMPTY_LIST)));
+              comment.setTitle(message);
               activityM.updateActivity(comment);
             } else {
               commentActivityId = null;
@@ -245,11 +250,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           }
           if (commentActivityId == null) { //create new activity's comment
             comment.setTemplateParams(commentTemplateParams);
-            comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(message, (List<String>) Collections.EMPTY_LIST)));
+            comment.setTitle(message);
             comment.setUserId(userIdentity.getId());
-            Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
-            activity.setTemplateParams(activityTemplateParams);
-            activity.setBody(ForumActivityBuilder.getFourFirstLines(question.getDetail()));
+            updateActivity(activity, question);
             activityM.updateActivity(activity);
             activityM.saveComment(activity, comment);
             faqS.saveActivityIdForComment(questionId, cm.getId(), language, comment.getId());
@@ -267,7 +270,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         comment.setUserId(userIdentity.getId());
         Map<String, String> commentTemplateParams = new HashMap<String, String>();
         commentTemplateParams.put(LINK_KEY, cm.getId());
-        comment.setTitle(StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(message, (List<String>) Collections.EMPTY_LIST)));
+        comment.setTitle(message);
         comment.setTemplateParams(commentTemplateParams);
         activityM.saveComment(activity, comment);
       }
@@ -288,6 +291,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
       String activityId = faqS.getActivityIdForQuestion(question.getId());
       
+      String questionDetail = ForumActivityBuilder.getFourFirstLines(question.getDetail());
+      questionDetail = CommonUtils.processBBCode(questionDetail);
       //in case deleted activity, if isUpdate, we will re-create new activity and add a comment associated
       boolean isUpdate = false;
       
@@ -295,8 +300,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         isUpdate = true;
         try {
           ExoSocialActivity activity = activityM.getActivity(activityId);
-          activity.setTitle(question.getQuestion());
-          activity.setBody(ForumActivityBuilder.getFourFirstLines(question.getDetail()));
+          activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion()));
+          activity.setBody(questionDetail);
           activity.setTemplateParams(templateParams);
           activityM.updateActivity(activity);
           
@@ -323,7 +328,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         if (streamOwner == null) {
           streamOwner = userIdentity;
         }
-        ExoSocialActivity activity = newActivity(userIdentity,question.getQuestion(),ForumActivityBuilder.getFourFirstLines(question.getDetail()),templateParams);
+        ExoSocialActivity activity = newActivity(userIdentity,question.getQuestion(),questionDetail,templateParams);
         activityM.saveActivityNoReturn(streamOwner, activity);
         faqS.saveActivityIdForQuestion(question.getId(),activity.getId());
         
@@ -439,12 +444,15 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private String getQuestionMessage(PropertyChangeEvent e, Question question, ExoSocialActivity comment) {
+    String questionName = CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion());
+    String questionDetail = ForumActivityBuilder.getFourFirstLines(question.getDetail());
+    questionDetail = CommonUtils.processBBCode(questionDetail);
     if ("questionName".equals(e.getPropertyName())) {
-      I18NActivityUtils.addResourceKey(comment, "question-update-title", question.getQuestion());
-      return "Title has been updated to: " + question.getQuestion();
+      I18NActivityUtils.addResourceKey(comment, "question-update-title", questionName);
+      return "Title has been updated to: " + questionName;
     } else if ("questionDetail".equals(e.getPropertyName())) {
-      I18NActivityUtils.addResourceKey(comment, "question-update-detail", ForumActivityBuilder.getFourFirstLines(question.getDetail()));
-      return "Details has been edited to: " + ForumActivityBuilder.getFourFirstLines(question.getDetail());
+      I18NActivityUtils.addResourceKey(comment, "question-update-detail", questionDetail);
+      return "Details has been edited to: " + questionDetail;
     } else if ("questionActivated".equals(e.getPropertyName())) {
       if (question.isActivated()) {
         I18NActivityUtils.addResourceKey(comment, "question-activated", null);
@@ -465,6 +473,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   
   private String getAnswerMessage(PropertyChangeEvent e, Answer answer, ExoSocialActivity comment) {
     String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
+    answerContent = CommonUtils.processBBCode(answerContent);
     if ("answerEdit".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "answer-update-content", answerContent);
       return "Answer has been edited to: " + answerContent;
@@ -497,9 +506,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       Question question = faqS.getQuestionById(questionId);
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       ExoSocialActivity activity = activityM.getActivity(questionActivityId);
-      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
-      activity.setTemplateParams(templateParams);
-      activity.setBody(ForumActivityBuilder.getFourFirstLines(question.getDetail()));
+      updateActivity(activity, question);
       activityM.updateActivity(activity);
     } catch (Exception e) {
       LOG.debug("Fail to refresh activity "+e.getMessage());

@@ -36,7 +36,8 @@
   import org.exoplatform.container.ExoContainer;
   import org.exoplatform.container.ExoContainerContext;
   import org.exoplatform.container.xml.PortalContainerInfo;
-  import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;  
+  import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
+
   //ECMS import END
 
   def pcontext = Util.getPortalRequestContext();
@@ -45,6 +46,7 @@
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
   def streamOwner = activity.getStreamOwner();
+  
 %>
 
 <% if (activity) { //process if not null
@@ -255,24 +257,24 @@
 		           	     <%
 		           	       def imageWidth = uicomponent.getImageHeight(currentNode);
 		           	       def imageHeight = uicomponent.getImageHeight(currentNode);
-		           	       if (imageHeight > imageWidth && imageHeight > 350) {
-		           	         imageWidth = (350 * imageWidth) / imageHeight;
-		           	         imageHeight = 350;
-		           	       } else if(imageWidth > imageHeight && imageWidth > 350){
-		           	         imageHeight = (350 * imageHeight) / imageWidth;
-		           	         imageWidth = 350;
-		           	       } else if(imageWidth == imageHeight && imageHeight > 350) {
-		           	         imageWidth = 350;
-		           	         imageHeight= 350;
+		           	       if (imageHeight > imageWidth && imageHeight > 300) {
+		           	         imageWidth = (300 * imageWidth) / imageHeight;
+		           	         imageHeight = 300;
+		           	       } else if(imageWidth > imageHeight && imageWidth > 300){
+		           	         imageHeight = (300 * imageHeight) / imageWidth;
+		           	         imageWidth = 300;
+		           	       } else if(imageWidth == imageHeight && imageHeight > 300) {
+		           	         imageWidth = 300;
+		           	         imageHeight= 300;
 		           	       }
 		           	       def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                   String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/"+imageWidth+"x"+imageHeight+"/" + repository + "/" + preferenceWS + encodedPath;
 		                   if(mimeType.indexOf("icon") >=0) thumbnailImage = binarySrc;           
 									   %>
-									   <a onclick="javascript:window.open('$binarySrc');" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="$activityContentTitle" /></a>
+									   <a href="$contentActivityUri" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="$activityContentTitle" /></a>
 									 </div><%
-		            } else if( mimeType.startsWith("application/pdf") || mimeType.startsWith("application/msword") || mimeType.startsWith("application/vnd.oasis.opendocument.text") || mimeType.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || mimeType.startsWith("application/rtf") ){%>
+		            } else if(org.exoplatform.services.cms.impl.Utils.isSupportThumbnailView(mimeType)){%>
 		               <div id="MediaContent${activity.id}" class="pull-left mediaContent docTypeContent">
 		                 <%
 		                   def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
@@ -316,7 +318,11 @@
 									%>
 									<%=_ctx.appRes("UIComposerDocumentExtension.label.Version"); %>&nbsp; $version -
 									<%} %>
-									<%=_ctx.appRes("SocialIntegration.titles.fileSize"); %>:&nbsp; $size
+									<%
+									if(size.length() > 0) {
+									%>
+											<%=_ctx.appRes("SocialIntegration.titles.fileSize"); %>:&nbsp; $size
+									<%}%>
 									</div>
 							</div>				
 						</div><!--end text-->
@@ -354,8 +360,8 @@
 					 <ul class="pull-left statusAction">					 
 						<li><a href="$contentActivityUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;View</a></li> <!-- hackcode-->
 						<li><a href="$downloadLink"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;Download</a></li> <!-- hackcode-->
-						<% if(editLink.length() > 0) {%>
-		          <li><a href="$editLink"><i class="uiIconEdit uiIconLightGray"></i>&nbsp;Edit</a></li><!-- hackcode-->
+						<% if(editLink != null && editLink.length() > 0) {%>
+		          <li><a href="$editLink"><i class="uiIconEdit uiIconLightGray"></i>&nbsp;Edit</a></li>
 		        <% } %>
 						
 					 </ul>

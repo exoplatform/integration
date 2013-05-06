@@ -5,16 +5,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.DataStorage;
-import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.faq.service.Question;
-import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.service.ForumService;
+import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.portal.application.PortalRequestContext;
@@ -197,7 +195,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       Comment comment = new Comment();
       comment.setNew(true);
       comment.setCommentBy(context.getRemoteUser());
-      comment.setComments(message);
+      comment.setComments(ForumActivityBuilder.decodeHTMLInput(message));
       comment.setFullName(getFullName(context.getRemoteUser()));
       comment.setDateComment(new Date());
       // add new corresponding post to forum.
@@ -255,6 +253,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       } // end adding post to forum.
 
       faqService.saveComment(question.getPath(), comment,  true);
+      comment.setComments(message);
       ExoSocialActivity cm = uiActivity.toActivity(comment);
       ActivityManager activityM = (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
       ExoSocialActivity activity = activityM.getActivity(faqService.getActivityIdForQuestion(question.getPath()));
@@ -262,6 +261,8 @@ public class AnswerUIActivity extends BaseKSActivity {
       question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
       templateParams.put(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS, String.valueOf(question.getComments().length));
       activity.setTemplateParams(templateParams);
+      activity.setBody(null);
+      activity.setTitle(null);
       activityM.updateActivity(activity);
       
       Map<String, String> commentTemplateParams = new HashMap<String, String>();
@@ -275,11 +276,6 @@ public class AnswerUIActivity extends BaseKSActivity {
       uiActivity.getParent().broadcast(event, event.getExecutionPhase());
     }
 
-  }
-  
-  private static String getNbOfComments(Question question) {
-    int numberOfComments = (question.getComments() != null) ? question.getComments().length : 0;
-    return String.valueOf(numberOfComments);
   }
   
   @Override

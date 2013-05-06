@@ -22,8 +22,6 @@ import java.util.Map;
 
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.webui.selector.UISelectable;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.BaseActivityProcessorPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
@@ -37,6 +35,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.ActivityStorageException;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
+import org.exoplatform.social.webui.composer.PopupContainer;
 import org.exoplatform.social.webui.composer.UIActivityComposer;
 import org.exoplatform.social.webui.composer.UIComposer;
 import org.exoplatform.social.webui.composer.UIComposer.PostContext;
@@ -47,8 +46,8 @@ import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
-import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.UIPopupWindow;
+import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIFormStringInput;
@@ -71,10 +70,9 @@ import org.exoplatform.webui.form.UIFormStringInput;
   }
 )
 public class UIDocActivityComposer extends UIActivityComposer implements UISelectable {
-  private static final Log LOG = ExoLogger.getLogger(UIDocActivityComposer.class);
   public static final String REPOSITORY = "repository";
   public static final String WORKSPACE = "collaboration";
-  private final String POPUP_COMPOSER = "UIPopupComposer";
+  private final static String POPUP_COMPOSER = "UIPopupComposer";
   private final String docActivityTitle = "Shared a document <a href=\"${"+ UIDocActivity.DOCLINK +"}\">" +
           "${" +UIDocActivity.DOCNAME +"}</a>";
 
@@ -124,41 +122,6 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   protected void onActivate(Event<UIActivityComposer> event) {
     isDocumentReady = false;
     setCurrentUser(event.getRequestContext().getRemoteUser());
-  }
-  
-  private UIPopupWindow showDocumentPopup(UIDocActivityComposer docActivityComposer) {
-    UIComposer uiComposer = docActivityComposer.getAncestorOfType(UIComposer.class);
-    UIContainer optionContainer = uiComposer.getOptionContainer();
-    UIPopupWindow uiPopup = optionContainer.getChild(UIPopupWindow.class);
-    
-    if(uiPopup == null){
-      try {
-        uiPopup = optionContainer.addChild(UIPopupWindow.class, null, POPUP_COMPOSER);
-      } catch (Exception e) { //UIContainer
-        LOG.error("An exception happens when add document popup.\n Cause by: ", e);
-        return null;
-      }
-    }
-
-    final UIComponent child = uiPopup.getUIComponent();
-    if(child != null && child instanceof UIDocActivitySelector){      
-        uiPopup.setShow(true);
-        uiPopup.setResizable(true);      
-    }
-    else {
-      try {
-        UIDocActivitySelector selector = uiPopup.createUIComponent(UIDocActivitySelector.class, null, null) ;
-        uiPopup.setUIComponent(selector);
-        uiPopup.setShow(true);
-        uiPopup.setResizable(true);
-      } catch (Exception e) { //UIPopupWindow
-        LOG.error("An exception happens when add document popup.\n Cause by: ", e);
-      }
-    }
-    
-    uiPopup.setWindowSize(500, 0);
-    
-    return uiPopup;
   }
 
   @Override
@@ -278,8 +241,10 @@ System.out.println("path : " + documentPath);
     @Override
     public void execute(Event<UIDocActivityComposer> event) throws Exception {
       UIDocActivityComposer docActivityComposer = event.getSource();
-      UIPopupWindow uiPopup = docActivityComposer.showDocumentPopup(docActivityComposer);
-      event.getRequestContext().addUIComponentToUpdateByAjax(uiPopup.getParent());
+      PopupContainer popupContainer = docActivityComposer.getAncestorOfType(UIPortletApplication.class)
+                                                          .findFirstComponentOfType(PopupContainer.class);
+      popupContainer.activate(UIDocActivitySelector.class, 500, POPUP_COMPOSER);
+      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
     }
   }
   

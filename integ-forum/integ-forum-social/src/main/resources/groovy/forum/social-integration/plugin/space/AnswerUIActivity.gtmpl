@@ -205,10 +205,15 @@
 				<div class="uiBox roundedBottom introBox ">	
 					<div class="clearfix headingContainer">
 						<div class="pull-right uiVote">
-              <div class="avgRatingImages sumaryRate">
-                <%
+						  <%
                  int rateInt = (Integer) uicomponent.getRating();
                  double diff = uicomponent.getRating() - rateInt;
+                 String labelRating = _ctx.appRes("ActivityRating.title.rank${rateInt}");
+                 if (rateInt == 0)
+                   labelRating = _ctx.appRes("ActivityRating.title.NotRateYet");
+              %>
+              <div class="avgRatingImages sumaryRate" rel="tooltip" data-placement="bottom" title="$labelRating">
+                <%
                  for (int i = 1; i<=5; i++) {
                    if (i <= rateInt) { %>
                      <i class="voted"></i>
@@ -244,7 +249,7 @@
 				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 					 def commentLink = "";
 				  %>
-				 <% if (activityCommentAndLikable) { %>						 
+				 <% if (! activity.isLocked()) { %>						 
 					<ul class="pull-right statusAction">						
 						<li>
 							<a class="$commentLink"  id="CommentLink${activity.id}" href="javascript:void(0);">
@@ -266,6 +271,7 @@
 					  <% }%>											 
 					</ul>  
 				 <% }%>	
+			<% if (! activity.isLocked()) { %>
 				<ul class="pull-left statusAction">
 					<li>					   
 					   <a onclick="void();" id="AnswerLink${activity.id}" href="${uicomponent.getLink()}">
@@ -273,6 +279,7 @@
 					   </a>										
 					</li> 	
 				 </ul>
+			<% } %>
 				</div><!--end actionBar-->
 				<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>				
 					<div class="listLikedBox $listPeopleBGClass">		

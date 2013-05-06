@@ -19,8 +19,8 @@ package org.exoplatform.forum.ext.activity;
 import java.util.Map;
 
 import org.exoplatform.commons.utils.PropertyChangeSupport;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.UserHelper;
-import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -129,7 +129,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.setTitle(ctx.getTopic().getTopicName());
+      activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(ctx.getTopic().getTopicName()));
       activity.setBody(ctx.getTopic().getDescription());
       
       return activity;
@@ -174,7 +174,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.setTitle(ctx.getTopic().getTopicName());
+      activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(ctx.getTopic().getTopicName()));
       //processTitle(ctx, activity);
 
       return activity;
@@ -218,7 +218,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.setBody(ForumActivityBuilder.getFourFirstLines(ctx.getTopic().getDescription()));
+      activity.setBody(ctx.getTopic().getDescription());
       //processTitle(ctx, activity);
       return activity;
     };
@@ -846,6 +846,40 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       }
       return null;
     }
+  };
+  
+  public static TopicActivityTask UPDATE_FORUM_TOPIC = new TopicActivityTask() {
+    @Override
+    protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
+      return activity;
+    }
+    
+    @Override
+    protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
+      Topic topic = ctx.getTopic();
+      if (! topic.getIsActiveByForum() || topic.getIsLock())
+        activity.isLocked(true);
+      else
+        activity.isLocked(false);
+      return activity;
+    }
+
+    @Override
+    public ExoSocialActivity execute(ForumActivityContext ctx) {
+      try {
+        ActivityManager am = ForumActivityUtils.getActivityManager();
+        ExoSocialActivity a = ForumActivityUtils.getActivityOfTopic(ctx);
+
+        a = processActivity(ctx, a);
+        am.updateActivity(a);
+        
+        return a;
+      } catch (Exception e) {
+        LOG.error("Can not record Activity for when add topic's title " + ctx.getTopic().getId(), e);
+      }
+      return null;
+    }
+    
   };
   
   @Override
