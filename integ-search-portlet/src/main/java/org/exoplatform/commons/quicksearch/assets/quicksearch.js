@@ -308,16 +308,6 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       }
     });     
 
-    // show the input search field and place the control in it if Alt + Space are pressed
-    $(document).keydown(function (e) {
-      if (e.which == 18) isAlt = true;
-      if (isAlt == true && e.which == 32) {
-        $(txtQuickSearchQuery_id).show();
-        $(txtQuickSearchQuery_id).focus();
-        return false;
-      }
-    });
-
     //show the input search or go to the main search page when search link is clicked
     $(linkQuickSearchQuery_id).click(function () {
       if ($(txtQuickSearchQuery_id).is(':hidden')) {
