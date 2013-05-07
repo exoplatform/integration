@@ -52,7 +52,6 @@
   //ECMS declare variables - BEGIN
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
   def activityMessage = uicomponent.getMessage();
-  def contentActivityUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");      
   def mimeType = uicomponent.getMimeType();
   def binarySrc;
   def summary;
@@ -253,7 +252,7 @@
             </div>
             <div class="text">
               <%if (currentNode) {%>
-                <a class="linkTitle" title="$activityContentTitle" href="$contentActivityUri"> $activityContentTitle </a>
+                <a class="linkTitle" title="$activityContentTitle" href="$viewLink"> $activityContentTitle </a>
               <%} else {%>
                 <span>$docTitle</span>
               <%}%>

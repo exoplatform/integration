@@ -46,7 +46,6 @@ public class CommentAddedActivityListener extends Listener<Node, Node> {
     ExoSocialActivity commentActivity = Utils.postActivity(currentNode, "{0}", false, true, commentContent);
     if (commentActivity!=null) {    	
       ActivityTypeUtils.attachActivityId(commentNode, commentActivity.getId());
-      commentNode.save();
       commentNode.getSession().save();
     }
   }
