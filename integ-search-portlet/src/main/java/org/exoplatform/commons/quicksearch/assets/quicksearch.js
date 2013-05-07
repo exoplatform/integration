@@ -226,6 +226,10 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
           break;
 
         case "file":
+        	var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon24x24" + type}).join(" ");
+        	avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+        	avatar = "<a href='"+result.url+"'>" + avatar + "</a>";
+        	break;
         case "document":
         case "page":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon24x24" + type}).join(" ");
