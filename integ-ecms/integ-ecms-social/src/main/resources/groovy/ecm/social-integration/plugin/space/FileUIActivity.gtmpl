@@ -293,9 +293,10 @@
 		               <%
 		                 def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	     encodedPath = encodedPath.replaceAll ("%2F", "/");
-		                 String defaultImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/default.gif";               
+		                 String defaultImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/default.gif";
+		                 def classIconName = org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(currentNode, "uiIcon64x64");		                             
 		               %>
-		               <a href="$contentActivityUri"><i rel="tooltip" data-placement="bottom" class="uiIcon64x64Templatent_file" data-original-title="File"></i></a>
+		               <a href="$contentActivityUri"><i rel="tooltip" data-placement="bottom" class="<%=classIconName%>" data-original-title="File"></i></a>
 					  </div>
 		            <%
 		            }%>		    
