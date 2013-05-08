@@ -43,17 +43,17 @@
       <groupId>org.exoplatform.doc</groupId>
       <artifactId>doc-style</artifactId>
       <optional>true</optional>
-    </dependency>  
+    </dependency>
     <dependency>
       <groupId>org.exoplatform.commons</groupId>
       <artifactId>commons-testing</artifactId>
       <scope>test</scope>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.exoplatform.ws</groupId>
       <artifactId>exo.ws.testframework</artifactId>
       <scope>test</scope>
-    </dependency>    
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -83,20 +83,20 @@
         <executions>
           <execution>
             <id>default-compile</id>
-              <phase>compile</phase>
-              <goals>
-                <goal>compile</goal>
-              </goals>
-              <!-- Additional configuration to generate wiki pages from wikbook annotations-->
-              <configuration>
-                <compilerArguments>
-                  <sourcepath>${project.build.directory}/templates</sourcepath>
-                </compilerArguments>
-              </configuration>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <!-- Additional configuration to generate wiki pages from wikbook annotations-->
+            <configuration>
+              <compilerArguments>
+                <sourcepath>${project.build.directory}/templates</sourcepath>
+              </compilerArguments>
+            </configuration>
           </execution>
         </executions>
       </plugin>
-	<plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -113,7 +113,7 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>      
+      </plugin>
     </plugins>
   </build>
 </project>
