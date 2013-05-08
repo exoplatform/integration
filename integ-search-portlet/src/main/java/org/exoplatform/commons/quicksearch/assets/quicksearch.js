@@ -21,14 +21,15 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     var firstKeyup = 0;
     var nextKeyup = 0;
     var skipKeyup = 0;
-    var numberOfSearching = 0;
+    var textVal = "";
+    var firstBackSpace = true;
     //var skipKeyUp = [9,16,17,18,19,20,33,34,35,36,37,38,39,40,45,49];
     
     var mapKeyUp = {"0":"48","1":"49","2":"50","3":"51","4":"52","5":"53","6":"54","7":"55","8":"56","9":"57",
     		"a":"65","b":"66","c":"67","d":"68","e":"69","f":"70","g":"71","h":"72","i":"73","j":"74",
     		"k":"75","l":"76","m":"77","n":"78","o":"79","p":"80","q":"81","r":"82","s":"83","t":"84",
     		"u":"85","v":"86","w":"87","x":"88","y":"89","z":"90","numpad 0":"96","numpad 1":"97","numpad 2":"98",
-    		"numpad 3":"99","numpad 4":"100","numpad 5":"101","numpad 6":"102","numpad 7":"103"};
+    		"numpad 3":"99","numpad 4":"100","numpad 5":"101","numpad 6":"102","numpad 7":"103", "backspace":"8", "delete":"46"};
 
     var QUICKSEARCH_RESULT_TEMPLATE= " \
       <div class='quickSearchResult %{type}'> \
@@ -278,30 +279,46 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         $(seeAll_id).click(); //go to main search page if Enter is pressed
       } else {
           //quickSearch(); //search for the text just being typed in
-    	  $.each(mapKeyUp, function(key, value){
-	    	  if (value == e.keyCode){
-	    		var query = $(txtQuickSearchQuery_id).val();
-	    		nextKeyup = new Date().getTime();	    
-	    		
-		    	if (query.length <= 2)
-		      	{
-		    		quickSearch(); //search for the text just being typed in
-		      	}else if (nextKeyup - firstKeyup >= 1000){
-			    		firstKeyup = nextKeyup;	    		
-			    		quickSearch(); //search for the text just being typed in	    		
-			    }else skipKeyup ++;
-		    	
-	 		    if (skipKeyup == 2)
-			    {
-				   skipKeyup = 0;
-				   quickSearch();
-				   firstKeyup = nextKeyup;
-				}
-	    	  }    	 
-    	  });    	      	  
+		  var currentVal = $(txtQuickSearchQuery_id).val();    	  
+    	  if (!charDeletedIsEmpty(e,textVal, currentVal)){
+    		  $.each(mapKeyUp, function(key, value){
+        		  
+    	    	  if (value == e.keyCode){
+    	    		var query = $(txtQuickSearchQuery_id).val();
+    	    		nextKeyup = new Date().getTime();	    
+    	    		
+    		    	if (query.length <= 2)
+    		      	{
+    		    		quickSearch(); //search for the text just being typed in
+    		      	}else if (nextKeyup - firstKeyup >= 1000){
+    			    		firstKeyup = nextKeyup;	    		
+    			    		quickSearch(); //search for the text just being typed in	    		
+    			    }else skipKeyup ++;
+    		    	
+    	 		    if (skipKeyup == 2)
+    			    {
+    				   skipKeyup = 0;
+    				   quickSearch();
+    				   firstKeyup = nextKeyup;
+    				}
+    	    	  }
+    	    	  textVal = $(txtQuickSearchQuery_id).val();
+        	  });
+    	  }    	      	      	 
       }
     });
-        
+    
+    //skip backspace and delete key
+    function charDeletedIsEmpty(key,textVal, currentVal){
+    	//process backspace key
+    	if (key.keyCode == 8 && textVal.trim() == currentVal.trim()){
+			return true;
+    	}
+    	//process delete key
+    	if (key.keyCode == 46 && textVal.trim() == currentVal.trim()){
+			return true;
+    	}    	
+    }
     // catch ennter key when search is running
     $(document).keyup(function (e) {
       if (e.keyCode == 13 && window['isSearching'] && !$(txtQuickSearchQuery_id).is(':hidden') ) {
