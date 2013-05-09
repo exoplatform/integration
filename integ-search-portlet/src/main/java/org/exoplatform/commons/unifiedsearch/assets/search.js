@@ -9,6 +9,7 @@ function initSearch() {
     var SEARCH_SETTING; //search setting
     var SERVER_OFFSET = 0;
     var LIMIT, RESULT_CACHE, CACHE_OFFSET, NUM_RESULTS_RENDERED;
+    var formLoading;
 
     var SEARCH_RESULT_TEMPLATE = " \
       <div class='resultBox clearfix %{type}'> \
@@ -20,7 +21,7 @@ function initSearch() {
         </div> \
       </div> \
     ";
-
+    
     var IMAGE_AVATAR_TEMPLATE = " \
       <span class='avatar pull-left'> \
         <img src='%{imageSrc}'> \
@@ -85,14 +86,18 @@ function initSearch() {
 
     function setWaitingStatus(status) {
       if(status) {
-        $("body").css("cursor", "wait");
-        $("#searchPortlet").css({"pointer-events":"none"});
-      } else {
-        $("body").css("cursor", "auto");
-        $("#searchPortlet").css({"pointer-events":"auto"});
+    	$("#resultLoading").show();
+    	var w = $("#resultLoading").css('width').replace("px","");
+    	var h = $("#resultLoading").css('height').replace("px","");
+    	var left = (window.screen.width/2)-(w/2);
+    	var top = (window.screen.height/2)-(h/2);
+    	
+    	$('#resultLoading').css('left',left + 200);
+    	$('#resultLoading').css('top',top - 50);
+      } else {    	  
+	    $("#resultLoading").hide();
       }
-    }
-
+    } 
 
     function getUrlParam(name) {
       var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);

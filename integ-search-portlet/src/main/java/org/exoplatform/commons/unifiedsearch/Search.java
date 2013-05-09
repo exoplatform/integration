@@ -82,6 +82,8 @@ public class Search {
       parameters.put("allsites", rs.getString("unifiedsearch.index.allsites.label"));
       parameters.put("contentTypes", rs.getString("unifiedsearch.index.contentTypes.label"));
       parameters.put("showmore", rs.getString("unifiedsearch.index.showmore.label"));      
+      parameters.put("searching", rs.getString("unifiedsearch.searching.label"));
+      
       index.render(parameters);      
     }
   }  

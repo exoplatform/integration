@@ -1,6 +1,10 @@
 
 <div id="searchPortlet" class="uiSearchPortlet">
 
+  <div id='resultLoading' class="resultLoading">
+  ${searching}
+  </div>
+
   <div id="searchPage">
 
     <div id="searchForm" class="searchContainer">
