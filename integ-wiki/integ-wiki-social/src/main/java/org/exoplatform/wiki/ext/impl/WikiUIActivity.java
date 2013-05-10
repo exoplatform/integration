@@ -1,5 +1,7 @@
 package org.exoplatform.wiki.ext.impl;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -98,7 +100,15 @@ public class WikiUIActivity extends BaseUIActivity {
   }
 
   String getPageURL() {
-    return getActivityParamValue(WikiSpaceActivityPublisher.URL_KEY);
+    String pageUrl = getActivityParamValue(WikiSpaceActivityPublisher.URL_KEY);
+    if (pageUrl != null) {
+      try {
+        URL oldURL = new URL(pageUrl);
+        pageUrl = oldURL.getPath();
+      } catch (MalformedURLException ex) {
+      }
+    }
+    return pageUrl;
   }
   
   String getViewChangeURL(){
