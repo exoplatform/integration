@@ -4,12 +4,12 @@
   portletId = rand.nextInt(1000000);
 %>
 
-<div class="uiSearchPlatformToolBarPortlet uiDropdownWithIcon dropdown" id="ToolBarSearch">
+<div class="uiSearchPlatformToolBarPortlet uiDropdownWithIcon dropdown" id="ToolBarSearch" tabindex="0">
   <input id="adminkeyword-${portletId}" name="adminkeyword" value="${SearchInInput}" type="text" style="display: none;"/>
   <a href="#" id="adminSearchLink-${portletId}" class="dropdown-toggle">
     <i class="uiIconPLF24x24Search"></i>
   </a>
-  <div id="quickSearchResult-${portletId}" class="uiQuickSearchResult"></div>
+  <div id="quickSearchResult-${portletId}" class="uiQuickSearchResult" ></div>
 </div>
 
 <script>
