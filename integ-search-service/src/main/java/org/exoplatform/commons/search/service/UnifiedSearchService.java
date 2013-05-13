@@ -62,9 +62,8 @@ import org.exoplatform.web.controller.metadata.DescriptorBuilder;
 import org.exoplatform.web.controller.router.Router;
 
 /**
- * This class provides end points help all external components call unified search service by Restful service standard.
- * These services are search, search setting, quick search setting, registry, sites and enable search type
- * @LevelAPI Experimental
+ * This class provides RESTful services endpoints which will help all external components to call unified search functions.
+ * These services are search, search settings, quick search settings, registry, sites and enable search type.
  * @anchor UnifiedSearchService
  */
 @Path("/search")
@@ -95,6 +94,7 @@ public class UnifiedSearchService implements ResourceContainer {
    * @param settingService a service to store and get the setting values 
    * @param userPortalConfigService a service to get user information from portal
    * @param webAppController a controller to get configuration path
+   * @format json
    * @LevelAPI Experimental
    */
   public UnifiedSearchService(SearchService searchService, SettingService settingService, UserPortalConfigService userPortalConfigService, WebAppController webAppController){
@@ -114,20 +114,18 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   /**
-   * Search for a query, with (optional) parameters (sites, content types...)
-   * 
+   * Search for a query.
    * @param context Search context
    * @param query The user-input query to search for
-   * @param sites Search on these specified sites only (e.g acme, intranet...)
-   * @param types Search for these specified content types only (e.g people, discussion, event, task, wiki, activity, social, file, document...)
-   * @param offset Start offset of the result set
-   * @param limit Maximum size of the result set 
+   * @param sSites Search on these specified sites only (e.g acme, intranet...)
+   * @param sTypes Search for these specified content types only (e.g people, discussion, event, task, wiki, activity, social, file, document...)
+   * @param sOffset Start offset of the result set
+   * @param sLimit Maximum size of the result set 
    * @param sort Sort type (relevancy, date, title)
    * @param order Sort order (asc, desc)
-   * 
-   * @return a map of connector with their search result
+   * @format json
+   * @return a map of connectors, including their search results.
    * @LevelAPI Experimental
-   * 
    * @anchor UnifiedSearchService.search
    */
   @GET
@@ -185,11 +183,10 @@ public class UnifiedSearchService implements ResourceContainer {
   }
 
   /**
-  * Get all connectors registered in the system and which are enabled
-  *
-  * @return List of connectors and names of the enabled ones (in JSON)
+  * Gets all connectors registered in the system and which are enabled.
+  * @return List of connectors and names of the enabled ones
+  * @format json
   * @LevelAPI Experimental
-  *
   * @anchor UnifiedSearchService.getRegistry
   */    
   @GET
@@ -204,11 +201,10 @@ public class UnifiedSearchService implements ResourceContainer {
 
   
   /**
-  * Get all available sites in the system
-  *
-  * @return List of site names in JSON
+  * Gets all available sites in the system.
+  * @return a list of site names
+  * @format json
   * @LevelAPI Experimental
-  *
   * @anchor UnifiedSearchService.getSites
   */  
   @GET
@@ -239,11 +235,10 @@ public class UnifiedSearchService implements ResourceContainer {
   }
 
   /**
-  * Get current user's setting for Search portlet
-  *
-  * @return Search setting of the current logging in (or anonymous) user
+  * Gets current user's search settings.
+  * @return search settings of the current logging in (or anonymous) user
+  * @format json
   * @LevelAPI Experimental
-  *
   * @anchor UnifiedSearchService.getSearchSetting
   */    
   @GET
@@ -254,11 +249,10 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   /**
-  * Save current user's setting for Search portlet
-  *
+  * Saves current user's search settings.
   * @return "ok" when succeed
+  * @format json
   * @LevelAPI Experimental
-  *
   * @anchor UnifiedSearchService.setSearchSetting
   */    
   @POST
@@ -288,11 +282,10 @@ public class UnifiedSearchService implements ResourceContainer {
   }
 
   /**
-  * Get current user's setting for Quick search portlet
-  *
-  * @return Quick search setting of the current logging in user
+  * Gets current user's quick search settings.
+  * @return quick search settings of the current logging in user
+  * @format json
   * @LevelAPI Experimental
-  *
   * @anchor UnifiedSearchService.getQuicksearchSetting
   */    
   @GET
@@ -302,9 +295,10 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   /**
-  * Save current user's setting for Quick search portlet
+  * Saves current user's quick search settings.
   *
   * @return "ok" when succeed
+  * @format json
   * @LevelAPI Experimental
   *
   * @anchor UnifiedSearchService.setQuicksearchSetting
@@ -334,13 +328,11 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   /**
-  * Set "enabledSearchTypes" global variable
-  *
+  * Sets "enabledSearchTypes" global variable.
   * @param searchTypes List of search types in the form of a comma-separated string
-  *
-  * @return Success if the caller's role is administrator, Failure otherwise
+  * @format json
+  * @return "ok" if the caller's role is administrator, otherwise, returns "nok: administrators only".
   * @LevelAPI Experimental
-  *
   * @anchor UnifiedSearchService.setEnabledSearchtypes
   */
   @POST
