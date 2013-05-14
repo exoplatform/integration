@@ -60,7 +60,7 @@
           </properties-param>
         </init-params>      
       </component-plugin>
-
+           
       <!-- Wiki -->
       <component-plugin>
         <name>WikiSearchConnector</name>
@@ -74,8 +74,8 @@
              <property name="displayName" value="Wiki"/>
           </properties-param>
         </init-params>      
-      </component-plugin>
-       
+      </component-plugin>             
+
       <!-- Ecms --> 
       <component-plugin>
         <name>PageSearchConnector</name>
@@ -90,7 +90,8 @@
           </properties-param>
         </init-params>      
       </component-plugin>
-
+      
+      
       <!-- Forum --> 
       <component-plugin>
         <name>DiscussionSearchConnector</name>
@@ -104,8 +105,8 @@
              <property name="displayName" value="Discussions"/>
           </properties-param>
         </init-params>      
-      </component-plugin>
-       
+      </component-plugin>         
+      
       <!-- Social -->
       <component-plugin>
         <name>PeopleSearchConnector</name>
@@ -119,8 +120,8 @@
             <property name="displayName" value="People"/>
           </properties-param>
         </init-params>      
-      </component-plugin>
-      
+      </component-plugin>      
+
       <!-- Social --> 
       <component-plugin>
         <name>SpaceSearchConnector</name>
@@ -134,9 +135,9 @@
              <property name="displayName" value="Spaces"/>
           </properties-param>
         </init-params>      
-      </component-plugin>
+      </component-plugin>      
       
-      <!-- Calendar -->
+     <!-- Calendar -->
       <component-plugin>
         <name>EventSearchConnector</name>
         <set-method>addConnector</set-method>
@@ -149,7 +150,7 @@
              <property name="displayName" value="Events"/>
           </properties-param>
         </init-params>      
-      </component-plugin>
+      </component-plugin>            
       
       <!-- Calendar -->
       <component-plugin>
@@ -164,7 +165,7 @@
              <property name="displayName" value="Tasks"/>
           </properties-param>
         </init-params>      
-      </component-plugin>
+      </component-plugin>              
       
       <!-- Forum --> 
       <component-plugin>
@@ -180,7 +181,7 @@
           </properties-param>
         </init-params>      
       </component-plugin>
-      
+            
     </component-plugins>
   </component>
 
