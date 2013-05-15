@@ -134,7 +134,8 @@
   def displayedIdentityLikes = uicomponent.getDisplayedIdentityLikes();
   def identityLikesNum = 0;
   def totalLikesNum = uicomponent.getIdentityLikes().length;
-  def hasMore = (totalLikesNum > uicomponent.LIKES_NUM_DEFAULT) && !uicomponent.isAllLoaded();
+  
+  def loadLikesAction = uicomponent.event("LoadLikes");
   def labelLikes = null;
   def toggleDisplayLikesAction = uicomponent.event("ToggleDisplayLikes");
   def startTag = "<a onclick=\"$toggleDisplayLikesAction\" id=\"ToggleDisplayListPeopleLikes${activity.id}\" href=\"#ToggleDisplayListPeopleLikes\">";
@@ -375,7 +376,7 @@
 		          <% if (!labelLikes) labelLikes = ""; %>
 					      $labelLikes		
 		            <% if (identityLikesNum > 0) {%>
-		            <div class="$listPeopleLikeBlockClass">
+		            <div class="listLiked">
 		            <%
 		            displayedIdentityLikes.each({
 		              def id = Utils.getIdentityManager().getIdentity(it);
@@ -388,9 +389,7 @@
 		                  <img src="$personLikeAvatarImageSource" alt="$personLikeFullName" title="$personLikeFullName" />
 		                </a>
 		             <% })%>
-		             <% if ( hasMore ) { %>
 		               <button onclick="$loadLikesAction" class="btn">...</button>
-		             <% } %>
 		            </div>
 		            <% }%>
 		          </div>
