@@ -24,6 +24,7 @@ import juzu.Path;
 import juzu.View;
 import juzu.bridge.portlet.JuzuPortlet;
 import juzu.impl.request.Request;
+import juzu.request.RenderContext;
 import juzu.request.RequestContext;
 import juzu.template.Template;
 import java.util.Locale;
@@ -51,11 +52,11 @@ public class Search {
   ResourceBundle bundle;    
   
   @View
-  public void index(){
+  public void index(RenderContext renderContext){
     RequestContext requestContext = Request.getCurrent().getContext();
+    
+    ResourceBundle rs = renderContext.getApplicationContext().resolveBundle(renderContext.getUserContext().getLocale());
     Map<String, Object> parameters = new HashMap<String, Object>();
-    Locale locale = bundle.getLocale();      
-    ResourceBundle rs = ResourceBundle.getBundle("unifiedsearch/unifiedsearch", locale);    
     
     Search_.index().setProperty(JuzuPortlet.PORTLET_MODE, PortletMode.EDIT);
     PortletMode mode = requestContext.getProperty(JuzuPortlet.PORTLET_MODE);

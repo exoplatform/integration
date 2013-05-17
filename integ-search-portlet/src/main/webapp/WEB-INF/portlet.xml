@@ -15,6 +15,7 @@
        <portlet-mode>edit</portlet-mode>       
      </supports>
      <supported-locale>en</supported-locale>
+     <resource-bundle>locale.portlet.unifiedsearch.unifiedsearch</resource-bundle>     
      <portlet-info>
        <title>Unified Search</title>
        <keywords>Search</keywords>
@@ -33,7 +34,7 @@
        <portlet-mode>edit</portlet-mode>       
      </supports>
      <supported-locale>en</supported-locale>
-      <resource-bundle>quicksearch.quicksearch</resource-bundle>
+     <resource-bundle>locale.portlet.quicksearch.quicksearch</resource-bundle>
      <portlet-info>
        <title>Quick Search</title>
        <keywords>Search</keywords>
@@ -51,6 +52,7 @@
        <mime-type>text/html</mime-type>
      </supports>
      <supported-locale>en</supported-locale>
+     <resource-bundle>locale.portlet.searchadministration.searchadministration</resource-bundle>
      <portlet-info>
        <title>Search Administration</title>
        <keywords>Search</keywords>

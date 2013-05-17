@@ -23,6 +23,9 @@ import javax.inject.Inject;
 
 import juzu.Path;
 import juzu.View;
+import juzu.impl.request.Request;
+import juzu.request.RenderContext;
+import juzu.request.RequestContext;
 import juzu.template.Template;
 import java.util.Locale;
 import java.util.Map;
@@ -44,10 +47,12 @@ public class SearchAdministration {
   ResourceBundle bundle;  
     
   @View
-  public void index(){
+  public void index(RenderContext renderContext){
+    RequestContext requestContext = Request.getCurrent().getContext();
+    
+    ResourceBundle rs = renderContext.getApplicationContext().resolveBundle(renderContext.getUserContext().getLocale());
     Map<String, Object> parameters = new HashMap<String, Object>();
-    Locale locale = bundle.getLocale();      
-    ResourceBundle rs = ResourceBundle.getBundle("searchadministration/searchadministration", locale);
+
     parameters.put("searchadministration", rs.getString("searchadministration.label"));
     parameters.put("contentType", rs.getString("searchadministration.contentType.label"));
     parameters.put("description", rs.getString("searchadministration.description.label"));
