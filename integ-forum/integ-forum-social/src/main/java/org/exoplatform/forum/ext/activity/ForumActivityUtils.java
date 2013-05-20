@@ -168,13 +168,13 @@ public class ForumActivityUtils {
     if (topic != null) {
       String description = topic.getDescription();
       description = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumber(description));
-      topic.setDescription(ForumActivityBuilder.getFourFirstLines(description));
+      topic.setDescription(description);
       ctx.setTopic(topic);
     }
     if (post != null) {
       String message = post.getMessage();
       message = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumber(message));
-      post.setMessage(ForumActivityBuilder.getFourFirstLines(message));
+      post.setMessage(message);
       ctx.setPost(post);
     }
     return ctx;

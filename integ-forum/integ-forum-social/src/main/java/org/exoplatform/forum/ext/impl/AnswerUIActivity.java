@@ -60,6 +60,8 @@ public class AnswerUIActivity extends BaseKSActivity {
     String questionLink = getLink();
     Map<String, String> templateParams = comment.getTemplateParams();
     String itemId = templateParams.get(AnswersSpaceActivityPublisher.LINK_KEY);
+    if (itemId == null)
+      return "";
     return String.format("%s#%s", questionLink, itemId);
   }
   

@@ -32,6 +32,7 @@ import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
 import org.exoplatform.forum.common.CommonUtils;
+import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -158,8 +159,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       String activityId = faqS.getActivityIdForQuestion(questionId);
       
       //
-      String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
-      answerContent = CommonUtils.processBBCode(answerContent);
+      String answerContent = processContent(answer.getResponses());
       
       if (activityId != null) {
         try {
@@ -227,8 +227,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Question question = faqS.getQuestionById(questionId);
-      String message = ForumActivityBuilder.getFourFirstLines(cm.getComments());
-      message = CommonUtils.processBBCode(message);
+      String message = processContent(cm.getComments());
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, cm.getCommentBy(), false);
       String activityId = faqS.getActivityIdForQuestion(questionId);
       if (activityId != null) {
@@ -291,8 +290,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
       String activityId = faqS.getActivityIdForQuestion(question.getId());
       
-      String questionDetail = ForumActivityBuilder.getFourFirstLines(question.getDetail());
-      questionDetail = CommonUtils.processBBCode(questionDetail);
+      String questionDetail = processContent(question.getDetail());
       //in case deleted activity, if isUpdate, we will re-create new activity and add a comment associated
       boolean isUpdate = false;
       
@@ -445,8 +443,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   
   private String getQuestionMessage(PropertyChangeEvent e, Question question, ExoSocialActivity comment) {
     String questionName = CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion());
-    String questionDetail = ForumActivityBuilder.getFourFirstLines(question.getDetail());
-    questionDetail = CommonUtils.processBBCode(questionDetail);
+    String questionDetail = processContent(question.getDetail());
     if ("questionName".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "question-update-title", questionName);
       return "Title has been updated to: " + questionName;
@@ -472,8 +469,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private String getAnswerMessage(PropertyChangeEvent e, Answer answer, ExoSocialActivity comment) {
-    String answerContent = ForumActivityBuilder.getFourFirstLines(answer.getResponses());
-    answerContent = CommonUtils.processBBCode(answerContent);
+    String answerContent = processContent(answer.getResponses());
     if ("answerEdit".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "answer-update-content", answerContent);
       return "Answer has been edited to: " + answerContent;
@@ -521,4 +517,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     comment.setTemplateParams(commentTemplateParams);
   }
   
+  private String processContent(String content) {
+    content = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumber(content));
+    content = ForumActivityBuilder.getFourFirstLines(content);
+    return content;
+  }
 }

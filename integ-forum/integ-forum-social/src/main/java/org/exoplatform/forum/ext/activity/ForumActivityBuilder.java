@@ -121,7 +121,6 @@ public class ForumActivityBuilder {
   }
   
   public static String getFourFirstLines(String str) {
-    str = CommonUtils.decodeSpecialCharToHTMLnumber(str);
     return getNumberFirstLines(str.replaceAll("&nbsp;", ""), 4);
   }
   
@@ -142,7 +141,7 @@ public class ForumActivityBuilder {
     
     //
     for (int i=0; i<numberOfLine; i++) {
-      sb.append(tab[i]);
+      sb.append(TransformHTML.cleanHtmlCode(tab[i], null));
       
       //
       if(i + 1 < numberOfLine) {
