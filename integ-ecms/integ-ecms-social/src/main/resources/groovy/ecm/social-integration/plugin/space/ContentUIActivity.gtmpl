@@ -251,7 +251,7 @@
             </div>
             <div class="text">
               <%if (currentNode) {%>
-                <a class="linkTitle" title="$activityContentTitle" href="$viewLink"> $activityContentTitle </a>
+                <a class="linkTitle" title="$docTitle" href="$viewLink"> $docTitle </a>
               <%} else {%>
                 <span>$docTitle</span>
               <%}%>
