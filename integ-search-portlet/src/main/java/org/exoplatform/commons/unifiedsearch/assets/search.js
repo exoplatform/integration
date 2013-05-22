@@ -197,11 +197,17 @@ function initSearch() {
             avatar = "<a href='"+result.url+"'>" + avatar + "</a>";            
             break;        	        	
         case "document":
-        case "page":
+        //case "page":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64" + type}).join(" ");
           avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
           break;
 
+        case "page":
+    	  result.detail = result.detail + " - " + result.url;
+    	  avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
+    	  result.excerpt = result.excerpt;
+          break;
+          
         case "post":
         case "answer":
           //render rating
