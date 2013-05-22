@@ -6,6 +6,7 @@
 			<editedBy>was edited by</editedBy>
 			<system>the system</system>
 			<readmore>...Read More.</readmore>
+      <state>State</state>
 		</messages>
 		<publicationStates>
 			<archived>Archived</archived>

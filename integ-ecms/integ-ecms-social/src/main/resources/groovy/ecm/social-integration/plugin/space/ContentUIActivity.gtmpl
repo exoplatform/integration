@@ -290,7 +290,7 @@
 	  	<% } 					
 			  
 			   if (state != null && state.length() > 0) { %>
-			   	 &nbsp;&nbsp; state: <%=_ctx.appRes("SocialIntegration.publicationStates." + state)%>
+			   	 &nbsp;&nbsp; <%=_ctx.appRes("SocialIntegration.messages.state") %>: <%=_ctx.appRes("SocialIntegration.publicationStates." + state)%>
 			<% } %>		
         </div>
 		<%if (mimeType != null && mimeType.length() > 0){
