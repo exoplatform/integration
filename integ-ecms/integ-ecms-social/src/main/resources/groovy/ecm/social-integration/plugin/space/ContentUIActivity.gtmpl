@@ -262,7 +262,7 @@
                   publishInfo = publishInfo + " - " +  docVersion;
                 }
                 if (state!=null && state.length() > 0) {
-                  publishInfo = publishInfo + " - " +  state;
+                  publishInfo = publishInfo + " - " + _ctx.appRes("SocialIntegration.publicationStates." + state);
                 }
               %>
               <span class="versionFile">$publishInfo</span>
