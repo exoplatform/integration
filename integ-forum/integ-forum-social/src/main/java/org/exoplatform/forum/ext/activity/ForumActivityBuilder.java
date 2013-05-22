@@ -133,7 +133,7 @@ public class ForumActivityBuilder {
    * @return
    */
   public static String getNumberFirstLines(String content, int line) {
-    String[] tab = TransformHTML.getPlainText(StringEscapeUtils.unescapeHtml(content)).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
+    String[] tab = TransformHTML.getPlainText(content).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
     
     //
     int numberOfLine = Math.min(NUMBER_OF_LINES, tab.length);
@@ -141,16 +141,16 @@ public class ForumActivityBuilder {
     
     //
     for (int i=0; i<numberOfLine; i++) {
-      sb.append(TransformHTML.cleanHtmlCode(tab[i], null));
-      
+      sb.append(tab[i]);
       //
-      if(i + 1 < numberOfLine) {
-        sb.append("<br/>");
+      if(i < numberOfLine - 1) {
+        sb.append("BR_");
       }
     }
+    String str = StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(sb.toString(), null)).trim();
     
     //
-    return trunc(sb.toString(), NUMBER_CHARS, tab.length > NUMBER_OF_LINES);
+    return trunc(str.replaceAll("BR_", "<br/>"), NUMBER_CHARS, tab.length > NUMBER_OF_LINES);
   }
   
   /**

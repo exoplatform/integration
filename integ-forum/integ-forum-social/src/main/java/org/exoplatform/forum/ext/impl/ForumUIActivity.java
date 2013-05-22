@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.forum.common.CommonUtils;
+import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.ext.activity.ForumActivityContext;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
@@ -38,6 +38,7 @@ import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
@@ -123,8 +124,6 @@ public class ForumUIActivity extends BaseKSActivity {
         }
       }
 
-      //
-      LOG.info("Link " + link);
       return link;
     } catch (Exception ex) {
       return "";
@@ -161,7 +160,6 @@ public class ForumUIActivity extends BaseKSActivity {
         if (FORUM_PAGE_NAGVIGATION.equals(child.getName()) || child.getName().indexOf(FORUM_PORTLET_NAME) >= 0) {
           break;
         }
-        LOG.info("Node name = " + child.getName());
       }
       String spaceLink = getSpaceHomeURL(spaceGroupId);
       String topicLink = String.format("%s/%s/topic/%s", spaceLink, child.getName(), topicId);
@@ -169,7 +167,7 @@ public class ForumUIActivity extends BaseKSActivity {
       return topicLink;
     }
    
-    return "";
+    return StringUtils.EMPTY;
   }
   
   /**
@@ -216,7 +214,7 @@ public class ForumUIActivity extends BaseKSActivity {
   @SuppressWarnings("unused")
   private String getActivityContentTitle(WebuiBindingContext _ctx, String herf) throws Exception {
     String title = getActivity().getTitle();
-    String linkTag = "";
+    String linkTag = StringUtils.EMPTY;
     try {
       linkTag = getLink(herf, title);
     } catch (Exception e) { // WebUIBindingContext
@@ -283,6 +281,8 @@ public class ForumUIActivity extends BaseKSActivity {
       //
       ExoSocialActivity activity = getActivity();
       activity = ForumActivityBuilder.updateNumberOfReplies(activity, false);
+      activity.setTitle(null);
+      activity.setBody(null);
       ForumActivityUtils.updateActivities(activity);
 
       return post;
@@ -306,7 +306,7 @@ public class ForumUIActivity extends BaseKSActivity {
       uiFormComment.reset();
       
       //
-      Post post = uiActivity.createPost(ForumActivityBuilder.decodeHTMLInput(message), requestContext);
+      Post post = uiActivity.createPost(TransformHTML.enCodeHTMLContent(message), requestContext);
 
       //
       post.setMessage(message);
@@ -329,7 +329,7 @@ public class ForumUIActivity extends BaseKSActivity {
     comment.setUserId(org.exoplatform.social.webui.Utils.getViewerIdentity().getId());
     comment.setTitle(post.getMessage());
     comment.setBody(post.getMessage());
-    org.exoplatform.social.webui.Utils.getActivityManager().saveComment(getActivity(), comment);
+    ForumActivityUtils.getActivityManager().saveComment(getActivity(), comment);
     //
     ForumActivityUtils.takeCommentBack(post, comment);
     

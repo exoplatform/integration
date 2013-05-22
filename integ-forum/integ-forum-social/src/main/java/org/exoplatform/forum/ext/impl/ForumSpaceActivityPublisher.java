@@ -134,7 +134,7 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
       topic.setIsLock(isLock);
       ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);
       TopicActivityTask task = TopicActivityTask.UPDATE_FORUM_TOPIC;
-      ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
+      ActivityExecutor.execute(task, ctx);
     }
   }
   
