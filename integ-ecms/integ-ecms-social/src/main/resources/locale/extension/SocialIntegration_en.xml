@@ -68,6 +68,7 @@
     </publicationStates>
     <view>View</view>
     <edit>Edit</edit>
+    <download>Download</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>

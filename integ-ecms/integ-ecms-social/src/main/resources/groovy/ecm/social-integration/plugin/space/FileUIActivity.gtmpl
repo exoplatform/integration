@@ -360,10 +360,10 @@
 					</ul>  
 				 <% }%>	
 					 <ul class="pull-left statusAction">					 
-						<li><a href="$contentActivityUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;View</a></li> <!-- hackcode-->
-						<li><a href="$downloadLink"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;Download</a></li> <!-- hackcode-->
+						<li><a href="$contentActivityUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
+						<li><a href="$downloadLink"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
 						<% if(editLink != null && editLink.length() > 0) {%>
-		          <li><a href="$editLink"><i class="uiIconEdit uiIconLightGray"></i>&nbsp;Edit</a></li>
+		          <li><a href="$editLink"><i class="uiIconEdit uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.edit");%></a></li>
 		        <% } %>
 						
 					 </ul>
