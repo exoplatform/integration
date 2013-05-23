@@ -36,10 +36,12 @@ import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
+import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
@@ -149,10 +151,20 @@ public class UIDocActivity extends BaseUIActivity {
     return 0;
   }
   
+  private boolean hasPermissionViewFile() {
+    return (getDocNode() != null);
+  }
+  
   public static class ViewDocumentActionListener extends EventListener<UIDocActivity> {
     @Override
     public void execute(Event<UIDocActivity> event) throws Exception {
       final UIDocActivity docActivity = event.getSource();
+      if (! docActivity.hasPermissionViewFile()) {
+        WebuiRequestContext ctx = event.getRequestContext();
+        UIApplication uiApplication = ctx.getUIApplication();
+        uiApplication.addMessage(new ApplicationMessage("UIDocActivity.msg.noPermission", null, ApplicationMessage.WARNING));
+        return;
+      }
       final UIActivitiesContainer activitiesContainer = docActivity.getParent();
       final PopupContainer popupContainer = activitiesContainer.getPopupContainer();
 
@@ -174,6 +186,12 @@ public class UIDocActivity extends BaseUIActivity {
     @Override
     public void execute(Event<UIDocActivity> event) throws Exception {
       UIDocActivity uiComp = event.getSource() ;
+      if (! uiComp.hasPermissionViewFile()) {
+        WebuiRequestContext ctx = event.getRequestContext();
+        UIApplication uiApplication = ctx.getUIApplication();
+        uiApplication.addMessage(new ApplicationMessage("UIDocActivity.msg.noPermission", null, ApplicationMessage.WARNING));
+        return;
+      }
       String downloadLink = null;
       if (getRealNode(uiComp.getDocNode()).getPrimaryNodeType().getName().equals(Utils.NT_FILE)) {
         downloadLink = Utils.getDownloadRestServiceLink(uiComp.getDocNode());

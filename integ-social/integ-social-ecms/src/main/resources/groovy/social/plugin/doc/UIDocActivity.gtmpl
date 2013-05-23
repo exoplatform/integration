@@ -168,20 +168,24 @@
 
   def dMessage = uicomponent.message;
   def dName = uicomponent.docName;
-  def fileSize = uicomponent.getSize();
-  def version = uicomponent.getVersion();
-  def title = uicomponent.getTitle();
+  def fileSize = "";
+  def version = 0;
+  def title = null;
   def summary = uicomponent.getSummary();
   
   def currentNode = uicomponent.getDocNode();
-  def mimeType = uicomponent.getMimeType();
+  def mimeType = "";
   def binarySrc;
   def uicontentpresentation = uicomponent.addChild(ContentPresentation.class, null, null);
   String repository;
   def preferenceWS;
   def fileComponent;
   if (currentNode) {
+    fileSize = uicomponent.getSize();
+    version = uicomponent.getVersion();
+    title = uicomponent.getTitle();
     binarySrc = uicomponent.getWebdavURL();
+    mimeType = uicomponent.getMimeType();
     summary =  uicomponent.getSummary();
     uicontentpresentation.setNode(currentNode);
     repository = ((ManageableRepository)currentNode.getSession().getRepository()).getConfiguration().getName();
@@ -320,7 +324,7 @@
 						<% }%>
 						</ul>
 						<% }%>
-					 <ul class="pull-left statusAction">					 
+					 <ul class="pull-left statusAction">
 						<li><a href="<%= uicomponent.event("ViewDocument")%>"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;$viewFileLabel</a></li> 
 						<li><a href="<%= uicomponent.event("DownloadDocument")%>"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;$downloadFileLabel</a></li>
 					 </ul>
