@@ -194,7 +194,7 @@ public class Utils {
     refineNode(node);
 
     // get owner
-    String activityOwnerId = getActivityOwnerId();
+    String activityOwnerId = getActivityOwnerId(node);
     String nodeActivityID = StringUtils.EMPTY;
     ExoSocialActivity exa =null;
     if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
@@ -310,7 +310,7 @@ public class Utils {
     refineNode(node);
 
     // get owner
-    String activityOwnerId = getActivityOwnerId();
+    String activityOwnerId = getActivityOwnerId(node);
     String nodeActivityID = StringUtils.EMPTY;
     ExoSocialActivity exa =null;    
     if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
@@ -444,11 +444,14 @@ public class Utils {
    * @throws RepositoryException
    */
   private static boolean isSupportedContent(Node node) throws Exception {
-    if (getActivityOwnerId() != null && getActivityOwnerId().length() > 0) {
+    if (getActivityOwnerId(node) != null && getActivityOwnerId(node).length() > 0) {
       NodeHierarchyCreator nodeHierarchyCreator = (NodeHierarchyCreator) ExoContainerContext.getCurrentContainer()
                                                                                             .getComponentInstanceOfType(NodeHierarchyCreator.class);
       SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
-      Node userNode = nodeHierarchyCreator.getUserNode(sessionProvider, getActivityOwnerId());
+      if(sessionProvider == null){
+    	  sessionProvider = WCMCoreUtils.getSystemSessionProvider();
+      }
+      Node userNode = nodeHierarchyCreator.getUserNode(sessionProvider, getActivityOwnerId(node));
       if (userNode != null && node.getPath().startsWith(userNode.getPath() + "/Private/")) {
         return false;
       }
@@ -482,11 +485,17 @@ public class Utils {
    * 
    * @return activity owner
    */
-  private static String getActivityOwnerId() {
+  private static String getActivityOwnerId(Node node) {
     String activityOwnerId = "";
     ConversationState conversationState = ConversationState.getCurrent();
     if (conversationState != null) {
       activityOwnerId = conversationState.getIdentity().getUserId();
+    }else{
+      try {
+        activityOwnerId = node.getProperty("publication:lastUser").getString();
+      } catch (Exception e) {
+        LOG.info("No lastUser publication");
+      }	
     }
     return activityOwnerId;
   }
@@ -551,12 +560,16 @@ public class Utils {
                                                                       .getString()
                                                                : org.exoplatform.ecm.webui.utils.Utils.getTitle(node);    
     ExoSocialActivity activity = new ExoSocialActivityImpl();
+    String userId = "";
     if(ConversationState.getCurrent() != null)
     {
-      Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, 
-        ConversationState.getCurrent().getIdentity().getUserId(), false);
-      activity.setUserId(identity.getId());
-    }    
+      userId = ConversationState.getCurrent().getIdentity().getUserId();
+    }else{
+      userId = activityOwnerId;
+    }
+    Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, 
+      userId, false);
+    activity.setUserId(identity.getId());
     activity.setType(activityType);
     activity.setUrl(node.getPath());
     activity.setTitle(title);
@@ -571,7 +584,7 @@ public class Utils {
     IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
     
     // get owner
-    String activityOwnerId = getActivityOwnerId();
+    String activityOwnerId = getActivityOwnerId(node);
     String nodeActivityID = StringUtils.EMPTY;
     ExoSocialActivity exa =null;
     if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
