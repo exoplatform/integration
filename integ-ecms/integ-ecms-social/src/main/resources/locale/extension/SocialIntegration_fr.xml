@@ -44,7 +44,7 @@
       <tagRemoved>Le tag: {0} a été supprimé.</tagRemoved>
       <tagsRemoved>Les tags: {0} ont été supprimés.</tagsRemoved>
       <stateChange>
-        <pending>Prêt pour être publié.</pending>
+        <pending>Le document est en attente de validation.</pending>
         <approved>Le document est validé.</approved>
         <staged>La publication est prête.</staged>
         <published>Le document est publié.</published>
@@ -68,6 +68,7 @@
     </publicationStates>
     <view>Voir</view>
     <edit>Modifier</edit>
+    <download>Download</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
