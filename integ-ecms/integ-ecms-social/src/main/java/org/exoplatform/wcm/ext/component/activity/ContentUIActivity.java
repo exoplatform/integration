@@ -220,7 +220,7 @@ public class ContentUIActivity extends BaseUIActivity {
   }
   public String getDocVersion() throws RepositoryException{
     Node node = getContentNode();
-    if (!node.isNodeType(MIX_VERSION)) {
+    if (node!=null && !node.isNodeType(MIX_VERSION)) {
       return null;
     }
     return docVersion;
