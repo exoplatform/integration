@@ -46,10 +46,11 @@
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
   def streamOwner = activity.getStreamOwner();
+  def currentNode = uicomponent.getContentNode();
   
 %>
 
-<% if (activity) { //process if not null
+<% if (activity && currentNode != null) { //process if not null
 
   def jsManager = pcontext.getJavascriptManager();  
 
@@ -63,7 +64,7 @@
   def uicontentpresentation = uicomponent.addChild(ContentPresentation.class, null, null);
   String repository;
   def preferenceWS;
-  def currentNode = uicomponent.getContentNode();
+  
   def fileComponent;
   if (currentNode) {
     activityContentTitle = uicomponent.getTitle(currentNode);
@@ -541,6 +542,4 @@
   </div> <!-- #boxContainer-->	  
   <% uiform.end() %>
 </div>
-<% } else { %> <!-- activity deleted -->
-<div class="activityStream deleted">$labelActivityHasBeenDeleted</div>
-<% }%>
+<% } %>
