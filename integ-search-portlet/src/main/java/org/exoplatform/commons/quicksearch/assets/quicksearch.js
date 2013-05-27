@@ -269,8 +269,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 
 
     //*** Event handlers - Quick search ***
-
-    $(seeAll_id).live("click", function(){
+    $(document).on("click",seeAll_id, function(){
       window.location.href = $(this).attr("href"); //open the main search page
       $(quickSearchResult_id).hide();
     });

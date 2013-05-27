@@ -401,7 +401,7 @@ function initSearch() {
       $("#searchPage").animate({ scrollTop: $("#resultPage")[0].scrollHeight}, "slow");
     });
 
-    $(":checkbox[name='contentType']").live("click", function(){
+    $(document).on("click",":checkbox[name='contentType']", function(){
       if("all"==this.value){ //All Content Types checked
         if($(this).is(":checked")) { // check/uncheck all
           $(":checkbox[name='contentType']").attr('checked', true);
@@ -416,7 +416,7 @@ function initSearch() {
     });
 
 
-    $(":checkbox[name='site']").live("click", function(){
+    $(document).on("click",":checkbox[name='site']", function(){
       if("all"==this.value){ //All Sites checked
         if($(this).is(":checked")) { // check/uncheck all
           $(":checkbox[name='site']").attr('checked', true);
