@@ -32,7 +32,6 @@ import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
 import org.exoplatform.forum.common.CommonUtils;
-import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -505,7 +504,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       updateActivity(activity, question);
       activityM.updateActivity(activity);
     } catch (Exception e) {
-      LOG.debug("Fail to refresh activity "+e.getMessage());
+      LOG.debug("Fail to refresh activity " + e.getMessage());
     }
   }
   
@@ -518,7 +517,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private String processContent(String content) {
-    content = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumber(content));
+    content = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(content));
     content = ForumActivityBuilder.getFourFirstLines(content);
     return content;
   }

@@ -16,9 +16,6 @@
  */
 package org.exoplatform.forum.ext.activity;
 
-import java.beans.PropertyChangeEvent;
-import java.util.List;
-
 import org.exoplatform.commons.utils.PropertyChangeSupport;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;

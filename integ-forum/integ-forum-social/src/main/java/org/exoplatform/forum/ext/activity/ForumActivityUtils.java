@@ -16,9 +16,6 @@
  */
 package org.exoplatform.forum.ext.activity;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.service.Category;
@@ -51,9 +48,6 @@ public class ForumActivityUtils {
   private static ActivityManager activityManager;
   private static IdentityManager identityManager;
   private static SpaceService spaceService;
-  
-  private static List<String> ignoreCharacterDecode = Arrays.asList(CommonUtils.LESS_THAN, CommonUtils.GREATER_THAN);
-  
   
   public static Identity getSpaceIdentity(String forumId) {
     Space space = getSpaceService().getSpaceByGroupId(getSpaceGroupId(forumId));
@@ -172,13 +166,13 @@ public class ForumActivityUtils {
     Post post = ctx.getPost();
     if (topic != null) {
       String description = topic.getDescription();
-      description = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumber(description, ignoreCharacterDecode));
+      description = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(description));
       topic.setDescription(description);
       ctx.setTopic(topic);
     }
     if (post != null) {
       String message = post.getMessage();
-      message = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumber(message, ignoreCharacterDecode));
+      message = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(message));
       post.setMessage(message);
       ctx.setPost(post);
     }
