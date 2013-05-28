@@ -233,7 +233,11 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 
         case "file":
         	var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon24x24" + type}).join(" ");
-        	avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+        	if (result.imageUrl == null || !$.trim(result.imageUrl).length){
+            	avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+        	}else{
+            	avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
+        	}
         	avatar = "<a href='"+result.url+"'>" + avatar + "</a>";
         	break;
         case "document":

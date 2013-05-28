@@ -27,7 +27,7 @@ function initSearch() {
         <img src='%{imageSrc}'> \
       </span> \
     ";
-
+    
     var CSS_AVATAR_TEMPLATE = " \
       <span class='avatar pull-left'> \
         <i class='%{cssClass}'></i> \
@@ -193,7 +193,11 @@ function initSearch() {
 
         case "file":
             var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64" + type}).join(" ");
-            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+            if (result.imageUrl == null || result.imageUrl == ""){
+            	avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+            }else{
+            	avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
+            }
             avatar = "<a href='"+result.url+"'>" + avatar + "</a>";            
             break;        	        	
         case "document":
