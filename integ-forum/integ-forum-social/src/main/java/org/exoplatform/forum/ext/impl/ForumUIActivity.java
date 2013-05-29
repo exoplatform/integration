@@ -342,6 +342,8 @@ public class ForumUIActivity extends BaseKSActivity {
     if (activity.getTitleId() != null) {
       Locale userLocale = requestContext.getLocale();
       activity = i18NActivityProcessor.processKeys(activity, userLocale);
+      String title = activity.getTitle().replaceAll("<br/>", "BR_").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+      activity.setTitle(title.replaceAll("BR_", "<br/>"));
     }
     return activity;
   }
