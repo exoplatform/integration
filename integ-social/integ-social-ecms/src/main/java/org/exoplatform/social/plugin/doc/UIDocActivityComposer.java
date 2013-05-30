@@ -46,7 +46,6 @@ import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
-import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
@@ -202,7 +201,6 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     documentName = rawPath.substring(rawPath.lastIndexOf("/") + 1);
     documentPath = buildDocumentPath(rawPath);
     isDocumentReady = true;
-System.out.println("path : " + documentPath);
     documentRefLink = documentRefLink.replace("//", "/");
     documentPath = documentPath.replace("//", "/");
     setReadyForPostingActivity(true);
