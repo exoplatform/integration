@@ -50,6 +50,9 @@
   
 %>
 
+
+
+
 <% if (activity && currentNode != null) { //process if not null
 
   def jsManager = pcontext.getJavascriptManager();  
@@ -158,7 +161,9 @@
       commentFormFocused: '${uicomponent.isCommentFormFocused()}'
     } """
   //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
-  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
+  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");  
+  jsManager.require("SHARED/wcm-utils", "wcmutil");      
+  
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
   def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
@@ -213,6 +218,27 @@
     if (!ownerAvatar) ownerAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
   }
 %>
+
+<script language="JavaScript">
+
+  function loadImageOnError(objImage) {
+    var tryCount = objImage.getAttribute("retryCount");
+    if (tryCount ==null) return;
+    tryCount = parseInt(tryCount);
+    if (tryCount>15) return;
+    tryCount++;
+    if (eXo.ecm.WCMUtils != null && objImage != null) {
+      if (objImage.parentNode != null && objImage.parentNode != null)
+        eXo.ecm.WCMUtils.loadImageForFileActivityCallback(objImage.parentNode);
+    }else {
+      objImage.setAttribute("retryCount", tryCount);
+      setTimeout(function(){loadImageOnError(objImage)},300);
+    }
+  }
+  
+ 
+</script>
+
 <div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 	<% uiform.begin() %>
 	<div class="activityTimeLine pull-left">
@@ -272,18 +298,28 @@
 		           	       def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                   String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/"+imageWidth+"x"+imageHeight+"/" + repository + "/" + preferenceWS + encodedPath;
-		                   if(mimeType.indexOf("icon") >=0) thumbnailImage = binarySrc;           
+		                   if(mimeType.indexOf("icon") >=0) thumbnailImage = binarySrc;  
+		                   def classIconName = org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(currentNode, "uiIcon64x64");
+		                        
 									   %>
-									   <a href="$contentActivityUri" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" alt="$activityContentTitle" /></a>
-									 </div><%
+									   <a href="$contentActivityUri" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" alt="$activityContentTitle" /></a>
+									   
+									   <a href="$contentActivityUri" style="display: none;"><i rel="tooltip" data-placement="bottom" class="<%=classIconName%>" data-original-title="File"></i></a>
+									   
+									 </div>
+									 <%
 		            } else if(org.exoplatform.services.cms.impl.Utils.isSupportThumbnailView(mimeType)){%>
 		               <div id="MediaContent${activity.id}" class="pull-left mediaContent docTypeContent">
 		                 <%
 		                   def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
-		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
+		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;
+		                   def classIconName = org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(currentNode, "uiIcon64x64");               
 		                 %>
-		                 <a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" class="pdfImageBorder"/></a>
+		                 <a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" class="pdfImageBorder"/></a>
+		                 
+		                 <a href="$contentActivityUri" style="display: none;"><i rel="tooltip" data-placement="bottom" class="<%=classIconName%>" data-original-title="File"></i></a>
+		                 
 		               </div><%
 		            } else if(fileComponent != null) { %>
 					 <div id="MediaContent${activity.id}" class=" pull-left PlayerContianer">
