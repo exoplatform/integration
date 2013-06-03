@@ -58,7 +58,9 @@ import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.ComponentConfigs;
 import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
@@ -69,16 +71,21 @@ import org.exoplatform.webui.event.EventListener;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
  * 15, 2011
  */
-@ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/ecm/social-integration/plugin/space/FileUIActivity.gtmpl", events = {
-    @EventConfig(listeners = FileUIActivity.ViewDocumentActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) })
-public class FileUIActivity extends BaseUIActivity {
+@ComponentConfigs({
+    @ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/ecm/social-integration/plugin/space/FileUIActivity.gtmpl", events = {
+        @EventConfig(listeners = FileUIActivity.ViewDocumentActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) }),
+    @ComponentConfig(
+       type = UIPopupWindow.class, template = "system:/groovy/webui/core/UIPopupWindow.gtmpl",
+       events = @EventConfig(listeners = FileUIActivity.CloseActionListener.class, name="ClosePopup"))
+    })
+public class FileUIActivity extends BaseUIActivity{
 
   private static final String NEW_DATE_FORMAT = "hh:mm:ss MMM d, yyyy";
 
@@ -539,6 +546,7 @@ public class FileUIActivity extends BaseUIActivity {
       docViewer.setOriginalNode(docNode);
       docViewer.setNode(docNode);
       popupContainer.activate(docViewer, 800, 600, true);
+      
       event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
     }
   }
@@ -561,6 +569,18 @@ public class FileUIActivity extends BaseUIActivity {
         return node.getSession().getNodeByUUID(uuid);
       }
       return node;
+    }
+  }
+
+  public static class CloseActionListener extends EventListener<UIPopupWindow> {
+    public void execute(Event<UIPopupWindow> event) throws Exception {
+      UIPopupWindow uiPopupWindow = event.getSource();
+      if (!uiPopupWindow.isShow())
+          return;
+      uiPopupWindow.setShow(false);
+      uiPopupWindow.setUIComponent(null);
+      UIPopupContainer popupContainer = uiPopupWindow.getAncestorOfType(UIPopupContainer.class);
+      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
     }
   }
 }
