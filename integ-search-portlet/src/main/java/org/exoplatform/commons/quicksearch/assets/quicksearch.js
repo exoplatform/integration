@@ -221,10 +221,12 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 
       switch(result.type) {
         case "event":
-          var date = new Date(result.fromDateTime).toString().split(/\s+/g);
+          //var date = new Date(result.fromDateTime).toString().split(/\s+/g);          
+          var dateOfDetail = result.detail.split(",")[1];
+          var date = dateOfDetail.trim().split(" ");
           avatar = EVENT_AVATAR_TEMPLATE.
-            replace(/%{month}/g, date[1]).
-            replace(/%{date}/g, date[2]);
+            replace(/%{month}/g, date[0].substring(0,3)).
+            replace(/%{date}/g, date[1].length==1?"0"+date[1]:date[1]);
           break;
 
         case "task":
