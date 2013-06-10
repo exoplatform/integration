@@ -62,7 +62,7 @@
       </component-plugin>
            
       <!-- Wiki -->
-      <component-plugin>
+      <component-plugin profiles="all">
         <name>WikiSearchConnector</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.wiki.service.impl.WikiSearchServiceConnector</type>
@@ -93,7 +93,7 @@
       
       
       <!-- Forum --> 
-      <component-plugin>
+      <component-plugin profiles="all">
         <name>DiscussionSearchConnector</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.forum.service.search.DiscussionSearchConnector</type>
@@ -108,7 +108,7 @@
       </component-plugin>         
       
       <!-- Social -->
-      <component-plugin>
+      <component-plugin profiles="all">
         <name>PeopleSearchConnector</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.social.core.search.PeopleSearchConnector</type>
@@ -123,7 +123,7 @@
       </component-plugin>      
 
       <!-- Social --> 
-      <component-plugin>
+      <component-plugin profiles="all">
         <name>SpaceSearchConnector</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.social.core.search.SpaceSearchConnector</type>
@@ -138,7 +138,7 @@
       </component-plugin>      
       
      <!-- Calendar -->
-      <component-plugin>
+      <component-plugin profiles="all">
         <name>EventSearchConnector</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.calendar.service.impl.EventSearchConnector</type>
@@ -153,7 +153,7 @@
       </component-plugin>            
       
       <!-- Calendar -->
-      <component-plugin>
+      <component-plugin profiles="all">
         <name>TaskSearchConnector</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.calendar.service.impl.TaskSearchConnector</type>
@@ -168,7 +168,7 @@
       </component-plugin>              
       
       <!-- Forum --> 
-      <component-plugin>
+      <component-plugin profiles="all">
         <name>AnswerSearchConnector</name>
         <set-method>addConnector</set-method>
         <type>org.exoplatform.faq.service.search.AnswerSearchConnector</type>
