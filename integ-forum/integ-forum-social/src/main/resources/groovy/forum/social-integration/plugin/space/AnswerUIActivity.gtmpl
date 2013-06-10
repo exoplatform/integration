@@ -203,7 +203,7 @@
 				</div><!--end heading-->
 				<div class="uiBox roundedBottom introBox ">	
 					<div class="clearfix headingContainer">
-						<div class="pull-right uiVote">
+						<div class="pull-right uiVote uiVoteMini">
 						  <%
                  int rateInt = (Integer) uicomponent.getRating();
                  double diff = uicomponent.getRating() - rateInt;
