@@ -151,6 +151,58 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     assertNull(activity);
   }
   
+  public void testRemoveCategory() throws Exception {
+    Category cate = createCategory("Category will be removed", 7);
+    String categoryId = Utils.CATEGORY_HOME + "/" + cate.getId();
+    faqService_.saveCategory(Utils.CATEGORY_HOME, cate, true);
+    Question question = createQuestion(categoryId);
+    
+    //save new question
+    faqService_.saveQuestion(question, true, faqSetting_);
+    
+    //an activity is created
+    String activityId = faqService_.getActivityIdForQuestion(question.getCategoryPath() + "/" + question.getId());
+    ExoSocialActivity activity1 = getManager().getActivity(activityId);
+    assertEquals(question.getQuestion(), activity1.getTitle());
+    
+    //sub category in level 2
+    Category cate2 = createCategory("Sub-Category will be removed", 8);
+    faqService_.saveCategory(cate.getPath(), cate2, true);
+    String categoryId2 = cate2.getPath();
+    
+    question = createQuestion(categoryId2);
+    faqService_.saveQuestion(question, true, faqSetting_);
+    
+    String activityId2 = faqService_.getActivityIdForQuestion(question.getCategoryPath() + "/" + question.getId());
+    ExoSocialActivity activity2 = getManager().getActivity(activityId2);
+    assertEquals(question.getQuestion(), activity2.getTitle());
+    
+    //sub category in level 3
+    Category cate3 = createCategory("Sub-sub-Category will be removed", 9);
+    faqService_.saveCategory(cate2.getPath(), cate3, true);
+    String categoryId3 = cate3.getPath();
+    
+    question = createQuestion(categoryId3);
+    faqService_.saveQuestion(question, true, faqSetting_);
+    
+    String activityId3 = faqService_.getActivityIdForQuestion(question.getCategoryPath() + "/" + question.getId());
+    ExoSocialActivity activity3 = getManager().getActivity(activityId3);
+    assertEquals(question.getQuestion(), activity3.getTitle());
+    
+    //remove category of question will delete all its activities and sub categories's 
+    faqService_.removeCategory(categoryId);
+    
+    //check the activity
+    activity1 = getManager().getActivity(activityId);
+    assertNull(activity1);
+    
+    activity2 = getManager().getActivity(activityId2);
+    assertNull(activity2);
+    
+    activity3 = getManager().getActivity(activityId3);
+    assertNull(activity3);
+  }
+  
   public void testUpdateQuestion() throws Exception {
     Category cate = createCategory("Category to test question", 6);
     String categoryId = Utils.CATEGORY_HOME + "/" + cate.getId();
@@ -372,4 +424,5 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     }
     return attachment;
   }
+  
 }
