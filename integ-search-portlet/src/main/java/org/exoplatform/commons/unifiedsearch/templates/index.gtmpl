@@ -62,5 +62,7 @@
 </div>
 
 <script>
+window.require(["PORTLET/unified-search/UnifiedsearchPortlet"], function() {
   initSearch();
+});  
 </script>

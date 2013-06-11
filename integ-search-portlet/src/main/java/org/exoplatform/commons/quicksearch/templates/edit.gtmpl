@@ -40,8 +40,12 @@
     </div>
 
   </div>
+  
+	<script>
+	  window.require(["PORTLET/unified-search/QuicksearchPortlet"], function() {
+	  	initQuickSearchSetting("${everything}","${alertOk}","${alertNotOk}");
+	  });
+	</script>
+    
 </div>
 
-<script>
-  initQuickSearchSetting("${everything}","${alertOk}","${alertNotOk}");
-</script>

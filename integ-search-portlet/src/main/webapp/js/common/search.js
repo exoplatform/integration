@@ -1,7 +1,7 @@
-function initSearch() {
-  jQuery.noConflict();
+(function($){
 
-  (function($){
+window.initSearch = function initSearch() {
+
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
     var SEARCH_TYPES; //enabled search types
@@ -336,8 +336,38 @@ function initSearch() {
           RESULT_CACHE.push.apply(RESULT_CACHE, results);
         });
 
-        var sortFuncName = "by" + sort.toProperCase() + order.toUpperCase();
-        RESULT_CACHE = RESULT_CACHE.sort(eval(sortFuncName)); //sort the result set
+        //var sortFuncName = "by" + sort.toProperCase() + order.toUpperCase();
+        if (order.toUpperCase() == "DESC"){
+        	if (sort.toProperCase() == "Relevancy"){
+                RESULT_CACHE = RESULT_CACHE.sort(function(a,b){
+                	return byRelevancyDESC(a,b);	  
+                }); //sort the result set
+        	}else if (sort.toProperCase() == "Date"){
+        		RESULT_CACHE = RESULT_CACHE.sort(function(a,b){
+        		return byDateDESC(a,b);
+        		});
+        	}else {
+        		RESULT_CACHE = RESULT_CACHE.sort(function(a,b){
+        		return byTitleDESC(a,b);
+        		});
+        	}
+        }else{
+        	if (sort.toProperCase() == "Relevancy"){
+        		RESULT_CACHE = RESULT_CACHE.sort(function(a,b){
+        		return byRelevancyASC(a,b);
+        		});
+        	}else if (sort.toProperCase() == "Date"){
+        		RESULT_CACHE = RESULT_CACHE.sort(function(a,b){
+        		return byDateASC(a,b);
+        		});
+        	}else {
+        		RESULT_CACHE = RESULT_CACHE.sort(function(a,b){
+        		return byTitleASC(a,b);
+        		});
+        	}        	
+        }
+        
+        //RESULT_CACHE = RESULT_CACHE.sort(eval(sortFuncName)); //sort the result set
 
         CACHE_OFFSET = 0; //reset the local offset
 
@@ -398,7 +428,7 @@ function initSearch() {
         $(":checkbox[name='contentType'][value='all']").attr('checked', false); //uncheck All Content Types
       }
 
-      search(); //perform search again to update the results
+      window.search = search(); //perform search again to update the results
     });
 
     $(document).on("click",":checkbox[name='site']", function(){
@@ -412,16 +442,16 @@ function initSearch() {
         $(":checkbox[name='site'][value='all']").attr('checked', false); //uncheck All Sites
       }
 
-      search(); //perform search again to update the results
+      window.search = search(); //perform search again to update the results
     });
 
     $("#btnSearch").click(function(){
-      search();
+      window.search = search();
     });
 
     $("#txtQuery").keyup(function(e){
       var keyCode = e.keyCode || e.which;
-      if(13==keyCode) search();
+      if(13==keyCode) window.search = search();
     });
 
     $("#sortOptions > li > a").on("click", function(){
@@ -510,7 +540,7 @@ function initSearch() {
 
         if(setting.searchCurrentSiteOnly) { //search without site filter
           $("#siteFilter").hide();
-          //search();
+          //window.search = search();
           NUM_RESULTS_RENDERED = 0;          
           getFromServer(function(){
             renderCachedResults();
@@ -528,7 +558,7 @@ function initSearch() {
                 $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
               }
             }
-            //search();
+            //window.search = search();
             NUM_RESULTS_RENDERED = 0;
             getFromServer(function(){
               renderCachedResults();
@@ -538,11 +568,114 @@ function initSearch() {
 
       });
     });
-
-  })(jQuery);
-
-  $ = jQuery; //undo .conflict();
 }
+
+
+//js for search setting
+window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk){
+
+    var CONNECTORS; //all registered SearchService connectors
+    var CHECKBOX_TEMPLATE = "\
+      <div class='control-group'> \
+        <div class='controls-full'> \
+          <span class='uiCheckbox'> \
+            <input type='checkbox' class='checkbox' name='%{name}' value='%{value}'> \
+            <span>%{text}</span> \
+          </span> \
+        </div> \
+      </div> \
+    ";
+
+
+    function getSelectedTypes() {
+      var searchIn = [];
+      if($(":checkbox[name='searchInOption'][value='all']").is(":checked")) {
+        return "all";
+      } else {
+        $.each($(":checkbox[name='searchInOption'][value!='all']:checked"), function(){
+          searchIn.push(this.value);
+        });
+        if (searchIn.length==0){
+        	return "false";
+        }
+        return searchIn.join(",");
+      }
+    }
+
+
+    // Call REST service to save the setting
+    $("#btnSave").click(function(){
+      //var url = "/rest/search/setting/"+$("#resultsPerPage").val()+"/"+getSelectedTypes()+"/"+$("#searchCurrentSiteOnly").is(":checked").toString()+"/"+$("#hideSearchForm").is(":checked").toString()+"/"+$("#hideFacetsFilter").is(":checked").toString();      
+      var jqxhr = $.post("/rest/search/setting", {
+        resultsPerPage: $("#resultsPerPage").val(),
+        searchTypes: getSelectedTypes(),
+        searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked"),
+        hideSearchForm: $("#hideSearchForm").is(":checked"),
+        hideFacetsFilter: $("#hideFacetsFilter").is(":checked")
+      });
+
+      jqxhr.complete(function(data) {
+        alert("ok"==data.responseText?"Your setting has been saved.":"Problem occurred when saving your setting: "+data.responseText);
+      });
+    });
+
+
+    // Handler for the checkboxes
+    $(":checkbox[name='searchInOption']").live("click", function(){
+      if("all"==this.value){ //All checked
+        if($(this).is(":checked")) { // check/uncheck all
+          $(":checkbox[name='searchInOption']").attr('checked', true);
+        } else {
+          $(":checkbox[name='searchInOption']").attr('checked', false);
+        }
+      } else {
+        $(":checkbox[name='searchInOption'][value='all']").attr('checked', false); //uncheck All Sites
+      }
+    });
+
+
+    // Load all needed configurations and settings from the service to build the UI
+    $.getJSON("/rest/search/registry", function(registry){
+      CONNECTORS = registry[0];
+      var searchInOpts=[];
+      searchInOpts.push(CHECKBOX_TEMPLATE.
+        replace(/%{name}/g, "searchInOption").
+        replace(/%{value}/g, "all").
+        replace(/%{text}/g, allMsg));
+      $.each(registry[1], function(i, type){
+        if(CONNECTORS[type]) searchInOpts.push(CHECKBOX_TEMPLATE.
+          replace(/%{name}/g, "searchInOption").
+          replace(/%{value}/g, type).
+          replace(/%{text}/g, CONNECTORS[type].displayName));
+      });
+      $("#lstSearchInOptions").html(searchInOpts.join(""));
+
+      // Display the previously saved (or default) search setting
+      $.getJSON("/rest/search/setting", function(setting){
+        if(-1 != $.inArray("all", setting.searchTypes)) {
+          $(":checkbox[name='searchInOption']").attr('checked', true);
+        } else {
+          $(":checkbox[name='searchInOption']").attr('checked', false);
+          $.each($(":checkbox[name='searchInOption']"), function(){
+            if(-1 != $.inArray(this.value, setting.searchTypes)) {
+              $(this).attr('checked', true);
+            }
+          });
+        }
+        $("#resultsPerPage").val(setting.resultsPerPage);
+        $("#searchCurrentSiteOnly").attr('checked', setting.searchCurrentSiteOnly);
+        $("#hideSearchForm").attr('checked', setting.hideSearchForm);
+        $("#hideFacetsFilter").attr('checked', setting.hideFacetsFilter);
+      });
+
+    });
+}
+
+
+initSearch();
+
+})($);
+
 /**
  * Handle error event when image cannot load in unified search
  * 
