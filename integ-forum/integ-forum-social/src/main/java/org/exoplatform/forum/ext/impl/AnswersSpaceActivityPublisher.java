@@ -32,6 +32,7 @@ import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
 import org.exoplatform.forum.common.CommonUtils;
+import org.exoplatform.forum.common.UserHelper;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -285,25 +286,38 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       IdentityManager identityM = (IdentityManager) exoContainer.getComponentInstanceOfType(IdentityManager.class);
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
-      Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,question.getAuthor(),false);
-      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(),
+                                                                question.getId(),
+                                                                getQuestionRate(question),
+                                                                getNbOfAnswers(question),
+                                                                getNbOfComments(question),
+                                                                question.getLanguage(),
+                                                                question.getLink());
       String activityId = faqS.getActivityIdForQuestion(question.getId());
-      
+
       String questionDetail = processContent(question.getDetail());
-      //in case deleted activity, if isUpdate, we will re-create new activity and add a comment associated
+      // in case deleted activity, if isUpdate, we will re-create new activity
+      // and add a comment associated
       boolean isUpdate = false;
-      
+      // UserHelper.checkValueUser(values)
       if (activityId != null) {
         isUpdate = true;
         try {
           ExoSocialActivity activity = activityM.getActivity(activityId);
+          Identity userIdentity;
+          String userId = question.getAuthor();
+          if (UserHelper.getUserByUserId(userId) == null) {
+            userIdentity = identityM.getIdentity(activity.getPosterId(), false);
+          } else {
+            userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
+          }
           activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion()));
           activity.setBody(questionDetail);
           activity.setTemplateParams(templateParams);
           activityM.updateActivity(activity);
-          
+
           ExoSocialActivity comment = createCommentWhenUpdateQuestion(userIdentity, question);
-          if (! "".equals(comment.getTitle())) {
+          if (!"".equals(comment.getTitle())) {
             activityM.saveComment(activity, comment);
           }
         } catch (Exception e) {
@@ -312,8 +326,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         }
       }
       if (activityId == null) {
+        Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, question.getAuthor(), false);
         Identity streamOwner = null;
-        String catId = (String) faqS.readQuestionProperty(question.getId(),FAQNodeTypes.EXO_CATEGORY_ID,String.class);
+        String catId = (String) faqS.readQuestionProperty(question.getId(), FAQNodeTypes.EXO_CATEGORY_ID, String.class);
         Identity spaceIdentity = getSpaceIdentity(catId);
         if (spaceIdentity != null) {
           // publish the activity in the space stream.
@@ -325,13 +340,13 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         if (streamOwner == null) {
           streamOwner = userIdentity;
         }
-        ExoSocialActivity activity = newActivity(userIdentity,question.getQuestion(),questionDetail,templateParams);
+        ExoSocialActivity activity = newActivity(userIdentity, question.getQuestion(), questionDetail, templateParams);
         activityM.saveActivityNoReturn(streamOwner, activity);
-        faqS.saveActivityIdForQuestion(question.getId(),activity.getId());
-        
+        faqS.saveActivityIdForQuestion(question.getId(), activity.getId());
+
         if (isUpdate) {
           ExoSocialActivity comment = createCommentWhenUpdateQuestion(userIdentity, question);
-          if (! "".equals(comment.getTitle())) {
+          if (!"".equals(comment.getTitle())) {
             activityM.saveComment(activity, comment);
           }
         }
