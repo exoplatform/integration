@@ -434,6 +434,18 @@ public class ContentUIActivity extends BaseUIActivity {
       return "";
     }
   }
+  
+  protected int getVersion(Node node) {
+    String currentVersion = null;
+    try {
+      currentVersion = contentNode.getBaseVersion().getName();      
+      if (currentVersion.contains("jcr:rootVersion")) currentVersion = "0";
+    }catch (Exception e) {
+      currentVersion ="0";
+    }
+    return Integer.parseInt(currentVersion);
+  }
+  
   public static class ViewDocumentActionListener extends EventListener<ContentUIActivity> {
     @Override
     public void execute(Event<ContentUIActivity> event) throws Exception {

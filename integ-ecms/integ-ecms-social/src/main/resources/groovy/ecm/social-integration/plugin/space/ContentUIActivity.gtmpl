@@ -111,10 +111,10 @@
   
   def docTypeName = uicomponent.getDocTypeName();
   def docTitle = uicomponent.getDocTitle();
-  def docVersionNo = uicomponent.getDocVersion();
+  def docVersionNo = uicomponent.getVersion(currentNode);
   def docVersion = _ctx.appRes("SocialIntegration.messages.version");
   if (docVersionNo !=null) {
-    docVersion = docVersion.replace("{0}", docVersionNo);
+    docVersion = docVersion.replace("{0}", String.valueOf(docVersionNo));
   } else {
     docVersion = null;
   }
