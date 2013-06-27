@@ -26,6 +26,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     var index = 0;
     var currentFocus = 0;
     //var skipKeyUp = [9,16,17,18,19,20,33,34,35,36,37,38,39,40,45,49];
+	var allJqxHrResponse = {};
     
     var mapKeyUp = {"0":"48","1":"49","2":"50","3":"51","4":"52","5":"53","6":"54","7":"55","8":"56","9":"57",
     		"a":"65","b":"66","c":"67","d":"68","e":"69","f":"70","g":"71","h":"72","i":"73","j":"74",
@@ -157,63 +158,161 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     }
 
     function quickSearch() {
-      var query = $(txtQuickSearchQuery_id).val();
+      	      
       setWaitingStatus(true);
-      var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
+      //var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
+      var typeArray = QUICKSEARCH_SETTING.searchTypes;
+	  var allResultMap = {};
+	  var tinySearchTypes = [];
+	  var smallSearchTypes = [];
+	  var normalSearchTypes = [];
+	  var bigSearchTypes = [];
+	  var tinyJqxhr = [];
+	  var smallJqxhr = [];
+	  var normalJqxhr = [];
+	  var bigJqxhr = [];
+	  
 
-      var searchParams = {
-        searchContext: {
-          siteName:parent.eXo.env.portal.portalName
-        },
-        q: query,
-        sites: QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all",
-        types: types,
-        offset: 0,
-        limit: QUICKSEARCH_SETTING.resultsPerPage,
-        sort: "relevancy",
-        order: "desc"
-      };
-      
-      
-      
-      // get results of all search types in a map
-      $.getJSON("/rest/search", searchParams, function(resultMap){
-        var rows = []; //one row per type
-        index = 0;
-        $.each(SEARCH_TYPES, function(i, searchType){          
-          var results = resultMap[searchType]; //get all results of this type
-          if(results && 0!=$(results).size()) { //show the type with result only        	 
-            //results.map(function(result){result.type = searchType;}); //assign type for each result
-            $.map(results, function(result){result.type = searchType;}); //assign type for each result
-            var cell = []; //the cell contains results of this type (in the quick search result table)
-            $.each(results, function(i, result){
-              index = index + 1; 	
-              cell.push(renderQuickSearchResult(result, index)); //add this result to the cell
-            });
-            var row = QUICKSEARCH_TABLE_ROW_TEMPLATE.replace(/%{type}/g, CONNECTORS[searchType].displayName).replace(/%{results}/g, cell.join(""));
-            rows.push(row);
-          }
-        });
-                        
-        var messageRow = rows.length==0 ? QUICKSEARCH_NO_RESULT.replace(/%{query}/, query) : QUICKSEARCH_SEE_ALL;
-        $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
-        if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
-        	$(quickSearchResult_id).show();              
-        }else{
-        	var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
-        	$(quickSearchResult_id).width(width);
-        	$(quickSearchResult_id).show();                      	
-        }              
-        
-        setWaitingStatus(false);
-        
-        var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
-        $(seeAll_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page      
-        currentFocus = 0;
-      });
+	  if ("all" == typeArray){
+		   var index = 0;
+		   $.each(CONNECTORS, function(idx,value){			  
+			  if (index<2) {
+				  bigSearchTypes.push(value.searchType);			  
+			  } else if (index>=2 && index<5) {
+				  normalSearchTypes.push(value.searchType);  
+			  } else if (index>=5 && index<8){
+				  smallSearchTypes.push(value.searchType);
+			  } else {
+				  tinySearchTypes.push(value.searchType);			 
+			  }		  
+			  index = index + 1; 
+		   })	    
+	  }else {
+		  $.each(typeArray,function(index,value){
+			  
+			  if (index<2) {
+				  bigSearchTypes.push(value);			  
+			  } else if (index>=2 && index<5) {
+				  normalSearchTypes.push(value);  
+			  } else if (index>=5 && index<8){
+				  smallSearchTypes.push(value);
+			  } else {
+				  tinySearchTypes.push(value);			 
+			  }		  
+		  });		  
+	  }
+	  
+	  
+	  //tiny search
+	  tinyJqxhr = executeSearch(tinySearchTypes,allResultMap);
+	  $.when(tinyJqxhr[0],tinyJqxhr[1]).done(function(){
+		  //small search
+		  smallJqxhr = executeSearch(smallSearchTypes,allResultMap);
+		  $.when(smallJqxhr[0],smallJqxhr[1],smallJqxhr[2]).done(function(){
+			  //normal search
+			  normalJqxhr = executeSearch(normalSearchTypes,allResultMap);
+			  			
+				  /*if (Object.keys(allResultMap).length.length>0){
+					  setWaitingStatus(false);
+				  }*/
+				  //big search
+				  $.when(normalJqxhr[0],normalJqxhr[1],normalJqxhr[2]).done(function (){
+					  bigJqxhr = executeSearch(bigSearchTypes,allResultMap);
+
+					  $.when(bigJqxhr[0]).done(function(){
+						  setWaitingStatus(false);
+						  var noResult = true;
+						  $.each(allResultMap, function(index, results){
+							 if ($(results).size() != 0) noResult = false; 
+						  });
+						  if (noResult){
+							  displayNoResult();  
+						  }		  
+					  });
+					  
+				  });			  
+		  });  
+	  });
     }
 
+    function executeSearch(types, allResultMap){
+    	var query = $(txtQuickSearchQuery_id).val();
+    	var jqxhrArray = [];
+	  	var tempJqxhr = null;
 
+    	$.each(types,function(index,types){
+		  	
+	        var searchParams = {
+	      	        searchContext: {
+	      	          siteName:parent.eXo.env.portal.portalName
+	      	        },
+	      	        q: query,
+	      	        sites: QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all",
+	        		types: types,
+	      	        offset: 0,
+	      	        limit: QUICKSEARCH_SETTING.resultsPerPage,
+	      	        sort: "relevancy",
+	      	        order: "desc"
+	      	      };    	  
+	            
+			var jqxhrB = allJqxHrResponse[types];
+			if (jqxhrB != null) {
+			  jqxhrB.abort();
+			}
+			// get results of all search types in a map
+			var jqxhr = $.getJSON("/rest/search", searchParams, function(resultMap){
+			//allQueryMap[types] = query;
+				
+			$.each(resultMap, function(key, results){			
+				allResultMap[key] = results;
+			});
+		  		
+	  		var rows = []; //one row per type
+	  		index = 0;
+	  		$.each(SEARCH_TYPES, function(i, searchType){          
+	            var results = allResultMap[searchType]; //get all results of this type
+	            if(results && 0!=$(results).size()) { //show the type with result only        	 
+	              //results.map(function(result){result.type = searchType;}); //assign type for each result
+	              $.map(results, function(result){result.type = searchType;}); //assign type for each result
+	              var cell = []; //the cell contains results of this type (in the quick search result table)
+	              $.each(results, function(i, result){
+	                index = index + 1; 	
+	                cell.push(renderQuickSearchResult(result, index)); //add this result to the cell
+	              });
+	              var row = QUICKSEARCH_TABLE_ROW_TEMPLATE.replace(/%{type}/g, CONNECTORS[searchType].displayName).replace(/%{results}/g, cell.join(""));
+	              rows.push(row);
+	            }
+	  		});
+	          if (rows.length>0){                
+		          var messageRow = QUICKSEARCH_SEE_ALL;
+		          $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
+	          }
+	          if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
+	          	$(quickSearchResult_id).show();              
+	          }else{
+	          	var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
+	          	$(quickSearchResult_id).width(width);
+	          	$(quickSearchResult_id).show();                      	
+	          }              
+	          	          
+	          var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
+	          $(seeAll_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page      
+	          currentFocus = 0;
+	        });
+		  allJqxHrResponse[types] =jqxhr;
+		  jqxhrArray.push(jqxhr);
+        });    	
+    	return jqxhrArray;
+    }
+    
+    function displayNoResult(){
+    	var query = $(txtQuickSearchQuery_id).val();
+    	var rows = [];
+        var messageRow = QUICKSEARCH_NO_RESULT.replace(/%{query}/, query);
+        $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
+    	
+    }
+    
     function renderQuickSearchResult(result, index) {
       var query = $(txtQuickSearchQuery_id).val();
       var terms = query.split(/\s+/g); //for highlighting
@@ -290,27 +389,8 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
           //quickSearch(); //search for the text just being typed in
 		  var currentVal = $(txtQuickSearchQuery_id).val();    	  
     	  if (!charDeletedIsEmpty(e,textVal, currentVal)){
-    		  $.each(mapKeyUp, function(key, value){
-        		  
-    	    	  if (value == e.keyCode){
-    	    		var query = $(txtQuickSearchQuery_id).val();
-    	    		nextKeyup = new Date().getTime();	    
-    	    		
-    		    	if (query.length <= 2)
-    		      	{
-    		    		quickSearch(); //search for the text just being typed in
-    		      	}else if (nextKeyup - firstKeyup >= 1000){
-    			    		firstKeyup = nextKeyup;	    		
-    			    		quickSearch(); //search for the text just being typed in	    		
-    			    }else skipKeyup ++;
-    		    	
-    	 		    if (skipKeyup == 2)
-    			    {
-    				   skipKeyup = 0;
-    				   quickSearch();
-    				   firstKeyup = nextKeyup;
-    				}
-    	    	  }
+    		  quickSearch(); //search for the text just being typed in
+    		  $.each(mapKeyUp, function(key, value){        		      	    	 
     	    	  textVal = $(txtQuickSearchQuery_id).val();
         	  });
     	  }    	      	      	 
@@ -438,6 +518,21 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       isDefault = false;
     });
 
+    //reset query stack
+    function putInQueryStack(val){
+    	queryStack.push(val);
+    }
+    
+    //reset query stack
+    function resetQueryStack(){
+    	queryStack = [];
+    }
+    //get first element in stack
+    function pickFirstQuery(){
+    	var temp = queryStack[queryStack.length-1];
+    	alert(temp);
+    	return queryStack[queryStack.length-1];
+    }
 
     //$(txtQuickSearchQuery_id).blur(function(){
     //  setTimeout(function(){$(quickSearchResult_id).hide();}, 200);
