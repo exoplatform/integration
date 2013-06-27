@@ -277,7 +277,7 @@
 			<% if (! activity.isLocked()) { %>
 				<ul class="pull-left statusAction">
 					<li>					   
-					   <a onclick="void();" id="AnswerLink${activity.id}" href="${uicomponent.getLink()}">
+					   <a onclick="void();" id="AnswerLink${activity.id}" href="${uicomponent.getAnswerLink()}">
 						 <i class="uiIconReply uiIconLightGray"></i>&nbsp;<%= _ctx.appRes("AnswerUIActivity.label.button.answer") %>
 					   </a>										
 					</li> 	
