@@ -204,20 +204,16 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 	  
 	  
 	  //tiny search
-	  tinyJqxhr = executeSearch(tinySearchTypes,allResultMap);
+	  tinyJqxhr = executeSearch(typeArray,tinySearchTypes,allResultMap);
 	  $.when(tinyJqxhr[0],tinyJqxhr[1]).done(function(){
 		  //small search
-		  smallJqxhr = executeSearch(smallSearchTypes,allResultMap);
+		  smallJqxhr = executeSearch(typeArray,smallSearchTypes,allResultMap);
 		  $.when(smallJqxhr[0],smallJqxhr[1],smallJqxhr[2]).done(function(){
 			  //normal search
-			  normalJqxhr = executeSearch(normalSearchTypes,allResultMap);
+			  normalJqxhr = executeSearch(typeArray,normalSearchTypes,allResultMap);
 			  			
-				  /*if (Object.keys(allResultMap).length.length>0){
-					  setWaitingStatus(false);
-				  }*/
-				  //big search
 				  $.when(normalJqxhr[0],normalJqxhr[1],normalJqxhr[2]).done(function (){
-					  bigJqxhr = executeSearch(bigSearchTypes,allResultMap);
+					  bigJqxhr = executeSearch(typeArray,bigSearchTypes,allResultMap);
 
 					  $.when(bigJqxhr[0]).done(function(){
 						  setWaitingStatus(false);
@@ -226,7 +222,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 							 if ($(results).size() != 0) noResult = false; 
 						  });
 						  if (noResult){
-							  displayNoResult();  
+							  displayNoResult(typeArray);  
 						  }		  
 					  });
 					  
@@ -235,12 +231,12 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 	  });
     }
 
-    function executeSearch(types, allResultMap){
+    function executeSearch(typeArray,subTypesArray, allResultMap){
     	var query = $(txtQuickSearchQuery_id).val();
     	var jqxhrArray = [];
 	  	var tempJqxhr = null;
 
-    	$.each(types,function(index,types){
+    	$.each(subTypesArray,function(index,types){
 		  	
 	        var searchParams = {
 	      	        searchContext: {
@@ -296,7 +292,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 	          }              
 	          	          
 	          var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
-	          $(seeAll_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page      
+	          $(seeAll_id).attr("href", searchPage +"?q="+query+"&types="+typeArray); //the query to be passed to main search page      
 	          currentFocus = 0;
 	        });
 		  allJqxHrResponse[types] =jqxhr;
@@ -305,12 +301,14 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     	return jqxhrArray;
     }
     
-    function displayNoResult(){
+    function displayNoResult(typeArray){
     	var query = $(txtQuickSearchQuery_id).val();
     	var rows = [];
         var messageRow = QUICKSEARCH_NO_RESULT.replace(/%{query}/, query);
         $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
-    	
+        var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
+    	var query = $(txtQuickSearchQuery_id).val();
+        $(linkQuickSearchQuery_id).attr("href", searchPage +"?q="+query+"&types="+typeArray); //the query to be passed to main search page
     }
     
     function renderQuickSearchResult(result, index) {
@@ -373,10 +371,13 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 
     //*** Event handlers - Quick search ***
     $(document).on("click",seeAll_id, function(){
-      window.location.href = $(this).attr("href"); //open the main search page
+    	if ($(this).attr("href") != "#"){
+    		window.location.href = $(this).attr("href"); //open the main search page
+    	}else {
+    		window.location.href = $(linkQuickSearchQuery_id).attr("href");
+    	}      
       $(quickSearchResult_id).hide();
     });
-
 
     $(txtQuickSearchQuery_id).keyup(function(e){
       if(""==$(this).val()) {
@@ -479,8 +480,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         $(txtQuickSearchQuery_id).show();
         $(txtQuickSearchQuery_id).focus();
       }
-      else
-      if (isDefault == true) {
+      else if (isDefault == true) {
           $(txtQuickSearchQuery_id).hide();
           $(quickSearchResult_id).hide();          
       }
@@ -517,22 +517,6 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       $(this).css('color', '#000');
       isDefault = false;
     });
-
-    //reset query stack
-    function putInQueryStack(val){
-    	queryStack.push(val);
-    }
-    
-    //reset query stack
-    function resetQueryStack(){
-    	queryStack = [];
-    }
-    //get first element in stack
-    function pickFirstQuery(){
-    	var temp = queryStack[queryStack.length-1];
-    	alert(temp);
-    	return queryStack[queryStack.length-1];
-    }
 
     //$(txtQuickSearchQuery_id).blur(function(){
     //  setTimeout(function(){$(quickSearchResult_id).hide();}, 200);
