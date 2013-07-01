@@ -65,6 +65,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   public static final String NUMBER_OF_COMMENTS = "NumberOfComments";
   public static final String SPACE_GROUP_ID     = "SpaceGroupId";
   
+  public static final String QUESTION_POINT     = "QuestionPoint";
+  
   private final static Log LOG = ExoLogger.getExoLogger(AnswersSpaceActivityPublisher.class);
   
   private Identity getSpaceIdentity(String categoryId) {
@@ -98,13 +100,14 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     return activity;
   }
   
-  private Map<String, String> updateTemplateParams(Map<String, String> templateParams, String questionId, String questionRate, String nbAnswers, String nbComments, String language, String link) {
+  private Map<String, String> updateTemplateParams(Map<String, String> templateParams, String questionId, String questionRate, String nbAnswers, String nbComments, String language, String link, int questionPoint) {
     templateParams.put(QUESTION_RATING, questionRate);
     templateParams.put(NUMBER_OF_ANSWERS, nbAnswers);
     templateParams.put(NUMBER_OF_COMMENTS, nbComments);
     templateParams.put(LINK_KEY, link);
     templateParams.put(LANGUAGE_KEY, language);
     templateParams.put(QUESTION_ID, questionId);
+    templateParams.put(QUESTION_POINT, ""+ questionPoint);
     return templateParams;
   }
   
@@ -141,7 +144,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private void updateActivity(ExoSocialActivity activity, Question question) {
-    Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+    Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink() , Utils.getQuestionPoint(question));
     activity.setTemplateParams(activityTemplateParams);
     activity.setBody(null);
     activity.setTitle(null);
@@ -292,7 +295,8 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
                                                                 getNbOfAnswers(question),
                                                                 getNbOfComments(question),
                                                                 question.getLanguage(),
-                                                                question.getLink());
+                                                                question.getLink(),
+                                                                Utils.getQuestionPoint(question));
       String activityId = faqS.getActivityIdForQuestion(question.getId());
 
       String questionDetail = processContent(question.getDetail());
@@ -536,4 +540,5 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     content = ForumActivityBuilder.getFourFirstLines(content);
     return content;
   }
+  
 }

@@ -64,7 +64,9 @@
 
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
-
+  
+  def labelQuestionPoint = _ctx.appRes("AnswerUIActivity.label.question.point");
+  
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
   if (allComments) {
@@ -235,11 +237,14 @@
 						</div>
 					</div>	
 				  <div class="contentAnswer theContent">
+				  <% 
+             def questionPoint = uicomponent.getQuestionPoint();
+          %>
 					<div class="clearfix ">
 						<div class="sumaryPoint pull-left">
-							<div>100</div>
-								points
-						</div><!--hardcode-->
+							<div>$questionPoint</div>
+								$labelQuestionPoint
+						</div>
 						<p class="text">$activity.body</p>	
 					</div>
           <% def numberOfAnswers = uicomponent.getNumberOfAnswers();

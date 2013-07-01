@@ -10,6 +10,7 @@ import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.DataStorage;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.service.Utils;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.service.ForumService;
@@ -186,6 +187,40 @@ public class AnswerUIActivity extends BaseKSActivity {
     link = link.replaceAll(selectedNode, "forum") + "/" + org.exoplatform.forum.service.Utils.TOPIC
         + "/" + topicId;
     return link;
+  }
+  
+  public int getQuestionPoint() {
+
+    try {
+
+      String sQuestionPoint = getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_POINT);
+      
+      if (CommonUtils.isEmpty(sQuestionPoint)) {// If the QUESTION_POINT is not exist in Template Params  
+        //
+        DataStorage faqService = (DataStorage) ExoContainerContext.getCurrentContainer()
+                                                                .getComponentInstanceOfType(DataStorage.class);
+        
+        Question question = faqService.getQuestionById(getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
+        
+        int questionPoint = Utils.getQuestionPoint(question);
+        
+        //update again the activity
+        ActivityManager activityM = (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
+        ExoSocialActivity activity = activityM.getActivity(faqService.getActivityIdForQuestion(question.getPath()));
+        
+        Map<String, String> templateParams = activity.getTemplateParams();
+        templateParams.put(AnswersSpaceActivityPublisher.QUESTION_POINT, ""+ questionPoint);
+        activityM.updateActivity(activity);
+        
+        return questionPoint;
+      }
+
+      return Integer.parseInt(sQuestionPoint);
+
+    } catch (Exception e) {
+      return 0;
+    }
+
   }
 
   public static class PostCommentActionListener extends BaseUIActivity.PostCommentActionListener {
