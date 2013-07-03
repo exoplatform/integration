@@ -63,7 +63,7 @@ import org.exoplatform.web.controller.router.Router;
 
 /**
  * This class provides RESTful services endpoints which will help all external components to call unified search functions.
- * These services are search, search settings, quick search settings, registry, sites and enable search type.
+ * These services include Search, Registry, Sites, Search settings, Quick search settings, and Enable search type.
  * @anchor UnifiedSearchService
  */
 @Path("/search")
@@ -114,16 +114,16 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   /**
-   * Search for a query.
+   * Searches for a query.
    * @param context Search context
-   * @param query The user-input query to search for
-   * @param sSites Search on these specified sites only (e.g acme, intranet...)
-   * @param sTypes Search for these specified content types only (e.g people, discussion, event, task, wiki, activity, social, file, document...)
-   * @param sOffset Start offset of the result set
-   * @param sLimit Maximum size of the result set 
-   * @param sort Sort type (relevancy, date, title)
-   * @param order Sort order (asc, desc)
-   * @format json
+   * @param query Searches for a query which is entered by the user.
+   * @param sSites Searches in the specified sites only (for example, ACME or Intranet).
+   * @param sTypes Searches for these specified content types only (for example, people, discussions, events, tasks, wikis, spaces, files, and documents).
+   * @param sOffset Starts the offset of the results set.
+   * @param sLimit Limit the maximum size of the results set.
+   * @param sort Defines the Sort type (relevancy, date, title).
+   * @param order Defines the Sort order (ascending, descending).
+   * @format JSON
    * @return a map of connectors, including their search results.
    * @LevelAPI Experimental
    * @anchor UnifiedSearchService.search
@@ -183,9 +183,9 @@ public class UnifiedSearchService implements ResourceContainer {
   }
 
   /**
-  * Gets all connectors registered in the system and which are enabled.
-  * @return List of connectors and names of the enabled ones
-  * @format json
+  * Gets all connectors which are registered in the system and are enabled.
+  * @return List of connectors and names of the enabled ones.
+  * @format JSON
   * @LevelAPI Experimental
   * @anchor UnifiedSearchService.getRegistry
   */    
@@ -203,7 +203,7 @@ public class UnifiedSearchService implements ResourceContainer {
   /**
   * Gets all available sites in the system.
   * @return a list of site names
-  * @format json
+  * @format JSON
   * @LevelAPI Experimental
   * @anchor UnifiedSearchService.getSites
   */  
@@ -237,7 +237,7 @@ public class UnifiedSearchService implements ResourceContainer {
   /**
   * Gets current user's search settings.
   * @return search settings of the current logging in (or anonymous) user
-  * @format json
+  * @format JSON
   * @LevelAPI Experimental
   * @anchor UnifiedSearchService.getSearchSetting
   */    
@@ -251,7 +251,7 @@ public class UnifiedSearchService implements ResourceContainer {
   /**
   * Saves current user's search settings.
   * @return "ok" when succeed
-  * @format json
+  * @format JSON
   * @LevelAPI Experimental
   * @anchor UnifiedSearchService.setSearchSetting
   */    
@@ -284,7 +284,7 @@ public class UnifiedSearchService implements ResourceContainer {
   /**
   * Gets current user's quick search settings.
   * @return quick search settings of the current logging in user
-  * @format json
+  * @format JSON
   * @LevelAPI Experimental
   * @anchor UnifiedSearchService.getQuicksearchSetting
   */    
@@ -298,7 +298,7 @@ public class UnifiedSearchService implements ResourceContainer {
   * Saves current user's quick search settings.
   *
   * @return "ok" when succeed
-  * @format json
+  * @format JSON
   * @LevelAPI Experimental
   *
   * @anchor UnifiedSearchService.setQuicksearchSetting
@@ -328,9 +328,9 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   /**
-  * Sets "enabledSearchTypes" global variable.
-  * @param searchTypes List of search types in the form of a comma-separated string
-  * @format json
+  * Sets the "enabledSearchTypes" variable in a global context.
+  * @param searchTypes List of search types in the form of a comma-separated string.
+  * @format JSON
   * @return "ok" if the caller's role is administrator, otherwise, returns "nok: administrators only".
   * @LevelAPI Experimental
   * @anchor UnifiedSearchService.setEnabledSearchtypes
