@@ -53,7 +53,7 @@
     <org.exoplatform.ecms.version>4.1.x-ecms-infinispan-full-integ-SNAPSHOT</org.exoplatform.ecms.version>
     <org.exoplatform.social.version>4.1.x-social-infinispan-full-integ-SNAPSHOT</org.exoplatform.social.version>
     <org.exoplatform.forum.version>4.1.x-forum-infinispan-full-integ-SNAPSHOT</org.exoplatform.forum.version>
-    <org.exoplatform.wiki.version>4.1.0-SNAPSHOT</org.exoplatform.wiki.version>
+    <org.exoplatform.wiki.version>4.1.x-wiki-infinispan-full-integ-SNAPSHOT</org.exoplatform.wiki.version>
     <org.exoplatform.calendar.version>4.1.x-calendar-infinispan-full-integ-SNAPSHOT</org.exoplatform.calendar.version>
     <!-- Platform Project 3rd party Dependencies -->
     <org.exoplatform.doc.doc-style.version>4.1.0-SNAPSHOT</org.exoplatform.doc.doc-style.version>
