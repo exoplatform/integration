@@ -334,8 +334,12 @@ public class AnswerUIActivity extends BaseKSActivity {
     if (activity.getTitleId() != null) {
       Locale userLocale = requestContext.getLocale();
       activity = i18NActivityProcessor.processKeys(activity, userLocale);
-      String title = activity.getTitle().replaceAll("<br/>", "BR_").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-      activity.setTitle(title.replaceAll("BR_", "<br/>"));
+      String title = activity.getTitle().replaceAll("&amp;", "&");
+      activity.setTitle(title);
+      if (activity.isComment() == false) {
+        String body = activity.getBody().replaceAll("&amp;", "&");
+        activity.setBody(body);
+      }
     }
     return activity;
   }

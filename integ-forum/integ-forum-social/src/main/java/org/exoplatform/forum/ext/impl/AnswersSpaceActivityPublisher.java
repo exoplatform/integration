@@ -93,6 +93,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   private ExoSocialActivity newActivity(Identity author, String title, String body, Map<String, String> templateParams) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(title));
+    activity.setTitleId("add-question");
     activity.setBody(body);
     activity.setType(SPACE_APP_ID);
     activity.setTemplateParams(templateParams);
@@ -245,6 +246,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
             if (oldComment != null) {
               comment = oldComment;
               comment.setTitle(message);
+              comment.setTitleId("update-comment");
               activityM.updateActivity(comment);
             } else {
               commentActivityId = null;
@@ -253,6 +255,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
           if (commentActivityId == null) { //create new activity's comment
             comment.setTemplateParams(commentTemplateParams);
             comment.setTitle(message);
+            comment.setTitleId("add-comment");
             comment.setUserId(userIdentity.getId());
             updateActivity(activity, question);
             activityM.updateActivity(activity);
