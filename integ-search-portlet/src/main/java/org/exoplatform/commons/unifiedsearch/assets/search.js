@@ -1,4 +1,3 @@
-
 function initSearch() {
   jQuery.noConflict();
 
@@ -21,12 +20,12 @@ function initSearch() {
         </div> \
       </div> \
     ";
-    
+    // Modify by Son DN at 2013 July 16
     var IMAGE_AVATAR_TEMPLATE = " \
-      <span class='avatar pull-left'> \
-        <img src='%{imageSrc}'> \
-      </span> \
-    ";
+        <span class='avatar pull-left'> \
+          <img src='%{imageSrc}' onerror='onImgError(this, \"%{errorClasses}\")'> \
+        </span> \
+      ";
     
     var CSS_AVATAR_TEMPLATE = " \
       <span class='avatar pull-left'> \
@@ -82,8 +81,7 @@ function initSearch() {
         replace(/<.+?>/g,"").              //remove all HTML tags
         replace(/{(\/?strong)}/g,"<\$1>"); //restore {strong}, {/strong} back to <strong>, </strong>
     }
-
-
+    
     function setWaitingStatus(status) {
       if(status) {
     	$("#resultLoading").show();
@@ -196,7 +194,8 @@ function initSearch() {
             if (result.imageUrl == null || result.imageUrl == ""){
             	avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
             }else{
-            	avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
+            	// Modify by Son DN at 2013 July 16
+            	avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl).replace(/%{errorClasses}/g, cssClasses);
             }
             avatar = "<a href='"+result.url+"'>" + avatar + "</a>";            
             break;        	        	
@@ -567,4 +566,14 @@ function initSearch() {
   })(jQuery);
 
   $ = jQuery; //undo .conflict();
+}
+
+/**
+ * Handle error event when image cannot load in unified search
+ * 
+ * @Author Son DN
+ * @Date 2013 July 16
+ */
+function onImgError(object, errorClasses) {
+	$(object).parent().empty().append($(document.createElement('i')).addClass(errorClasses));
 }
