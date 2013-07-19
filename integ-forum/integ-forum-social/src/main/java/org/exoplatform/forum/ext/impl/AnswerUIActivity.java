@@ -9,6 +9,8 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.DataStorage;
 import org.exoplatform.faq.service.Question;
+import org.exoplatform.faq.service.Utils;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.service.ForumService;
@@ -85,7 +87,18 @@ public class AnswerUIActivity extends BaseKSActivity {
       return getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY);
     }
     String[] tab = getQuestionId().split("/");
-    String answerLink = String.format("%s/answer/%s", spaceLink, tab[tab.length-1]);
+    String answerLink = String.format("%s/answer%s", spaceLink, Utils.QUESTION_ID.concat(tab[tab.length-1]));
+    return answerLink;
+  }
+  
+  @SuppressWarnings("unused")
+  private String getAnswerLink() {
+    String spaceLink = getSpaceHomeURL(getSpaceGroupId());
+    if (spaceLink == null) {
+      return getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY).concat(Utils.ANSWER_NOW.concat("true"));
+    }
+    String[] tab = getQuestionId().split("/");
+    String answerLink = String.format("%s/answer%s%s", spaceLink, Utils.QUESTION_ID.concat(tab[tab.length-1]), Utils.ANSWER_NOW.concat("true"));
     return answerLink;
   }
   
@@ -174,6 +187,40 @@ public class AnswerUIActivity extends BaseKSActivity {
     link = link.replaceAll(selectedNode, "forum") + "/" + org.exoplatform.forum.service.Utils.TOPIC
         + "/" + topicId;
     return link;
+  }
+  
+  public int getQuestionPoint() {
+
+    try {
+
+      String sQuestionPoint = getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_POINT);
+      
+      if (CommonUtils.isEmpty(sQuestionPoint)) {// If the QUESTION_POINT is not exist in Template Params  
+        //
+        DataStorage faqService = (DataStorage) ExoContainerContext.getCurrentContainer()
+                                                                .getComponentInstanceOfType(DataStorage.class);
+        
+        Question question = faqService.getQuestionById(getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
+        
+        int questionPoint = Utils.getQuestionPoint(question);
+        
+        //update again the activity
+        ActivityManager activityM = (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
+        ExoSocialActivity activity = activityM.getActivity(faqService.getActivityIdForQuestion(question.getPath()));
+        
+        Map<String, String> templateParams = activity.getTemplateParams();
+        templateParams.put(AnswersSpaceActivityPublisher.QUESTION_POINT, ""+ questionPoint);
+        activityM.updateActivity(activity);
+        
+        return questionPoint;
+      }
+
+      return Integer.parseInt(sQuestionPoint);
+
+    } catch (Exception e) {
+      return 0;
+    }
+
   }
 
   public static class PostCommentActionListener extends BaseUIActivity.PostCommentActionListener {
@@ -287,8 +334,12 @@ public class AnswerUIActivity extends BaseKSActivity {
     if (activity.getTitleId() != null) {
       Locale userLocale = requestContext.getLocale();
       activity = i18NActivityProcessor.processKeys(activity, userLocale);
-      String title = activity.getTitle().replaceAll("<br/>", "BR_").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-      activity.setTitle(title.replaceAll("BR_", "<br/>"));
+      String title = activity.getTitle().replaceAll("&amp;", "&");
+      activity.setTitle(title);
+      if (activity.isComment() == false) {
+        String body = activity.getBody().replaceAll("&amp;", "&");
+        activity.setBody(body);
+      }
     }
     return activity;
   }
