@@ -2,7 +2,7 @@
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>Tamaño del archivo</fileSize>
     </titles>
     <messages>
       <createdBy>was created by</createdBy>
