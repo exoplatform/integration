@@ -220,7 +220,7 @@ public class ContentUIActivity extends BaseUIActivity {
   }
   public String getDocVersion() throws RepositoryException{
     Node node = getContentNode();
-    if (!node.isNodeType(MIX_VERSION)) {
+    if(!node.isNodeType(MIX_VERSION)) {
       return null;
     }
     return docVersion;
@@ -260,6 +260,10 @@ public class ContentUIActivity extends BaseUIActivity {
   public Node getContentNode() {
     return NodeLocation.getNodeByLocation(nodeLocation);
   }
+  
+  public String getTitle(Node node) throws Exception {
+    return org.exoplatform.ecm.webui.utils.Utils.getTitle(node);
+  } 
 
   public void setContentNode(Node contentNode) {
     this.nodeLocation = NodeLocation.getNodeLocationByNode(contentNode);
