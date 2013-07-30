@@ -1,7 +1,5 @@
 
 <div id="searchSetting" class="uiSearchSetting">
-  <h4 class="titleWithBorder">${unifiedsearch}</h4>
-
   <div class="uiForm">
     <div class="form-horizontal">
       <div class="control-group">
