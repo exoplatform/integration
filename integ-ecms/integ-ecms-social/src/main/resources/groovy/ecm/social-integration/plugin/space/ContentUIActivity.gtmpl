@@ -27,6 +27,7 @@
   import org.exoplatform.social.core.space.model.Space;
   import org.exoplatform.social.webui.Utils;
   import org.exoplatform.social.core.service.LinkProvider;
+  import org.apache.commons.lang.StringUtils;
   
   //ECMS import BEGIN
   import org.exoplatform.wcm.ext.component.activity.ContentPresentation;
@@ -43,14 +44,16 @@
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
   def streamOwner = activity.getStreamOwner();
+  def currentNode = uicomponent.getContentNode();
 %>
 
-<% if (activity) { //process if not null
+<% if (activity && currentNode != null) { //process if not null
 
   def jsManager = pcontext.getJavascriptManager();  
 
   //ECMS declare variables - BEGIN
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
+  def docSummary = uicomponent.getDocSummary();
   def activityMessage = uicomponent.getMessage();
   def mimeType = uicomponent.getMimeType();
   def binarySrc;
@@ -58,9 +61,10 @@
   def uicontentpresentation = uicomponent.addChild(ContentPresentation.class, null, null);
   String repository;
   def preferenceWS;
-  def currentNode = uicomponent.getContentNode();
   def fileComponent;
   if (currentNode) {
+    activityContentTitle = uicomponent.getTitle(currentNode);
+    docSummary = uicomponent.getSummary(currentNode);
     binarySrc = uicomponent.getWebdavURL();
     summary =  uicomponent.getSummary(currentNode);
     uicontentpresentation.setNode(currentNode);
@@ -110,6 +114,7 @@
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
   
   def docTypeName = uicomponent.getDocTypeName();
+  if(docTypeName == null) docTypeName = "";  
   def docTitle = uicomponent.getDocTitle();
   def docVersionNo = uicomponent.getDocVersion();
   def docVersion = _ctx.appRes("SocialIntegration.messages.version");
@@ -118,7 +123,7 @@
   } else {
     docVersion = null;
   }
-  def docSummary = uicomponent.getDocSummary();
+  
   def viewLink = uicomponent.getViewLink();
   def editLink = uicomponent.getEditLink();
   def commentList = uicomponent.getComments();
@@ -251,7 +256,7 @@
             </div>
             <div class="text">
               <%if (currentNode) {%>
-                <a class="linkTitle" title="$docTitle" href="$viewLink"> $docTitle </a>
+                <a class="linkTitle" title="$activityContentTitle" href="$viewLink"> $activityContentTitle </a>
               <%} else {%>
                 <span>$docTitle</span>
               <%}%>
@@ -259,10 +264,16 @@
               <%
                 def publishInfo = docTypeName;
                 if (docVersion) {
-                  publishInfo = publishInfo + " - " +  docVersion;
+                  if(StringUtils.isEmpty(publishInfo))
+                    publishInfo = docVersion;
+                  else
+                    publishInfo = publishInfo + " - " +  docVersion;
                 }
                 if (state!=null && state.length() > 0) {
-                  publishInfo = publishInfo + " - " + _ctx.appRes("SocialIntegration.publicationStates." + state);
+                  if(StringUtils.isEmpty(publishInfo))
+                    publishInfo = _ctx.appRes("SocialIntegration.publicationStates." + state);
+                  else
+                    publishInfo = publishInfo + " - " + _ctx.appRes("SocialIntegration.publicationStates." + state);
                 }
               %>
               <span class="versionFile">$publishInfo</span>
