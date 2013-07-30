@@ -5,8 +5,8 @@
       <div class="control-group">
         <label class="control-label">${resultsPerType}</label>
         <div class="controls">
-          <span class="uiSelectbox">
-            <select id="resultsPerPage" class="selectbox">
+          <span class="uiSelectbox uiEDWidth70">
+            <select id="resultsPerPage" class="selectbox uiResultPerPage">
               <option>1</option>
               <option>2</option>
               <option>3</option>
