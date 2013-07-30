@@ -1,7 +1,5 @@
 
 <div id="quickSearchSetting" class="uiQuickSearchSetting">
-  <h4 class="titleWithBorder">${quicksearch}</h4>
-
   <div class="uiForm">
     <div class="form-horizontal">
       <div class="control-group">
