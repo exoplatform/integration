@@ -16,10 +16,17 @@
  */
 package org.exoplatform.forum.ext.impl;
 
-import org.apache.commons.lang.ArrayUtils;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.webui.WebUIUtils;
+import org.exoplatform.forum.service.Utils;
+import org.exoplatform.poll.service.Poll;
+import org.exoplatform.poll.service.PollService;
 import org.exoplatform.portal.mop.SiteType;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
@@ -41,37 +48,76 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
   @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
   @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) })
 public class PollUIActivity extends BaseKSActivity {
+  
+  private String totalOfUsersVote;
 
-  @SuppressWarnings("unused")
-  private String[] getVotes(String infoVote) {
-    String[] tab = infoVote.split("\\|");
-    tab = (String[]) ArrayUtils.removeElement(tab, tab[tab.length-1]);
-    for (int i = 0; i< tab.length; i++) {
-      String option = tab[i].split(":")[0];
-      String percent = tab[i].split(":")[1];
-      String nbVotes = tab[i].split(":")[2];
-      int number = Integer.parseInt(nbVotes);
-      if (number <= 1) {
-        nbVotes = WebUIUtils.getLabel(null, "PollUIActivity.label.vote").replace("{0}", String.valueOf(number));
-      } else {
-        nbVotes = WebUIUtils.getLabel(null, "PollUIActivity.label.votes").replace("{0}", String.valueOf(number));
-      }
-      StringBuilder sb = new StringBuilder();
-      sb.append(CommonUtils.decodeSpecialCharToHTMLnumber(option)).append(":").append(percent).append(":").append(nbVotes);
-      tab[i] = sb.toString();
+  public Map<String, List<String>> getVotes() throws Exception{
+    Map<String, List<String>> info = new LinkedHashMap<String, List<String>>();
+    String pollId = getActivityParamValue(PollSpaceActivityPublisher.POLL_ID).replace(Utils.TOPIC, Utils.POLL);
+    PollService pollService = (PollService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PollService.class);
+    Poll poll = pollService.getPoll(pollId);
+    String[] options = poll.getOption();
+    String[] userVotes = poll.getUserVote();
+    String[] votes = poll.getVote();
+    int[] votesValues = getVotesOfOption(userVotes, options.length);
+    
+    for (int i = 0; i < options.length; i++) {
+      List<String> values = new LinkedList<String>();
+      values.add(buildPercentVote(votes[i]));
+      values.add(getStringFromNumberOfVotes(votesValues[i]));
+      info.put(CommonUtils.decodeSpecialCharToHTMLnumber(options[i]), values);
     }
-    return tab;
+    setTotalUsersVotes(getStringFromNumberOfVotes(userVotes.length));
+    return info;
   }
   
-  @SuppressWarnings("unused")
-  private String getNumberOfVotes(String infoVote) {
-    String[] tab = infoVote.split("\\|");
-    int number = Integer.parseInt(tab[tab.length-1]);
-    if (number <= 1) {
-      return WebUIUtils.getLabel(null, "PollUIActivity.label.vote").replace("{0}", String.valueOf(number));
-    } else {
-      return WebUIUtils.getLabel(null, "PollUIActivity.label.votes").replace("{0}", String.valueOf(number));
+  
+  /**
+   * Gets only 2 numbers after the point
+   * 
+   * @param percent
+   * @return
+   */
+  private String buildPercentVote(String percent) {
+    int index = percent.lastIndexOf(".");
+    if (index > 0 && (index + 2) < percent.length()) {
+      percent = percent.substring(0, index + 3);
     }
+    return percent;
+  }
+  
+  /**
+   * @return the nbTotalVotes
+   */
+  public String getTotalUsersVotes() {
+    return totalOfUsersVote;
+  }
+
+  /**
+   * @param nbTotalVotes the nbTotalVotes to set
+   */
+  public void setTotalUsersVotes(String totalOfUsersVote) {
+    this.totalOfUsersVote = totalOfUsersVote;
+  }
+  
+  private String getStringFromNumberOfVotes(int nbVotes) {
+    if (nbVotes <= 1) {
+      return WebUIUtils.getLabel(null, "PollUIActivity.label.vote").replace("{0}", String.valueOf(nbVotes));
+    } else {
+      return WebUIUtils.getLabel(null, "PollUIActivity.label.votes").replace("{0}", String.valueOf(nbVotes));
+    }
+  }
+
+  private int[] getVotesOfOption(String[] userVotes, int length) {
+    int[] tab = new int[length];
+    for (String userVote : userVotes) {
+      String[] votes = userVote.split(":");
+      for (int i = 1; i < votes.length; i++) {
+        int index = Integer.parseInt(votes[i]);
+        tab[index] =+ 1;
+      }
+    }
+    return tab;
   }
   
   @SuppressWarnings("unused")
