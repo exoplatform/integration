@@ -48,6 +48,9 @@
   def streamOwner = activity.getStreamOwner();
   def currentNode = uicomponent.getContentNode();
   
+  def rcontext = _ctx.getRequestContext();
+  rcontext.getJavascriptManager().require("SHARED/jquery", "gj").addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
+  
 %>
 
 
@@ -303,7 +306,7 @@
 		                   def classIconName = org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(currentNode, "uiIcon64x64");
 		                        
 									   %>
-									   <a href="$contentActivityUri" style="cursor:pointer" title="$activityContentTitle"><image src="$thumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" alt="$activityContentTitle" /></a>
+									   <a href="$contentActivityUri" style="cursor:pointer"  rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle"><image src="$thumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" alt="$activityContentTitle" /></a>
 									   
 									   <a href="$contentActivityUri" style="display: none;"><i rel="tooltip" data-placement="bottom" class="<%=classIconName%>" data-original-title="File"></i></a>
 									   
@@ -317,7 +320,7 @@
 		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;
 		                   def classIconName = org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(currentNode, "uiIcon64x64");               
 		                 %>
-		                 <a href="$contentActivityUri" title="$activityContentTitle"><image src="$pdfThumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" class="pdfImageBorder"/></a>
+		                 <a href="$contentActivityUri" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle"><image src="$pdfThumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" class="pdfImageBorder"/></a>
 		                 
 		                 <a href="$contentActivityUri" style="display: none;"><i rel="tooltip" data-placement="bottom" class="<%=classIconName%>" data-original-title="File"></i></a>
 		                 
@@ -345,7 +348,7 @@
 						
 						<div class="text">
 							<%if (currentNode) {%>
-							  <a class="linkTitle" title="$activityContentTitle" href="$contentActivityUri"> $activityContentTitle </a>
+							  <a class="linkTitle" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle" href="$contentActivityUri"> $activityContentTitle </a>
 							<%} else {%>
 							  <span>$docTitle</span>
 							<%}%>
