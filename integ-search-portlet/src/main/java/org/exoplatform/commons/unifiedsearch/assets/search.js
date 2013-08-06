@@ -1,4 +1,3 @@
-
 function initSearch() {
   jQuery.noConflict();
 
@@ -21,10 +20,9 @@ function initSearch() {
         </div> \
       </div> \
     ";
-    
     var IMAGE_AVATAR_TEMPLATE = " \
-      <span class='avatar pull-left'> \
-        <img src='%{imageSrc}'> \
+      <span class='avatar pull-left %{userThumbnail}'> \
+        <img src='%{imageSrc}' onerror='onImgError(this, \"%{errorClasses}\")'> \
       </span> \
     ";
     
@@ -35,7 +33,7 @@ function initSearch() {
     ";
 
     var EVENT_AVATAR_TEMPLATE = " \
-      <div class='pull-left'> \
+      <div class='avatar pull-left'> \
         <div class='calendarBox'> \
           <div class='heading'> %{month} </div> \
           <div class='content' style='margin-left: 0px;'> %{date} </div> \
@@ -44,9 +42,9 @@ function initSearch() {
     ";
 
     var TASK_AVATAR_TEMPLATE = " \
-      <div class='pull-left'> \
-        <i class='uiIconStatus-64-%{taskStatus}'></i> \
-      </div> \
+      <span class='avatar pull-left'> \
+        <i class='uiIconApp64x64Task%{taskStatus}'></i> \
+      </span> \
     ";
 
     var RATING_TEMPLATE = " \
@@ -58,11 +56,9 @@ function initSearch() {
     ";
 
     //*** Utility functions ***
-
     String.prototype.toProperCase = function() {
       return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
     };
-
 
     String.prototype.highlight = function(words) {
       var str = this;
@@ -74,7 +70,6 @@ function initSearch() {
       return str;
     };
 
-
     // Remove all HTML tags except <strong>, </strong> (for highlighting)
     String.prototype.escapeHtml = function() {
       return this.
@@ -82,7 +77,6 @@ function initSearch() {
         replace(/<.+?>/g,"").              //remove all HTML tags
         replace(/{(\/?strong)}/g,"<\$1>"); //restore {strong}, {/strong} back to <strong>, </strong>
     }
-
 
     function setWaitingStatus(status) {
       if(status) {
@@ -104,20 +98,17 @@ function initSearch() {
       return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
     }
 
-
     function getRegistry(callback) {
       $.getJSON("/rest/search/registry", function(registry){
         if(callback) callback(registry);
       });
     }
 
-
     function getSearchSetting(callback) {
       $.getJSON("/rest/search/setting", function(setting){
         if(callback) callback(setting);
       });
     }
-
 
     function loadContentFilter(connectors, searchSetting) {
       var contentTypes = [];
@@ -136,7 +127,6 @@ function initSearch() {
       }
     }
 
-
     function loadSiteFilter(callback) {
       $.getJSON("/rest/search/sites", function(sites){
         var siteNames = [];
@@ -153,7 +143,6 @@ function initSearch() {
       });
     }
 
-
     function getSelectedTypes(){
       var selectedTypes = [];
       $.each($(":checkbox[name='contentType'][value!='all']:checked"), function(){
@@ -161,7 +150,6 @@ function initSearch() {
       });
       return selectedTypes.join(",");
     }
-
 
     function getSelectedSites(){
       if(SEARCH_SETTING.searchCurrentSiteOnly) return getUrlParam("currentSite") || parent.eXo.env.portal.portalName;
@@ -171,7 +159,6 @@ function initSearch() {
       });
       return selectedSites.join(",");
     }
-
 
     function renderSearchResult(result) {
       var query = $("#txtQuery").val();
@@ -188,7 +175,9 @@ function initSearch() {
           break;
 
         case "task":
-          avatar = TASK_AVATAR_TEMPLATE.replace(/%{taskStatus}/g, result.taskStatus);
+          var taskStatus = result.taskStatus;
+          var taskStatusClass = taskStatus === "needs-action" ? "NeedActions" : (taskStatus === "in-process" ? "Progress" : (taskStatus === "canceled" ? "Canceled" : "Done"));
+          avatar = TASK_AVATAR_TEMPLATE.replace(/%{taskStatus}/g, taskStatusClass);
           break;
 
         case "file":
@@ -196,19 +185,18 @@ function initSearch() {
             if (result.imageUrl == null || result.imageUrl == ""){
             	avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
             }else{
-            	avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
+                avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl).replace(/%{errorClasses}/g, cssClasses).replace(/%{userThumbnail}/g, "");
             }
             avatar = "<a href='"+result.url+"'>" + avatar + "</a>";            
             break;        	        	
         case "document":
-        //case "page":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64" + type}).join(" ");
           avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
           break;
 
         case "page":
     	  result.detail = result.detail + " - " + result.url;
-    	  avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
+          avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl).replace(/%{userThumbnail}/g, "");
     	  result.excerpt = result.excerpt;
           break;
           
@@ -227,15 +215,16 @@ function initSearch() {
 
           rating = RATING_TEMPLATE.replace(/%{rating}/g, rating);
 
-          if("post"==result.type) {
-            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconAppForumPortlet");
-          } else {
-            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconAppAnswersPortlet");
-          }
+          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, result.type === "post" ? "uiIconApp64x64Forum" : "uiIconApp64x64Answers");
           break;
-
+        case "wiki":
+            avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconApp64x64Wiki");
+          break;
         default:
           avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
+          if (result.type === "space" || result.type === "people") {
+            avatar = avatar.replace(/%{userThumbnail}/g, "userThumbnail");
+          }
       }
 
       var html = SEARCH_RESULT_TEMPLATE.
@@ -250,7 +239,6 @@ function initSearch() {
       $("#result").append(html);
     }
 
-
     function clearResultPage(message){
       $("#result").html("");
       $("#resultHeader").html(message?message:"");
@@ -259,7 +247,6 @@ function initSearch() {
       setWaitingStatus(false);
       return;
     }
-
 
     // Client-side sort functions
     function byRelevancyASC(a,b) {
@@ -307,7 +294,6 @@ function initSearch() {
       return 0;
     }
 
-
     function search(callback) {
       SERVER_OFFSET = 0;
       NUM_RESULTS_RENDERED = 0;
@@ -316,7 +302,6 @@ function initSearch() {
         renderCachedResults();
       });
     }
-
 
     function getFromServer(callback){
       var query = $("#txtQuery").val();
@@ -362,7 +347,6 @@ function initSearch() {
       });
     }
 
-
     function renderCachedResults(append) {
       var current = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);
       if(0==current.length) {
@@ -386,9 +370,7 @@ function initSearch() {
       });
     }
 
-
     //*** Event handlers ***
-
     $("#btnShowMore").click(function(){
       CACHE_OFFSET = CACHE_OFFSET + LIMIT;
       var remaining = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);      
@@ -419,7 +401,6 @@ function initSearch() {
       search(); //perform search again to update the results
     });
 
-
     $(document).on("click",":checkbox[name='site']", function(){
       if("all"==this.value){ //All Sites checked
         if($(this).is(":checked")) { // check/uncheck all
@@ -434,17 +415,14 @@ function initSearch() {
       search(); //perform search again to update the results
     });
 
-
     $("#btnSearch").click(function(){
       search();
     });
-
 
     $("#txtQuery").keyup(function(e){
       var keyCode = e.keyCode || e.which;
       if(13==keyCode) search();
     });
-
 
     $("#sortOptions > li > a").on("click", function(){
       var oldOption = $("#sortField").attr("sort");
@@ -485,7 +463,6 @@ function initSearch() {
 
     });
 
-
     //*** The entry point ***
     getRegistry(function(registry){ //load all configuration from the registry
       CONNECTORS = registry[0];
@@ -494,7 +471,6 @@ function initSearch() {
         SEARCH_SETTING = setting;
 
         // Display search page elements base on the configurations in search setting
-
         if(!setting.hideFacetsFilter) {
           $("#facetsFilter").show();
         }
@@ -517,7 +493,6 @@ function initSearch() {
         }
 
         // Render the search page's query, limit, sort, order with their values got from url (or default values)
-
         $("#txtQuery").val(getUrlParam("q"));
         $("#txtQuery").focus();
 
@@ -567,4 +542,11 @@ function initSearch() {
   })(jQuery);
 
   $ = jQuery; //undo .conflict();
+}
+/**
+ * Handle error event when image cannot load in unified search
+ * 
+ */
+function onImgError(object, errorClasses) {
+  $(object).parent().empty().append($(document.createElement('i')).addClass(errorClasses));
 }
