@@ -3,6 +3,10 @@
 
 .uiSearchPortlet {
   padding: 20px;
+  .calendarBox {
+  	width: 54px;
+  	display: inline-block;
+  }
   .searchContainer {
     display: none;
     margin-bottom: 20px;
@@ -48,7 +52,7 @@
 
   .resultPage {
     display: none;  
-    padding: 0 20px;
+    padding: 15px 20px;
     margin-left: 240px;
     .resultBox {
       margin: 20px 0;
@@ -58,13 +62,17 @@
         overflow: hidden;
         text-align: center;
         > img {
-          width: 64px;
+          width: 54px;
+        }
+        &.userThumbnail > img {
+          .border-radius(4px);
         }
       }
       .content {
-        margin-left: 75px;
+        margin-left: 85px;
         > h6 {
           margin-top: 0;
+          margin-bottom: 5px;
           color: #2f5e92;
         }
         .excerpt {
