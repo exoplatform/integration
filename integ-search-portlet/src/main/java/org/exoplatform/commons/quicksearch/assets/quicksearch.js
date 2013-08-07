@@ -142,7 +142,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     function setWaitingStatus(status) {
     	if (status){
     		window['isSearching'] = true;
-            $(quickSearchResult_id).html(QUICKSEARCH_WAITING_TEMPLATE);
+            $(txtQuickSearchQuery_id).addClass("loadding");
             if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
             	$(quickSearchResult_id).show();              
             }else{
@@ -204,7 +204,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         	$(quickSearchResult_id).width(width);
         	$(quickSearchResult_id).show();                      	
         }              
-        
+        $(txtQuickSearchQuery_id).removeClass("loadding");
         setWaitingStatus(false);
         
         var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
