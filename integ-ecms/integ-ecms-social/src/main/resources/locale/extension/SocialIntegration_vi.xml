@@ -63,8 +63,8 @@
       <approved>Đã duyệt</approved>
       <inreview>Đang đánh giá</inreview>
       <staged>Đang xem xét</staged>
-      <published>Đã xuất bản</published>
-      <live>Đã xuất bản</live>
+      <published>Xuất bản</published>
+      <live>Xuất bản</live>
     </publicationStates>
     <view>Xem</view>
     <edit>Chỉnh sửa</edit>
