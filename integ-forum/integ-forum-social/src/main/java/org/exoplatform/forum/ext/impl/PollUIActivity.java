@@ -59,6 +59,9 @@ public class PollUIActivity extends BaseKSActivity {
     String[] options = poll.getOption();
     String[] userVotes = poll.getUserVote();
     String[] votes = poll.getVote();
+
+    setTotalUsersVotes(getStringFromNumberOfVotes(Integer.parseInt(poll.getVotes())));
+
     int[] votesValues = getVotesOfOption(userVotes, options.length);
     
     for (int i = 0; i < options.length; i++) {
@@ -67,7 +70,6 @@ public class PollUIActivity extends BaseKSActivity {
       values.add(getStringFromNumberOfVotes(votesValues[i]));
       info.put(CommonUtils.decodeSpecialCharToHTMLnumber(options[i]), values);
     }
-    setTotalUsersVotes(getStringFromNumberOfVotes(userVotes.length));
     return info;
   }
   
@@ -114,7 +116,7 @@ public class PollUIActivity extends BaseKSActivity {
       String[] votes = userVote.split(":");
       for (int i = 1; i < votes.length; i++) {
         int index = Integer.parseInt(votes[i]);
-        tab[index] =+ 1;
+        tab[index]++;
       }
     }
     return tab;
