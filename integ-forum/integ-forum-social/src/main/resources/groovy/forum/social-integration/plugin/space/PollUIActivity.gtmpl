@@ -272,7 +272,7 @@
 			 <% }%>	
 			<div class="pull-left statusAction">
 				 <a href="${uicomponent.getLink()}">
-					 <i class="uiIconSocVote uiIconSocLightGray"></i>&nbsp;Vote
+					 <i class="uiIconSocVote uiIconSocLightGray"></i>&nbsp;<%=_ctx.appRes("PollUIActivity.action.vote");%>
 				  </a>
 			</div>			 
 			</div><!--end actionBar-->					
