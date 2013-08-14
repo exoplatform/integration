@@ -24,17 +24,12 @@ import java.util.Map;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.webui.WebUIUtils;
+import org.exoplatform.forum.ext.activity.BuildLinkUtils;
+import org.exoplatform.forum.ext.activity.BuildLinkUtils.PORTLET_INFO;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.poll.service.Poll;
 import org.exoplatform.poll.service.PollService;
-import org.exoplatform.portal.mop.SiteType;
-import org.exoplatform.social.core.space.SpaceUtils;
-import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
-import org.exoplatform.web.application.RequestContext;
-import org.exoplatform.web.url.navigation.NavigationResource;
-import org.exoplatform.web.url.navigation.NodeURL;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -53,7 +48,10 @@ public class PollUIActivity extends BaseKSActivity {
 
   public Map<String, List<String>> getVotes() throws Exception{
     Map<String, List<String>> info = new LinkedHashMap<String, List<String>>();
-    String pollId = getActivityParamValue(PollSpaceActivityPublisher.POLL_ID).replace(Utils.TOPIC, Utils.POLL);
+    String pollId = getActivityParamValue(PollSpaceActivityPublisher.POLL_ID);
+    if(pollId.indexOf(Utils.TOPIC) == 0) {
+      pollId = pollId.replace(Utils.TOPIC, Utils.POLL);
+    }
     PollService pollService = (PollService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PollService.class);
     Poll poll = pollService.getPoll(pollId);
     String[] options = poll.getOption();
@@ -122,32 +120,20 @@ public class PollUIActivity extends BaseKSActivity {
     return tab;
   }
   
-  @SuppressWarnings("unused")
-  private String getLink() {
-    String spaceLink = getSpaceHomeURL(getSpaceGroupId());
-    if (spaceLink == null)
-      return getActivityParamValue(PollSpaceActivityPublisher.POLL_LINK_KEY);
-    String topicId = getActivityParamValue(PollSpaceActivityPublisher.POLL_ID);
-    String topicLink = String.format("%s/forum/topic/%s", spaceLink, topicId);
-    return topicLink;
+  protected String getLink() {
+    String pollId = getActivityParamValue(PollSpaceActivityPublisher.POLL_ID);
+    String parentPath = getActivityParamValue(PollSpaceActivityPublisher.POLL_PARENT);
+
+    if (parentPath.indexOf(Utils.TOPIC) > 0) {
+      String topicId = pollId.replace(Utils.POLL, Utils.TOPIC);
+      return BuildLinkUtils.buildLink(getSpaceGroupId(), topicId, PORTLET_INFO.FORUM);
+    }
+    //
+    return "#";
   }
-  
+
   private String getSpaceGroupId() {
     return getActivityParamValue(PollSpaceActivityPublisher.SPACE_GROUP_ID);
-  }
-  
-  public String getSpaceHomeURL(String spaceGroupId) {
-    if ("".equals(spaceGroupId))
-      return null;
-    String permanentSpaceName = spaceGroupId.split("/")[2];
-    SpaceService spaceService  = (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
-    Space space = spaceService.getSpaceByGroupId(spaceGroupId);
-    
-    NodeURL nodeURL =  RequestContext.getCurrentInstance().createURL(NodeURL.TYPE);
-    NavigationResource resource = new NavigationResource(SiteType.GROUP, SpaceUtils.SPACE_GROUP + "/"
-                                        + permanentSpaceName, space.getPrettyName());
-   
-    return nodeURL.setResource(resource).toString(); 
   }
   
 }
