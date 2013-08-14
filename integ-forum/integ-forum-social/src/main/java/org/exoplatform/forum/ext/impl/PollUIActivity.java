@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.webui.WebUIUtils;
@@ -28,6 +29,7 @@ import org.exoplatform.forum.service.Utils;
 import org.exoplatform.poll.service.Poll;
 import org.exoplatform.poll.service.PollService;
 import org.exoplatform.portal.mop.SiteType;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -126,10 +128,21 @@ public class PollUIActivity extends BaseKSActivity {
   private String getLink() {
     String spaceLink = getSpaceHomeURL(getSpaceGroupId());
     if (spaceLink == null)
-      return getActivityParamValue(PollSpaceActivityPublisher.POLL_LINK_KEY);
+      return getLink(getActivityParamValue(PollSpaceActivityPublisher.POLL_LINK_KEY));
     String topicId = getActivityParamValue(PollSpaceActivityPublisher.POLL_ID);
     String topicLink = String.format("%s/forum/topic/%s", spaceLink, topicId);
-    return topicLink;
+    return getLink(topicLink);
+  }
+  
+  private String getLink(String link) {
+    if(link.indexOf("http") == 0) {
+      link = link.substring(link.indexOf("/", 8));
+      String containerName = CommonsUtils.getService(ExoContainerContext.class).getPortalContainerName();
+      String fullUrl = Util.getPortalRequestContext().getRequest().getRequestURL().toString();
+      String hostName = fullUrl.substring(0, fullUrl.indexOf(containerName) - 1);
+      return new StringBuffer(hostName).append(link).toString();
+    }
+    return link;
   }
   
   private String getSpaceGroupId() {
