@@ -2,7 +2,7 @@
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>Kích thước tập tin</fileSize>
+      <fileSize>Kích thước Tệp</fileSize>
     </titles>
     <messages>
       <createdBy>được tạo bởi</createdBy>
@@ -21,7 +21,7 @@
       <editSummary>Nội dung tóm tắt đã được cập nhật thành: {0}</editSummary>
       <editLanguage>Ngôn ngữ đã được cập nhật thành: {0}</editLanguage>
       <editContent>Nội dung đã được cập nhật thành: {0}</editContent>
-      <editFile>Tệp tin đã được cập nhật.</editFile>
+      <editFile>Tệp đã được cập nhật.</editFile>
       <emptyTitle>Tiêu đề vừa bị loại bỏ.</emptyTitle>
       <emptySummary>Tóm tắt vừa bị loại bỏ.</emptySummary>
       <emptyContent>Nội dung vừa bị loại bỏ.</emptyContent>
@@ -35,14 +35,14 @@
       <removeMultiCreator>Các tác giả: {0} đã bị loại bỏ.</removeMultiCreator>
       <removeLanguage>Ngôn ngữ đã bị xóa.</removeLanguage>
       <removeContent>Nội dung đã bị xóa.</removeContent>
-      <attachmentAdded>Một số tệp tin đã được đính kèm.</attachmentAdded>
-      <attachmentRemoved>Tập tin vừa bị loại bỏ.</attachmentRemoved>
+      <attachmentAdded>Một số tệp đã được đính kèm.</attachmentAdded>
+      <attachmentRemoved>Tệp vừa bị loại bỏ.</attachmentRemoved>
       <categoryAdded>Danh mục: {0} đã được thêm vào.</categoryAdded>
       <categoryRemoved>Danh mục: {0} đã được thêm vào.</categoryRemoved>
-      <tagAdded>Thẻ: {0} vừa được thêm vào.</tagAdded>
-      <tagsAdded>Một số thẻ: {0} vừa được thêm vào.</tagsAdded>
-      <tagRemoved>Thẻ: {0} vừa bị loại bỏ.</tagRemoved>
-      <tagsRemoved>Một số thẻ: {0} vừa bị loại bỏ.</tagsRemoved>
+      <tagAdded>Nhãn {0} vừa được thêm vào.</tagAdded>
+      <tagsAdded>Một số Nhãn: {0} vừa được thêm vào.</tagsAdded>
+      <tagRemoved>Nhãn: {0} vừa bị loại bỏ.</tagRemoved>
+      <tagsRemoved>Một số Nhãn: {0} vừa bị loại bỏ.</tagsRemoved>
       <stateChange>
         <pending>Trang thái xuất bản đang được chờ duyệt.</pending>
         <approved>Xuất bản đã được duyệt.</approved>
@@ -50,7 +50,7 @@
         <published>Xuất bản vừa được công bố.</published>
       </stateChange>
       <contentMoved>Xuất bản vừa được di chuyển đến: {0}</contentMoved>
-      <fileMoved>Tập tin đã được chuyển tới: {0}</fileMoved>
+      <fileMoved>Tệp đã được chuyển tới: {0}</fileMoved>
       <revisionChanged>Xuất bản vừa được hoàn lại phiên bản: {0}</revisionChanged>
       <version>Phiên bản: {0}</version>
     </messages>
@@ -78,7 +78,7 @@
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Loại tài nguyên</resourceType>        
+        <resourceType>Loại Tài nguyên</resourceType>        
       </label>
     </dialog>
   </ElementSet>
