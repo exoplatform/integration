@@ -18,6 +18,7 @@ package org.exoplatform.cs.ext.impl;
 
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import org.exoplatform.calendar.service.CalendarEvent;
@@ -50,6 +52,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.webui.application.WebuiRequestContext;
+import org.exoplatform.webui.application.portlet.PortletRequestContext;
 
 /**
  * Created by The eXo Platform SAS
@@ -129,6 +132,9 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   public static final String TASK_IN_PROCESS_ACTION = CalendarEvent.IN_PROCESS;
   public static final String TASK_COMPLETED_ACTION = CalendarEvent.COMPLETED;
   public static final String TASK_CANCELLED_ACTION = CalendarEvent.CANCELLED;
+
+  private static final String LOCALE_US = "en";
+  protected static final String CALENDAR_PREFIX_KEY = "CalendarUIActivity.msg.";
 
   private CalendarService calService_ ;
 
@@ -320,7 +326,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     data.put(CALENDAR_FIELDS_CHANGED, fieldsChanged);
     newComment.setTitleId(fieldsChanged);
     newComment.setTemplateParams(data);
-//    newComment.setTitle(title.toString());
+    newComment.setTitle(buildComment(Locale.US, newComment)); //default title in English
     return newComment;
   }
 
@@ -515,7 +521,6 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     calService_ = (CalendarService)PortalContainer.getInstance().getComponentInstance(CalendarService.class);
     CalendarSetting calSetting = calService_.getCalendarSetting(userId);
     WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance() ;
-
     Locale locale = requestContext.getParentAppRequestContext().getLocale() ;
     DateFormat format = new SimpleDateFormat(calSetting.getDateFormat(), locale);
     DateFormatSymbols symbols = new DateFormatSymbols(locale);
@@ -532,20 +537,20 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     if (repeatType.equals(CalendarEvent.RP_DAILY)) {
       if (interval == 1) {
         //pattern = "Daily";
-        pattern.append(CalendarUIActivity.getUICalendarLabel("daily"));
+        pattern.append(getUICalendarLabel("daily"));
       } else {
         //pattern = "Every {interval} days";
-        pattern.append(CalendarUIActivity.getUICalendarLabel("every-day"));
+        pattern.append(getUICalendarLabel("every-day"));
       }
       if (endType.equals(RP_END_AFTER)) {
         //pattern = "Daily, {count} times";
         //pattern = "Every {interval} days, {count} times";
-        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("count-times"));
+        pattern.append(", " + getUICalendarLabel("count-times"));
       }
       if (endType.equals(RP_END_BYDATE)) {
         //pattern = "Daily, until {until}";
         //pattern = "Every {interval} days, until {until}";
-        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("until"));
+        pattern.append(", " + getUICalendarLabel("until"));
       }
 
       return new String(pattern).replace("{interval}", String.valueOf(interval))
@@ -556,20 +561,20 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     if (repeatType.equals(CalendarEvent.RP_WEEKLY)) {
       if (interval == 1) {
         //pattern = "Weekly on {byDays}";
-        pattern.append(CalendarUIActivity.getUICalendarLabel("weekly"));
+        pattern.append(getUICalendarLabel("weekly"));
       } else {
         //pattern = "Every {interval} weeks on {byDays}";
-        pattern.append(CalendarUIActivity.getUICalendarLabel("every-week"));
+        pattern.append(getUICalendarLabel("every-week"));
       }
       if (endType.equals(RP_END_AFTER)) {
         //pattern = "Weekly on {byDays}, {count} times";
         //pattern = "Every {interval} weeks on {byDays}, {count} times";
-        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("count-times"));
+        pattern.append(", " + getUICalendarLabel("count-times"));
       }
       if (endType.equals(RP_END_BYDATE)) {
         //pattern = "Weekly on {byDays}, until {until}";
         //pattern = "Every {interval} weeks on {byDays}, until {until}";
-        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("until"));
+        pattern.append(", " + getUICalendarLabel("until"));
       }
 
       String[] weeklyByDays = repeatEvent.getRepeatByDay();
@@ -594,27 +599,27 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 
       if (interval == 1) {
         // pattern = "Monthly on"
-        pattern.append(CalendarUIActivity.getUICalendarLabel("monthly"));
+        pattern.append(getUICalendarLabel("monthly"));
       } else {
         // pattern = "Every {interval} months on
-        pattern.append(CalendarUIActivity.getUICalendarLabel("every-month"));
+        pattern.append(getUICalendarLabel("every-month"));
       }
 
       if (monthlyType.equals(RP_MONTHLY_BYDAY)) {
         // pattern = "Monthly on {theNumber} {theDay}
         // pattern = "Every {interval} months on {theNumber} {theDay}
-        pattern.append(" " + CalendarUIActivity.getUICalendarLabel("monthly-by-day"));
+        pattern.append(" " + getUICalendarLabel("monthly-by-day"));
       } else {
         // pattern = "Monthly on day {theDay}
         // pattern = "Every {interval} months on day {theDay}
-        pattern.append(" " + CalendarUIActivity.getUICalendarLabel("monthly-by-month-day"));
+        pattern.append(" " + getUICalendarLabel("monthly-by-month-day"));
       }
 
       if (endType.equals(RP_END_AFTER)) {
-        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("count-times"));
+        pattern.append(", " + getUICalendarLabel("count-times"));
       }
       if (endType.equals(RP_END_BYDATE)) {
-        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("until"));
+        pattern.append(", " + getUICalendarLabel("until"));
       }
 
       String theNumber = ""; // the first, the second, the third, ...
@@ -628,8 +633,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
         temp2.add(java.util.Calendar.DATE, 7);
         if (temp2.get(java.util.Calendar.MONTH) != temp.get(java.util.Calendar.MONTH)) weekOfMonth = 5;
         int dayOfWeek = temp.get(java.util.Calendar.DAY_OF_WEEK);
-        String[] weekOfMonths = new String[] {CalendarUIActivity.getUICalendarLabel("summary-the-first"), CalendarUIActivity.getUICalendarLabel("summary-the-second"), CalendarUIActivity.getUICalendarLabel("summary-the-third"),
-            CalendarUIActivity.getUICalendarLabel("summary-the-fourth"), CalendarUIActivity.getUICalendarLabel("summary-the-last")};
+        String[] weekOfMonths = new String[] {getUICalendarLabel("summary-the-first"), getUICalendarLabel("summary-the-second"),getUICalendarLabel("summary-the-third"),
+            getUICalendarLabel("summary-the-fourth"), getUICalendarLabel("summary-the-last")};
         theNumber = weekOfMonths[weekOfMonth-1];
         theDay = dayOfWeeks[dayOfWeek];
       } else {
@@ -647,21 +652,21 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     if (repeatType.equals(CalendarEvent.RP_YEARLY)) {
       if (interval == 1) {
         // pattern = "Yearly on {theDay}"
-        pattern.append(CalendarUIActivity.getUICalendarLabel("yearly"));
+        pattern.append(getUICalendarLabel("yearly"));
       } else {
         // pattern = "Every {interval} years on {theDay}"
-        pattern.append(CalendarUIActivity.getUICalendarLabel("every-year"));
+        pattern.append(getUICalendarLabel("every-year"));
       }
 
       if (endType.equals(RP_END_AFTER)) {
         // pattern = "Yearly on {theDay}, {count} times"
         // pattern = "Every {interval} years on {theDay}, {count} times"
-        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("count-times"));
+        pattern.append(", " + getUICalendarLabel("count-times"));
       }
       if (endType.equals(RP_END_BYDATE)) {
         // pattern = "Yearly on {theDay}, until {until}"
         // pattern = "Every {interval} years on {theDay}, until {until}"
-        pattern.append(", " + CalendarUIActivity.getUICalendarLabel("until"));
+        pattern.append(", " + getUICalendarLabel("until"));
       }
 
       String theDay = format.format(repeatEvent.getFromDateTime()); //
@@ -711,10 +716,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
       Calendar cal2 = new GregorianCalendar(tz) ;
       cal1.setLenient(false);
       cal1.setTime(eventCalendar.getFromDateTime()) ;
-      //cal1.setTimeZone(tz);
       cal2.setLenient(false);
       cal2.setTime(eventCalendar.getToDateTime()) ;
-      //cal2.setTimeZone(tz);
       return (cal1.get(Calendar.HOUR_OF_DAY) == 0  && 
           cal1.get(Calendar.MINUTE) == 0 &&
           cal2.get(Calendar.HOUR_OF_DAY) == cal2.getActualMaximum(Calendar.HOUR_OF_DAY)&& 
@@ -726,7 +729,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     return false;
   }
 
-  private TimeZone getUserTimeZone() {
+  public static TimeZone getUserTimeZone() {
     try {
       String username = ConversationState.getCurrent().getIdentity().getUserId();      
       CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
@@ -774,8 +777,6 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    */
   public void updatePublicEvent(CalendarEvent newEvent, String calendarId) {
     String eventType = newEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
-    //Map<String, String> messagesParams = buildParams(oldEvent, newEvent);
-    //updateToActivity(newEvent, calendarId, eventType, messagesParams);
     publishActivity(newEvent, calendarId, eventType);
   }
 
@@ -790,4 +791,115 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     deleteActivity(event, calendarId, eventType) ;
   }
 
+  /* Utils for building comment content */
+  
+  /**
+   * builds localized string for comment content
+   *
+   * used in template
+   * @see <code>CalendarUIActivity.gtmpl</code>
+   *
+   * @param comment
+   * @return localized string for comment
+   * @since activity-type
+   */
+  public static String buildComment(Locale locale, ExoSocialActivity comment) {
+    StringBuilder commentMessage = new StringBuilder();
+    Map<String,String> tempParams = comment.getTemplateParams();
+    // get updated fields in format {field1,field2,...}
+    String fieldsChanged = tempParams.get(CalendarSpaceActivityPublisher.CALENDAR_FIELDS_CHANGED);
+    if(fieldsChanged == null) {
+      return comment.getTitle();
+    }
+    String[] fields = fieldsChanged.split(",");
+    for(int i = 0; i < fields.length; i++) {
+      String label = getUICalendarLabel(fields[i],locale);
+      String childMessage; // message for each updated field
+      if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED) || fields[i].equals(CalendarSpaceActivityPublisher.TO_UPDATED)) {
+        long time = Long.valueOf(tempParams.get(fields[i]));
+        childMessage = MessageFormat.format(label, CalendarSpaceActivityPublisher.getDateTimeString(locale, time, null,getUserTimeZone()));
+      } else {
+        childMessage = MessageFormat.format(label,tempParams.get(fields[i]));  
+      }
+      commentMessage.append(childMessage + "<br/>");
+    }
+    return commentMessage.toString();
+  }
+  /**
+   * returns localized DateTime string for a time, for ex. Friday, February 22, 2013 6:30 PM
+   * @param ctx
+   * @param time
+   * @param event
+   * @return
+   */
+  public static String getDateTimeString(Locale locale, long time, CalendarEvent event, TimeZone tz) {
+    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+    ResourceBundle rb = requestContext.getParentAppRequestContext().getApplicationResourceBundle();
+    
+    Calendar calendar = GregorianCalendar.getInstance(locale);
+    calendar.setTimeInMillis(time);
+    
+    StringBuilder sb = new StringBuilder(CalendarSpaceActivityPublisher.getDateString(locale,calendar,tz));
+    sb.append(" ");
+    
+    if(event != null && isAllDay(event)) {
+      if(CalendarEvent.TYPE_EVENT.equals(event.getEventType())) {
+        sb.append(rb.getString("CalendarUIActivity.label.allday"));
+      }
+    } else {
+      sb.append(getTimeString(locale, calendar, tz));
+    }
+    return sb.toString();
+  }
+  
+  public static String getDateString(Locale locale, Calendar calendar, TimeZone tz) {
+    DateFormat dformat = DateFormat.getDateInstance(DateFormat.FULL, locale); // date format
+    dformat.setTimeZone(tz);
+    return capitalizeFirstChar(dformat.format(calendar.getTime()));
+  }
+  
+  public static String getTimeString(Locale locale, Calendar calendar, TimeZone tz) {
+    String timeStr;
+    DateFormat tformat = DateFormat.getTimeInstance(DateFormat.SHORT, locale); // time format
+    tformat.setTimeZone(tz);
+    
+    timeStr = tformat.format(calendar.getTime());
+    if(LOCALE_US.equals(locale) && timeStr.indexOf(":00") > -1) {
+      return timeStr.replace(":00", "");
+    }
+    return timeStr;
+  }
+  
+  private static String capitalizeFirstChar(String str) {
+    StringBuilder sb = new StringBuilder(str.substring(0,1).toUpperCase());
+    sb.append(str.substring(1));
+    return sb.toString();
+  }
+  
+  /**
+   * checks if an event is all day
+   * @param event
+   * @return true if given event is all day
+   */
+  private static Boolean isAllDay(CalendarEvent event) {
+    long diff = event.getToDateTime().getTime() - event.getFromDateTime().getTime() + 1;
+    return diff % (24 * 60 * 60 * 1000) == 0;
+  }
+  
+  /**
+   * get label from resource bundle for CalendarUIActivity
+   * @param label
+   * @return
+   */
+  public static String getUICalendarLabel(String label)
+  {
+    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+    ResourceBundle resourceBundle = requestContext.getApplicationResourceBundle();
+    return resourceBundle.getString(CALENDAR_PREFIX_KEY + label);
+  }
+  
+  public static String getUICalendarLabel(String label, Locale locale) {
+    ResourceBundle resourceBundle = PortletRequestContext.getCurrentInstance().getApplication().getResourceBundle(locale);
+    return resourceBundle.getString(CALENDAR_PREFIX_KEY + label);
+  }
 }
