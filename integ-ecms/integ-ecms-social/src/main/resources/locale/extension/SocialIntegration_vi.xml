@@ -44,7 +44,7 @@
       <tagRemoved>Nhãn: {0} vừa bị loại bỏ.</tagRemoved>
       <tagsRemoved>Một số Nhãn: {0} vừa bị loại bỏ.</tagsRemoved>
       <stateChange>
-        <pending>Trang thái xuất bản đang được chờ duyệt.</pending>
+        <pending>Tài liệu đang chờ được duyệt.</pending>
         <approved>Xuất bản đã được duyệt.</approved>
         <staged>Xuất bản đang được xem xét.</staged>
         <published>Xuất bản vừa được công bố.</published>
