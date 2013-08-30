@@ -45,9 +45,9 @@
       <tagsRemoved>タグ: {0} が削除されました</tagsRemoved>
       <stateChange>
         <pending>公開ステータスが、保留中になっています</pending>
-        <approved>文書が承認されました</approved>
+        <approved>Document has been approved.</approved>
         <staged>文書が承認申請されました</staged>
-        <published>文書を公開されました</published>
+        <published>Document has been published.</published>
       </stateChange>
       <contentMoved>文書が移動されました： {0}</contentMoved>
       <fileMoved>ファイルが移動されました： {0}</fileMoved>
