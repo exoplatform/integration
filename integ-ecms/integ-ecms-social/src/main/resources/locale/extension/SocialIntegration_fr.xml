@@ -45,9 +45,9 @@
       <tagsRemoved>Les tags: {0} ont été supprimés.</tagsRemoved>
       <stateChange>
         <pending>Le document est en attente de validation.</pending>
-        <approved>Le document est validé.</approved>
+        <approved>Le document a été approuvé.</approved>
         <staged>La publication est prête.</staged>
-        <published>Le document est publié.</published>
+        <published>Le document a été publié.</published>
       </stateChange>
       <contentMoved>Le document a été déplacé ici : {0}</contentMoved>
       <fileMoved>Le fichier a été déplacé: {0}</fileMoved>
