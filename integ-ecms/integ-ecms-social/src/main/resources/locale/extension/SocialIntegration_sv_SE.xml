@@ -45,9 +45,9 @@
       <tagsRemoved>Taggar: {0} har tagits bort.</tagsRemoved>
       <stateChange>
         <pending>Publikation status pågår nu.</pending>
-        <approved>Publikationen har godkänts.</approved>
+        <approved>Document has been approved.</approved>
         <staged>Publikationen har varit iscensatt.</staged>
-        <published>Har publicerats.</published>
+        <published>Document has been published.</published>
       </stateChange>
       <contentMoved>Publikationen har flyttats till: {0}</contentMoved>
       <fileMoved>Filen har flyttats till: {0}</fileMoved>
