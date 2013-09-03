@@ -1,17 +1,5 @@
 package org.exoplatform.cs.ext.impl;
 
-import java.text.DateFormat;
-import java.text.MessageFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.TimeZone;
-
-import javax.jcr.PathNotFoundException;
-
 import org.exoplatform.calendar.service.CalendarEvent;
 import org.exoplatform.calendar.service.CalendarService;
 import org.exoplatform.calendar.service.CalendarSetting;
@@ -31,6 +19,17 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+
+import javax.jcr.PathNotFoundException;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 @ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/cs/social-integration/plugin/space/CalendarUIActivity.gtmpl", events = {
     @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
@@ -358,8 +357,13 @@ public class CalendarUIActivity extends BaseUIActivity {
 	  for(int i = 0; i < fields.length; i++) {
       String label = getUICalendarLabel(fields[i]);
       String childMessage; // message for each updated field
-      if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED) || fields[i].equals(CalendarSpaceActivityPublisher.TO_UPDATED)) {
-		    long time = Long.valueOf(tempParams.get(fields[i]));
+      if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED)
+              || fields[i].equals(CalendarSpaceActivityPublisher.TO_UPDATED)
+              || fields[i].equals(CalendarSpaceActivityPublisher.STOP_REPEATING)
+              || fields[i].equals(CalendarSpaceActivityPublisher.EVENT_CANCELLED)) {
+
+        //for those fields, the value is timestamp, we need to convert it to user-friendly format
+        long time = Long.valueOf(tempParams.get(fields[i]));
 		    childMessage = MessageFormat.format(label, getDateTimeString(ctx, time, null));
 		  } else {
 		    childMessage = MessageFormat.format(label,tempParams.get(fields[i]));  
@@ -481,7 +485,5 @@ public class CalendarUIActivity extends BaseUIActivity {
       }
       requestContext.addUIComponentToUpdateByAjax(uiComponent);
     }
-
   }
-
 }
