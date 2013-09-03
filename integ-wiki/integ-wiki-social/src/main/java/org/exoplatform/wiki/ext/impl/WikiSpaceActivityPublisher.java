@@ -75,7 +75,6 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
   private ExoSocialActivityImpl createNewActivity(String ownerId) {
     ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
     activity.setUserId(ownerId);
-    activity.setTitle("title");
     activity.setBody("body");
     activity.setType(WIKI_APP_ID);
     return activity;
@@ -103,7 +102,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
       activity = createNewActivity(ownerIdentity.getId());
       isNewActivity = true;
     }
-    
+    activity.setTitle(page.getTitle());
     // Add UI params
     Map<String, String> templateParams = new HashMap<String, String>();
     templateParams.put(PAGE_ID_KEY, pageId);
