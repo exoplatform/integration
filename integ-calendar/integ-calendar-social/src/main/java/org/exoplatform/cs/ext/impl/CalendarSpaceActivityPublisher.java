@@ -185,10 +185,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * publish a new event activity
    *
    * @param event
-   * @param calendarId
-   * @param eventType
    */
-  private void publishActivity(CalendarEvent event, String calendarId, String eventType) {
+  private void publishActivity(CalendarEvent event) {
     ExoSocialActivity activity = getActivityForEvent(event);
     if(activity == null) {
       if(LOG.isDebugEnabled()) {
@@ -204,7 +202,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * we create new activity and set its activityId
    */
   private ExoSocialActivity getActivityForEvent(CalendarEvent calendarEvent) {
-
+    String eventType = calendarEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
     String calendarId = calendarEvent.getCalendarId();
     //if calendar is null, or not a space calendar, returns null
     if (calendarId == null || calendarId.indexOf(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX) < 0) {
@@ -237,15 +235,15 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
       activity.setUserId(userIdentity.getId());
       activity.setTitle(calendarEvent.getSummary());
       activity.setBody(calendarEvent.getDescription());
-      activity.setType("cs-calendar:spaces");
-      activity.setTemplateParams(makeActivityParams(calendarEvent, calendarId, calendarEvent.getEventType()));
+      activity.setType(CALENDAR_APP_ID);
+      activity.setTemplateParams(makeActivityParams(calendarEvent, calendarId, eventType));
       activityManager.saveActivityNoReturn(spaceIdentity, activity);
       calendarEvent.setActivityId(activity.getId());
     } else {
       //update the activity
       activity.setTitle(calendarEvent.getSummary());
       activity.setBody(calendarEvent.getDescription());
-      activity.setTemplateParams(makeActivityParams(calendarEvent, calendarId, calendarEvent.getEventType()));
+      activity.setTemplateParams(makeActivityParams(calendarEvent, calendarId, eventType));
       activityManager.updateActivity(activity);
     }
     return activity;
@@ -254,11 +252,9 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * adds comment to existing event activity
    *
    * @param event
-   * @param calendarId
-   * @param eventType
    * @param messagesParams
    */
-  private void updateToActivity(CalendarEvent event, String calendarId, String eventType, Map<String, String> messagesParams){
+  private void updateToActivity(CalendarEvent event, Map<String, String> messagesParams){
     ExoSocialActivity activity = getActivityForEvent(event);
     if(activity != null) {
       //add comment to the activity
@@ -273,9 +269,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * from http://community.exoplatform.com/portal/intranet/wiki/group/spaces/platform_41/Recurring_Events_Specification
    * @param originEvent
    * @param selectedOccurrence
-   * @param isDelete
    */
-  public void updateFollowingOccurrences(CalendarEvent originEvent, CalendarEvent selectedOccurrence, boolean isDelete) {
+  public void updateFollowingOccurrences(CalendarEvent originEvent, CalendarEvent selectedOccurrence) {
     ExoSocialActivity activity = getActivityForEvent(originEvent);
     if(activity != null) {
       Map<String,String> params = new HashMap<String, String>();
@@ -308,9 +303,11 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    */
   private ExoSocialActivity createComment(Map<String,String> messagesParams) {
     String userId = ConversationState.getCurrent().getIdentity().getUserId();
+    Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
+
     ExoSocialActivity newComment = new ExoSocialActivityImpl();
     newComment.isComment(true);
-    newComment.setUserId(userId);
+    newComment.setUserId(userIdentity.getId());
     newComment.setType("CALENDAR_ACTIVITY");
     StringBuilder fields = new StringBuilder();
     Map<String, String> data = new LinkedHashMap<String, String>(); 
@@ -333,9 +330,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    *
    * @param event
    * @param calendarId
-   * @param eventType
    */
-  private void deleteActivity(CalendarEvent event, String calendarId, String eventType){
+  private void deleteActivity(CalendarEvent event, String calendarId){
     try {
       Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
     } catch (ClassNotFoundException e) {
@@ -348,8 +344,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
       return;
     }
     try{
-      ActivityManager activityManager = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
-      SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+      activityManager = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
+      spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
       String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
       Space space = spaceService.getSpaceByGroupId(spaceGroupId);
       if (space != null && event.getActivityId() != null) {
@@ -750,8 +746,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * @param calendarId
    */
   public void savePublicEvent(CalendarEvent event, String calendarId) {
-    String eventType = event.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
-    publishActivity(event, calendarId, eventType);
+    publishActivity(event);
   }
 
   /**
@@ -762,10 +757,9 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * @param calendarId
    */
   public void updatePublicEvent(CalendarEvent oldEvent, CalendarEvent newEvent, String calendarId) {
-    String eventType = newEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
     Map<String, String> messagesParams = buildParams(oldEvent, newEvent);
     if(messagesParams.size() > 0) {
-      updateToActivity(newEvent, calendarId, eventType, messagesParams);
+      updateToActivity(newEvent, messagesParams);
     }
   }
 
@@ -776,10 +770,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * @param calendarId
    */
   public void updatePublicEvent(CalendarEvent newEvent, String calendarId) {
-    String eventType = newEvent.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
-    //Map<String, String> messagesParams = buildParams(oldEvent, newEvent);
-    //updateToActivity(newEvent, calendarId, eventType, messagesParams);
-    publishActivity(newEvent, calendarId, eventType);
+    publishActivity(newEvent);
   }
 
   /**
@@ -789,7 +780,6 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * @param calendarId
    */
   public void deletePublicEvent(CalendarEvent event, String calendarId) {
-    String eventType = event.getEventType().equalsIgnoreCase(CalendarEvent.TYPE_EVENT) ? EVENT_ADDED : TASK_ADDED;
-    deleteActivity(event, calendarId, eventType) ;
+    deleteActivity(event, calendarId) ;
   }
 }
