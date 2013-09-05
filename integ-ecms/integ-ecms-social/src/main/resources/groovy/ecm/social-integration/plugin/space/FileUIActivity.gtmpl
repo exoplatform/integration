@@ -109,7 +109,6 @@
   def labelHideAllComments = _ctx.appRes("UIActivity.label.Hide_All_Comments");
   def labelOnePersonLikeThis = _ctx.appRes("UIActivity.label.One_Person_Like_This");
   def labelTwoPersonLikeThis=_ctx.appRes("UIActivity.label.Two_Person_Like_This");
-  def labelPeopleLikeThis = _ctx.appRes("UIActivity.label.People_Like_This");
   def labelOneAndOthersLikeThis=_ctx.appRes("UIActivity.label.One_And_Others_Like_This");  
   def labelYouLikeThis = _ctx.appRes("UIActivity.label.You_Like_This");
   def labelYouAndOnePersonLikeThis = _ctx.appRes("UIActivity.label.You_And_One_Person_Like_This");
