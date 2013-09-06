@@ -357,17 +357,26 @@ public class CalendarUIActivity extends BaseUIActivity {
 	  for(int i = 0; i < fields.length; i++) {
       String label = getUICalendarLabel(fields[i]);
       String childMessage; // message for each updated field
-      if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED)
-              || fields[i].equals(CalendarSpaceActivityPublisher.TO_UPDATED)
-              || fields[i].equals(CalendarSpaceActivityPublisher.STOP_REPEATING)
-              || fields[i].equals(CalendarSpaceActivityPublisher.EVENT_CANCELLED)) {
 
-        //for those fields, the value is timestamp, we need to convert it to user-friendly format
+      if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED)
+              || fields[i].equals(CalendarSpaceActivityPublisher.TO_UPDATED)) {
+        //get date time string from timestamp
         long time = Long.valueOf(tempParams.get(fields[i]));
-		    childMessage = MessageFormat.format(label, getDateTimeString(ctx, time, null));
-		  } else {
-		    childMessage = MessageFormat.format(label,tempParams.get(fields[i]));  
-		  }
+        childMessage = MessageFormat.format(label, getDateTimeString(ctx, time, null));
+
+      } else if(fields[i].equals(CalendarSpaceActivityPublisher.STOP_REPEATING)
+              || fields[i].equals(CalendarSpaceActivityPublisher.EVENT_CANCELLED)) {
+        //get the date string from timestamp
+        long time = Long.valueOf(tempParams.get(fields[i]));
+        Locale locale = ctx.getRequestContext().getLocale();
+        Calendar calendar = GregorianCalendar.getInstance(locale);
+        calendar.setTimeInMillis(time);
+        childMessage = MessageFormat.format(label, getDateString(locale, calendar));
+
+      } else {
+        childMessage = MessageFormat.format(label,tempParams.get(fields[i]));
+      }
+
 		  commentMessage.append(childMessage + "<br/>");
 	  }
 	  return commentMessage.toString();
