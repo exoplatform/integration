@@ -68,7 +68,7 @@
     </publicationStates>
     <view>Ver</view>
     <edit>Editar</edit>
-    <download>Download</download>
+    <download>Descargar</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -78,7 +78,7 @@
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Resource Type</resourceType>        
+        <resourceType>Tipo de Recursos</resourceType>        
       </label>
     </dialog>
   </ElementSet>
