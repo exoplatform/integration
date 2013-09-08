@@ -12,6 +12,7 @@ import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.forum.common.TransformHTML;
+import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.ext.activity.ForumActivityContext;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
@@ -227,11 +228,11 @@ public class ForumUIActivity extends BaseKSActivity {
     int nbReplies = Integer.parseInt(Utils.isEmpty(got) ? "0" : got);
     switch (nbReplies) {
       case 0:
-        return "No Reply";
+        return WebUIUtils.getLabel(null, "ForumUIActivity.label.noReply");
       case 1:
-        return "1 Reply";
+        return WebUIUtils.getLabel(null, "ForumUIActivity.label.oneReply").replace("{0}", got);
       default:
-        return String.format("%s Replies", got);
+        return WebUIUtils.getLabel(null, "ForumUIActivity.label.replies").replace("{0}", got);
     }
   }
   
