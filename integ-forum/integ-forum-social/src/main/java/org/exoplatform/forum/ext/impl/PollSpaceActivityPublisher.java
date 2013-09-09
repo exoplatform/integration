@@ -45,10 +45,9 @@ public class PollSpaceActivityPublisher extends PollEventListener{
   public static final String POLL_APP_ID            = "ks-poll:spaces";
   public static final String POLL_COMMENT_APP_ID    = "poll:spaces";
   private static final Log   LOG                    = ExoLogger.getExoLogger(PollSpaceActivityPublisher.class);
-  public static final String POLL_LINK_KEY          = "PollLink";
+  public static final String POLL_PARENT          = "PollLink";
   public static final String UPDATE_POLL_TITLE_ID   = "update_poll";
   public static final String SPACE_GROUP_ID         = "SpaceGroupId";
-  public static final String CATE_SPACE_ID_PREFIX   = "forumSpace".intern();
   
   public static final String POLL_ID = "Id";
   
@@ -66,7 +65,7 @@ public class PollSpaceActivityPublisher extends PollEventListener{
     ExoSocialActivityImpl comment = new ExoSocialActivityImpl();
     comment.setTitle("Poll has been updated.");
     comment.setType(POLL_COMMENT_APP_ID);
-    I18NActivityUtils.addResourceKey(comment, UPDATE_POLL_TITLE_ID, null);
+    I18NActivityUtils.addResourceKey(comment, UPDATE_POLL_TITLE_ID);
     return comment;
   }
   
@@ -122,8 +121,8 @@ public class PollSpaceActivityPublisher extends PollEventListener{
           pollOwnerIdentity = spaceIdentity;
           templateParams.put(SPACE_GROUP_ID, getSpaceGroupId(poll.getParentPath()));
         }
-        templateParams.put(POLL_LINK_KEY, poll.getLink());
-        templateParams.put(POLL_ID, poll.getId().replaceFirst("poll", "topic"));
+        templateParams.put(POLL_PARENT, poll.getParentPath());
+        templateParams.put(POLL_ID, poll.getId());
         newActivity.setTemplateParams(templateParams);
         getManager().saveActivityNoReturn(pollOwnerIdentity, newActivity);
         
@@ -203,13 +202,12 @@ public class PollSpaceActivityPublisher extends PollEventListener{
   }
   
   private String getSpaceGroupId(String path) {
-    String spaceGroupId = "";
-    if (path.contains("forumCategoryspaces")) {
-      String[] tab = path.split("/");
-      String spaceName = tab[tab.length-2].replace(CATE_SPACE_ID_PREFIX, "");
-      spaceGroupId = SpaceUtils.SPACE_GROUP + CommonUtils.SLASH + spaceName;
+    if (path.contains(org.exoplatform.forum.service.Utils.CATEGORY_SPACE_ID_PREFIX)) {
+      String[] tab = path.split(CommonUtils.SLASH);
+      String spaceName = tab[tab.length-2].replace(org.exoplatform.forum.service.Utils.FORUM_SPACE_ID_PREFIX, "");
+      return new StringBuffer(SpaceUtils.SPACE_GROUP).append(CommonUtils.SLASH).append(spaceName).toString();
     }
-    return spaceGroupId;
+    return CommonUtils.EMPTY_STR;
   }
   
   private Identity getSpaceIdentity(Poll poll) {
