@@ -143,7 +143,9 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     function setWaitingStatus(status) {
     	if (status){
     		window['isSearching'] = true;
-            $(quickSearchResult_id).html(QUICKSEARCH_WAITING_TEMPLATE);
+    		// Modify by SONDN PLF August 07, 2013
+            //$(quickSearchResult_id).html(QUICKSEARCH_WAITING_TEMPLATE);
+    		$(txtQuickSearchQuery_id).addClass("loadding");
             if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
             	$(quickSearchResult_id).show();              
             }else{
@@ -217,6 +219,8 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 
 					  $.when(bigJqxhr[0]).done(function(){
 						  setWaitingStatus(false);
+						  // Modify by SONDN PLF August 07, 2013
+					      $(txtQuickSearchQuery_id).removeClass("loadding");
 						  var noResult = true;
 						  $.each(allResultMap, function(index, results){
 							 if ($(results).size() != 0) noResult = false; 

@@ -60,7 +60,7 @@
   def labelOneAndOthersLikeThis=_ctx.appRes("UIActivity.label.One_And_Others_Like_This");
   def labelYouLikeThis = _ctx.appRes("UIActivity.label.You_Like_This");
   def labelYouAndOnePersonLikeThis = _ctx.appRes("UIActivity.label.You_And_One_Person_Like_This");
-  def labelYouAndPeopleLikeThis = _ctx.appRes("UIActivity.label.You_And_People_Like_This");
+  def labelYouAndOthersLikeThis = _ctx.appRes("UIActivity.label.You_And_Others_Like_This");
   
   def labelToDeleteThisActivity=_ctx.appRes("UIActivity.msg.Are_You_Sure_To_Delete_This_Activity");
   def labelToDeleteThisComment=_ctx.appRes("UIActivity.msg.Are_You_Sure_To_Delete_This_Comment");

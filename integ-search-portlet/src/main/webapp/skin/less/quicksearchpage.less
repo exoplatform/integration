@@ -2,7 +2,7 @@
 @import "mixins.less";
 .uiQuickSearchResult {
   position: absolute;
-  background: white;
+  background: @white;
   width: 315px;
   margin-top: 6px;
   margin-left: 3px;
@@ -15,7 +15,7 @@
       text-align: right;
     }
     tr:nth-child(2n) th {
-      background: white;
+      background: @white;
     }
     tbody {
       tr td,
@@ -47,10 +47,10 @@
       text-align: center;
       > a {
         font-weight: bold;
-        color: #333333;
+        color: @textColor;
       }
       > a:hover {
-        color: #2f5e92;
+        color: @linkColor;
       }
     }
     .message:hover {
@@ -58,7 +58,7 @@
     }
 
     .noResult {
-      background: white;
+      background: @white;
       .border-radius(4px);
     }
   }
@@ -72,12 +72,12 @@
   }
   
   .quickSearchResult:hover, .quickSearchResult.arrowResult {
-    #gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 15%));
-    border-color: #8ba6d5;
+    #gradient > .vertical(@blueLighter, darken(@blueLighter, 15%));
+    border-color: @blueDark;
     a {
 		color: white;
 	    > [class^="uiIconPLF"] {
-	    	background-image: url("/eXoPlatformResources/skin/platformSkin/images/icons/uiIconsPLFWhite.png");
+	    	background-image: url("/eXoPlatformResources/skin/images/icons/uiIconsPLFWhite.png");
 	    }
 	    
 	    > [class^="uiIconEcms"] {
@@ -89,4 +89,11 @@
 	    }
    	}
   }
+}
+
+.uiEDWidth70, .uiEDWidth70 select.uiResultPerPage, select.uiResultPerPage {
+	width: 70px;
+}
+.uiSearchSetting, .uiQuickSearchSetting {
+	padding-left: 10px;
 }

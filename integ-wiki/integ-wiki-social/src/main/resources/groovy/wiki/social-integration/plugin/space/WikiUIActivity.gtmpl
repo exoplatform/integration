@@ -158,6 +158,7 @@
   
   def version = uicomponent.getPageVersion();
   def versionLabel = _ctx.appRes("WikiUIActivity.label.version") + version;
+  def versionNum = Integer.valueOf(version);
 %>
 
 <div class="activityStream uiWikiActivity" id="activityContainer${activity.id}">
@@ -212,7 +213,18 @@
                 <div class="actionBar clearfix linkActivityIcon">
                          <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
                                      def commentLink = "";
-                                  %> 
+                                  %>
+                         <!-- View Changes -->
+                         <% if (versionNum > 1) { %>
+                         <ul class="pull-left statusAction">
+                           <li>
+                             <a id="ViewChanges${activity.id}" href="<%=uicomponent.getViewChangeURL();%>" >
+                             <i class="uiIconViewChange uiIconLightGray"></i>&nbsp;<%= _ctx.appRes("WikiUIActivity.label.view-change"); %>
+                             </a>
+                           </li>
+                         </ul>
+                         <% } %>
+                         
                          <% if (activityCommentAndLikable) { %>                      
                         <ul class="pull-right statusAction">
                             <li>
