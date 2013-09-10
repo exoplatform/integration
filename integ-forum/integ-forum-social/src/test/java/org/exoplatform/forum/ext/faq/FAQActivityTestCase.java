@@ -114,14 +114,14 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     activity = getManager().getActivity(activityId);
     assertEquals("&-*() / --- == coucou #@", activity.getTitle());
     comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
-    assertEquals("Details has been edited to: &-*() / --- == coucou #@", comments.get(2).getTitle());
+    assertEquals("Details has been edited to: &amp;-*() / --- == coucou #@", comments.get(2).getTitle());
 
     question.setDetail("<strong>&-*() /</strong> and [B]@$#$%[/B]");
     faqService_.saveQuestion(question, false, faqSetting_);
     activity = getManager().getActivity(activityId);
     assertEquals("&-*() / --- == coucou #@", activity.getTitle());
     comments = getManager().getCommentsWithListAccess(activity).loadAsList(0, 10);
-    assertEquals("Details has been edited to: &-*() / and @$#$%", comments.get(3).getTitle());
+    assertEquals("Details has been edited to: &amp;-*() / and @$#$%", comments.get(3).getTitle());
     
     String questionPath = question.getCategoryPath()+ "/" + Utils.QUESTION_HOME + "/" + question.getId();
     //delete question will delete the activity

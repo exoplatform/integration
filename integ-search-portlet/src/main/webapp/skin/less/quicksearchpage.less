@@ -2,7 +2,7 @@
 @import "mixins.less";
 .uiQuickSearchResult {
   position: absolute;
-  background: white;
+  background: @white;
   width: 315px;
   margin-top: 6px;
   margin-left: 3px;
@@ -15,7 +15,7 @@
       text-align: right;
     }
     tr:nth-child(2n) th {
-      background: white;
+      background: @white;
     }
     tbody {
       tr td,
@@ -47,10 +47,10 @@
       text-align: center;
       > a {
         font-weight: bold;
-        color: #333333;
+        color: @textColor;
       }
       > a:hover {
-        color: #2f5e92;
+        color: @linkColor;
       }
     }
     .message:hover {
@@ -58,7 +58,7 @@
     }
 
     .noResult {
-      background: white;
+      background: @white;
       .border-radius(4px);
     }
   }
@@ -66,98 +66,34 @@
   .quickSearchResult {
     padding: 5px 10px 7px;
     display: block;	
-    .avatar {
-      display: inline-block;
-      .square(24px);
-      vertical-align: top;
-      overflow: hidden;
-      i[class^="uiIcon"] {
-      	display: block!important;
-      }
-      img {
-        .square(24px);
-      }
-    }
-    .name {
-      display: inline-block;
-      margin-left: 5px;
-      max-width: 145px;
-      .text-overflow();
-      vertical-align: middle;
+    .avatarTiny > img {
+    	margin-right: 5px;
     }
   }
   
   .quickSearchResult:hover, .quickSearchResult.arrowResult {
-	    #gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 15%));
-	    border-color: #8ba6d5;
-	    a {
-	    	color: white;
+    #gradient > .vertical(@blueLighter, darken(@blueLighter, 15%));
+    border-color: @blueDark;
+    a {
+		color: white;
+	    > [class^="uiIconPLF"] {
+	    	background-image: url("/eXoPlatformResources/skin/images/icons/uiIconsPLFWhite.png");
 	    }
-	  }
-
-	
-
+	    
+	    > [class^="uiIconEcms"] {
+	    	background-image: url("/eXoWCMResources/skin/images/Icons/uiIconsEcmsWhite.png");
+	    }
+	    
+	    > [class^="uiIconWiki"] {
+	    	background-image: url("/wiki/skin/images/Icons/uiIconsWikiWhite.png");
+	    }
+   	}
+  }
 }
 
-
-
-
-
-
-
-
-
-
-
-/*
-.calendarBox {
-  font-family: "Helvetica Neue Bold",Helvetica,Lucida,Arial,sans-serif;
-  font-weight: bold;
-  text-align: center;
+.uiEDWidth70, .uiEDWidth70 select.uiResultPerPage, select.uiResultPerPage {
+	width: 70px;
 }
-
-.calendarBox .heading {
-  background-color: #567AB6;
-  background-image: -moz-linear-gradient(center top , #638ACD, #426393);
-  background-repeat: repeat-x;
-  border: 1px solid #224886;
-  border-radius: 4px 4px 0 0;
-  color: #FFFFFF;
-  margin: 0;
-  padding: 2px 0;
+.uiSearchSetting, .uiQuickSearchSetting {
+	padding-left: 10px;
 }
-
-.calendarBox .content {
-  border: 1px solid #C3C3C3;
-  border-radius: 0 0 4px 4px;
-  color: #316399;
-  font-size: 24px;
-  padding: 8px;
-}
-
-.statusTask i {
-  background: url("/unified-search/public/images/status-task.png") repeat scroll 0 0 transparent;
-  display: inline-block;
-  height: 38px;
-  width: 38px;
-}
-
-.statusTask i.quicksearch {
-  background-size: 145px 35px;
-  height: 24px;
-  width: 24px;
-}
-
-.statusTask i.quicksearch.needs-actionIcon {
-  background-position: 0 0;
-}
-.statusTask i.quicksearch.in-processIcon {
-  background-position: -35px 0;
-}
-.statusTask i.quicksearch.completedIcon {
-  background-position: -72px 0;
-}
-.statusTask i.quicksearch.canceledIcon {
-  background-position: -108px 0;
-}
-*/

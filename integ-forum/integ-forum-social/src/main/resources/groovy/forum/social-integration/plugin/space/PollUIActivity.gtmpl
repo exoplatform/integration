@@ -170,6 +170,9 @@
     ownerName = profile.fullName;
   }
   def currentTime = System.currentTimeMillis();
+  
+  def votes = uicomponent.getVotes();
+  def numberOfVotes = uicomponent.getTotalUsersVotes(); 
 %>
 
 <div class="activityStream uiPollActivity" id="activityContainer${activity.id}"> 
@@ -207,8 +210,6 @@
 			<div class="uiBox roundedBottom introBox pollShare">	
 				<div class="clearfix pollTitle">
 					<div class="pull-right">
-						<% def numberOfVotes = uicomponent.getNumberOfVotes(activity.body); 
-						  %>
 						  <span class="numberVoted">$numberOfVotes</span>
 					</div>
 					<h5>					
@@ -220,11 +221,11 @@
 				<!--begin hardcode-->
 			     <div class="infoVote">			
 			     
-			     	<% def votes = uicomponent.getVotes(activity.body);
+			     	<% 
 			         for (vote in votes) {
-			           def solution = vote.split(":")[0];
-			           def percent = vote.split(":")[1];
-			           def nbVotes = vote.split(":")[2];
+			           String solution = vote.key;
+			           String percent = vote.value.get(0) + "%";
+			           String nbVotes = vote.value.get(1);
             %>
 						     <div class="voteRow clearfix">
 									<div class="titleVote">
@@ -271,7 +272,7 @@
 			 <% }%>	
 			<div class="pull-left statusAction">
 				 <a href="${uicomponent.getLink()}">
-					 <i class="uiIconSocVote uiIconSocLightGray"></i>&nbsp;Vote
+					 <i class="uiIconSocVote uiIconSocLightGray"></i>&nbsp;<%=_ctx.appRes("PollUIActivity.action.vote");%>
 				  </a>
 			</div>			 
 			</div><!--end actionBar-->					

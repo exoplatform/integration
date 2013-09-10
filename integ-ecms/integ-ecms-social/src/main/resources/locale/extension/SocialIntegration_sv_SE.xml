@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+  <SocialIntegration>
+    <titles>
+      <fileSize>Filstorlek</fileSize>
+    </titles>
+    <messages>
+      <createdBy>skapades av</createdBy>
+      <editedBy>redigerades av</editedBy>
+      <system>systemet</system>
+      <readmore>...Läs mer.</readmore>
+      <editTitle>Titeln har uppdaterats till: {0}</editTitle>
+      <editName>Namn har uppdaterats till: {0}</editName>
+      <editDescription>Beskrivning har uppdaterats till: {0}</editDescription>
+      <singleCreator>Skaparen är {0}</singleCreator>
+      <multiCreator>Skaparna är {0}</multiCreator>
+      <addSource>Källfil: {0} har lagts till</addSource>
+      <addMultiSource>Fil källor: {0} har lagts till</addMultiSource>
+      <removeSource>Källfil: {0} har tagits bort</removeSource>
+      <removeMultiSource>Fil källor: {0} har tagits bort</removeMultiSource>
+      <editSummary>Sammanfattning har uppdaterats till: {0}</editSummary>
+      <editLanguage>Språket har uppdaterats till: {0}</editLanguage>
+      <editContent>Innehållet har uppdaterats.</editContent>
+      <editFile>Filen har uppdaterats.</editFile>
+      <emptyTitle>Titeln har tagits bort.</emptyTitle>
+      <emptySummary>Sammanfattningen har tagits bort.</emptySummary>
+      <emptyContent>Innehållet har tagits bort.</emptyContent>
+      <updateMetadata>Metadata {0} har uppdaterats till: {1}</updateMetadata>
+      <removeMetadata>Metadata {0} har tagits bort.</removeMetadata>  
+      <removeTitle>Titeln har tagits bort.</removeTitle>
+      <removeName>Namn har tagits bort.</removeName>
+      <removeSummary>Sammanfattning har tagits bort.</removeSummary>
+      <removeDescription>Beskrivning har tagits bort.</removeDescription>
+      <removeCreator>Upphovsman: {0} har tagits bort.</removeCreator>
+      <removeMultiCreator>Skapare: {0} har tagits bort.</removeMultiCreator>
+      <removeLanguage>Språket har tagits bort.</removeLanguage>
+      <removeContent>Innehåll har tagits bort.</removeContent>
+      <attachmentAdded>Fil(er) har bifogats.</attachmentAdded>
+      <attachmentRemoved>Filerna har tagits bort.</attachmentRemoved>
+      <categoryAdded>Kategori: {0} har lagts till.</categoryAdded>
+      <categoryRemoved>Kategori: {0} har tagits bort.</categoryRemoved>
+      <tagAdded>Tag: {0} har lagts till.</tagAdded>
+      <tagsAdded>Taggar: {0} har lagts till.</tagsAdded>
+      <tagRemoved>Tag: {0} har tagits bort.</tagRemoved>
+      <tagsRemoved>Taggar: {0} har tagits bort.</tagsRemoved>
+      <stateChange>
+        <pending>Publikation status pågår nu.</pending>
+        <approved>Document has been approved.</approved>
+        <staged>Publikationen har varit iscensatt.</staged>
+        <published>Document has been published.</published>
+      </stateChange>
+      <contentMoved>Publikationen har flyttats till: {0}</contentMoved>
+      <fileMoved>Filen har flyttats till: {0}</fileMoved>
+      <revisionChanged>Publikationen har återställts till version: {0}</revisionChanged>
+      <version>Version {0}</version>
+    </messages>
+    <publicationStates>
+      <archived>Arkiverad</archived>
+      <obsolete>Utgången</obsolete>
+      <unpublished>Ej publicerad</unpublished>
+      <draft>Utkast</draft>
+      <pending>Väntläge</pending>
+      <approved>Godkänd</approved>
+      <inreview>Under granskning</inreview>
+      <staged>Iscensatt</staged>
+      <published>Publicerad</published>
+      <live>Publicerad</live>
+    </publicationStates>
+    <view>Visa</view>
+    <edit>Redigera</edit>
+    <download>Ladda ner</download>
+  </SocialIntegration>
+  <UIPopupWindow>
+    <title>
+      <DocViewer>Förhandsgranska</DocViewer>
+    </title>
+  </UIPopupWindow>
+  <ElementSet>
+    <dialog>
+      <label>       
+        <resourceType>Resurstyp</resourceType>        
+      </label>
+    </dialog>
+  </ElementSet>
+</bundle>
