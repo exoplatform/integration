@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+  <SocialIntegration>
+    <titles>
+      <fileSize>Kích thước Tệp</fileSize>
+    </titles>
+    <messages>
+      <createdBy>được tạo bởi</createdBy>
+      <editedBy>được sửa bởi</editedBy>
+      <system>hệ thống</system>
+      <readmore>...Xem Thêm.</readmore>
+      <editTitle>Tiêu đề đã được cập nhật thành : {0}</editTitle>
+      <editName>Tên đã đã được cập nhật thành: {0}</editName>
+      <editDescription>Mô tả đã được cập nhật thành: {0}</editDescription>
+      <singleCreator>Tác giả là {0}</singleCreator>
+      <multiCreator>Các Tác giả là: {0}</multiCreator>
+      <addSource>Tệp nguồn: {0} đã được thêm vào</addSource>
+      <addMultiSource>Một số tệp nguồn: {0} đã được thêm vào</addMultiSource>
+      <removeSource>Tệp nguồn: {0} đã bị loại bỏ</removeSource>
+      <removeMultiSource>Một số tệp nguồn: {0} đã bị loại bỏ</removeMultiSource>
+      <editSummary>Nội dung tóm tắt đã được cập nhật thành: {0}</editSummary>
+      <editLanguage>Ngôn ngữ đã được cập nhật thành: {0}</editLanguage>
+      <editContent>Nội dung đã được cập nhật thành: {0}</editContent>
+      <editFile>Tệp đã được cập nhật.</editFile>
+      <emptyTitle>Tiêu đề vừa bị loại bỏ.</emptyTitle>
+      <emptySummary>Tóm tắt vừa bị loại bỏ.</emptySummary>
+      <emptyContent>Nội dung vừa bị loại bỏ.</emptyContent>
+      <updateMetadata>Siêu dữ liệu {0} đã được cập nhật thành: {1}</updateMetadata>
+      <removeMetadata>Siêu dữ liệu {0} vừa bị loại bỏ.</removeMetadata>  
+      <removeTitle>Tiêu đề vừa bị loại bỏ.</removeTitle>
+      <removeName>Tên vừa bị loại bỏ.</removeName>
+      <removeSummary>Tóm tắt vừa bị loại bỏ.</removeSummary>
+      <removeDescription>Miêu tả vừa bị loại bỏ.</removeDescription>
+      <removeCreator>Tác giả: {0} vừa bị loại bỏ.</removeCreator>
+      <removeMultiCreator>Các tác giả: {0} đã bị loại bỏ.</removeMultiCreator>
+      <removeLanguage>Ngôn ngữ đã bị xóa.</removeLanguage>
+      <removeContent>Nội dung đã bị xóa.</removeContent>
+      <attachmentAdded>Một số tệp đã được đính kèm.</attachmentAdded>
+      <attachmentRemoved>Tệp vừa bị loại bỏ.</attachmentRemoved>
+      <categoryAdded>Danh mục: {0} đã được thêm vào.</categoryAdded>
+      <categoryRemoved>Danh mục: {0} đã được thêm vào.</categoryRemoved>
+      <tagAdded>Nhãn {0} vừa được thêm vào.</tagAdded>
+      <tagsAdded>Một số Nhãn: {0} vừa được thêm vào.</tagsAdded>
+      <tagRemoved>Nhãn: {0} vừa bị loại bỏ.</tagRemoved>
+      <tagsRemoved>Một số Nhãn: {0} vừa bị loại bỏ.</tagsRemoved>
+      <stateChange>
+        <pending>Tài liệu đang chờ được duyệt.</pending>
+        <approved>Tài liệu đã được chấp thuận.</approved>
+        <staged>Xuất bản đang được xem xét.</staged>
+        <published>Tài liệu đã được xuất bản.</published>
+      </stateChange>
+      <contentMoved>Xuất bản vừa được di chuyển đến: {0}</contentMoved>
+      <fileMoved>Tệp đã được chuyển tới: {0}</fileMoved>
+      <revisionChanged>Xuất bản vừa được hoàn lại phiên bản: {0}</revisionChanged>
+      <version>Phiên bản: {0}</version>
+    </messages>
+    <publicationStates>
+      <archived>Được sao lưu</archived>
+      <obsolete>Đã quá hạn</obsolete>
+      <unpublished>Chưa xuất bản</unpublished>
+      <draft>Bản nháp</draft>
+      <pending>Chờ duyệt</pending>
+      <approved>Đã duyệt</approved>
+      <inreview>Đang đánh giá</inreview>
+      <staged>Đang xem xét</staged>
+      <published>Xuất bản</published>
+      <live>Xuất bản</live>
+    </publicationStates>
+    <view>Xem</view>
+    <edit>Chỉnh sửa</edit>
+    <download>Tải về</download>
+  </SocialIntegration>
+  <UIPopupWindow>
+    <title>
+      <DocViewer>Xem lại</DocViewer>
+    </title>
+  </UIPopupWindow>
+  <ElementSet>
+    <dialog>
+      <label>       
+        <resourceType>Loại Tài nguyên</resourceType>        
+      </label>
+    </dialog>
+  </ElementSet>
+</bundle>

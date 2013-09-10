@@ -81,7 +81,15 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     return activity;
   }
   
-  private ExoSocialActivity generateActivity(Identity ownerStream, Identity ownerIdentity, String wikiType, String wikiOwner, String pageId, Page page, String spaceUrl, String activityType) throws Exception {
+  private ExoSocialActivity generateActivity(Identity ownerStream,
+                                             Identity ownerIdentity,
+                                             String wikiType,
+                                             String wikiOwner,
+                                             String pageId,
+                                             Page page,
+                                             String spaceUrl,
+                                             String spaceName,
+                                             String activityType) throws Exception {
     // Get activity
     Node node = page.getJCRPageNode();
     ExoSocialActivity activity = null;
@@ -169,6 +177,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
         WikiService wikiService = (WikiService) PortalContainer.getInstance().getComponentInstanceOfType(WikiService.class);
         List<BreadcrumbData> breadcrumbDatas = wikiService.getBreadcumb(wikiType, wikiOwner, pageId);
         StringBuffer breadcrumText = new StringBuffer();
+        breadcrumText.append((StringUtils.isEmpty(spaceName) ? wikiOwner : spaceName)).append(" > ");
         for (int i = 0; i < breadcrumbDatas.size(); i++) {
           breadcrumText.append(breadcrumbDatas.get(i).getTitle());
           if (i < breadcrumbDatas.size() - 1) {
@@ -251,6 +260,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     Identity ownerStream = null, authorActivity = userIdentity;
     ExoSocialActivity activity = null;
     String spaceUrl = null;
+    String spaceName = null;
     if (PortalConfig.GROUP_TYPE.equals(wikiType)) {
       /* checking whether the page is in a space */
       SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
@@ -261,6 +271,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
           if (!isPublicInSpace(page, space)) return;
           ownerStream = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
           spaceUrl = space.getUrl();
+          spaceName = space.getDisplayName();
         }
       } catch (SpaceStorageException e) {
         if (LOG.isDebugEnabled()) {
@@ -275,7 +286,8 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     }
     
     if (ownerStream != null) {
-      activity = generateActivity(ownerStream, authorActivity, wikiType, wikiOwner, pageId, page, spaceUrl, activityType);
+      activity = 
+          generateActivity(ownerStream, authorActivity, wikiType, wikiOwner, pageId, page, spaceUrl, spaceName, activityType);
       if (activity == null) {
         return;
       }

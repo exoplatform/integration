@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+  <SocialIntegration>
+    <titles>
+      <fileSize>Dateigröße</fileSize>
+    </titles>
+    <messages>
+      <createdBy>wurde erstellt von</createdBy>
+      <editedBy>wurde bearbeitet von</editedBy>
+      <system>dem System</system>
+      <readmore>...Lesen Sie mehr.</readmore>
+      <editTitle>Der Titel wurde zu: {0} aktualisiert</editTitle>
+      <editName>Der Name wurde auf: {0} aktualisiert</editName>
+      <editDescription>Die Beschreibung wurde auf: {0} aktualisiert</editDescription>
+      <singleCreator>Der Ersteller ist {0}</singleCreator>
+      <multiCreator>Die Ersteller sind {0}</multiCreator>
+      <addSource>Die Dateiquelle: {0} wurde hinzugefügt</addSource>
+      <addMultiSource>Die Dateiquellen: {0} wurden hinzugefügt</addMultiSource>
+      <removeSource>Die Dateiquelle: {0} wurde entfernt</removeSource>
+      <removeMultiSource>Die Dateiquellen: {0} wurden entfernt</removeMultiSource>
+      <editSummary>Zusammenfassung wurde auf: {0} aktualisiert</editSummary>
+      <editLanguage>Die Sprache wurde auf: {0} aktualisiert</editLanguage>
+      <editContent>Der Inhalt wurde aktualisiert.</editContent>
+      <editFile>Die Datei wurde aktualisiert.</editFile>
+      <emptyTitle>Der Titel wurde entfernt.</emptyTitle>
+      <emptySummary>Die Zusammenfassung wurde entfernt.</emptySummary>
+      <emptyContent>Der Inhalt wurde entfernt.</emptyContent>
+      <updateMetadata>Die Metadaten {0} wurden zu: {1} aktualisiert</updateMetadata>
+      <removeMetadata>Metadaten {0} wurden entfernt.</removeMetadata>  
+      <removeTitle>Der Titel wurde entfernt.</removeTitle>
+      <removeName>Der Name wurde entfernt.</removeName>
+      <removeSummary>Die Zusammenfassung wurde entfernt.</removeSummary>
+      <removeDescription>Die Beschreibung wurde entfernt.</removeDescription>
+      <removeCreator>Der Ersteller {0} wurde entfernt.</removeCreator>
+      <removeMultiCreator>Die Ersteller: {0} wurden entfernt.</removeMultiCreator>
+      <removeLanguage>Die Sprache wurde entfernt.</removeLanguage>
+      <removeContent>Der Inhalt wurde entfernt.</removeContent>
+      <attachmentAdded>Die Datei(en) wurde(n) angehängt.</attachmentAdded>
+      <attachmentRemoved>Die Datei(en) wurde(n) entfernt.</attachmentRemoved>
+      <categoryAdded>Kategorie: {0} wurde hinzugefügt.</categoryAdded>
+      <categoryRemoved>Kategorie: {0} wurde entfernt.</categoryRemoved>
+      <tagAdded>Ein Tag {0} wurde hinzugefügt.</tagAdded>
+      <tagsAdded>Die Tags: {0} wurden hinzugefügt.</tagsAdded>
+      <tagRemoved>Ein Tag {0} wurde entfernt.</tagRemoved>
+      <tagsRemoved>Die Tags: {0} wurden entfernt.</tagsRemoved>
+      <stateChange>
+        <pending>Der Veröffentlichungsstatus ist jetzt ausstehend.</pending>
+        <approved>Document has been approved.</approved>
+        <staged>Die Veröffentlichung ist bereit gestellt worden.</staged>
+        <published>Document has been published.</published>
+      </stateChange>
+      <contentMoved>Die Veröffentlichung wurde nach: {0} verschoben</contentMoved>
+      <fileMoved>Die Datei wurde nach: {0} verschoben</fileMoved>
+      <revisionChanged>Die Veröffentlichung wurde auf Version: {0} wiederhergstellt</revisionChanged>
+      <version>Version: {0}</version>
+    </messages>
+    <publicationStates>
+      <archived>Archiviert</archived>
+      <obsolete>Veraltet</obsolete>
+      <unpublished>Unveröffentlicht</unpublished>
+      <draft>Entwurf</draft>
+      <pending>Ausstehend</pending>
+      <approved>Genehmigt</approved>
+      <inreview>Unter Überprüfung</inreview>
+      <staged>bereitgestellt</staged>
+      <published>Veröffentlicht</published>
+      <live>Veröffentlicht</live>
+    </publicationStates>
+    <view>Sehen</view>
+    <edit>Bearbeiten</edit>
+    <download>Herunterladen</download>
+  </SocialIntegration>
+  <UIPopupWindow>
+    <title>
+      <DocViewer>Vorschau</DocViewer>
+    </title>
+  </UIPopupWindow>
+  <ElementSet>
+    <dialog>
+      <label>       
+        <resourceType>Ressourcentyp</resourceType>        
+      </label>
+    </dialog>
+  </ElementSet>
+</bundle>
