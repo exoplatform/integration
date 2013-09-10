@@ -1,14 +1,12 @@
 
 <div id="searchSetting" class="uiSearchSetting">
-  <h4 class="titleWithBorder">${unifiedsearch}</h4>
-
   <div class="uiForm">
     <div class="form-horizontal">
       <div class="control-group">
         <label class="control-label">${resultsPerPage}</label>
         <div class="controls">
-          <span class="uiSelectbox">
-            <select id="resultsPerPage" class="selectbox">
+          <span class="uiSelectbox uiEDWidth70">
+            <select id="resultsPerPage" class="selectbox uiResultPerPage">
               <option>5</option>
               <option>10</option>
               <option>20</option>
