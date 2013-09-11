@@ -268,13 +268,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * The comment has content: "The event will stop repeating on : $LAST_EVENT_DATE, cf RECURRING_ACTIVITY_04
    * from http://community.exoplatform.com/portal/intranet/wiki/group/spaces/platform_41/Recurring_Events_Specification
    * @param originEvent
-   * @param selectedOccurrence
+   * @param stopDate
    */
-  public void updateFollowingOccurrences(CalendarEvent originEvent, CalendarEvent selectedOccurrence) {
+  public void updateFollowingOccurrences(CalendarEvent originEvent, Date stopDate) {
     ExoSocialActivity activity = getActivityForEvent(originEvent);
     if(activity != null) {
       Map<String,String> params = new HashMap<String, String>();
-      params.put(STOP_REPEATING, String.valueOf(selectedOccurrence.getFromDateTime().getTime()));
+      params.put(STOP_REPEATING, String.valueOf(stopDate.getTime()));
       ExoSocialActivity comment = createComment(params);
       activityManager.saveComment(activity,comment);
     }
