@@ -3,7 +3,6 @@ package org.exoplatform.wiki.ext.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.jcr.Node;
 
@@ -28,7 +27,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
-import org.exoplatform.webui.application.WebuiRequestContext;
+import org.exoplatform.wiki.ext.impl.WikiUIActivity.CommentType;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
@@ -40,7 +39,7 @@ import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.rendering.syntax.Syntax;
 
 public class WikiSpaceActivityPublisher extends PageWikiListener {
-
+  
   public static final String WIKI_APP_ID       = "ks-wiki:spaces";
 
   public static final String ACTIVITY_TYPE_KEY = "act_key";
@@ -148,31 +147,37 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     }
     
     // Check to add comment to activity
-    WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
-    ResourceBundle res = context.getApplicationResourceBundle();
     if (!ADD_PAGE_TYPE.equals(activityType)) {
       if (EDIT_PAGE_TITLE_TYPE.equals(activityType) && !page.isMinorEdit()) {
-        createAndSaveComment(activity, res.getString("WikiUIActivity.msg.update-page-title") + page.getTitle(), ownerIdentity.getId());
+        createAndSaveSystemComment(activity, ownerIdentity.getId(), "WikiUIActivity.msg.update-page-title", page.getTitle());
       } else if (EDIT_PAGE_CONTENT_TYPE.equals(activityType) && !page.isMinorEdit()) {
         String comment = page.getComment();
         if (StringUtils.isEmpty(comment)) {
-          createAndSaveComment(activity, res.getString("WikiUIActivity.msg.update-page-content"), ownerIdentity.getId());
+          createAndSaveSystemComment(activity, ownerIdentity.getId(), "WikiUIActivity.msg.update-page-content");
         } else {
-          createAndSaveComment(activity, comment, ownerIdentity.getId());
+          createAndSaveUserComment(activity, ownerIdentity.getId(), comment);
         }
       } else if (EDIT_PAGE_CONTENT_AND_TITLE_TYPE.equals(activityType) && !page.isMinorEdit()) {
-        StringBuffer commentContent = new StringBuffer();
-        commentContent.append(res.getString("WikiUIActivity.msg.update-page-title"));
-        commentContent.append(page.getTitle());
-        commentContent.append("<br>");
-        
         String comment = page.getComment();
         if (StringUtils.isEmpty(comment)) {
-          commentContent.append(res.getString("WikiUIActivity.msg.update-page-content"));
+          createAndSaveComment(activity,
+                               CommentType.SYSTEM_GROUP,
+                               ownerIdentity.getId(),
+                               null,
+                               "WikiUIActivity.msg.update-page-title",
+                               new String[]{ page.getTitle() },
+                               "WikiUIActivity.msg.update-page-content",
+                               null);
         } else {
-          commentContent.append(comment);
+          createAndSaveComment(activity,
+                               CommentType.SYSTEM_GROUP,
+                               ownerIdentity.getId(),
+                               null,
+                               "WikiUIActivity.msg.update-page-title",
+                               new String[]{ page.getTitle() },
+                               comment,
+                               null);
         }
-        createAndSaveComment(activity, commentContent.toString(), ownerIdentity.getId());
       } else if (MOVE_PAGE_TYPE.equals(activityType)) {
         WikiService wikiService = (WikiService) PortalContainer.getInstance().getComponentInstanceOfType(WikiService.class);
         List<BreadcrumbData> breadcrumbDatas = wikiService.getBreadcumb(wikiType, wikiOwner, pageId);
@@ -184,7 +189,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
             breadcrumText.append(" > ");
           }
         }
-        createAndSaveComment(activity, res.getString("WikiUIActivity.msg.move-page") + breadcrumText.toString(), ownerIdentity.getId());
+        createAndSaveSystemComment(activity, ownerIdentity.getId(), "WikiUIActivity.msg.move-page", breadcrumText.toString());
       }
     }
     return activity;
@@ -210,13 +215,87 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     return result.toString();
   }
   
-  private void createAndSaveComment(ExoSocialActivity activity, String comment, String userId) {
-    ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
-    ExoSocialActivity newComment = new ExoSocialActivityImpl();
-    newComment.setTitle(comment);
-    newComment.setUserId(userId);
-    activityM.saveComment(activity, newComment);
+  /**
+   * Create and save System comment.
+   * 
+   * @param activity
+   * @param userId
+   * @param commentMsgKey
+   * @param args
+   */
+  private void createAndSaveSystemComment(ExoSocialActivity activity,
+                                           String userId,
+                                           String commentMsgKey,
+                                           String... args) {
+    createAndSaveComment(activity, CommentType.SYSTEM, userId, null, commentMsgKey, args, null, null);
   }
+  
+  /**
+   * Create and save User comment.
+   * 
+   * @param activity
+   * @param userId
+   * @param comment
+   */
+  private void createAndSaveUserComment(ExoSocialActivity activity, String userId, String comment) {
+    createAndSaveComment(activity, CommentType.USER, userId, comment, null, null, null, null);
+  }
+  
+  /**
+   * Create and save comment.
+   * 
+   * @param activity
+   * @param commentType USER: comment by user, SYSTEM: generated by system, GROUP_SYSTEM: block of 2 comments
+   * @param userId
+   * @param userComment
+   * @param commentMsgKey1
+   * @param args1
+   * @param commentMsgKey2
+   * @param args2
+   */
+  private void createAndSaveComment(ExoSocialActivity activity,
+                                            CommentType commentType,
+                                            String userId,
+                                            String userComment,
+                                            String commentMsgKey1,
+                                            String[] args1,
+                                            String commentMsgKey2,
+                                            String[] args2) {
+   // Activity manager
+   ActivityManager activityM =
+       (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
+   ExoSocialActivity newComment = new ExoSocialActivityImpl();
+   
+   // 
+   newComment.setUserId(userId);
+   
+   // Activity params
+   Map<String, String> activityParams = new HashMap<String, String>();
+   
+   activityParams.put(WikiUIActivity.COMMENT_TYPE, commentType.name());
+   switch(commentType) {
+     case USER:
+       newComment.setTitle(userComment);
+       break;
+     case SYSTEM:
+       activityParams.put(WikiUIActivity.COMMENT_MESSAGE_KEY, commentMsgKey1);
+       activityParams.put(WikiUIActivity.COMMENT_MESSAGE_ARGS,
+                          StringUtils.join(args1, WikiUIActivity.COMMENT_MESSAGE_ARGS_ELEMENT_SAPERATOR));
+       break;
+     case SYSTEM_GROUP:
+       activityParams.put(WikiUIActivity.COMMENT_MESSAGE_KEY1, commentMsgKey1);
+       activityParams.put(WikiUIActivity.COMMENT_MESSAGE_ARGS1,
+                          StringUtils.join(args1, WikiUIActivity.COMMENT_MESSAGE_ARGS_ELEMENT_SAPERATOR));
+       activityParams.put(WikiUIActivity.COMMENT_MESSAGE_KEY2, commentMsgKey2);
+       activityParams.put(WikiUIActivity.COMMENT_MESSAGE_ARGS2,
+                          StringUtils.join(args2, WikiUIActivity.COMMENT_MESSAGE_ARGS_ELEMENT_SAPERATOR));
+       break;
+   }
+   newComment.setTemplateParams(activityParams);
+   
+   //
+   activityM.saveComment(activity, newComment);
+ }
   
   private boolean isPublic(Page page) throws Exception {
     HashMap<String, String[]> permissions = page.getPermission();
