@@ -11,9 +11,14 @@
   <name>eXo Integration - Search - Service</name>
   <dependencies>
     <dependency>
-      <groupId>org.exoplatform.calendar</groupId>
-      <artifactId>calendar-service</artifactId>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>compile</scope>
     </dependency>
+     <dependency>
+        <groupId>org.exoplatform.calendar</groupId>
+        <artifactId>calendar-service</artifactId>
+     </dependency>
     <dependency>
       <groupId>org.exoplatform.commons</groupId>
       <artifactId>commons-api</artifactId>
