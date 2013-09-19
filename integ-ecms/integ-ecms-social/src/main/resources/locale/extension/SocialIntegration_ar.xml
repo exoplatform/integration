@@ -45,9 +45,9 @@
       <tagsRemoved>وقع إزالة العلامات: {0}.</tagsRemoved>
       <stateChange>
         <pending>وضع المنشور الحالي: قيد النظر.</pending>
-        <approved>Document has been approved.</approved>
+        <approved>تمّت المصادقة على الوثيقة.</approved>
         <staged>وضع المنشور الحالي: جاهز للنشر.</staged>
-        <published>Document has been published.</published>
+        <published>تمّ نشر الوثيقة.</published>
       </stateChange>
       <contentMoved>وقد تم نقل المنشور إلى: {0}</contentMoved>
       <fileMoved>وقد تم نقل الملف إلى: {0}</fileMoved>
