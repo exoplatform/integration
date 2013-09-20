@@ -51,10 +51,10 @@
     <!-- Platform Project Dependencies -->
     <org.exoplatform.commons.version>4.0.2</org.exoplatform.commons.version>
     <org.exoplatform.ecms.version>4.0.2-CP01</org.exoplatform.ecms.version>
-    <org.exoplatform.social.version>4.0.2-CP01</org.exoplatform.social.version>
-    <org.exoplatform.forum.version>4.0.2-CP01</org.exoplatform.forum.version>
-    <org.exoplatform.wiki.version>4.0.2-CP01</org.exoplatform.wiki.version>
-    <org.exoplatform.calendar.version>4.0.2-CP01</org.exoplatform.calendar.version>
+    <org.exoplatform.social.version>4.0.2-CP02-INTERNAL</org.exoplatform.social.version>
+    <org.exoplatform.forum.version>4.0.2-CP02-INTERNAL</org.exoplatform.forum.version>
+    <org.exoplatform.wiki.version>4.0.2-CP02-INTERNAL</org.exoplatform.wiki.version>
+    <org.exoplatform.calendar.version>4.0.2-CP02-INTERNAL</org.exoplatform.calendar.version>
     <!-- Platform Project 3rd party Dependencies-->
     <org.exoplatform.doc.doc-style.version>4.0.2</org.exoplatform.doc.doc-style.version>
   </properties>
