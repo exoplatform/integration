@@ -384,7 +384,7 @@
 					  <%
                if(postLink != null && postLink.length() > 0) {
             %>
-					  <a class="viewComment" id="" href="$postLink"  ><i class="uiIconWatch uiIconLightGray"></i>&nbsp;View</a>
+					  <a class="viewComment" id="" href="$postLink"  ><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%= _ctx.appRes("ForumUIActivity.label.view")%></a>
 					  <%
                }
             %>

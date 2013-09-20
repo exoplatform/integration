@@ -380,7 +380,7 @@
                if(viewCommentLink != null && viewCommentLink.length() > 0) {
               %>
 						  
-						  <a class="viewComment" id="" href="$viewCommentLink"  ><i class="uiIconWatch uiIconLightGray"></i>&nbsp;View</a>
+						  <a class="viewComment" id="" href="$viewCommentLink"  ><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%= _ctx.appRes("AnswerUIActivity.label.button.view") %></a>
 						  <%
                }
               %>
