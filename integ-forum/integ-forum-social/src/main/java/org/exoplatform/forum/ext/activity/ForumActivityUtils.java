@@ -16,6 +16,9 @@
  */
 package org.exoplatform.forum.ext.activity;
 
+import java.util.Map;
+
+import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.service.Category;
@@ -24,6 +27,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.Utils;
+import org.exoplatform.forum.service.impl.model.PostFilter;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -102,6 +106,48 @@ public class ForumActivityUtils {
   
   public static void takeCommentBack(Post post, ExoSocialActivity comment) {
     ForumActivityUtils.getForumService().saveActivityIdForOwnerPath(post.getPath(), comment.getId());
+  }
+  
+  public static void updateActivityByTopic(Topic topic, ExoSocialActivity activity) throws Exception {
+    String topicPath = topic.getPath();
+    PostFilter filter = new PostFilter(Utils.getCategoryId(topicPath), Utils.getForumId(topicPath), Utils.getTopicId(topicPath), "", "", "", "");
+    ListAccess<Post> listPost = getForumService().getPosts(filter);
+    
+    //After split, if a topic has only one post (include the post by default of topic),
+    //this topic is considered "has no reply" then no comment will be added to the activity 
+    if (listPost.getSize() <= 1) {
+      return;
+    }
+    
+    Post[] posts = listPost.load(0, listPost.getSize());
+    ActivityManager am = getActivityManager();
+    int count = 0;
+    
+    //
+    for (Post post : posts) {
+      //The first post of topic is not a reply and will not be added to the activity
+      if (post.getId().equals(topic.getId().replace(Utils.TOPIC, Utils.POST))) {
+        continue;
+      }
+      String commentId = getForumService().getActivityIdForOwnerPath(post.getPath());
+      am.saveComment(activity, am.getActivity(commentId));
+      count++;
+    }
+    
+    Map<String, String> templateParams = activity.getTemplateParams();
+    templateParams.put(ForumActivityBuilder.TOPIC_POST_COUNT_KEY, "" + count);
+    activity.setTemplateParams(templateParams);
+    am.updateActivity(activity);
+  }
+  
+  public static void saveTopicActivity(Identity poster, Identity streamOwner, ExoSocialActivity activity, Topic topic) throws Exception {
+    //Save activity only in case the owner and poster of new topic exist
+    if (poster != null && streamOwner != null) {
+      activity.setUserId(poster.getId());
+      getActivityManager().saveActivityNoReturn(streamOwner, activity);
+      //update comment for activity's topic
+      updateActivityByTopic(topic, activity);
+    }
   }
   
   /**
