@@ -26,6 +26,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 
 /**
@@ -810,22 +811,17 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        ForumActivityUtils.removeActivities(ctx.getRemoveActivities());
-
         //
-        ActivityManager am = ForumActivityUtils.getActivityManager();
         Identity streamOwner = getOwnerStream(ctx);
         
-        ////FORUM_01 case: creates topic
+        ////FORUM_01 case: creates topic -> create new activity
         ExoSocialActivity newActivity = ForumActivityBuilder.createActivity(ctx.getTopic(), ctx);
         newActivity = processActivity(ctx, newActivity);
         
         //
         Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getOwner());
-        newActivity.setUserId(poster.getId());
         
-        //
-        am.saveActivityNoReturn(streamOwner, newActivity);
+        ForumActivityUtils.saveTopicActivity(poster, streamOwner, newActivity, ctx.getTopic());
         
         // Creates activity split
         ExoSocialActivity splitActivity = ForumActivityBuilder.createActivity(ctx.getSplitedTopic(), ctx);
@@ -833,12 +829,19 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         //
         poster = ForumActivityUtils.getIdentity(ctx.getSplitedTopic().getOwner());
-        splitActivity.setUserId(poster.getId());
         
-        //
-        am.saveActivityNoReturn(streamOwner, splitActivity);
+        //If streamOwner is not a space and the 2 topics have different owner
+        if (! SpaceIdentityProvider.NAME.equals(streamOwner.getProviderId()) && 
+            ! ctx.getTopic().getOwner().equals(ctx.getSplitedTopic().getOwner())) {
+          streamOwner = poster;
+        }
+        
+        ForumActivityUtils.saveTopicActivity(poster, streamOwner, splitActivity, ctx.getSplitedTopic());
         
         ForumActivityUtils.takeActivityBack(ctx.getSplitedTopic(), splitActivity);
+  
+        //remove old activity
+        ForumActivityUtils.removeActivities(ctx.getRemoveActivities());
         
         return newActivity;
       } catch (Exception e) {
