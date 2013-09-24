@@ -44,7 +44,7 @@
   def event = uicomponent.event ;
 %>
 
-<% if (activity) { //process if not null   
+<% if (activity && event != null) { //process if not null   
 
   def labelComment = _ctx.appRes("UIActivity.label.Comment");
   def labelLike = _ctx.appRes("UIActivity.label.Like");
@@ -417,6 +417,4 @@
   </div> <!-- #boxContainer-->	  
   <% uiform.end() %>
 </div>
-<% } else { %> <!-- activity deleted -->
-<div class="activityStream deleted">$labelActivityHasBeenDeleted</div>
 <% }%>
