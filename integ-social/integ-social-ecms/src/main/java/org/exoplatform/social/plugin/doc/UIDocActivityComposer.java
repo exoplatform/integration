@@ -235,9 +235,9 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     IdentityManager identityManager = uiComposer.getApplicationComponent(IdentityManager.class);
 
     SpaceService spaceSrv = uiComposer.getApplicationComponent(SpaceService.class);
-    Space space = spaceSrv.getSpaceByUrl(SpaceUtils.getSpaceUrl());
+    Space space = spaceSrv.getSpaceByUrl(SpaceUtils.getSpaceUrlByContext());
 
-    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,space.getName(),false);
+    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,space.getPrettyName(),false);
     String remoteUser = requestContext.getRemoteUser();
     ExoSocialActivity activity = saveActivity(activityParams, activityManager, identityManager, spaceIdentity, remoteUser);
 
@@ -269,16 +269,16 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
       activity_type = FILE_SPACES;
     }
-    Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser);
+    Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);
     ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(), activity_type, docActivityTitle, null);
     activity.setTemplateParams(activityParams);
-    activityManager.saveActivity(ownerIdentity, activity);
+    activityManager.saveActivityNoReturn(ownerIdentity, activity);
     String activityId = activity.getId();
     if (!StringUtils.isEmpty(activityId)) {
       ActivityTypeUtils.attachActivityId(node, activityId);
       node.save();
     }
-    return activity;
+    return activityManager.getActivity(activityId);
   }
 
   private String buildDocumentLink(String rawPath) {
