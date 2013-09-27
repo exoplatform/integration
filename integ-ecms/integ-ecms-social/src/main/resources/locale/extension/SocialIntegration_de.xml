@@ -45,9 +45,9 @@
       <tagsRemoved>Die Tags: {0} wurden entfernt.</tagsRemoved>
       <stateChange>
         <pending>Der Veröffentlichungsstatus ist jetzt ausstehend.</pending>
-        <approved>Document has been approved.</approved>
+        <approved>Dokument wurde genehmigt.</approved>
         <staged>Die Veröffentlichung ist bereit gestellt worden.</staged>
-        <published>Document has been published.</published>
+        <published>Dokument wurde veröffentlicht.</published>
       </stateChange>
       <contentMoved>Die Veröffentlichung wurde nach: {0} verschoben</contentMoved>
       <fileMoved>Die Datei wurde nach: {0} verschoben</fileMoved>
