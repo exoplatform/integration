@@ -54,6 +54,7 @@
   //ECMS declare variables - BEGIN
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
   def docSummary = uicomponent.getDocSummary();
+  
   def activityMessage = uicomponent.getMessage();
   def mimeType = uicomponent.getMimeType();
   def binarySrc;
@@ -72,6 +73,8 @@
     preferenceWS  = currentNode.getSession().getWorkspace().getName();
     fileComponent = uicontentpresentation.getUIComponent(mimeType);
   }
+
+  docSummary = org.exoplatform.wcm.ext.component.activity.listener.Utils.getFirstSummaryLines(docSummary);
 
   def ilBinarySrc = uicomponent.getImagePath();
 
