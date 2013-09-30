@@ -143,6 +143,9 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     if (isNewActivity) {
       activityManager.saveActivityNoReturn(ownerStream, activity);
     } else {
+      if (MOVE_PAGE_TYPE.equals(activityType)) {
+        activity.setStreamOwner(ownerStream.getRemoteId());
+      }
       activityManager.updateActivity(activity);
     }
     
