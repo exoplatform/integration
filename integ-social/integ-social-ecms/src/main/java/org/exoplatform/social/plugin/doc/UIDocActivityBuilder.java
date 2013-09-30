@@ -19,7 +19,7 @@ package org.exoplatform.social.plugin.doc;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.exoplatform.container.PortalContainer;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.ecm.utils.text.Text;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -39,44 +39,24 @@ import org.json.JSONObject;
  */
 public class UIDocActivityBuilder extends BaseUIActivityBuilder {
   private static final Log LOG = ExoLogger.getLogger(UIDocActivityBuilder.class);
+
   @Override
   protected void extendUIActivity(BaseUIActivity uiActivity, ExoSocialActivity activity) {
     UIDocActivity docActivity = (UIDocActivity) uiActivity;
-    String repository = null;
-    String workspace = null;
-    if (activity.getTemplateParams() != null) {
-      Map<String,String> activityParams = activity.getTemplateParams();
-      docActivity.docLink = activityParams.get(UIDocActivity.DOCLINK);
-      docActivity.docName = activityParams.get(UIDocActivity.DOCNAME);
-      docActivity.message = activityParams.get(UIDocActivity.MESSAGE);
-      docActivity.docPath = activityParams.get(UIDocActivity.DOCPATH);
-      repository = activityParams.get(UIDocActivity.REPOSITORY);
-      workspace = activityParams.get(UIDocActivity.WORKSPACE);
-      docActivity.repository = repository;
-      docActivity.workspace = workspace;
-    } else {
-      //backward compatible with old data
-      try {
-        final JSONObject jsonObject = new JSONObject(activity.getTitle());
-        docActivity.docLink = jsonObject.getString(UIDocActivity.DOCLINK);
-        docActivity.docName = jsonObject.getString(UIDocActivity.DOCNAME);
-        docActivity.message = jsonObject.getString(UIDocActivity.MESSAGE);
-        docActivity.docPath = jsonObject.getString(UIDocActivity.DOCPATH);
-        repository = jsonObject.getString(UIDocActivity.REPOSITORY);
-        workspace = jsonObject.getString(UIDocActivity.WORKSPACE);
-
-        saveToNewDataFormat(activity, docActivity, repository, workspace);
-
-      } catch (JSONException je) {
-        LOG.error("Error with activity's title data");
-      }
-
+    //
+    if (activity.getTemplateParams() == null) {
+      saveToNewDataFormat(activity);
     }
-    
-    docActivity.repository = repository;
-    docActivity.workspace = workspace;
-    
-    //escape node name for special characters
+    //
+    Map<String, String> activityParams = activity.getTemplateParams();
+    docActivity.docLink = activityParams.get(UIDocActivity.DOCLINK);
+    docActivity.docName = activityParams.get(UIDocActivity.DOCNAME);
+    docActivity.message = activityParams.get(UIDocActivity.MESSAGE);
+    docActivity.docPath = activityParams.get(UIDocActivity.DOCPATH);
+    docActivity.repository = activityParams.get(UIDocActivity.REPOSITORY);
+    docActivity.workspace = activityParams.get(UIDocActivity.WORKSPACE);
+
+    // escape node name for special characters
     docActivity.docPath = escapeIllegalJcrCharsOnNodeName(docActivity.docPath);
   }
 
@@ -96,24 +76,33 @@ public class UIDocActivityBuilder extends BaseUIActivityBuilder {
     return path;
   }
 
-  private void saveToNewDataFormat(ExoSocialActivity activity, UIDocActivity docActivity, String repository , String workspace) {
-    final String docActivityTitle = "Shared a document <a href=\"${"+ UIDocActivity.DOCLINK +"}\">" +
-                                    "${" +UIDocActivity.DOCNAME +"}</a>";
-    activity.setTitle(docActivityTitle);
-    Map<String, String> activityParams = new HashMap<String, String>();
-    activityParams.put(UIDocActivity.DOCNAME, docActivity.docName);
-    activityParams.put(UIDocActivity.DOCLINK, docActivity.docLink);
-    activityParams.put(UIDocActivity.DOCPATH, docActivity.docPath);
-    activityParams.put(UIDocActivity.REPOSITORY, repository);
-    activityParams.put(UIDocActivity.WORKSPACE, workspace);
-    activityParams.put(UIDocActivity.MESSAGE, docActivity.message);
-    activity.setTemplateParams(activityParams);
-    ActivityManager activityManager = (ActivityManager) PortalContainer.getInstance().
-                                                        getComponentInstanceOfType(ActivityManager.class);
+  private void saveToNewDataFormat(ExoSocialActivity activity) {
     try {
-      activityManager.saveActivity(activity);
+      final JSONObject jsonObject = new JSONObject(activity.getTitle());
+      final String docActivityTitle = new StringBuffer("Shared a document <a href=\"${").append(UIDocActivity.DOCLINK)
+                                        .append("}\">").append("${").append(UIDocActivity.DOCNAME).append("}</a>").toString();
+      //
+      activity.setTitle(docActivityTitle);
+      //
+      Map<String, String> activityParams = new HashMap<String, String>();
+      activityParams.put(UIDocActivity.DOCNAME, jsonObject.getString(UIDocActivity.DOCNAME));
+      activityParams.put(UIDocActivity.DOCLINK, jsonObject.getString(UIDocActivity.DOCLINK));
+      activityParams.put(UIDocActivity.DOCPATH, jsonObject.getString(UIDocActivity.DOCPATH));
+      activityParams.put(UIDocActivity.REPOSITORY, jsonObject.getString(UIDocActivity.REPOSITORY));
+      activityParams.put(UIDocActivity.WORKSPACE, jsonObject.getString(UIDocActivity.WORKSPACE));
+      activityParams.put(UIDocActivity.MESSAGE, jsonObject.getString(UIDocActivity.MESSAGE));
+      activity.setTemplateParams(activityParams);
+      //
+      ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
+      //
+      activityManager.saveActivityNoReturn(activity);
+      activity = activityManager.getActivity(activity.getId());
+    } catch (JSONException je) {
+      LOG.error("Error with activity's title data");
     } catch (ActivityStorageException ase) {
-      LOG.warn("Could not save new data format for document activity.", ase);
+      LOG.error("Could not save new data format for document activity.", ase);
+    } catch (Exception e) {
+      LOG.error("Unknown error  to save document activity.", e);
     }
   }
 }
