@@ -2,7 +2,10 @@ package org.exoplatform.wiki.ext.impl;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
@@ -13,6 +16,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
+import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -35,7 +39,26 @@ import org.exoplatform.wiki.service.WikiService;
       }
 )
 public class WikiUIActivity extends BaseUIActivity {
+  
   private static final Log LOG = ExoLogger.getLogger(WikiUIActivity.class);
+  
+  public enum CommentType { USER, SYSTEM, SYSTEM_GROUP };
+
+  public static final String COMMENT_MESSAGE_KEY            = "commentMessageKey";
+  
+  public static final String COMMENT_MESSAGE_KEY1            = "commentMessageKey1";
+  
+  public static final String COMMENT_MESSAGE_KEY2            = "commentMessageKey2";
+  
+  public static final String COMMENT_MESSAGE_ARGS = "messageArgs";
+  
+  public static final String COMMENT_MESSAGE_ARGS1 = "messageArgs1";
+  
+  public static final String COMMENT_MESSAGE_ARGS2 = "messageArgs2";
+  
+  public static final String COMMENT_MESSAGE_ARGS_ELEMENT_SAPERATOR = "\n";
+  
+  public static final String COMMENT_TYPE     = "commentType";
 
   public WikiUIActivity() {
   }
@@ -143,5 +166,92 @@ public class WikiUIActivity extends BaseUIActivity {
       }
     }
     return version;
+  }
+  
+  /**
+   * Get comment message arguments by param Key.
+   * 
+   * @param activityParams templates params
+   * @param paramKey key to get message arguments from activity params
+   * @return message bundle
+   */
+  private String[] getActivityCommentBundleArguments(Map<String, String> activityParams, String paramKey) {
+    if (activityParams != null) {
+      String commentMessageArgs  = activityParams.get(paramKey);
+      if (StringUtils.isNotEmpty(commentMessageArgs)) {
+        String[] args = commentMessageArgs.split(COMMENT_MESSAGE_ARGS_ELEMENT_SAPERATOR);
+        return args;
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * Format message from arguments.
+   * 
+   * @param pattern
+   * @param args
+   * @return
+   */
+  private String formatMessage(String msgKey, Object[] args) {
+    WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
+    ResourceBundle res = context.getApplicationResourceBundle();
+    String message = StringUtils.EMPTY;
+    try {
+      message = res.getString(msgKey);
+    } catch (MissingResourceException e) {
+      message = msgKey;
+    }
+    
+    return MessageFormat.format(message.replace("'", "''"), args);
+  }
+  
+  /**
+   * Get system comment message.
+   * 
+   * @param messageKeyParam param to get message key from activity params
+   * @param messageArgumentsParam param to get message arguments from activity params
+   * @param activityParams activity parameters
+   * @return
+   */
+  private String getSystemCommentMessage(String messageKeyParam,
+                            String messageArgumentsParam,
+                            Map<String, String> activityParams) {
+    String msgKey = activityParams.get(messageKeyParam);
+    String[] args = getActivityCommentBundleArguments(activityParams, messageArgumentsParam);
+    return formatMessage(msgKey, args);
+  }
+  
+  /**
+   * Get system comment message.
+   * 
+   * @param activityParams
+   * @title activity Title
+   * @return
+   */
+  public String getSystemCommentMessage(Map<String, String> activityParams, String title) {
+    // Get Comment Type
+    CommentType commentType = CommentType.USER;
+    if (activityParams != null && activityParams.containsKey(COMMENT_TYPE)) {
+      commentType = CommentType.valueOf(activityParams.get(COMMENT_TYPE));
+    }
+    
+    // Get system comment message
+    String commentMessage = StringUtils.EMPTY;
+    switch (commentType) {
+      case USER:
+        commentMessage = title;
+        break;
+      case SYSTEM:
+        commentMessage = getSystemCommentMessage(COMMENT_MESSAGE_KEY, COMMENT_MESSAGE_ARGS, activityParams);
+        break;
+      case SYSTEM_GROUP:
+        String commentMessage1 = getSystemCommentMessage(COMMENT_MESSAGE_KEY1, COMMENT_MESSAGE_ARGS1, activityParams);
+        String commentMessage2 = getSystemCommentMessage(COMMENT_MESSAGE_KEY2, COMMENT_MESSAGE_ARGS2, activityParams);
+        commentMessage = commentMessage1.concat("<br>").concat(commentMessage2);
+        break;
+    }
+    
+    return commentMessage;
   }
 }
