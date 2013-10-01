@@ -181,9 +181,9 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     IdentityManager identityManager = uiComposer.getApplicationComponent(IdentityManager.class);
 
     SpaceService spaceSrv = uiComposer.getApplicationComponent(SpaceService.class);
-    Space space = spaceSrv.getSpaceByUrl(SpaceUtils.getSpaceUrl());
+    Space space = spaceSrv.getSpaceByUrl(SpaceUtils.getSpaceUrlByContext());
 
-    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,space.getName(),false);
+    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,space.getPrettyName(),false);
     String remoteUser = requestContext.getRemoteUser();
     ExoSocialActivity activity = saveActivity(activityParams, activityManager, identityManager, spaceIdentity, remoteUser);
 
@@ -209,14 +209,15 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   private ExoSocialActivity saveActivity(Map<String, String> activityParams, ActivityManager activityManager,
                                          IdentityManager identityManager, Identity ownerIdentity,
                                          String remoteUser) throws ActivityStorageException {
-    Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser);
+    Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);
     ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(),
                                      UIDocActivity.ACTIVITY_TYPE,
                                      docActivityTitle,
                                      null);
     activity.setTemplateParams(activityParams);
-    activityManager.saveActivity(ownerIdentity, activity);
-    return activity;
+    activityManager.saveActivityNoReturn(ownerIdentity, activity);
+    //
+    return activityManager.getActivity(activity.getId());
   }
 
   private String buildDocumentLink(String rawPath) {
