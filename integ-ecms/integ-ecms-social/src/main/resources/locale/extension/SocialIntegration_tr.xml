@@ -2,83 +2,83 @@
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>Dosya Boyutu</fileSize>
     </titles>
     <messages>
-      <createdBy>was created by</createdBy>
-      <editedBy>was edited by</editedBy>
-      <system>the system</system>
-      <readmore>...Read More.</readmore>
-      <editTitle>Title has been updated to: {0}</editTitle>
-      <editName>Name has been updated to: {0}</editName>
-      <editDescription>Description has been updated to: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <addSource>File source: {0} has been added</addSource>
-      <addMultiSource>File sources: {0} have been added</addMultiSource>
-      <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
-      <editSummary>Summary has been updated to: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
-      <editContent>Content has been updated.</editContent>
-      <editFile>File has been updated.</editFile>
-      <emptyTitle>The title has been removed.</emptyTitle>
-      <emptySummary>The summary has been removed.</emptySummary>
-      <emptyContent>The content has been removed.</emptyContent>
-      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} has been removed.</removeMetadata>  
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Name has been removed.</removeName>
-      <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator: {0} has been removed.</removeCreator>
-      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
-      <removeLanguage>Language has been removed.</removeLanguage>
-      <removeContent>Content has been removed.</removeContent>
-      <attachmentAdded>File(s) has been attached.</attachmentAdded>
-      <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
-      <categoryAdded>Category: {0} has been added.</categoryAdded>
-      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
-      <tagAdded>Tag: {0} has been added.</tagAdded>
-      <tagsAdded>Tags: {0} have been added.</tagsAdded>
-      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
+      <createdBy>oluşturan</createdBy>
+      <editedBy>düzenleyen</editedBy>
+      <system>Sistem</system>
+      <readmore>...Devamını oku.</readmore>
+      <editTitle>Başlık güncellendi: {0}</editTitle>
+      <editName>Adı güncellendi: {0}</editName>
+      <editDescription>Açıklama güncellendi: {0}</editDescription>
+      <singleCreator>{0} Yaratıcısıdır</singleCreator>
+      <multiCreator>{0} Yaratıcılarıdır</multiCreator>
+      <addSource>Dosya kaynağı: {0} eklendi</addSource>
+      <addMultiSource>Dosya kaynağı: {0} eklendi</addMultiSource>
+      <removeSource>Dosya kaynağı: {0} kaldırıldı</removeSource>
+      <removeMultiSource>Dosya kaynağı: {0} kaldırıldı</removeMultiSource>
+      <editSummary>Özet güncellendi: {0}</editSummary>
+      <editLanguage>Dil güncellendi: {0}</editLanguage>
+      <editContent>İçeriği güncelleştirildi.</editContent>
+      <editFile>Dosyası güncelleştirildi.</editFile>
+      <emptyTitle>Başlığı kaldırıldı.</emptyTitle>
+      <emptySummary>Özet kaldırıldı.</emptySummary>
+      <emptyContent>İçerik kaldırıldı.</emptyContent>
+      <updateMetadata>Meta veriler {0} için güncellendi: {1}</updateMetadata>
+      <removeMetadata>Meta veriler {0} kaldırıldı.</removeMetadata>  
+      <removeTitle>Başlık kaldırıldı.</removeTitle>
+      <removeName>Adı kaldırıldı.</removeName>
+      <removeSummary>Özet kaldırıldı.</removeSummary>
+      <removeDescription>Açıklama kaldırıldı.</removeDescription>
+      <removeCreator>Hazırlayan: {0} kaldırıldı.</removeCreator>
+      <removeMultiCreator>Hazırlayan: {0} kaldırılmıştır.</removeMultiCreator>
+      <removeLanguage>Dil kaldırıldı.</removeLanguage>
+      <removeContent>İçerik kaldırıldı.</removeContent>
+      <attachmentAdded>Dosya(lar) eklendi.</attachmentAdded>
+      <attachmentRemoved>Dosya(lar) kaldırıldı.</attachmentRemoved>
+      <categoryAdded>Kategori: {0} eklendi.</categoryAdded>
+      <categoryRemoved>Kategori: {0} kaldırıldı.</categoryRemoved>
+      <tagAdded>Etiket: {0} eklendi.</tagAdded>
+      <tagsAdded>Etiketler: {0} eklendi.</tagsAdded>
+      <tagRemoved>Etiket: {0} kaldırıldı.</tagRemoved>
+      <tagsRemoved>Etiketler: {0} kaldırılmıştır.</tagsRemoved>
       <stateChange>
-        <pending>Publication status is now pending.</pending>
-        <approved>Document has been approved.</approved>
-        <staged>Publication has been staged.</staged>
-        <published>Document has been published.</published>
+        <pending>Yayın durumu şimdi bekliyor.</pending>
+        <approved>Belge onaylandı.</approved>
+        <staged>Yayın düzenledi.</staged>
+        <published>Belge yayınladı.</published>
       </stateChange>
-      <contentMoved>Publication has been moved to: {0}</contentMoved>
-      <fileMoved>File has been moved to: {0}</fileMoved>
-      <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
-      <version>Version: {0}</version>
+      <contentMoved>Yayın taşındı: {0}</contentMoved>
+      <fileMoved>Dosya taşındı: {0}</fileMoved>
+      <revisionChanged>Yayın sürümüne geri yüklendi: {0}</revisionChanged>
+      <version>Sürüm: {0}</version>
     </messages>
     <publicationStates>
-      <archived>Archived</archived>
-      <obsolete>Obsolete</obsolete>
-      <unpublished>Unpublished</unpublished>
-      <draft>Draft</draft>
-      <pending>Pending</pending>
-      <approved>Approved</approved>
-      <inreview>In Review</inreview>
-      <staged>Staged</staged>
-      <published>Published</published>
-      <live>Published</live>
+      <archived>Arşivlenmiş</archived>
+      <obsolete>Eskimiş</obsolete>
+      <unpublished>Yayınlanmamış</unpublished>
+      <draft>Taslak</draft>
+      <pending>Bekleyen</pending>
+      <approved>Onaylı</approved>
+      <inreview>İnceleniyor</inreview>
+      <staged>Düzenlendi</staged>
+      <published>Yayınlandı</published>
+      <live>Yayınlandı</live>
     </publicationStates>
-    <view>View</view>
-    <edit>Edit</edit>
-    <download>Download</download>
+    <view>Görünüm</view>
+    <edit>Düzenle</edit>
+    <download>İndir</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Preview</DocViewer>
+      <DocViewer>Önizleme</DocViewer>
     </title>
   </UIPopupWindow>
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Resource Type</resourceType>        
+        <resourceType>Kaynak Türü</resourceType>        
       </label>
     </dialog>
   </ElementSet>
