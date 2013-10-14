@@ -228,6 +228,9 @@
 			           String nbVotes = vote.value.get(1);
             %>
 						     <div class="voteRow clearfix">
+									<div class="progressing">
+										$percent ($nbVotes)
+									</div>	
 									<div class="titleVote">
 										$solution 
 									</div>
@@ -236,9 +239,6 @@
 											<div class="bar" style="width: ${percent};"></div>
 										</div>
 									</div>
-									<div class="progressing">
-										$percent ($nbVotes)
-									</div>						
 							 </div>	<!--end voteRow-->
 						<% } %>	
 					
