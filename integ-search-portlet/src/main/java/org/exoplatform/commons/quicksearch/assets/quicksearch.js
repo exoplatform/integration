@@ -34,15 +34,29 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     		"u":"85","v":"86","w":"87","x":"88","y":"89","z":"90","numpad 0":"96","numpad 1":"97","numpad 2":"98",
     		"numpad 3":"99","numpad 4":"100","numpad 5":"101","numpad 6":"102","numpad 7":"103", "backspace":"8", "delete":"46"};
 
-    var QUICKSEARCH_RESULT_TEMPLATE= " \
+    /*var QUICKSEARCH_RESULT_TEMPLATE= " \
       <div class='quickSearchResult %{type}' tabindex='%{index}' id='quickSearchResult%{index}'> \
         <span class='avatar'> \
           %{avatar} \
         </span> \
        	<a href='%{url}' class='name'>%{title}</a> \
       </div> \
-    ";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \
+    ";*///<div class='Excerpt Ellipsis'>%{excerpt}</div> \
 
+    var QUICKSEARCH_RESULT_TEMPLATE= "\
+        <div class='quickSearchResult %{type}' tabindex='%{index}' id='quickSearchResult%{index}'> \
+        %{lineResult}\
+      </div>";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \    
+    
+    var LINE_RESULT_TEMPLATE = "\
+        <a href='%{url}'> \
+     	<i class='%{cssClass}'></i> %{title}\
+     	</a>";
+    
+    var OTHER_RESULT_TEMPLATE  = "\
+		<a href='%{url}' class='avatarTiny'><img src='%{imageSrc}'/>%{title}</a>\
+		";
+        
     var QUICKSEARCH_TABLE_TEMPLATE=" \
           <table class='uiGrid table table-striped  rounded-corners'> \
             <col width='30%'> \
@@ -112,9 +126,14 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 	          </td> \
 	        </tr> \
         </table> \
-      ";    
-
+      ";       
+    
     //*** Utility functions ***
+    
+    String.prototype.toProperCase = function() {
+        return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+      };
+    
     // Highlight the specified text in a string
     String.prototype.highlight = function(words) {
       var str = this;
@@ -319,50 +338,50 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       var query = $(txtQuickSearchQuery_id).val();
       var terms = query.split(/\s+/g); //for highlighting
       var avatar = "";
+      var line = "";
 
       switch(result.type) {
-        case "event":
-          var date = new Date(result.fromDateTime).toString().split(/\s+/g);
-          avatar = EVENT_AVATAR_TEMPLATE.
-            replace(/%{month}/g, date[1]).
-            replace(/%{date}/g, date[2]);
+        case "event":          
+	    	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconPLFEvent uiIconPLFLightGray");	
           break;
 
         case "task":
-          avatar = TASK_AVATAR_TEMPLATE.replace(/%{taskStatus}/g, result.taskStatus);
+        	var cssClass = "uiIconPLFTask" + result.taskStatus.toProperCase() + " uiIconPLFLightGray";
+	    	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, cssClass);	
           break;
 
         case "file":
-        	var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon24x24" + type}).join(" ");
-        	if (result.imageUrl == null || !$.trim(result.imageUrl).length){
-            	avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
-        	}else{
-            	avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
-        	}
-        	avatar = "<a href='"+result.url+"'>" + avatar + "</a>";
-        	break;
+	    	var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon16x16" + type}).join(" ");
+	    	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+	    	break;
         case "document":
-        //case "page":
-          var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon24x24" + type}).join(" ");
-          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+          var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon16x16Template" + type}).join(" ");
+    	  line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
           break;
 
         case "post":
-          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconUIForms");
+        	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconPLFDiscussion uiIconPLFLightGray");	
           break;
 
         case "answer":
-          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, "uiIconSocAnswersMini");
+        	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconPLFProfile uiIconPLFLightGray");	      
           break;
+        case "wiki":        	
+        	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconWikiWiki uiIconWikiLightGray");	      
+            break;
+        case "page":
+        	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconEcmsTemplateDocument uiIconEcmsLightGrey");
+            break;        	
+        default: 
+            line = OTHER_RESULT_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);        	
 
-        default:
-          avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl);
       }
 
 
       var html = QUICKSEARCH_RESULT_TEMPLATE.
         replace(/%{index}/g, index).
         replace(/%{type}/g, result.type).
+        replace(/%{lineResult}/g, line).
         replace(/%{url}/g, result.url).
         replace(/%{title}/g, (result.title||"").highlight(terms)).
         replace(/%{excerpt}/g, (result.excerpt||"").highlight(terms)).
