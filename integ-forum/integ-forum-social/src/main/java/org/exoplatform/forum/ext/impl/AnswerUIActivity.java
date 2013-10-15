@@ -15,6 +15,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.forum.service.Utils;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.mop.SiteType;
 import org.exoplatform.portal.webui.util.Util;
@@ -89,9 +90,11 @@ public class AnswerUIActivity extends BaseKSActivity {
     return answerLink;
   }
   
-  @SuppressWarnings("unused")
   private String getNumberOfAnswers() throws Exception {
-    int number = Integer.parseInt(getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_ANSWERS));
+    String number_str = getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_ANSWERS);
+
+    int number = Integer.parseInt(Utils.isEmpty(number_str) ? "0" : number_str);
+
     if (number == 0) {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noAnswer");
     } else if (number == 1) {
@@ -101,15 +104,20 @@ public class AnswerUIActivity extends BaseKSActivity {
     }
   }
   
-  @SuppressWarnings("unused")
   private double getRating() {
     String rate = getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_RATING);
-    return  Double.parseDouble(rate);
+    
+    try {
+      return Double.parseDouble(rate);
+    } catch (NumberFormatException e) {
+      return 0.0;   
+    }
   }
   
-  @SuppressWarnings("unused")
   private String getNumberOfComments() throws Exception {
-    int number = Integer.parseInt(getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS));
+    String number_str = getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS);
+
+    int number = Integer.parseInt(Utils.isEmpty(number_str) ? "0" : number_str);
 
     if (number == 0) {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noComment");
