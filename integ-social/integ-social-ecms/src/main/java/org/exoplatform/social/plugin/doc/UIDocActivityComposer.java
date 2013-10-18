@@ -58,6 +58,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIPortletApplication;
+import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIFormStringInput;
@@ -92,6 +93,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   private String documentName;
   private boolean isDocumentReady;
   private String currentUser;
+  private String docIcon = "";
   
   /**
    * constructor
@@ -113,6 +115,10 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 
   public String getDocumentName() {
     return documentName;
+  }
+
+  public String getDocumentIcon() {
+    return docIcon;
   }
 
   /**
@@ -251,6 +257,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     isDocumentReady = true;
     documentRefLink = documentRefLink.replace("//", "/");
     documentPath = documentPath.replace("//", "/");
+    docIcon = CssClassUtils.getCSSClassByFileName(documentName, null);
     setReadyForPostingActivity(true);
   }  
   
