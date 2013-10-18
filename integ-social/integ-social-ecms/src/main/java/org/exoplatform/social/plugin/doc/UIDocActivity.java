@@ -21,7 +21,6 @@ import java.io.InputStream;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFormatException;
 import javax.portlet.PortletRequest;
 
@@ -50,6 +49,9 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
+import org.exoplatform.webui.cssfile.CssClassIconFile;
+import org.exoplatform.webui.cssfile.CssClassManager;
+import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 
@@ -157,20 +159,33 @@ public class UIDocActivity extends BaseUIActivity {
   protected int getVersion() {
     try {
       VersionNode rootVersion_ = new VersionNode(NodeLocation.getNodeByLocation(new NodeLocation(repository, workspace, docPath))
-                                     .getVersionHistory()
-                                     .getRootVersion(), getDocNode().getSession());
+                                                 .getVersionHistory().getRootVersion(), getDocNode().getSession());
       if (rootVersion_ != null) {
         return rootVersion_.getChildren().size();
       }
-    } catch (UnsupportedRepositoryOperationException e) {
-      return 0;
-    } catch (RepositoryException e) {
-      return 0;
-    }
-    
+    } catch (Exception e) { }
     return 0;
   }
-  
+
+  protected String getCssClassIconFile(String fileName, String fileType) {
+    String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(fileName, fileType, CssClassManager.ICON_SIZE.ICON_64);
+    if (cssClass.indexOf(CssClassIconFile.DEFAULT_CSS) > 0) {
+      return "uiIcon64x64Templatent_file uiIcon64x64nt_file";
+    }
+    return cssClass;
+  }
+
+  protected boolean isDisplayThumbnail(String mimeType) {
+    if( mimeType.startsWith("application/pdf") || 
+        mimeType.startsWith("application/msword") || 
+        mimeType.startsWith("application/vnd.oasis.opendocument.text") || 
+        mimeType.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || 
+        mimeType.startsWith("application/rtf") ){
+      return true;
+    }
+    return false;
+  }
+
   private boolean hasPermissionViewFile() {
     return (getDocNode() != null);
   }

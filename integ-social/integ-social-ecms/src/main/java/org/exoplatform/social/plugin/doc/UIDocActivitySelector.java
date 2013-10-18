@@ -21,12 +21,14 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.webui.composer.UIComposer;
 import org.exoplatform.web.application.ApplicationMessage;
+import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.commons.UIDocumentSelector;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.UIPopupWindow;
+import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.Lifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
@@ -56,9 +58,7 @@ public class UIDocActivitySelector extends UIContainer implements UIPopupCompone
 
   public UIDocActivitySelector(){
     try {
-      UIDocumentSelector documentSelector = addChild(UIDocumentSelector.class,
-                                                     null,
-                                                     UIDOCUMENTSELECTOR);
+      addChild(UIDocumentSelector.class, null, UIDOCUMENTSELECTOR);
     } catch (Exception e) { 
       //UIContainer add selector exception
       LOG.error("An exception happens when init UIDocActivitySelector", e);
@@ -75,36 +75,31 @@ public class UIDocActivitySelector extends UIContainer implements UIPopupCompone
     popup.setUIComponent(null);
     popup.setShow(false);
     popup.setRendered(false);
+    ((WebuiRequestContext) WebuiRequestContext.getCurrentInstance()).addUIComponentToUpdateByAjax(popup.getParent());
   }
 
   static public class CancelActionListener extends EventListener<UIDocActivitySelector>{
     public void execute(Event<UIDocActivitySelector> event) throws Exception {
       UIDocActivitySelector uiDocActivitySelector = event.getSource() ;
-      UIContainer optionContainer = uiDocActivitySelector.getAncestorOfType(UIContainer.class);
       uiDocActivitySelector.deActivate();
-      event.getRequestContext().addUIComponentToUpdateByAjax(optionContainer);
     }
-
   }
 
   static public class SelectedFileActionListener extends EventListener<UIDocActivitySelector>{
     public void execute(Event<UIDocActivitySelector> event) throws Exception {
       UIDocActivitySelector uiDocActivitySelector = event.getSource() ;
-      UIContainer optionContainer = uiDocActivitySelector.getAncestorOfType(UIContainer.class);
-      String rawPath = uiDocActivitySelector.getChild(UIDocumentSelector.class).getSeletedFile() ;
+      UIPortletApplication uiApp = uiDocActivitySelector.getAncestorOfType(UIPortletApplication.class);
+      UIDocumentSelector documentSelector = uiDocActivitySelector.getChild(UIDocumentSelector.class);
+      String rawPath = documentSelector.getSeletedFile() ;
       if(rawPath == null || rawPath.trim().length() <= 0) {
-        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIDocActivitySelector.msg.not-a-file",
-                                                                                       null,
-                                                                                       ApplicationMessage.WARNING));
-        ((PortalRequestContext) event.getRequestContext().getParentAppRequestContext()).setFullRender(true);
+        uiApp.addMessage(new ApplicationMessage("UIDocActivitySelector.msg.not-a-file", null, ApplicationMessage.WARNING));
+        ((PortalRequestContext) event.getRequestContext().getParentAppRequestContext()).ignoreAJAXUpdateOnPortlets(true);
         return;
       } else {
-        UIComposer uiComposer = optionContainer.getParent().findFirstComponentOfType(UIComposer.class);
+        UIComposer uiComposer = uiApp.findFirstComponentOfType(UIComposer.class);
         UIDocActivityComposer uiDocActivityComposer = uiComposer.findFirstComponentOfType(UIDocActivityComposer.class);
-        uiDocActivityComposer.doSelect(null, rawPath) ;
+        uiDocActivityComposer.doSelect(documentSelector.getSeletedFileType(), rawPath) ;
         uiDocActivitySelector.deActivate() ;
-        event.getRequestContext().addUIComponentToUpdateByAjax(optionContainer);
-//        event.getRequestContext().addUIComponentToUpdateByAjax(uiDocActivityComposer);
         event.getRequestContext().addUIComponentToUpdateByAjax(uiComposer);
       }
     }

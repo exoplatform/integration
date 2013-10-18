@@ -257,7 +257,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     isDocumentReady = true;
     documentRefLink = documentRefLink.replace("//", "/");
     documentPath = documentPath.replace("//", "/");
-    docIcon = CssClassUtils.getCSSClassByFileName(documentName, null);
+    docIcon = CssClassUtils.getCSSClassByFileNameAndFileType(documentName, selectField, null);
     setReadyForPostingActivity(true);
   }  
   

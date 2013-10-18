@@ -263,9 +263,7 @@
 						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 					<div class="author">
-						<a title="$ownerName" href="$ownerUri">
-						$ownerName
-						</a>         
+						<a title="$ownerName" href="$ownerUri">$ownerName</a>         
 					</div>	
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
@@ -304,13 +302,13 @@
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                   String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/"+imageWidth+"x"+imageHeight+"/" + repository + "/" + preferenceWS + encodedPath;
 		                   if(mimeType.indexOf("icon") >=0) thumbnailImage = binarySrc;  
-		                   def classIconName = org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(currentNode, "uiIcon64x64");
+		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);
 		                        
 									   %>
-									   <a href="$contentActivityUri" style="cursor:pointer"  rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle"><image src="$thumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" alt="$activityContentTitle" /></a>
-									   
-									   <a href="$contentActivityUri" style="display: none;"><i rel="tooltip" data-placement="bottom" class="<%=classIconName%>" data-original-title="File"></i></a>
-									   
+									   <a href="$contentActivityUri" style="cursor:pointer"  rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle">
+									   	<img src="$thumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" alt="$activityContentTitle" />
+									   </a>
+									   <a href="$contentActivityUri" style="display: none;" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle"><i class="<%=classIconName%>"></i></a>
 									 </div>
 									 <%
 		            } else if(org.exoplatform.services.cms.impl.Utils.isSupportThumbnailView(mimeType)){%>
@@ -319,12 +317,12 @@
 		                   def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;
-		                   def classIconName = org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(currentNode, "uiIcon64x64");               
+		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);               
 		                 %>
-		                 <a href="$contentActivityUri" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle"><image src="$pdfThumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" class="pdfImageBorder"/></a>
-		                 
-		                 <a href="$contentActivityUri" style="display: none;"><i rel="tooltip" data-placement="bottom" class="<%=classIconName%>" data-original-title="File"></i></a>
-		                 
+		                 <a href="$contentActivityUri" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle">
+		                 	<img src="$pdfThumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" class="pdfImageBorder"/>
+		                 </a>
+		                 <a href="$contentActivityUri" style="display: none;" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle"><i class="<%=classIconName%>"></i></a>
 		               </div><%
 		            } else if(fileComponent != null) { %>
 					 <div id="MediaContent${activity.id}" class=" pull-left PlayerContianer">
@@ -334,12 +332,9 @@
 		            %>
 		              <div id="MediaContent${activity.id}" class="fileTypeContent">
 		               <%
-		                 def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
-		           	     encodedPath = encodedPath.replaceAll ("%2F", "/");
-		                 String defaultImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/default.gif";
-		                 def classIconName = org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(currentNode, "uiIcon64x64");		                             
+		                 def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);		                             
 		               %>
-		               <a href="$contentActivityUri"><i rel="tooltip" data-placement="bottom" class="<%=classIconName%>" data-original-title="File"></i></a>
+		               <a href="$contentActivityUri"  data-original-title="$activityContentTitle" rel="tooltip" data-placement="bottom"><i class="<%=classIconName%>"></i></a>
 					  </div>
 		            <%
 		            }%>		    
