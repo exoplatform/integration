@@ -37,7 +37,7 @@ import org.exoplatform.services.security.Identity;
 
 @ConfiguredBy({
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
-  @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.integration.component.test.jcr-configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.social.component.core.test.configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.faq.component.core.test.configuration.xml"),
