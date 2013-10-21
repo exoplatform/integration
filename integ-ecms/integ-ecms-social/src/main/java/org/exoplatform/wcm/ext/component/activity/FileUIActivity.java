@@ -63,6 +63,9 @@ import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
+import org.exoplatform.webui.cssfile.CssClassIconFile;
+import org.exoplatform.webui.cssfile.CssClassManager;
+import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 
@@ -525,6 +528,14 @@ public class FileUIActivity extends BaseUIActivity{
     }
   }
   
+  protected String getCssClassIconFile(String fileName, String fileType) {
+    String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(fileName, fileType, CssClassManager.ICON_SIZE.ICON_64);
+    if (cssClass.indexOf(CssClassIconFile.DEFAULT_CSS) > 0) {
+      return "uiIcon64x64Templatent_file uiIcon64x64nt_file";
+    }
+    return cssClass;
+  }
+
   public String getDownloadLink() {
     try {
       return org.exoplatform.wcm.webui.Utils.getDownloadLink(getContentNode());
