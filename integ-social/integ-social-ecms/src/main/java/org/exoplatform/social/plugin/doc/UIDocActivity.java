@@ -16,10 +16,11 @@
  */
 package org.exoplatform.social.plugin.doc;
 
+import java.io.InputStream;
+
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFormatException;
 import javax.portlet.PortletRequest;
 
@@ -28,11 +29,16 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.jcr.model.VersionNode;
 import org.exoplatform.ecm.webui.utils.Utils;
+import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.wcm.core.NodeLocation;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
+import org.exoplatform.services.wcm.core.WebSchemaConfigService;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+import org.exoplatform.services.wcm.webcontent.WebContentSchemaHandler;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
@@ -43,6 +49,9 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
+import org.exoplatform.webui.cssfile.CssClassIconFile;
+import org.exoplatform.webui.cssfile.CssClassManager;
+import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 
@@ -80,7 +89,21 @@ public class UIDocActivity extends BaseUIActivity {
   public static final String REPOSITORY = "REPOSITORY";
   public static final String WORKSPACE = "WORKSPACE";
   public static final String DOCNAME = "DOCNAME";
+  public static final String ID = "id";
   public static final String DOCPATH = "DOCPATH";
+  
+  public static final String CONTENT_NAME       = "contentName";
+  public static final String CONTENT_LINK       = "contenLink";
+  public static final String IMAGE_PATH         = "imagePath";
+  public static final String MIME_TYPE          = "mimeType";
+  public static final String STATE              = "state";
+  public static final String AUTHOR             = "author";
+  public static final String DATE_CREATED       = "dateCreated";
+  public static final String LAST_MODIFIED      = "lastModified";
+  public static final String DOCUMENT_TYPE_LABEL= "docTypeLabel";  
+  public static final String DOCUMENT_TITLE     = "docTitle";  
+  public static final String DOCUMENT_VERSION   = "docVersion";  
+  public static final String DOCUMENT_SUMMARY   = "docSummary";
   
   public String docLink;
   public String message;
@@ -136,20 +159,33 @@ public class UIDocActivity extends BaseUIActivity {
   protected int getVersion() {
     try {
       VersionNode rootVersion_ = new VersionNode(NodeLocation.getNodeByLocation(new NodeLocation(repository, workspace, docPath))
-                                     .getVersionHistory()
-                                     .getRootVersion(), getDocNode().getSession());
+                                                 .getVersionHistory().getRootVersion(), getDocNode().getSession());
       if (rootVersion_ != null) {
         return rootVersion_.getChildren().size();
       }
-    } catch (UnsupportedRepositoryOperationException e) {
-      return 0;
-    } catch (RepositoryException e) {
-      return 0;
-    }
-    
+    } catch (Exception e) { }
     return 0;
   }
-  
+
+  protected String getCssClassIconFile(String fileName, String fileType) {
+    String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(fileName, fileType, CssClassManager.ICON_SIZE.ICON_64);
+    if (cssClass.indexOf(CssClassIconFile.DEFAULT_CSS) > 0) {
+      return "uiIcon64x64Templatent_file uiIcon64x64nt_file";
+    }
+    return cssClass;
+  }
+
+  protected boolean isDisplayThumbnail(String mimeType) {
+    if( mimeType.startsWith("application/pdf") || 
+        mimeType.startsWith("application/msword") || 
+        mimeType.startsWith("application/vnd.oasis.opendocument.text") || 
+        mimeType.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || 
+        mimeType.startsWith("application/rtf") ){
+      return true;
+    }
+    return false;
+  }
+
   private boolean hasPermissionViewFile() {
     return (getDocNode() != null);
   }
@@ -279,6 +315,118 @@ public class UIDocActivity extends BaseUIActivity {
   public String getTitle() throws Exception {
     return Utils.getTitle(getDocNode());
   }
+  
+  /**
+   * get activity owner
+   * 
+   * @return activity owner
+   */
+  public static String getActivityOwnerId(Node node) {
+    String activityOwnerId = "";
+    ConversationState conversationState = ConversationState.getCurrent();
+    if (conversationState != null) {
+      activityOwnerId = conversationState.getIdentity().getUserId();
+    }else{
+      try {
+        activityOwnerId = node.getProperty("publication:lastUser").getString();
+      } catch (Exception e) {
+        LOG.info("No lastUser publication");
+      } 
+    }
+    return activityOwnerId;
+  }
+  
+  /**
+   * Gets the illustrative image.
+   * 
+   * @param node the node
+   * @return the illustrative image
+   */
+  public static String getIllustrativeImage(Node node) {
+    WebSchemaConfigService schemaConfigService = WCMCoreUtils.getService(WebSchemaConfigService.class);
+    WebContentSchemaHandler contentSchemaHandler = schemaConfigService.getWebSchemaHandlerByType(WebContentSchemaHandler.class);
+    Node illustrativeImage = null;
+    String uri = "";
+    try {
+      illustrativeImage = contentSchemaHandler.getIllustrationImage(node);
+      uri = generateThumbnailImageURI(illustrativeImage);
+    } catch (PathNotFoundException ex) {
+      return uri;
+    } catch (Exception e) { // WebContentSchemaHandler
+      LOG.warn(e.getMessage(), e);
+    }
+    return uri;
+  }
+  
+  /**
+   * Generate the Thumbnail Image URI.
+   * 
+   * @param node the node
+   * @return the Thumbnail uri with medium size
+   * @throws Exception the exception
+   */
+  public static String generateThumbnailImageURI(Node file) throws Exception {
+    StringBuilder builder = new StringBuilder();
+    NodeLocation fielLocation = NodeLocation.getNodeLocationByNode(file);
+    String repository = fielLocation.getRepository();
+    String workspaceName = fielLocation.getWorkspace();
+    String nodeIdentifiler = file.getPath().replaceFirst("/", "");
+    String portalName = PortalContainer.getCurrentPortalContainerName();
+    String restContextName = PortalContainer.getCurrentRestContextName();
+    InputStream stream = file.getNode(NodetypeConstant.JCR_CONTENT)
+                             .getProperty(NodetypeConstant.JCR_DATA)
+                             .getStream();
+    if (stream.available() == 0)
+      return null;
+    stream.close();
+    builder.append("/")
+           .append(portalName)
+           .append("/")
+           .append(restContextName)
+           .append("/")
+           .append("thumbnailImage/medium/")
+           .append(repository)
+           .append("/")
+           .append(workspaceName)
+           .append("/")
+           .append(nodeIdentifiler);
+    return builder.toString();
+  }
+  
+  /**
+   * Generate the viewer link to site explorer by node
+   * 
+   * @param Node the node
+   * @return String the viewer link
+   * @throws RepositoryException
+   */
+  public static String getContentLink(Node node) throws RepositoryException {
+    String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration()
+                                                                                  .getName();
+    String workspace = node.getSession().getWorkspace().getName();
+    return repository + '/' + workspace + node.getPath();
+  }
+  
+  /**
+   * Get the MimeType
+   * 
+   * @param node the node
+   * @return the MimeType
+   */
+  public static String getMimeType(Node node) {
+    try {
+      if (node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
+        if (node.hasNode(NodetypeConstant.JCR_CONTENT))
+          return node.getNode(NodetypeConstant.JCR_CONTENT)
+                     .getProperty(NodetypeConstant.JCR_MIME_TYPE)
+                     .getString();
+      }
+    } catch (RepositoryException e) {
+      LOG.error(e.getMessage(), e);
+    }
+    return "";
+  }
+
   
   private String getMimeType() {
     String mimeType = "";    

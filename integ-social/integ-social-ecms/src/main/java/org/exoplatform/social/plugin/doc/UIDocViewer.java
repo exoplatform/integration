@@ -65,7 +65,7 @@ public class UIDocViewer extends UIBaseNodePresentation {
    * The logger.
    */
   private static final Log LOG = ExoLogger.getLogger(UIDocViewer.class);
-  private Node originalNode;
+  protected Node originalNode;
   public String docPath;
   public String repository;
   public String workspace;

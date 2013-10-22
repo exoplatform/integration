@@ -33,6 +33,6 @@
   <% uicomponent.renderChild(uicomponent.UIDOCUMENTSELECTOR); %>
     <div class="uiAction uiActionBorder">
       <button class="btn" type="button" onclick="$select"><%=_ctx.appRes(uicomponent.id + ".label.selectedfile");%></button>
-	  <button class="btn" type="button" onclick="$cancel"><%=_ctx.appRes(uicomponent.id + ".label.cancel");%></button>
+	  	<button class="btn" type="button" onclick="$cancel"><%=_ctx.appRes(uicomponent.id + ".label.cancel");%></button>
     </div>
 </div>
