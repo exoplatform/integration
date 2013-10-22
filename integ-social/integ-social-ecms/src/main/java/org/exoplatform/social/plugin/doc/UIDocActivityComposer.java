@@ -17,11 +17,22 @@
 
 package org.exoplatform.social.plugin.doc;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.utils.ActivityTypeUtils;
+import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.webui.selector.UISelectable;
+import org.exoplatform.services.wcm.core.NodeLocation;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.social.core.BaseActivityProcessorPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
@@ -47,6 +58,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIPortletApplication;
+import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIFormStringInput;
@@ -71,6 +83,7 @@ import org.exoplatform.webui.form.UIFormStringInput;
 public class UIDocActivityComposer extends UIActivityComposer implements UISelectable {
   public static final String REPOSITORY = "repository";
   public static final String WORKSPACE = "collaboration";
+  private static final String FILE_SPACES         = "files:spaces";
   private final static String POPUP_COMPOSER = "UIPopupComposer";
   private final String docActivityTitle = "Shared a document <a href=\"${"+ UIDocActivity.DOCLINK +"}\">" +
           "${" +UIDocActivity.DOCNAME +"}</a>";
@@ -80,6 +93,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   private String documentName;
   private boolean isDocumentReady;
   private String currentUser;
+  private String docIcon = "";
   
   /**
    * constructor
@@ -101,6 +115,10 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 
   public String getDocumentName() {
     return documentName;
+  }
+
+  public String getDocumentIcon() {
+    return docIcon;
   }
 
   /**
@@ -141,13 +159,49 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
                                                                            ApplicationMessage.INFO));
     } else {
       Map<String, String> activityParams = new LinkedHashMap<String, String>();
+      Node node = getDocNode(REPOSITORY, WORKSPACE, documentPath);
+      
+      
       activityParams.put(UIDocActivity.DOCNAME, documentName);
       activityParams.put(UIDocActivity.DOCLINK, documentRefLink);
       activityParams.put(UIDocActivity.DOCPATH, documentPath);
       activityParams.put(UIDocActivity.REPOSITORY, REPOSITORY);
       activityParams.put(UIDocActivity.WORKSPACE, WORKSPACE);
-      activityParams.put(UIDocActivity.MESSAGE, postedMessage);
+      activityParams.put(UIDocActivity.MESSAGE, postedMessage);      
       activityParams.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, UIDocActivity.MESSAGE);
+      
+      if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
+        String activityOwnerId = UIDocActivity.getActivityOwnerId(node);
+        DateFormat dateFormatter = null;
+        dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
+        
+        String illustrationImg = UIDocActivity.getIllustrativeImage(node);
+        String strDateCreated = "";
+        if (node.hasProperty(NodetypeConstant.EXO_DATE_CREATED)) {
+          Calendar dateCreated = node.getProperty(NodetypeConstant.EXO_DATE_CREATED).getDate();
+          strDateCreated = dateFormatter.format(dateCreated.getTime());
+        }
+        String strLastModified = "";
+        if (node.hasNode(NodetypeConstant.JCR_CONTENT)) {
+          Node contentNode = node.getNode(NodetypeConstant.JCR_CONTENT);
+          if (contentNode.hasProperty(NodetypeConstant.JCR_LAST_MODIFIED)) {
+            Calendar lastModified = contentNode.getProperty(NodetypeConstant.JCR_LAST_MODIFIED)
+                                               .getDate();
+            strLastModified = dateFormatter.format(lastModified.getTime());
+          }
+        }
+        
+        activityParams.put(UIDocActivity.ID, node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "");       
+        activityParams.put(UIDocActivity.CONTENT_NAME, node.getName());
+        activityParams.put(UIDocActivity.AUTHOR, activityOwnerId);
+        activityParams.put(UIDocActivity.DATE_CREATED, strDateCreated);
+        activityParams.put(UIDocActivity.LAST_MODIFIED, strLastModified);
+        activityParams.put(UIDocActivity.CONTENT_LINK, UIDocActivity.getContentLink(node));
+        activityParams.put(UIDocActivity.ID, node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "");
+        activityParams.put(UIDocActivity.MIME_TYPE, UIDocActivity.getMimeType(node));
+        activityParams.put(UIDocActivity.IMAGE_PATH, illustrationImg);
+      }
+      
 
       if(postContext == UIComposer.PostContext.SPACE){
         postActivityToSpace(source, requestContext, activityParams);
@@ -203,20 +257,32 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     isDocumentReady = true;
     documentRefLink = documentRefLink.replace("//", "/");
     documentPath = documentPath.replace("//", "/");
+    docIcon = CssClassUtils.getCSSClassByFileNameAndFileType(documentName, selectField, null);
     setReadyForPostingActivity(true);
-  }
+  }  
+  
 
   private ExoSocialActivity saveActivity(Map<String, String> activityParams, ActivityManager activityManager,
                                          IdentityManager identityManager, Identity ownerIdentity,
-                                         String remoteUser) throws ActivityStorageException {
+                                         String remoteUser) throws ActivityStorageException, RepositoryException {
+    Node node = getDocNode(activityParams.get(UIDocActivity.REPOSITORY), activityParams.get(UIDocActivity.WORKSPACE), 
+                           activityParams.get(UIDocActivity.DOCPATH));
+    String activity_type = UIDocActivity.ACTIVITY_TYPE;
+    if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
+      activity_type = FILE_SPACES;
+    }
+      
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);
-    ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(),
-                                     UIDocActivity.ACTIVITY_TYPE,
-                                     docActivityTitle,
-                                     null);
+    ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(), activity_type, docActivityTitle, null);
     activity.setTemplateParams(activityParams);
     activityManager.saveActivityNoReturn(ownerIdentity, activity);
-    //
+    
+    String activityId = activity.getId();
+    if (!StringUtils.isEmpty(activityId)) {
+      ActivityTypeUtils.attachActivityId(node, activityId);
+      node.save();
+    }
+    
     return activityManager.getActivity(activity.getId());
   }
 
@@ -254,6 +320,11 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
       // Reset values
       docActivityComposer.resetValues();
     }
+  }
+  
+  protected Node getDocNode(String repository, String workspace, String docPath) {
+    NodeLocation nodeLocation = new NodeLocation(repository, workspace, docPath);
+    return NodeLocation.getNodeByLocation(nodeLocation);
   }
   
 }

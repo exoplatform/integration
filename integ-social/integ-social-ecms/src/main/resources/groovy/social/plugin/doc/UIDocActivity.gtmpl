@@ -46,9 +46,10 @@
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
   def streamOwner = activity.getStreamOwner();
+  def currentNode = uicomponent.getDocNode();
 %>
 
-<% if (activity) { //process if not null 
+<% if (activity && currentNode != null) { //process if not null 
 
   def labelComment = _ctx.appRes("UIActivity.label.Comment");
   def labelLike = _ctx.appRes("UIActivity.label.Like");
@@ -173,7 +174,6 @@
   def title = null;
   def summary = uicomponent.getSummary();
   
-  def currentNode = uicomponent.getDocNode();
   def mimeType = "";
   def binarySrc;
   def uicontentpresentation = uicomponent.addChild(ContentPresentation.class, null, null);
@@ -244,11 +244,11 @@
              if(mimeType.startsWith("image")) {
           %>
           <div class="clearfix isPreviewable">
-                <a class="pull-left" href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>" title="$dName">      
-                    <img src="<%= uicomponent.docThumbnail %>" />
-                </a>
+            <a class="pull-left" href="javascript:void(0)" onclick="<%=uicomponent.event("ViewDocument")%>" rel="tooltip" data-placement="bottom" title="$dName">      
+              <img src="<%=uicomponent.docThumbnail%>" />
+            </a>
           <%
-            } else if( mimeType.startsWith("application/pdf") || mimeType.startsWith("application/msword") || mimeType.startsWith("application/vnd.oasis.opendocument.text") || mimeType.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || mimeType.startsWith("application/rtf") ) {
+            } else if(uicomponent.isDisplayThumbnail(mimeType) == true ) {
           %>
           <div class="clearfix isPreviewable">
             <div id="MediaContent${activity.id}" class="pull-left mediaContent docTypeContent">
@@ -257,7 +257,7 @@
 	               encodedPath = encodedPath.replaceAll ("%2F", "/");
 	               String docThumbnail = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
 	             %>
-	             <a href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>" title="$title"><image src="$docThumbnail" class="pdfImageBorder"/></a>
+	             <a href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>" rel="tooltip" data-placement="bottom" title="$title"><img src="$docThumbnail" class="pdfImageBorder"/></a>
 	          </div>
 	        <%
 	          } else if(fileComponent != null) { 
@@ -268,14 +268,14 @@
             </div>
           <%
             } else {
+              String classIcon = uicomponent.getCssClassIconFile(((title == null) ? dName : title), mimeType);
           %>
             <div class="clearfix isPreviewable">
-                <div id="MediaContent${activity.id}" class="fileTypeContent">
-	               <%
-	                 String defaultImage = "/eXoWCMResources/skin/DefaultSkin/skinIcons/48x48/icons/NodeTypes/default.gif";               
-	               %>
-	               <a href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>"><i rel="tooltip" data-placement="bottom" class="uiIcon64x64Templatent_file" data-original-title="File"></i></a>
-	              </div>
+              <div id="MediaContent${activity.id}" class="fileTypeContent">
+                <a href="javascript:void(0)" onclick="<%=uicomponent.event("ViewDocument")%>" rel="tooltip" data-placement="bottom" title="<%=_ctx.appRes("UIActivityComposer.label.UIDocActivityComposer")%>">
+                	<i class="$classIcon"></i>
+               	</a>
+              </div>
           <%
             }
           %>  
