@@ -274,6 +274,21 @@ public class Utils {
         ActivityTypeUtils.attachActivityId(node, activityId);
       }
       updateMainActivity(activityManager, node, activity);
+      if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
+        try {
+          nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
+          exa =  activityManager.getActivity(nodeActivityID);
+        }catch (Exception e){
+          //Not activity is deleted, return no related activity
+        }
+        if (exa!=null && !commentFlag) {
+          activityManager.saveComment(exa, activity);
+          if (node.isNodeType(MIX_COMMENT)) {
+            commentID = activity.getId();
+            node.setProperty(MIX_COMMENT_ID, commentID);
+          }
+        }
+      }
       return activity;
     }
   }
@@ -386,6 +401,22 @@ public class Utils {
       if (!StringUtils.isEmpty(activityId)) {
         ActivityTypeUtils.attachActivityId(node, activityId);
       }
+      if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
+        try {
+          nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
+          exa =  activityManager.getActivity(nodeActivityID);
+        }catch (Exception e){
+          //Not activity is deleted, return no related activity
+        }
+        if (exa!=null && !commentFlag) {
+          activityManager.saveComment(exa, activity);
+          if (node.isNodeType(MIX_COMMENT)) {
+            commentID = activity.getId();
+            node.setProperty(MIX_COMMENT_ID, commentID);
+          }
+        }
+      }
+      
       return activity;
     }
   }
