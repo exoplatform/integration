@@ -67,7 +67,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   private final static Log LOG = ExoLogger.getExoLogger(AnswersSpaceActivityPublisher.class);
   
   private Identity getSpaceIdentity(String categoryId) {
-    String spaceGroupId = getSpaceGroupId(categoryId);
+    String spaceGroupId = ActivityUtils.getSpaceGroupId(categoryId);
     if ("".equals(spaceGroupId))
       return null;
     IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
@@ -76,15 +76,6 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     if (space != null)
       return identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
     else return null;
-  }
-  
-  private String getSpaceGroupId(String categoryId) {
-    String spaceGroupId = "";
-    if (categoryId.indexOf(Utils.CATE_SPACE_ID_PREFIX) < 0) 
-      return "";
-    String prettyname = categoryId.split(Utils.CATE_SPACE_ID_PREFIX)[1];
-    spaceGroupId = SpaceUtils.SPACE_GROUP + CommonUtils.SLASH + prettyname;
-    return spaceGroupId;
   }
   
   private ExoSocialActivity newActivity(Identity author, String title, String body, Map<String, String> templateParams) {
@@ -140,7 +131,11 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private void updateActivity(ExoSocialActivity activity, Question question) {
-    Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+    Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(),
+                                                                      ActivityUtils.getQuestionRate(question),
+                                                                      ActivityUtils.getNbOfAnswers(question),
+                                                                      ActivityUtils.getNbOfComments(question),
+                                                                      question.getLanguage(), question.getLink());
     activity.setTemplateParams(activityTemplateParams);
     activity.setBody(null);
     activity.setTitle(null);
@@ -158,7 +153,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       String activityId = faqS.getActivityIdForQuestion(questionId);
       
       //
-      String answerContent = processContent(answer.getResponses());
+      String answerContent = ActivityUtils.processContent(answer.getResponses());
       
       if (activityId != null) {
         try {
@@ -226,7 +221,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Question question = faqS.getQuestionById(questionId);
-      String message = processContent(cm.getComments());
+      String message = ActivityUtils.processContent(cm.getComments());
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, cm.getCommentBy(), false);
       String activityId = faqS.getActivityIdForQuestion(questionId);
       if (activityId != null) {
@@ -286,10 +281,14 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,question.getAuthor(),false);
-      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink());
+      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(),
+                                                                ActivityUtils.getQuestionRate(question),
+                                                                ActivityUtils.getNbOfAnswers(question),
+                                                                ActivityUtils.getNbOfComments(question),
+                                                                question.getLanguage(), question.getLink());
       String activityId = faqS.getActivityIdForQuestion(question.getId());
       
-      String questionDetail = processContent(question.getDetail());
+      String questionDetail = ActivityUtils.processContent(question.getDetail());
       //in case deleted activity, if isUpdate, we will re-create new activity and add a comment associated
       boolean isUpdate = false;
       
@@ -318,7 +317,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         if (spaceIdentity != null) {
           // publish the activity in the space stream.
           streamOwner = spaceIdentity;
-          templateParams.put(SPACE_GROUP_ID, getSpaceGroupId(catId));
+          templateParams.put(SPACE_GROUP_ID, ActivityUtils.getSpaceGroupId(catId));
         }
         List<String> categoryIds = faqS.getCategoryPath(catId);
         Collections.reverse(categoryIds);
@@ -426,23 +425,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     }
   }
   
-  private String getQuestionRate(Question question) {
-    return String.valueOf(question.getMarkVote());
-  }
-  
-  private String getNbOfComments(Question question) {
-    int nbComments = (question.getComments() != null) ? question.getComments().length : 0;
-    return String.valueOf(nbComments);
-  }
-  
-  private String getNbOfAnswers(Question question) {
-    int nbAnswers = (question.getAnswers() != null) ? question.getAnswers().length : 0;
-    return String.valueOf(nbAnswers);
-  }
-  
   private String getQuestionMessage(PropertyChangeEvent e, Question question, ExoSocialActivity comment) {
     String questionName = CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion());
-    String questionDetail = processContent(question.getDetail());
+    String questionDetail = ActivityUtils.processContent(question.getDetail());
     if ("questionName".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "question-update-title", questionName);
       return "Title has been updated to: " + questionName;
@@ -468,7 +453,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private String getAnswerMessage(PropertyChangeEvent e, Answer answer, ExoSocialActivity comment) {
-    String answerContent = processContent(answer.getResponses());
+    String answerContent = ActivityUtils.processContent(answer.getResponses());
     if ("answerEdit".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "answer-update-content", answerContent);
       return "Answer has been edited to: " + answerContent;
@@ -516,9 +501,4 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     comment.setTemplateParams(commentTemplateParams);
   }
   
-  private String processContent(String content) {
-    content = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(content));
-    content = ForumActivityBuilder.getFourFirstLines(content);
-    return content;
-  }
 }
