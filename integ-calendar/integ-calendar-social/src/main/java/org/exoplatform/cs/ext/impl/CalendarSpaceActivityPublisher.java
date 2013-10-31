@@ -292,6 +292,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     Map<String,String> params = new HashMap<String, String>();
     params.put(EVENT_CANCELLED,String.valueOf(removedEvent.getFromDateTime().getTime()));
     ExoSocialActivity comment = createComment(params);
+    if(comment != null)
     activityManager.saveComment(activity, comment);
   }
   /**
@@ -303,6 +304,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    */
   private ExoSocialActivity createComment(Map<String,String> messagesParams) {
     String userId = ConversationState.getCurrent().getIdentity().getUserId();
+    if(identityManager == null) return null;
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
 
     ExoSocialActivity newComment = new ExoSocialActivityImpl();
