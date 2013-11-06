@@ -73,7 +73,9 @@ public class AnswerUIActivity extends BaseKSActivity {
   
   private static final String ANSWER_PAGE_NAGVIGATION = "answers";
   
-  private static final String ANSWER_PORTLET_NAME = "ForumPortlet";
+  private static final String ANSWER_SPACE_NAGVIGATION = "answer";
+  
+  private static final String ANSWER_PORTLET_NAME = "AnswersPortlet";
   
   public AnswerUIActivity() {
   }
@@ -124,7 +126,7 @@ public class AnswerUIActivity extends BaseKSActivity {
       NodeContext<?> child = null;
       while(it.hasNext()) {
         child = it.next();
-        if ("answer".equals(child.getName()) || child.getName().indexOf(ANSWER_PORTLET_NAME) >= 0) {
+        if (ANSWER_SPACE_NAGVIGATION.equals(child.getName()) || child.getName().indexOf(ANSWER_PORTLET_NAME) >= 0) {
           return child.getName();
         }
       }
