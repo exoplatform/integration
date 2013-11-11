@@ -59,7 +59,7 @@
       <obsolete>Obsolete</obsolete>
       <unpublished>Unpublished</unpublished>
       <draft>Draft</draft>
-      <pending>Pending</pending>
+      <pending>等待中</pending>
       <approved>Approved</approved>
       <inreview>In Review</inreview>
       <staged>Staged</staged>
@@ -67,7 +67,7 @@
       <live>Published</live>
     </publicationStates>
     <view>View</view>
-    <edit>Edit</edit>
+    <edit>编辑</edit>
     <download>Download</download>
   </SocialIntegration>
   <UIPopupWindow>
