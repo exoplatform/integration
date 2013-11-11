@@ -5,54 +5,54 @@
       <fileSize>Dimensione File</fileSize>
     </titles>
     <messages>
-      <createdBy>was created by</createdBy>
-      <editedBy>was edited by</editedBy>
-      <system>the system</system>
-      <readmore>...Read More.</readmore>
-      <editTitle>Title has been updated to: {0}</editTitle>
-      <editName>Name has been updated to: {0}</editName>
-      <editDescription>Description has been updated to: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <addSource>File source: {0} has been added</addSource>
-      <addMultiSource>File sources: {0} have been added</addMultiSource>
-      <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
-      <editSummary>Summary has been updated to: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
-      <editContent>Content has been updated.</editContent>
-      <editFile>File has been updated.</editFile>
-      <emptyTitle>The title has been removed.</emptyTitle>
-      <emptySummary>The summary has been removed.</emptySummary>
-      <emptyContent>The content has been removed.</emptyContent>
-      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} has been removed.</removeMetadata>  
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Name has been removed.</removeName>
-      <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator: {0} has been removed.</removeCreator>
-      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
-      <removeLanguage>Language has been removed.</removeLanguage>
-      <removeContent>Content has been removed.</removeContent>
-      <attachmentAdded>File(s) has been attached.</attachmentAdded>
-      <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
-      <categoryAdded>Category: {0} has been added.</categoryAdded>
-      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
-      <tagAdded>Tag: {0} has been added.</tagAdded>
-      <tagsAdded>Tags: {0} have been added.</tagsAdded>
-      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
+      <createdBy>è stato creato da</createdBy>
+      <editedBy>è stato modificato da</editedBy>
+      <system>il sistema</system>
+      <readmore>...Per saperne di più.</readmore>
+      <editTitle>Titolo aggiornato a: {0}</editTitle>
+      <editName>Nome aggiornato a: {0}</editName>
+      <editDescription>La descrizione è stata aggiornata a: {0}</editDescription>
+      <singleCreator>Creatore è {0}</singleCreator>
+      <multiCreator>Creatori sono: {0}</multiCreator>
+      <addSource>File di origine: {0} è stato aggiunto</addSource>
+      <addMultiSource>File di origine: {0} sono stati aggiunti</addMultiSource>
+      <removeSource>File di origine: {0} è stato rimosso</removeSource>
+      <removeMultiSource>File di origine: {0} sono stati rimossi</removeMultiSource>
+      <editSummary>Il sommario è stato aggiornato a: {0}</editSummary>
+      <editLanguage>Lingua aggiornata a: {0}</editLanguage>
+      <editContent>Contenuto è stato aggiornato.</editContent>
+      <editFile>File aggiornato.</editFile>
+      <emptyTitle>Il titolo è stato rimosso.</emptyTitle>
+      <emptySummary>Il sommario è stato rimosso.</emptySummary>
+      <emptyContent>Il contenuto è stato rimosso.</emptyContent>
+      <updateMetadata>Metadati {0} è stato aggiornato a: {1}</updateMetadata>
+      <removeMetadata>Metadati {0} è stato rimosso.</removeMetadata>  
+      <removeTitle>Titolo rimosso.</removeTitle>
+      <removeName>Nome rimosso.</removeName>
+      <removeSummary>Sommario rimosso.</removeSummary>
+      <removeDescription>La descrizione è stata rimossa.</removeDescription>
+      <removeCreator>Creatore: {0} è stato rimosso.</removeCreator>
+      <removeMultiCreator>Creatori: {0} sono stati rimossi.</removeMultiCreator>
+      <removeLanguage>Lingua rimossa.</removeLanguage>
+      <removeContent>Contenuto rimosso.</removeContent>
+      <attachmentAdded>File sono stati allegati.</attachmentAdded>
+      <attachmentRemoved>File sono stati rimossi.</attachmentRemoved>
+      <categoryAdded>Categoria: {0} è stata aggiunta.</categoryAdded>
+      <categoryRemoved>Categoria: {0} è stata rimossa.</categoryRemoved>
+      <tagAdded>Tag: {0} è stato aggiunto.</tagAdded>
+      <tagsAdded>Tag: {0} sono stati aggiunti.</tagsAdded>
+      <tagRemoved>Tag: {0} è stato rimosso.</tagRemoved>
+      <tagsRemoved>Tag: {0} sono stati rimossi.</tagsRemoved>
       <stateChange>
-        <pending>Publication status is now pending.</pending>
-        <approved>Document has been approved.</approved>
-        <staged>Publication has been staged.</staged>
-        <published>Document has been published.</published>
+        <pending>Lo stato di pubblicazione ora è in sospeso.</pending>
+        <approved>Il documento è stato approvato.</approved>
+        <staged>La Pubblicazione  è pronta.</staged>
+        <published>Il documento è stato pubblicato.</published>
       </stateChange>
-      <contentMoved>Publication has been moved to: {0}</contentMoved>
-      <fileMoved>File has been moved to: {0}</fileMoved>
-      <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
-      <version>Version: {0}</version>
+      <contentMoved>La pubblicazione è stata spostata a: {0}</contentMoved>
+      <fileMoved>File spostato a: {0}</fileMoved>
+      <revisionChanged>Pubblicazione restaurata alla versione: {0}</revisionChanged>
+      <version>Versione: {0}</version>
     </messages>
     <publicationStates>
       <archived>Archiviato</archived>
@@ -66,7 +66,7 @@
       <published>Pubblicato</published>
       <live>Pubblicato</live>
     </publicationStates>
-    <view>View</view>
+    <view>Visualizza</view>
     <edit>Modifica</edit>
     <download>Scarica questo File</download>
   </SocialIntegration>
