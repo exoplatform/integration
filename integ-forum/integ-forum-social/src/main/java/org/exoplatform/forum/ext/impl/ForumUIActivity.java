@@ -6,11 +6,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.forum.common.TransformHTML;
+import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils.PORTLET_INFO;
-import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.ext.activity.ForumActivityContext;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
@@ -24,6 +25,7 @@ import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.webui.application.WebuiRequestContext;
@@ -113,6 +115,9 @@ public class ForumUIActivity extends BaseKSActivity {
   
   public String getNumberOfReplies() {
     String got = getActivityParamValue(ForumActivityBuilder.TOPIC_POST_COUNT_KEY);
+    if (Utils.isEmpty(got) && getTopic() != null) {
+      got = "" + getTopic().getPostCount();
+    }
     int nbReplies = Integer.parseInt(Utils.isEmpty(got) ? "0" : got);
     switch (nbReplies) {
       case 0:
@@ -126,10 +131,23 @@ public class ForumUIActivity extends BaseKSActivity {
   
   public double getRate() {
     String got = getActivityParamValue(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY);
+    if (Utils.isEmpty(got) && getTopic() != null) {
+      got = "" + getTopic().getVoteRating();
+    }
     try {
       return Double.parseDouble(got);
     } catch (NumberFormatException e) {
       return 0.0;
+    }
+  }
+  
+  private Topic getTopic() {
+    DataStorage dataStorage = (DataStorage) CommonsUtils.getService(DataStorage.class);
+    String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
+    try {
+      return (Topic) dataStorage.getObjectNameById(topicId, Utils.TOPIC);
+    } catch (Exception e) {
+      return null;
     }
   }
   
@@ -196,9 +214,16 @@ public class ForumUIActivity extends BaseKSActivity {
       //
       Post post = uiActivity.createPost(TransformHTML.enCodeHTMLContent(message), requestContext);
 
+      boolean isMigratedActivity = false;
+      //Case of migrate activity, post will be null
+      if (post == null) {
+        post = new Post();
+        isMigratedActivity = true;
+      }
+      
       //
       post.setMessage(message);
-      uiActivity.saveComment(post);
+      uiActivity.saveComment(post, isMigratedActivity);
 
       uiActivity.setCommentFormFocused(true);
       requestContext.addUIComponentToUpdateByAjax(uiActivity);
@@ -211,15 +236,22 @@ public class ForumUIActivity extends BaseKSActivity {
    * Create comment from post
    * @param post
    */
-  private void saveComment(Post post) {
-    ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
-    ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
+  private void saveComment(Post post, boolean isMigratedActivity) {
+    ExoSocialActivity comment = new ExoSocialActivityImpl();
+    //
+    if (isMigratedActivity == false) {
+      ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
+      comment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
+    }
     comment.setUserId(org.exoplatform.social.webui.Utils.getViewerIdentity().getId());
     comment.setTitle(post.getMessage());
     comment.setBody(post.getMessage());
     ForumActivityUtils.getActivityManager().saveComment(getActivity(), comment);
-    //
-    ForumActivityUtils.takeCommentBack(post, comment);
+    
+    //Never save comment's id to a post when comment on a activity that is not applied activity-type specification
+    if (isMigratedActivity == false) {
+      ForumActivityUtils.takeCommentBack(post, comment);
+    }
     
     refresh();
   }
