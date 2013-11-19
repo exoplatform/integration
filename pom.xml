@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.exoplatform.integration</groupId>
   <artifactId>integ</artifactId>
-  <version>4.2.x-SNAPSHOT</version>
+  <version>4.1.x-integ-upgrade-gatein-3.7.x-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>eXo Integration</name>
   <modules>
@@ -40,7 +40,7 @@
     <!-- **************************************** -->
     <!-- Project Dependencies                     -->
     <!-- **************************************** -->
-    <org.exoplatform.depmgt.version>10-SNAPSHOT</org.exoplatform.depmgt.version>
+    <org.exoplatform.depmgt.version>9-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.depmgt.version>
     <!-- JCR Project Dependencies -->
       <org.exoplatform.kernel.version>2.4.x-SNAPSHOT</org.exoplatform.kernel.version>
       <org.exoplatform.core.version>2.5.x-SNAPSHOT</org.exoplatform.core.version>
@@ -48,15 +48,18 @@
     <!-- GateIn Project Dependencies -->
     <org.gatein.shindig.version>2.0.2.Final-gatein-4</org.gatein.shindig.version>
     <org.gatein.portal.version>4.2.x-PLF-SNAPSHOT</org.gatein.portal.version>
+
     <!-- Platform Project Dependencies -->
-    <org.exoplatform.commons.version>4.2.x-SNAPSHOT</org.exoplatform.commons.version>
-    <org.exoplatform.ecms.version>4.2.x-SNAPSHOT</org.exoplatform.ecms.version>
-    <org.exoplatform.social.version>4.2.x-SNAPSHOT</org.exoplatform.social.version>
-    <org.exoplatform.forum.version>4.2.x-SNAPSHOT</org.exoplatform.forum.version>
-    <org.exoplatform.wiki.version>4.2.x-SNAPSHOT</org.exoplatform.wiki.version>
-    <org.exoplatform.calendar.version>4.2.x-SNAPSHOT</org.exoplatform.calendar.version>
+    <org.exoplatform.commons.version>4.1.x-commons-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.commons.version>
+    <org.exoplatform.ecms.version>4.1.x-ecms-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.ecms.version>
+    <org.exoplatform.social.version>4.1.x-soc-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.social.version>
+    <org.exoplatform.forum.version>4.1.x-forum-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.forum.version>
+    <org.exoplatform.wiki.version>4.1.x-wiki-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.wiki.version>
+    <org.exoplatform.calendar.version>4.1.x-cal-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.calendar.version>
+
     <!-- Platform Project 3rd party Dependencies -->
     <org.exoplatform.doc.doc-style.version>4.2.x-SNAPSHOT</org.exoplatform.doc.doc-style.version>
+    
     <!-- For surefire and failsafe to be compatible with jacoco -->
     <argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
   </properties>
