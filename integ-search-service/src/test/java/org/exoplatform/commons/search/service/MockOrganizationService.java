@@ -160,10 +160,6 @@ public class MockOrganizationService implements OrganizationService {
       }
       return groups;
     }
-    @Override
-    public Collection<Group> resolveGroupByMembership(String userName, String membershipType) throws Exception {
-        return null;
-    }
 
     public Group findGroupById(String groupId) throws Exception {
       Iterator<SimpleMembership> mbIt = storage.iterator();
@@ -306,9 +302,6 @@ public class MockOrganizationService implements OrganizationService {
     public User removeUser(String userName, boolean broadcast) throws Exception {
       return null;
     }
-    public User setEnabled(String userName, boolean enabled, boolean broadcast) throws Exception, UnsupportedOperationException {
-        return null;
-    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public PageList<User> getUserPageList(int pageSize) throws Exception {
@@ -358,9 +351,6 @@ public class MockOrganizationService implements OrganizationService {
       }
       return null;
     }
-    public User findUserByName(String userName, boolean enabledOnly) throws Exception {
-        return null;
-    }
 
     public User createUserInstance(String username) {
       return null;
@@ -385,22 +375,13 @@ public class MockOrganizationService implements OrganizationService {
     public ListAccess<User> findAllUsers() throws Exception {
       return null;
     }
-    public ListAccess<User> findAllUsers(boolean enabledOnly) throws Exception {
-        return null;
-    }
 
     public ListAccess<User> findUsersByGroupId(String groupId) throws Exception {
       return null;
     }
-    public  ListAccess<User> findUsersByGroupId(String groupId, boolean enabledOnly) throws Exception {
-        return null;
-    }
 
     public ListAccess<User> findUsersByQuery(Query query) throws Exception {
       return null;
-    }
-    public ListAccess<User> findUsersByQuery(Query query, boolean enabledOnly) throws Exception {
-        return null;
     }
 
     @Override
@@ -513,9 +494,6 @@ public class MockOrganizationService implements OrganizationService {
 
     public void setDisplayName(String displayName) {
    
-    }
-    public  boolean isEnabled() {
-        return true;
     }
   }
 
