@@ -58,7 +58,13 @@
         overflow: hidden;
         text-align: center;
         > img {
-          width: 64px;
+          max-width: 54px;
+          max-height: 54px;
+        }
+        &.userThumbnail > img {
+          .border-radius(4px);
+          height: 54px;
+          width: 54px;
         }
       }
       .content {
