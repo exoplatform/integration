@@ -1,10 +1,15 @@
 package org.exoplatform.forum.ext.impl;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.DataStorage;
@@ -15,9 +20,21 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.forum.service.Utils;
 import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.mop.SiteKey;
 import org.exoplatform.portal.mop.SiteType;
+import org.exoplatform.portal.mop.navigation.NavigationContext;
+import org.exoplatform.portal.mop.navigation.NavigationService;
+import org.exoplatform.portal.mop.navigation.NodeContext;
+import org.exoplatform.portal.mop.navigation.NodeModel;
+import org.exoplatform.portal.mop.navigation.Scope;
+import org.exoplatform.portal.mop.user.UserNavigation;
+import org.exoplatform.portal.mop.user.UserNode;
+import org.exoplatform.portal.mop.user.UserPortal;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -52,6 +69,14 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
     @EventConfig(listeners = AnswerUIActivity.PostCommentActionListener.class) })
 public class AnswerUIActivity extends BaseKSActivity {
 
+  private final static Log LOG = ExoLogger.getExoLogger(AnswerUIActivity.class);
+  
+  private static final String ANSWER_PAGE_NAGVIGATION = "answers";
+  
+  private static final String ANSWER_SPACE_NAGVIGATION = "answer";
+  
+  private static final String ANSWER_PORTLET_NAME = "AnswersPortlet";
+  
   public AnswerUIActivity() {
   }
   
@@ -79,19 +104,67 @@ public class AnswerUIActivity extends BaseKSActivity {
     return nodeURL.setResource(resource).toString(); 
   }
   
-  private String getLink() {
-    String spaceLink = getSpaceHomeURL(getSpaceGroupId());
-    if (spaceLink == null) {
-      return getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY);
-    }
-    String[] tab = getQuestionId().split("/");
-    String answerLink = String.format("%s/answer/%s", spaceLink, tab[tab.length-1]);
-    return answerLink;
+  private String getNodeURL(UserNode node) {
+    RequestContext ctx = RequestContext.getCurrentInstance();
+    NodeURL nodeURL =  ctx.createURL(NodeURL.TYPE);
+    return nodeURL.setNode(node).toString();
   }
   
-  @SuppressWarnings("unused")
+  private String getAnswerPortletInSpace(String spaceGroupId){
+    
+    ExoContainer container = ExoContainerContext.getCurrentContainer();
+    NavigationService navService = (NavigationService) container.getComponentInstance(NavigationService.class);
+    NavigationContext nav = navService.loadNavigation(SiteKey.group(spaceGroupId));
+    
+    NodeContext<NodeContext<?>> parentNodeCtx = navService.loadNode(NodeModel.SELF_MODEL, nav, Scope.ALL, null);
+    
+    if(parentNodeCtx.getSize() >= 1) {
+      NodeContext<?> nodeCtx = parentNodeCtx.get(0);
+      Collection<NodeContext<?>> children = (Collection<NodeContext<?>>) nodeCtx.getNodes();
+      Iterator<NodeContext<?>> it = children.iterator();
+      
+      NodeContext<?> child = null;
+      while(it.hasNext()) {
+        child = it.next();
+        if (ANSWER_SPACE_NAGVIGATION.equals(child.getName()) || child.getName().indexOf(ANSWER_PORTLET_NAME) >= 0) {
+          return child.getName();
+        }
+      }
+    }
+    return StringUtils.EMPTY;
+  }
+  
+  private String getLink() {
+    String[] questionPath = getQuestionId().split("/");
+    String questionId = questionPath[questionPath.length - 1];
+    String spaceLink = getSpaceHomeURL(getSpaceGroupId());
+    if (spaceLink == null) {
+      PortalRequestContext prc = Util.getPortalRequestContext();
+
+      UserPortal userPortal = prc.getUserPortal();
+      UserNavigation userNav = userPortal.getNavigation(prc.getSiteKey());
+      UserNode userNode = userPortal.getNode(userNav, Scope.ALL, null, null);
+      //
+      UserNode answerNode = userNode.getChild(ANSWER_PAGE_NAGVIGATION);
+      
+      //
+      if (answerNode != null) {
+        String answerURI = getNodeURL(answerNode);
+        return String.format("%s%s%s", answerURI, org.exoplatform.faq.service.Utils.QUESTION_ID, questionId);
+      }
+      return StringUtils.EMPTY;
+    }
+    if (getAnswerPortletInSpace(getSpaceGroupId()).length() == 0) {
+      return StringUtils.EMPTY;
+    }
+    return String.format("%s/%s%s%s", spaceLink, getAnswerPortletInSpace(getSpaceGroupId()), org.exoplatform.faq.service.Utils.QUESTION_ID, questionId);
+  }
+  
   private String getNumberOfAnswers() throws Exception {
-    int number = Integer.parseInt(getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_ANSWERS));
+    String number_str = getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_ANSWERS);
+
+    int number = Integer.parseInt(Utils.isEmpty(number_str) ? ActivityUtils.getNbOfAnswers(getQuestion()) : number_str);
+
     if (number == 0) {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noAnswer");
     } else if (number == 1) {
@@ -101,15 +174,22 @@ public class AnswerUIActivity extends BaseKSActivity {
     }
   }
   
-  @SuppressWarnings("unused")
   private double getRating() {
     String rate = getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_RATING);
-    return  Double.parseDouble(rate);
+    if (Utils.isEmpty(rate)) {
+      rate = ActivityUtils.getQuestionRate(getQuestion());
+    }
+    try {
+      return Double.parseDouble(rate);
+    } catch (NumberFormatException e) {
+      return 0.0;   
+    }
   }
   
-  @SuppressWarnings("unused")
   private String getNumberOfComments() throws Exception {
-    int number = Integer.parseInt(getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS));
+    String number_str = getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS);
+
+    int number = Integer.parseInt(Utils.isEmpty(number_str) ? ActivityUtils.getNbOfComments(getQuestion()) : number_str);
 
     if (number == 0) {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noComment");
@@ -120,12 +200,39 @@ public class AnswerUIActivity extends BaseKSActivity {
     }
   }
   
+  protected String getQuestionTitle() {
+    try {
+      return getQuestion().getQuestion();
+    } catch (Exception e) {
+      return getActivity().getTitle();
+    }
+  }
+  
+  protected String getQuestionDetail() {
+    try {
+      return ActivityUtils.processContent(getQuestion().getDetail());
+    } catch (Exception e) {
+      return getActivity().getBody();
+    }
+  }
+  
   private String getSpaceGroupId() {
-    return getActivityParamValue(AnswersSpaceActivityPublisher.SPACE_GROUP_ID);
+    return ActivityUtils.getSpaceGroupId(getQuestion().getCategoryId());
   }
   
   private String getQuestionId() {
-    return getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID);
+    String questionId = getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID);
+    return Utils.isEmpty(questionId) ? getActivityParamValue("QuestionId") : questionId;
+  }
+  
+  private Question getQuestion() {
+    DataStorage faqService = (DataStorage) CommonsUtils.getService(DataStorage.class);
+    try {
+      return faqService.getQuestionById(getQuestionId());
+    } catch (Exception e) {
+      LOG.debug("Failed to get question object", e);
+      return null;
+    }
   }
 
   private ExoSocialActivity toActivity(Comment comment) {
@@ -193,11 +300,11 @@ public class AnswerUIActivity extends BaseKSActivity {
       }
       DataStorage faqService = (DataStorage) ExoContainerContext.getCurrentContainer()
                                                               .getComponentInstanceOfType(DataStorage.class);
-      Question question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
+      Question question = faqService.getQuestionById(uiActivity.getQuestionId());
       Comment comment = new Comment();
       comment.setNew(true);
       comment.setCommentBy(context.getRemoteUser());
-      comment.setComments(TransformHTML.enCodeHTMLContent(message));
+      comment.setComments(message);
       comment.setFullName(getFullName(context.getRemoteUser()));
       comment.setDateComment(new Date());
       // add new corresponding post to forum.
@@ -241,7 +348,7 @@ public class AnswerUIActivity extends BaseKSActivity {
                 post.setModifiedBy(context.getRemoteUser());
               }
               post.setIsApproved(!topic.getIsModeratePost());
-              post.setMessage(comment.getComments());
+              post.setMessage(TransformHTML.enCodeHTMLContent(message));
               forumService.savePost(ids[t - 3],
                                     ids[t - 2],
                                     topicId,
@@ -254,13 +361,25 @@ public class AnswerUIActivity extends BaseKSActivity {
         }
       } // end adding post to forum.
 
-      faqService.saveComment(question.getPath(), comment,  true);
-      comment.setComments(message);
       ExoSocialActivity cm = uiActivity.toActivity(comment);
       ActivityManager activityM = (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
       ExoSocialActivity activity = activityM.getActivity(faqService.getActivityIdForQuestion(question.getPath()));
+      
+      //Case migrate activity : if the activity is not exist or the current activity is not the same
+      //as the activity associated to the question --> just add comment on this activity
+      if (activity == null || ! uiActivity.getActivity().getId().equals(activity.getId())) {
+        activity = uiActivity.getActivity();
+        activityM.saveComment(activity, cm);
+        uiActivity.refresh();
+        context.addUIComponentToUpdateByAjax(uiActivity);
+        uiActivity.getParent().broadcast(event, event.getExecutionPhase());
+        return;
+      }
+      
+      comment.setComments(TransformHTML.enCodeHTMLContent(message));
+      faqService.saveComment(question.getPath(), comment,  true);
       Map<String, String> templateParams = activity.getTemplateParams();
-      question = faqService.getQuestionById(uiActivity.getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID));
+      question = uiActivity.getQuestion();
       templateParams.put(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS, String.valueOf(question.getComments().length));
       activity.setTemplateParams(templateParams);
       activity.setBody(null);
