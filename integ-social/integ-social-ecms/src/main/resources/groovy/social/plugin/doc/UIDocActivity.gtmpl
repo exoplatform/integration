@@ -46,10 +46,9 @@
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
   def streamOwner = activity.getStreamOwner();
-  def currentNode = uicomponent.getDocNode();
 %>
 
-<% if (activity && currentNode != null) { //process if not null 
+<% if (activity) { //process if not null 
 
   def labelComment = _ctx.appRes("UIActivity.label.Comment");
   def labelLike = _ctx.appRes("UIActivity.label.Like");
@@ -174,6 +173,7 @@
   def title = null;
   def summary = uicomponent.getSummary();
   
+  def currentNode = uicomponent.getDocNode();
   def mimeType = "";
   def binarySrc;
   def uicontentpresentation = uicomponent.addChild(ContentPresentation.class, null, null);
