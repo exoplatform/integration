@@ -2,83 +2,83 @@
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>文件大小</fileSize>
     </titles>
     <messages>
-      <createdBy>was created by</createdBy>
-      <editedBy>was edited by</editedBy>
-      <system>the system</system>
-      <readmore>...Read More.</readmore>
-      <editTitle>Title has been updated to: {0}</editTitle>
-      <editName>Name has been updated to: {0}</editName>
-      <editDescription>Description has been updated to: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <addSource>File source: {0} has been added</addSource>
-      <addMultiSource>File sources: {0} have been added</addMultiSource>
-      <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
-      <editSummary>Summary has been updated to: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
-      <editContent>Content has been updated.</editContent>
-      <editFile>File has been updated.</editFile>
-      <emptyTitle>The title has been removed.</emptyTitle>
-      <emptySummary>The summary has been removed.</emptySummary>
-      <emptyContent>The content has been removed.</emptyContent>
-      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} has been removed.</removeMetadata>  
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Name has been removed.</removeName>
-      <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator: {0} has been removed.</removeCreator>
-      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
-      <removeLanguage>Language has been removed.</removeLanguage>
-      <removeContent>Content has been removed.</removeContent>
-      <attachmentAdded>File(s) has been attached.</attachmentAdded>
-      <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
-      <categoryAdded>Category: {0} has been added.</categoryAdded>
-      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
-      <tagAdded>Tag: {0} has been added.</tagAdded>
-      <tagsAdded>Tags: {0} have been added.</tagsAdded>
-      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
+      <createdBy>是由创建的</createdBy>
+      <editedBy>是由编辑</editedBy>
+      <system>系统</system>
+      <readmore>...阅读更多。</readmore>
+      <editTitle>标题已更新到： {0}</editTitle>
+      <editName>名称已被更新到: {0}</editName>
+      <editDescription>说明已被更新到: {0}</editDescription>
+      <singleCreator>创建者是 {0}</singleCreator>
+      <multiCreator>创作者是 {0}</multiCreator>
+      <addSource>文件源： {0} 已添加</addSource>
+      <addMultiSource>文件源： {0} 已添加</addMultiSource>
+      <removeSource>文件源： {0} 已被删除</removeSource>
+      <removeMultiSource>文件源： {0} 已被删除</removeMultiSource>
+      <editSummary>摘要已更新到： {0}</editSummary>
+      <editLanguage>语言已更新到： {0}</editLanguage>
+      <editContent>已更新的内容。</editContent>
+      <editFile>文件已被更新。</editFile>
+      <emptyTitle>标题已被移除。</emptyTitle>
+      <emptySummary>摘要已被移除。</emptySummary>
+      <emptyContent>内容已被删除。</emptyContent>
+      <updateMetadata>已到更新元数据 {0}: {1}</updateMetadata>
+      <removeMetadata>元数据 {0} 已被移除。</removeMetadata>  
+      <removeTitle>标题已被移除。</removeTitle>
+      <removeName>名称已被移除。</removeName>
+      <removeSummary>摘要已被移除。</removeSummary>
+      <removeDescription>说明已被移除。</removeDescription>
+      <removeCreator>创建者: {0} 已被移除。</removeCreator>
+      <removeMultiCreator>创作者: {0} 已被删除。</removeMultiCreator>
+      <removeLanguage>已删除的语言。</removeLanguage>
+      <removeContent>已删除的内容。</removeContent>
+      <attachmentAdded>已附加的文件。</attachmentAdded>
+      <attachmentRemoved>文件已被删除。</attachmentRemoved>
+      <categoryAdded>类别： {0} 已被添加。</categoryAdded>
+      <categoryRemoved>类别： {0} 已被移除。</categoryRemoved>
+      <tagAdded>标签: {0} 已被添加。</tagAdded>
+      <tagsAdded>标签: {0} 已被添加。</tagsAdded>
+      <tagRemoved>标签: {0} 已被移除。</tagRemoved>
+      <tagsRemoved>标签: {0} 已被删除。</tagsRemoved>
       <stateChange>
-        <pending>Publication status is now pending.</pending>
-        <approved>Document has been approved.</approved>
-        <staged>Publication has been staged.</staged>
-        <published>Document has been published.</published>
+        <pending>发布状态现在是挂起的。</pending>
+        <approved>文档已被批准。</approved>
+        <staged>上演了出版物。</staged>
+        <published>已发布文档。</published>
       </stateChange>
-      <contentMoved>Publication has been moved to: {0}</contentMoved>
-      <fileMoved>File has been moved to: {0}</fileMoved>
-      <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
-      <version>Version: {0}</version>
+      <contentMoved>出版物已被移动到: {0}</contentMoved>
+      <fileMoved>文件已被移动到: {0}</fileMoved>
+      <revisionChanged>出版物已还原到版本: {0}</revisionChanged>
+      <version>版本 {0}</version>
     </messages>
     <publicationStates>
-      <archived>Archived</archived>
-      <obsolete>Obsolete</obsolete>
-      <unpublished>Unpublished</unpublished>
-      <draft>Draft</draft>
-      <pending>Pending</pending>
-      <approved>Approved</approved>
-      <inreview>In Review</inreview>
-      <staged>Staged</staged>
-      <published>Published</published>
-      <live>Published</live>
+      <archived>存档</archived>
+      <obsolete>已过时的</obsolete>
+      <unpublished>未发布</unpublished>
+      <draft>草稿</draft>
+      <pending>等待中</pending>
+      <approved>核准</approved>
+      <inreview>在审查中</inreview>
+      <staged>进行中</staged>
+      <published>已发布</published>
+      <live>已发布</live>
     </publicationStates>
-    <view>View</view>
-    <edit>Edit</edit>
-    <download>Download</download>
+    <view>查看</view>
+    <edit>编辑</edit>
+    <download>下载</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Preview</DocViewer>
+      <DocViewer>预览</DocViewer>
     </title>
   </UIPopupWindow>
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Resource Type</resourceType>        
+        <resourceType>资源类型</resourceType>        
       </label>
     </dialog>
   </ElementSet>

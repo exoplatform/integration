@@ -364,7 +364,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
           break;
 
         case "answer":
-        	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconPLFProfile uiIconPLFLightGray");	      
+        	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconSocAnswersMini uiIconSocLightGray");	      
           break;
         case "wiki":        	
         	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconWikiWiki uiIconWikiLightGray");	      

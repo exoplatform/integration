@@ -66,7 +66,7 @@
       <published>Veröffentlicht</published>
       <live>Veröffentlicht</live>
     </publicationStates>
-    <view>Sehen</view>
+    <view>Anzeigen</view>
     <edit>Bearbeiten</edit>
     <download>Herunterladen</download>
   </SocialIntegration>
