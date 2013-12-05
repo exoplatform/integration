@@ -281,7 +281,7 @@ public class Utils {
         }catch (Exception e){
           //Not activity is deleted, return no related activity
         }
-        if (exa!=null && !commentFlag) {
+        if (exa!=null && !commentFlag && isSystemComment) {
           activityManager.saveComment(exa, activity);
           if (node.isNodeType(MIX_COMMENT)) {
             commentID = activity.getId();
@@ -408,7 +408,7 @@ public class Utils {
         }catch (Exception e){
           //Not activity is deleted, return no related activity
         }
-        if (exa!=null && !commentFlag) {
+        if (exa!=null && !commentFlag && isSystemComment) {
           activityManager.saveComment(exa, activity);
           if (node.isNodeType(MIX_COMMENT)) {
             commentID = activity.getId();
