@@ -26,6 +26,13 @@
    xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
   
   <!-- UNIFIED SEARCH -->
+
+  <!-- Indexing -->
+  <component>
+    <key>org.exoplatform.commons.api.indexing.IndexingService</key>
+    <type>org.exoplatform.commons.search.indexing.JcrIndexingService</type>
+  </component>
+
   <component>
     <key>org.exoplatform.commons.api.search.SearchService</key>
     <type>org.exoplatform.commons.search.driver.jcr.JcrSearchDriver</type>
@@ -188,5 +195,88 @@
   <component>
     <type>org.exoplatform.commons.search.service.UnifiedSearchService</type>
   </component>
+
+  <!-- Indexing Listeners -->
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+    <component-plugin>
+      <name>CmsService.event.postCreate</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchContentListener</type>
+      <description>Content listener for Unified Search</description>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+    <component-plugin>
+      <name>CmsService.event.postEdit</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchContentListener</type>
+      <description>Content listener for Unified Search</description>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.wiki.service.WikiService</target-component>
+    <component-plugin>
+      <name>unifiedsearch.listeners.wiki</name>
+      <set-method>addComponentPlugin</set-method>
+      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchPageWikiListener</type>
+      <description>Wiki listener for Unified Search</description>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.forum.service.ForumService</target-component>
+    <component-plugin>
+      <name>unifiedsearch.listeners.forum</name>
+      <set-method>addListenerPlugin</set-method>
+      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchForumListener</type>
+      <description>Forum listener for Unified Search</description>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.faq.service.FAQService</target-component>
+    <component-plugin>
+      <name>unifiedsearch.listeners.answer</name>
+      <set-method>addListenerPlugin</set-method>
+      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchAnswerListener</type>
+      <description>Answer listener for Unified Search</description>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.calendar.service.CalendarService</target-component>
+    <component-plugin>
+      <name>unifiedsearch.listeners.calendar</name>
+      <set-method>addEventListenerPlugin</set-method>
+      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchCalendarListener</type>
+      <description>Calendar listener for Unified Search</description>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.organization.OrganizationService</target-component>
+    <component-plugin>
+      <name>unifiedsearch.listeners.organization.profile</name>
+      <set-method>addListenerPlugin</set-method>
+      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchOrganizationProfileListener</type>
+      <description>Social Profile listener for Unified Search</description>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.social.core.manager.IdentityManager</target-component>
+    <component-plugin>
+      <name>unifiedsearch.listeners.social.profile</name>
+      <set-method>addProfileListener</set-method>
+      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchSocialProfileListener</type>
+      <description>Social Profile listener for Unified Search</description>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
+    <component-plugin>
+      <name>unifiedsearch.listeners.social.space</name>
+      <set-method>addSpaceListener</set-method>
+      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchSocialSpaceListener</type>
+      <description>Social Space listener for Unified Search</description>
+    </component-plugin>
+  </external-component-plugins>
 
 </configuration>
