@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ-social</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.1.x-integ-weemo-addon-SNAPSHOT</version>
   </parent>
   <artifactId>integ-social-ecms</artifactId>
   <packaging>jar</packaging>
