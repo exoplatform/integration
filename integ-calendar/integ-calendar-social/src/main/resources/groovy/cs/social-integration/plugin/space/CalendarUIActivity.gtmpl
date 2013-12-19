@@ -234,7 +234,7 @@
 						<% } %>	
 						  <div class="text">								
 								  <%
-									title = "<a class='linkTitle' href='" + uicomponent.getEventLink() +"' title='" + uicomponent.getSummary() + "'>" + uicomponent.getSummary() + "</a>";
+									title = "<a class='linkTitle' href='" + uicomponent.getEventLink() +"'>" + uicomponent.getSummary() + "</a>";
 									print title;
 								  %>
 								<%
