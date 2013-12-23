@@ -373,6 +373,9 @@ public class CalendarUIActivity extends BaseUIActivity {
         calendar.setTimeInMillis(time);
         childMessage = MessageFormat.format(label, getDateString(locale, calendar));
 
+      } else if(fields[i].equals(CalendarSpaceActivityPublisher.REPEAT_UPDATED)) {
+        CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+        childMessage =  CalendarSpaceActivityPublisher.buildRepeatSummary(event, calService);
       } else {
         childMessage = MessageFormat.format(label,tempParams.get(fields[i]));
       }
