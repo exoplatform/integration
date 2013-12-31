@@ -70,7 +70,7 @@ public class CalendarUIActivity extends BaseUIActivity {
         event = calService.getGroupEvent(calendarId, eventId);
       } catch (PathNotFoundException pnf) {
         if (LOG.isDebugEnabled()) 
-        	LOG.debug("Couldn't find the event: " + eventId, pnf);
+                LOG.debug("Couldn't find the event: " + eventId, pnf);
       }
       if (event == null) {
         eventNotFound = true;

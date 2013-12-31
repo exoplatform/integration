@@ -233,72 +233,74 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    */
   private void updateToActivity(CalendarEvent event, String calendarId, String eventType, Map<String, String> messagesParams){
     try {
-		  Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
-	  } catch (ClassNotFoundException e) {
-		  if (LOG.isDebugEnabled()) {
-			  LOG.debug("eXo Social components not found!", e);
-		  }
-		  return;
-	  }
-	  if (calendarId == null || calendarId.indexOf(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX) < 0) {
-		  return;
-	  }
-	  try{
-		  IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
-		  ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
-		  SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+      Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
+    } catch (ClassNotFoundException e) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("eXo Social components not found!", e);
+      }
+      return;
+    }
+    if (calendarId == null
+        || calendarId.indexOf(CalendarDataInitialize.SPACE_CALENDAR_ID_SUFFIX) < 0) {
+      return;
+    }
+    try {
+      IdentityManager identityM = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
+      ActivityManager activityM = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
+      SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
 
-		  String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
-		  Space space = spaceService.getSpaceByGroupId(spaceGroupId);
-		  if (space != null) {
+      String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
+      Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+      if (space != null) {
         String userId = ConversationState.getCurrent().getIdentity().getUserId();
-			  Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
-			  Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
-			  
-			  ExoSocialActivity activity = null;
-			  
-			  if(event.getActivityId() != null) {
-			    activity = activityM.getActivity(event.getActivityId());
-			  }
-			  
-			  /*
-			   * if activity is still null, that means:
-			   * - activity was deleted
-			   * - or this event is a public event from plf 3.5, it has no activityId
-			   * In this case, we create new activity and add comments about the changes to the activity
-			   */
-			  if(activity == null) {
-	        
-			    // create activity
-			    ExoSocialActivity newActivity = new ExoSocialActivityImpl();
-	        newActivity.setUserId(userIdentity.getId());
-	        newActivity.setTitle(event.getSummary());
-	        newActivity.setBody(event.getDescription());
-	        newActivity.setType("cs-calendar:spaces");
-	        newActivity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
-	        activityM.saveActivityNoReturn(spaceIdentity, newActivity);
-	       
-	        // add comments
-	        ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
+        Identity spaceIdentity = identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
+        Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
+
+        ExoSocialActivity activity = null;
+
+        if (event.getActivityId() != null) {
+          activity = activityM.getActivity(event.getActivityId());
+        }
+
+        /*
+         * if activity is still null, that means: - activity was deleted - or
+         * this event is a public event from plf 3.5, it has no activityId In
+         * this case, we create new activity and add comments about the changes
+         * to the activity
+         */
+        if (activity == null) {
+
+          // create activity
+          ExoSocialActivity newActivity = new ExoSocialActivityImpl();
+          newActivity.setUserId(userIdentity.getId());
+          newActivity.setTitle(event.getSummary());
+          newActivity.setBody(event.getDescription());
+          newActivity.setType("cs-calendar:spaces");
+          newActivity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
+          activityM.saveActivityNoReturn(spaceIdentity, newActivity);
+
+          // add comments
+          ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
           activityM.saveComment(newActivity, newComment);
-          
+
           // update activity id for event
-	        event.setActivityId(newActivity.getId());
-          LOG.info(String.format("[CALENDAR] successfully re-created activity for event: %s", event.getSummary()));
-			  } else {
+          event.setActivityId(newActivity.getId());
+          LOG.info(String.format("[CALENDAR] successfully re-created activity for event: %s",
+                                 event.getSummary()));
+        } else {
           activity.setTitle(event.getSummary());
-			    activity.setBody(event.getDescription());
-			    activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
-	        activityM.updateActivity(activity);
-	        ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
-	        activityM.saveComment(activity, newComment);
-	        LOG.info(String.format("[CALENDAR] successfully added comment to activity of event: %s", event.getSummary()));
-			  }
-		  }
-	  } catch (ExoSocialException e){  
-		  if (LOG.isDebugEnabled())
-			  LOG.error("Can not update Activity for space when event modified ", e);
-	  }
+          activity.setBody(event.getDescription());
+          activity.setTemplateParams(makeActivityParams(event, calendarId, eventType));
+          activityM.updateActivity(activity);
+          ExoSocialActivity newComment = createComment(userIdentity.getId(), messagesParams);
+          activityM.saveComment(activity, newComment);
+          LOG.info(String.format("[CALENDAR] successfully added comment to activity of event: %s", event.getSummary()));
+        }
+      }
+    } catch (ExoSocialException e) {
+      if (LOG.isDebugEnabled())
+        LOG.error("Can not update Activity for space when event modified ", e);
+    }
   }
   
   /**
