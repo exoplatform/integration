@@ -33,7 +33,6 @@ import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.UserHelper;
-import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -44,7 +43,6 @@ import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.processor.I18NActivityUtils;
-import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -70,7 +68,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   private final static Log LOG = ExoLogger.getExoLogger(AnswersSpaceActivityPublisher.class);
   
   private Identity getSpaceIdentity(String categoryId) {
-    String spaceGroupId = getSpaceGroupId(categoryId);
+    String spaceGroupId = ActivityUtils.getSpaceGroupId(categoryId);
     if ("".equals(spaceGroupId))
       return null;
     IdentityManager identityM = (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
@@ -79,15 +77,6 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     if (space != null)
       return identityM.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
     else return null;
-  }
-  
-  private String getSpaceGroupId(String categoryId) {
-    String spaceGroupId = "";
-    if (categoryId.indexOf(Utils.CATE_SPACE_ID_PREFIX) < 0) 
-      return "";
-    String prettyname = categoryId.split(Utils.CATE_SPACE_ID_PREFIX)[1];
-    spaceGroupId = SpaceUtils.SPACE_GROUP + CommonUtils.SLASH + prettyname;
-    return spaceGroupId;
   }
   
   private ExoSocialActivity newActivity(Identity author, String title, String body, Map<String, String> templateParams) {
@@ -145,7 +134,12 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private void updateActivity(ExoSocialActivity activity, Question question) {
-    Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(), getQuestionRate(question), getNbOfAnswers(question), getNbOfComments(question), question.getLanguage(), question.getLink() , Utils.getQuestionPoint(question));
+    Map<String, String> activityTemplateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(),
+                                                                      ActivityUtils.getQuestionRate(question),
+                                                                      ActivityUtils.getNbOfAnswers(question),
+                                                                      ActivityUtils.getNbOfComments(question),
+                                                                      question.getLanguage(), question.getLink(),
+                                                                      Utils.getQuestionPoint(question));
     activity.setTemplateParams(activityTemplateParams);
     activity.setBody(null);
     activity.setTitle(null);
@@ -163,7 +157,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       String activityId = faqS.getActivityIdForQuestion(questionId);
       
       //
-      String answerContent = processContent(answer.getResponses());
+      String answerContent = ActivityUtils.processContent(answer.getResponses());
       
       if (activityId != null) {
         try {
@@ -231,7 +225,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
       Question question = faqS.getQuestionById(questionId);
-      String message = processContent(cm.getComments());
+      String message = ActivityUtils.processContent(cm.getComments());
       Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, cm.getCommentBy(), false);
       String activityId = faqS.getActivityIdForQuestion(questionId);
       if (activityId != null) {
@@ -292,31 +286,25 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       IdentityManager identityM = (IdentityManager) exoContainer.getComponentInstanceOfType(IdentityManager.class);
       ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
       FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
-      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(),
-                                                                question.getId(),
-                                                                getQuestionRate(question),
-                                                                getNbOfAnswers(question),
-                                                                getNbOfComments(question),
-                                                                question.getLanguage(),
-                                                                question.getLink(),
+      Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,question.getAuthor(),false);
+      Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(),
+                                                                ActivityUtils.getQuestionRate(question),
+                                                                ActivityUtils.getNbOfAnswers(question),
+                                                                ActivityUtils.getNbOfComments(question),
+                                                                question.getLanguage(), question.getLink(),
                                                                 Utils.getQuestionPoint(question));
       String activityId = faqS.getActivityIdForQuestion(question.getId());
-
-      String questionDetail = processContent(question.getDetail());
-      // in case deleted activity, if isUpdate, we will re-create new activity
-      // and add a comment associated
+      
+      String questionDetail = ActivityUtils.processContent(question.getDetail());
+      //in case deleted activity, if isUpdate, we will re-create new activity and add a comment associated
       boolean isUpdate = false;
       // UserHelper.checkValueUser(values)
       if (activityId != null) {
         isUpdate = true;
         try {
           ExoSocialActivity activity = activityM.getActivity(activityId);
-          Identity userIdentity;
-          String userId = question.getAuthor();
-          if (UserHelper.getUserByUserId(userId) == null) {
+          if (UserHelper.getUserByUserId(question.getAuthor()) == null) {
             userIdentity = identityM.getIdentity(activity.getPosterId(), false);
-          } else {
-            userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
           }
           activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion()));
           activity.setBody(questionDetail);
@@ -333,14 +321,13 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
         }
       }
       if (activityId == null) {
-        Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME, question.getAuthor(), false);
         Identity streamOwner = null;
         String catId = (String) faqS.readQuestionProperty(question.getId(), FAQNodeTypes.EXO_CATEGORY_ID, String.class);
         Identity spaceIdentity = getSpaceIdentity(catId);
         if (spaceIdentity != null) {
           // publish the activity in the space stream.
           streamOwner = spaceIdentity;
-          templateParams.put(SPACE_GROUP_ID, getSpaceGroupId(catId));
+          templateParams.put(SPACE_GROUP_ID, ActivityUtils.getSpaceGroupId(catId));
         }
         List<String> categoryIds = faqS.getCategoryPath(catId);
         Collections.reverse(categoryIds);
@@ -448,23 +435,9 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     }
   }
   
-  private String getQuestionRate(Question question) {
-    return String.valueOf(question.getMarkVote());
-  }
-  
-  private String getNbOfComments(Question question) {
-    int nbComments = (question.getComments() != null) ? question.getComments().length : 0;
-    return String.valueOf(nbComments);
-  }
-  
-  private String getNbOfAnswers(Question question) {
-    int nbAnswers = (question.getAnswers() != null) ? question.getAnswers().length : 0;
-    return String.valueOf(nbAnswers);
-  }
-  
   private String getQuestionMessage(PropertyChangeEvent e, Question question, ExoSocialActivity comment) {
     String questionName = CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion());
-    String questionDetail = processContent(question.getDetail());
+    String questionDetail = ActivityUtils.processContent(question.getDetail());
     if ("questionName".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "question-update-title", questionName);
       return "Title has been updated to: " + questionName;
@@ -490,7 +463,7 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private String getAnswerMessage(PropertyChangeEvent e, Answer answer, ExoSocialActivity comment) {
-    String answerContent = processContent(answer.getResponses());
+    String answerContent = ActivityUtils.processContent(answer.getResponses());
     if ("answerEdit".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "answer-update-content", answerContent);
       return "Answer has been edited to: " + answerContent;
@@ -536,12 +509,6 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       commentTemplateParams = new HashMap<String, String>();
     commentTemplateParams.put(LINK_KEY, link);
     comment.setTemplateParams(commentTemplateParams);
-  }
-  
-  private String processContent(String content) {
-    content = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(content));
-    content = ForumActivityBuilder.getFourFirstLines(content);
-    return content;
   }
   
 }

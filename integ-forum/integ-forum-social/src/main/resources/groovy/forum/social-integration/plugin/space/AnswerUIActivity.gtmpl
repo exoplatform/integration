@@ -194,7 +194,7 @@
 					</div>	
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
-						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
+						<% if (uicomponent.getSpaceGroupId().length() > 0) {
 								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
 									def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
 									def spaceName = spaceSource.displayName;
@@ -232,8 +232,11 @@
                  } %>
               </div>
             </div>
+            <% def questionTitle = uicomponent.getQuestionTitle();
+               def questionDetail = uicomponent.getQuestionDetail();
+            %>
 						<div class="titleAnswer">
-							<a class="linkTitle" href="${uicomponent.getLink()}" title="">$activity.title</a>
+							<a class="linkTitle" href="${uicomponent.getLink()}" title="">$questionTitle</a>
 						</div>
 					</div>	
 				  <div class="contentAnswer theContent">
@@ -245,7 +248,7 @@
 							<div>$questionPoint</div>
 								$labelQuestionPoint
 						</div>
-						<p class="text">$activity.body</p>	
+						<p class="text">$questionDetail</p>	
 					</div>
           <% def numberOfAnswers = uicomponent.getNumberOfAnswers();
              def numberOfComments = uicomponent.getNumberOfComments();
