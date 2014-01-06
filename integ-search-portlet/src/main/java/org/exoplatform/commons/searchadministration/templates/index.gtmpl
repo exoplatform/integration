@@ -1,4 +1,3 @@
-
 <div id="searchAdmin" class="uiSearchAdmin">
   <h4 class="titleWithBorder">${searchadministration}</h4>
  
@@ -13,7 +12,3 @@
 	  
   </table>
 </div>
-
-<script>
-  initSearchAdmin();
-</script>
