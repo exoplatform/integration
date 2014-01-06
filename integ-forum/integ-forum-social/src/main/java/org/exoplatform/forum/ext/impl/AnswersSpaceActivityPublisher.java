@@ -223,11 +223,10 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
       //
       String answerContent = ActivityUtils.processContent(answer.getResponses());
       
-      if (activityId != null) {
+      if (activityId != null && answer.getApprovedAnswers()) {
         try {
           ExoSocialActivity activity = activityM.getActivity(activityId);
           ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
-          
           if (!comment.getTitle().equals("")) { //Case update answer or promote comment to answer
             String promotedAnswer = "Comment "+answerContent+" has been promoted as an answer";
             if (promotedAnswer.equals(comment.getTitle())) {
