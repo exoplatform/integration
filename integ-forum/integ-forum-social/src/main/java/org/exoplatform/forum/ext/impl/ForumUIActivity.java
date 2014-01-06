@@ -8,9 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.forum.common.TransformHTML;
+import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils.PORTLET_INFO;
-import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.ext.activity.ForumActivityContext;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
@@ -114,9 +114,9 @@ public class ForumUIActivity extends BaseKSActivity {
   
   public String getNumberOfReplies() {
     String got = getActivityParamValue(ForumActivityBuilder.TOPIC_POST_COUNT_KEY);
-      if (Utils.isEmpty(got) && getTopic() != null) {
-        got = "" + getTopic().getPostCount();
-      }
+    if (Utils.isEmpty(got) && getTopic() != null) {
+      got = "" + getTopic().getPostCount();
+    }
     int nbReplies = Integer.parseInt(Utils.isEmpty(got) ? "0" : got);
     switch (nbReplies) {
       case 0:
@@ -130,9 +130,9 @@ public class ForumUIActivity extends BaseKSActivity {
   
   public double getRate() {
     String got = getActivityParamValue(ForumActivityBuilder.TOPIC_VOTE_RATE_KEY);
-      if (Utils.isEmpty(got) && getTopic() != null) {
-        got = "" + getTopic().getVoteRating();
-      }
+    if (Utils.isEmpty(got) && getTopic() != null) {
+      got = "" + getTopic().getVoteRating();
+    }
     try {
       return Double.parseDouble(got);
     } catch (NumberFormatException e) {
