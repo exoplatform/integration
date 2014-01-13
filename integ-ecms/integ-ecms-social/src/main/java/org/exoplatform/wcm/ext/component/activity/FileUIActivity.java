@@ -37,6 +37,7 @@ import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.xml.PortalContainerInfo;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.log.ExoLogger;
@@ -100,7 +101,7 @@ public class FileUIActivity extends BaseUIActivity{
 
   public static final String CONTENT_LINK       = "contenLink";
 
-  public static final String MESSAGE            = "message";
+  public static final String MESSAGE            = "MESSAGE";
 
   public static final String REPOSITORY         = "repository";
 
@@ -132,8 +133,6 @@ public class FileUIActivity extends BaseUIActivity{
   
   public static final String SYSTEM_COMMENT     = "systemComment";
   
-  
-
   private String             contentLink;
 
   private String             message;
@@ -536,6 +535,13 @@ public class FileUIActivity extends BaseUIActivity{
     return cssClass;
   }
 
+  protected String getContainerName() {
+    //get portal name
+    ExoContainer container = ExoContainerContext.getCurrentContainer();
+    PortalContainerInfo containerInfo = (PortalContainerInfo) container.getComponentInstanceOfType(PortalContainerInfo.class);
+    return containerInfo.getContainerName();  
+  }
+  
   public String getDownloadLink() {
     try {
       return org.exoplatform.wcm.webui.Utils.getDownloadLink(getContentNode());
