@@ -1,9 +1,7 @@
-
+(function($){
 // Function to be called when the quick search template is ready
-function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
-  jQuery.noConflict();
-
-  (function($){
+window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
+  
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
     var SEARCH_TYPES; //enabled search types
@@ -26,7 +24,6 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     var index = 0;
     var currentFocus = 0;
     //var skipKeyUp = [9,16,17,18,19,20,33,34,35,36,37,38,39,40,45,49];
-	var allJqxHrResponse = {};
     
     var mapKeyUp = {"0":"48","1":"49","2":"50","3":"51","4":"52","5":"53","6":"54","7":"55","8":"56","9":"57",
     		"a":"65","b":"66","c":"67","d":"68","e":"69","f":"70","g":"71","h":"72","i":"73","j":"74",
@@ -162,9 +159,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     function setWaitingStatus(status) {
     	if (status){
     		window['isSearching'] = true;
-    		// Modify by SONDN PLF August 07, 2013
-            //$(quickSearchResult_id).html(QUICKSEARCH_WAITING_TEMPLATE);
-    		$(txtQuickSearchQuery_id).addClass("loadding");
+            $(txtQuickSearchQuery_id).addClass("loadding");
             if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
             	$(quickSearchResult_id).show();              
             }else{
@@ -179,161 +174,63 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
     }
 
     function quickSearch() {
-      	      
+      var query = $(txtQuickSearchQuery_id).val();
       setWaitingStatus(true);
-      //var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
-      var typeArray = QUICKSEARCH_SETTING.searchTypes;
-	  var allResultMap = {};
-	  var tinySearchTypes = [];
-	  var smallSearchTypes = [];
-	  var normalSearchTypes = [];
-	  var bigSearchTypes = [];
-	  var tinyJqxhr = [];
-	  var smallJqxhr = [];
-	  var normalJqxhr = [];
-	  var bigJqxhr = [];
-	  
+      var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
 
-	  if ("all" == typeArray){
-		   var index = 0;
-		   $.each(CONNECTORS, function(idx,value){			  
-			  if (index<2) {
-				  bigSearchTypes.push(value.searchType);			  
-			  } else if (index>=2 && index<5) {
-				  normalSearchTypes.push(value.searchType);  
-			  } else if (index>=5 && index<8){
-				  smallSearchTypes.push(value.searchType);
-			  } else {
-				  tinySearchTypes.push(value.searchType);			 
-			  }		  
-			  index = index + 1; 
-		   })	    
-	  }else {
-		  $.each(typeArray,function(index,value){
-			  
-			  if (index<2) {
-				  bigSearchTypes.push(value);			  
-			  } else if (index>=2 && index<5) {
-				  normalSearchTypes.push(value);  
-			  } else if (index>=5 && index<8){
-				  smallSearchTypes.push(value);
-			  } else {
-				  tinySearchTypes.push(value);			 
-			  }		  
-		  });		  
-	  }
-	  
-	  
-	  //tiny search
-	  tinyJqxhr = executeSearch(typeArray,tinySearchTypes,allResultMap);
-	  $.when(tinyJqxhr[0],tinyJqxhr[1]).done(function(){
-		  //small search
-		  smallJqxhr = executeSearch(typeArray,smallSearchTypes,allResultMap);
-		  $.when(smallJqxhr[0],smallJqxhr[1],smallJqxhr[2]).done(function(){
-			  //normal search
-			  normalJqxhr = executeSearch(typeArray,normalSearchTypes,allResultMap);
-			  			
-				  $.when(normalJqxhr[0],normalJqxhr[1],normalJqxhr[2]).done(function (){
-					  bigJqxhr = executeSearch(typeArray,bigSearchTypes,allResultMap);
-
-					  $.when(bigJqxhr[0]).done(function(){
-						  setWaitingStatus(false);
-						  // Modify by SONDN PLF August 07, 2013
-					      $(txtQuickSearchQuery_id).removeClass("loadding");
-						  var noResult = true;
-						  $.each(allResultMap, function(index, results){
-							 if ($(results).size() != 0) noResult = false; 
-						  });
-						  if (noResult){
-							  displayNoResult(typeArray);  
-						  }		  
-					  });
-					  
-				  });			  
-		  });  
-	  });
-    }
-
-    function executeSearch(typeArray,subTypesArray, allResultMap){
-    	var query = $(txtQuickSearchQuery_id).val();
-    	var jqxhrArray = [];
-	  	var tempJqxhr = null;
-
-    	$.each(subTypesArray,function(index,types){
-		  	
-	        var searchParams = {
-	      	        searchContext: {
-	      	          siteName:parent.eXo.env.portal.portalName
-	      	        },
-	      	        q: query,
-	      	        sites: QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all",
-	        		types: types,
-	      	        offset: 0,
-	      	        limit: QUICKSEARCH_SETTING.resultsPerPage,
-	      	        sort: "relevancy",
-	      	        order: "desc"
-	      	      };    	  
-	            
-			var jqxhrB = allJqxHrResponse[types];
-			if (jqxhrB != null) {
-			  jqxhrB.abort();
-			}
-			// get results of all search types in a map
-			var jqxhr = $.getJSON("/rest/search", searchParams, function(resultMap){
-			//allQueryMap[types] = query;
-				
-			$.each(resultMap, function(key, results){			
-				allResultMap[key] = results;
-			});
-		  		
-	  		var rows = []; //one row per type
-	  		index = 0;
-	  		$.each(SEARCH_TYPES, function(i, searchType){          
-	            var results = allResultMap[searchType]; //get all results of this type
-	            if(results && 0!=$(results).size()) { //show the type with result only        	 
-	              //results.map(function(result){result.type = searchType;}); //assign type for each result
-	              $.map(results, function(result){result.type = searchType;}); //assign type for each result
-	              var cell = []; //the cell contains results of this type (in the quick search result table)
-	              $.each(results, function(i, result){
-	                index = index + 1; 	
-	                cell.push(renderQuickSearchResult(result, index)); //add this result to the cell
-	              });
-	              var row = QUICKSEARCH_TABLE_ROW_TEMPLATE.replace(/%{type}/g, CONNECTORS[searchType].displayName).replace(/%{results}/g, cell.join(""));
-	              rows.push(row);
-	            }
-	  		});
-	          if (rows.length>0){                
-		          var messageRow = QUICKSEARCH_SEE_ALL;
-		          $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
-	          }
-	          if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
-	          	$(quickSearchResult_id).show();              
-	          }else{
-	          	var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
-	          	$(quickSearchResult_id).width(width);
-	          	$(quickSearchResult_id).show();                      	
-	          }              
-	          	          
-	          var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
-	          $(seeAll_id).attr("href", searchPage +"?q="+query+"&types="+typeArray); //the query to be passed to main search page      
-	          currentFocus = 0;
-	        });
-		  allJqxHrResponse[types] =jqxhr;
-		  jqxhrArray.push(jqxhr);
-        });    	
-    	return jqxhrArray;
-    }
-    
-    function displayNoResult(typeArray){
-    	var query = $(txtQuickSearchQuery_id).val();
-    	var rows = [];
-        var messageRow = QUICKSEARCH_NO_RESULT.replace(/%{query}/, query);
+      var searchParams = {
+        searchContext: {
+          siteName:parent.eXo.env.portal.portalName
+        },
+        q: query,
+        sites: QUICKSEARCH_SETTING.searchCurrentSiteOnly ? parent.eXo.env.portal.portalName : "all",
+        types: types,
+        offset: 0,
+        limit: QUICKSEARCH_SETTING.resultsPerPage,
+        sort: "relevancy",
+        order: "desc"
+      };
+      
+      
+      
+      // get results of all search types in a map
+      $.getJSON("/rest/search", searchParams, function(resultMap){
+        var rows = []; //one row per type
+        index = 0;
+        $.each(SEARCH_TYPES, function(i, searchType){          
+          var results = resultMap[searchType]; //get all results of this type
+          if(results && 0!=$(results).size()) { //show the type with result only        	 
+            //results.map(function(result){result.type = searchType;}); //assign type for each result
+            $.map(results, function(result){result.type = searchType;}); //assign type for each result
+            var cell = []; //the cell contains results of this type (in the quick search result table)
+            $.each(results, function(i, result){
+              index = index + 1; 	
+              cell.push(renderQuickSearchResult(result, index)); //add this result to the cell
+            });
+            var row = QUICKSEARCH_TABLE_ROW_TEMPLATE.replace(/%{type}/g, CONNECTORS[searchType].displayName).replace(/%{results}/g, cell.join(""));
+            rows.push(row);
+          }
+        });
+                        
+        var messageRow = rows.length==0 ? QUICKSEARCH_NO_RESULT.replace(/%{query}/, query) : QUICKSEARCH_SEE_ALL;
         $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
+        if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
+        	$(quickSearchResult_id).show();              
+        }else{
+        	var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
+        	$(quickSearchResult_id).width(width);
+        	$(quickSearchResult_id).show();                      	
+        }              
+        $(txtQuickSearchQuery_id).removeClass("loadding");
+        setWaitingStatus(false);
+        
         var searchPage = "/portal/"+parent.eXo.env.portal.portalName+"/search";
-    	var query = $(txtQuickSearchQuery_id).val();
-        $(linkQuickSearchQuery_id).attr("href", searchPage +"?q="+query+"&types="+typeArray); //the query to be passed to main search page
+        $(seeAll_id).attr("href", searchPage +"?q="+query+"&types="+types); //the query to be passed to main search page      
+        currentFocus = 0;
+      });
     }
-    
+
+
     function renderQuickSearchResult(result, index) {
       var query = $(txtQuickSearchQuery_id).val();
       var terms = query.split(/\s+/g); //for highlighting
@@ -364,7 +261,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
           break;
 
         case "answer":
-        	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconAnsSubmitQuestion uiIconAnsLightGray");	      
+        	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconSocAnswersMini uiIconSocLightGray");	      
           break;
         case "wiki":        	
         	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, "uiIconWikiWiki uiIconWikiLightGray");	      
@@ -394,13 +291,10 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
 
     //*** Event handlers - Quick search ***
     $(document).on("click",seeAll_id, function(){
-    	if ($(this).attr("href") != "#"){
-    		window.location.href = $(this).attr("href"); //open the main search page
-    	}else {
-    		window.location.href = $(linkQuickSearchQuery_id).attr("href");
-    	}      
+      window.location.href = $(this).attr("href"); //open the main search page
       $(quickSearchResult_id).hide();
     });
+
 
     $(txtQuickSearchQuery_id).keyup(function(e){
       if(""==$(this).val()) {
@@ -413,8 +307,27 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
           //quickSearch(); //search for the text just being typed in
 		  var currentVal = $(txtQuickSearchQuery_id).val();    	  
     	  if (!charDeletedIsEmpty(e,textVal, currentVal)){
-    		  quickSearch(); //search for the text just being typed in
-    		  $.each(mapKeyUp, function(key, value){        		      	    	 
+    		  $.each(mapKeyUp, function(key, value){
+        		  
+    	    	  if (value == e.keyCode){
+    	    		var query = $(txtQuickSearchQuery_id).val();
+    	    		nextKeyup = new Date().getTime();	    
+    	    		
+    		    	if (query.length <= 2)
+    		      	{
+    		    		quickSearch(); //search for the text just being typed in
+    		      	}else if (nextKeyup - firstKeyup >= 1000){
+    			    		firstKeyup = nextKeyup;	    		
+    			    		quickSearch(); //search for the text just being typed in	    		
+    			    }else skipKeyup ++;
+    		    	
+    	 		    if (skipKeyup == 2)
+    			    {
+    				   skipKeyup = 0;
+    				   quickSearch();
+    				   firstKeyup = nextKeyup;
+    				}
+    	    	  }
     	    	  textVal = $(txtQuickSearchQuery_id).val();
         	  });
     	  }    	      	      	 
@@ -503,7 +416,8 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
         $(txtQuickSearchQuery_id).show();
         $(txtQuickSearchQuery_id).focus();
       }
-      else if (isDefault == true) {
+      else
+      if (isDefault == true) {
           $(txtQuickSearchQuery_id).hide();
           $(quickSearchResult_id).hide();          
       }
@@ -540,10 +454,7 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       $(this).css('color', '#000');
       isDefault = false;
     });
-
-    //$(txtQuickSearchQuery_id).blur(function(){
-    //  setTimeout(function(){$(quickSearchResult_id).hide();}, 200);
-    //});
+    
 
     //collapse the input search field when clicking outside the search box
     $('body').click(function (evt) {
@@ -564,7 +475,104 @@ function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
       });
 
     });
-  })(jQuery);
 
-  $ = jQuery; //undo .conflict();
+  //$ = jQuery; //undo .conflict();
 }
+
+
+//Function to be called when the quick search setting template is ready
+window.initQuickSearchSetting = function(allMsg,alertOk,alertNotOk){  
+  
+    var CONNECTORS; //all registered SearchService connectors
+    var CHECKBOX_TEMPLATE = "\
+      <div class='control-group'> \
+        <div class='controls-full'> \
+          <span class='uiCheckbox'> \
+            <input type='checkbox' class='checkbox' name='%{name}' value='%{value}'> \
+            <span>%{text}</span> \
+          </span> \
+        </div> \
+      </div> \
+    ";
+
+
+    function getSelectedTypes() {
+      var searchIn = [];
+      if($(":checkbox[name='searchInOption'][value='all']").is(":checked")) {
+        return "all";
+      } else {
+        $.each($(":checkbox[name='searchInOption'][value!='all']:checked"), function(){
+          searchIn.push(this.value);
+        });
+        if (searchIn.length==0){
+        	return "false";
+        }
+        return searchIn.join(",");
+      }
+    }
+
+
+    // Call REST service to save the setting
+    $("#btnSave").click(function(){
+      var jqxhr = $.post("/rest/search/setting/quicksearch", {
+        resultsPerPage: $("#resultsPerPage").val(),
+        searchTypes: getSelectedTypes(),
+        searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked")
+      });
+
+      jqxhr.complete(function(data) {
+        alert("ok"==data.responseText?alertOk:alertNotOk+data.responseText);
+      });
+    });
+
+
+    // Handler for the checkboxes
+    $(":checkbox[name='searchInOption']").live("click", function(){
+      if("all"==this.value){ //All checked
+        if($(this).is(":checked")) { // check/uncheck all
+          $(":checkbox[name='searchInOption']").attr('checked', true);
+        } else {
+          $(":checkbox[name='searchInOption']").attr('checked', false);
+        }
+      } else {
+        $(":checkbox[name='searchInOption'][value='all']").attr('checked', false); //uncheck All Sites
+      }
+    });
+
+
+    // Load all needed configurations and settings from the service to build the UI
+    $.getJSON("/rest/search/registry", function(registry){
+      CONNECTORS = registry[0];
+      var searchInOpts=[];
+      searchInOpts.push(CHECKBOX_TEMPLATE.
+        replace(/%{name}/g, "searchInOption").
+        replace(/%{value}/g, "all").
+        replace(/%{text}/g, allMsg));
+      $.each(registry[1], function(i, type){
+        if(CONNECTORS[type]) searchInOpts.push(CHECKBOX_TEMPLATE.
+          replace(/%{name}/g, "searchInOption").
+          replace(/%{value}/g, type).
+          replace(/%{text}/g, CONNECTORS[type].displayName));
+      });
+      $("#lstSearchInOptions").html(searchInOpts.join(""));
+
+      // Display the previously saved (or default) quick search setting
+      $.getJSON("/rest/search/setting/quicksearch", function(setting){
+        if(-1 != $.inArray("all", setting.searchTypes)) {
+          $(":checkbox[name='searchInOption']").attr('checked', true);
+        } else {
+          $(":checkbox[name='searchInOption']").attr('checked', false);
+          $.each($(":checkbox[name='searchInOption']"), function(){
+            if(-1 != $.inArray(this.value, setting.searchTypes)) {
+              $(this).attr('checked', true);
+            }
+          });
+        }
+        $("#resultsPerPage").val(setting.resultsPerPage);
+        $("#searchCurrentSiteOnly").attr('checked', setting.searchCurrentSiteOnly);
+      });
+
+    });
+}
+})($);
+

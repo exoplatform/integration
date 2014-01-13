@@ -10,7 +10,7 @@
       <system>hệ thống</system>
       <readmore>...Xem Thêm.</readmore>
       <editTitle>Tiêu đề đã được cập nhật thành : {0}</editTitle>
-      <editName>Tên đã đã được cập nhật thành: {0}</editName>
+      <editName>Tên đã được cập nhật thành: {0}</editName>
       <editDescription>Mô tả đã được cập nhật thành: {0}</editDescription>
       <singleCreator>Tác giả là {0}</singleCreator>
       <multiCreator>Các Tác giả là: {0}</multiCreator>
@@ -20,7 +20,7 @@
       <removeMultiSource>Một số tệp nguồn: {0} đã bị loại bỏ</removeMultiSource>
       <editSummary>Nội dung tóm tắt đã được cập nhật thành: {0}</editSummary>
       <editLanguage>Ngôn ngữ đã được cập nhật thành: {0}</editLanguage>
-      <editContent>Nội dung đã được cập nhật thành: {0}</editContent>
+      <editContent>Nội dung đã được cập nhật.</editContent>
       <editFile>Tệp đã được cập nhật.</editFile>
       <emptyTitle>Tiêu đề vừa bị loại bỏ.</emptyTitle>
       <emptySummary>Tóm tắt vừa bị loại bỏ.</emptySummary>
@@ -46,12 +46,12 @@
       <stateChange>
         <pending>Tài liệu đang chờ được duyệt.</pending>
         <approved>Tài liệu đã được chấp thuận.</approved>
-        <staged>Xuất bản đang được xem xét.</staged>
+        <staged>Tài liệu đang được xem xét.</staged>
         <published>Tài liệu đã được xuất bản.</published>
       </stateChange>
-      <contentMoved>Xuất bản vừa được di chuyển đến: {0}</contentMoved>
+      <contentMoved>Tài liệu vừa được di chuyển đến: {0}</contentMoved>
       <fileMoved>Tệp đã được chuyển tới: {0}</fileMoved>
-      <revisionChanged>Xuất bản vừa được hoàn lại phiên bản: {0}</revisionChanged>
+      <revisionChanged>Tài liệu vừa được khôi phục lại phiên bản: {0}</revisionChanged>
       <version>Phiên bản: {0}</version>
     </messages>
     <publicationStates>
