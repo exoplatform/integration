@@ -137,6 +137,19 @@ public class WikiUIActivity extends BaseUIActivity {
   String getViewChangeURL(){
     return getActivityParamValue(WikiSpaceActivityPublisher.VIEW_CHANGE_URL_KEY);
   }
+  String getVerName(){
+  	String url = getViewChangeURL();
+  	StringBuilder sb = new StringBuilder();
+  	for (int i = url.length() - 1; i >= 0; i --) {
+  	    char c = url.charAt(i);
+  	    if (Character.isDigit(c)) {
+  	        sb.insert(0, c);
+  	    } else {
+  	        break;
+  	    }
+  	}
+  	return sb.toString();
+  }
   
   String getPageExcerpt(){
     return getActivityParamValue(WikiSpaceActivityPublisher.PAGE_EXCERPT);
@@ -150,24 +163,9 @@ public class WikiUIActivity extends BaseUIActivity {
       if (pageUrl == null) {
         return version;
       }
-      
-      PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
-      WikiService wikiService = (WikiService) PortalContainer.getInstance().getComponentInstanceOfType(WikiService.class);
-      try {
-        Page wikiHome = pageResolver.resolve(pageUrl, Util.getUIPortal().getSelectedUserNode());
-        if (wikiHome != null) {
-          Page page = wikiService.getPageById(wikiHome.getWiki().getType(), wikiHome.getWiki().getOwner(), pageUrl.substring(pageUrl.lastIndexOf('/') + 1));
-          if (page != null) {
-            version = String.valueOf(page.getVersionableMixin().getVersionHistory().getChildren().size() - 1);
-          }
-        }
-      } catch (Exception e) {
-        LOG.warn("Failed to get version of wiki page", e);
-      }
     }
     return version;
   }
-  
   /**
    * Get comment message arguments by param Key.
    * 
@@ -253,5 +251,9 @@ public class WikiUIActivity extends BaseUIActivity {
     }
     
     return commentMessage;
+  }
+  
+  String getWikiActivityType(){
+  	return getActivityParamValue(WikiSpaceActivityPublisher.ACTIVITY_TYPE_KEY);
   }
 }
