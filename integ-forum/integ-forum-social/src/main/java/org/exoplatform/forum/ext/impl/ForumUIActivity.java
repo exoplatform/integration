@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
@@ -25,7 +24,6 @@ import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.webui.application.WebuiRequestContext;
@@ -35,7 +33,8 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
-
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 
 @ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/forum/social-integration/plugin/space/ForumUIActivity.gtmpl", events = {
     @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
@@ -140,16 +139,15 @@ public class ForumUIActivity extends BaseKSActivity {
       return 0.0;
     }
   }
-  
-  private Topic getTopic() {
-    DataStorage dataStorage = (DataStorage) CommonsUtils.getService(DataStorage.class);
-    String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
-    try {
-      return (Topic) dataStorage.getObjectNameById(topicId, Utils.TOPIC);
-    } catch (Exception e) {
-      return null;
-    }
-  }
+    private Topic getTopic() {
+        DataStorage dataStorage = (DataStorage) CommonsUtils.getService(DataStorage.class);
+        String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
+            try {
+                return (Topic) dataStorage.getObjectNameById(topicId, Utils.TOPIC);
+            } catch (Exception e) {
+                  return null;
+             }
+         }
   
   public boolean isTopicActivity() {
     if (Utils.isEmpty(getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY)) == false) {
@@ -213,14 +211,13 @@ public class ForumUIActivity extends BaseKSActivity {
       
       //
       Post post = uiActivity.createPost(TransformHTML.enCodeHTMLContent(message), requestContext);
+        boolean isMigratedActivity = false;
 
-      boolean isMigratedActivity = false;
-      //Case of migrate activity, post will be null
-      if (post == null) {
-        post = new Post();
-        isMigratedActivity = true;
-      }
-      
+         //Case of migrate activity, post will be null
+           if (post == null) {
+            post = new Post();
+            isMigratedActivity = true;
+          }
       //
       post.setMessage(message);
       uiActivity.saveComment(post, isMigratedActivity);
@@ -237,22 +234,20 @@ public class ForumUIActivity extends BaseKSActivity {
    * @param post
    */
   private void saveComment(Post post, boolean isMigratedActivity) {
-    ExoSocialActivity comment = new ExoSocialActivityImpl();
-    //
-    if (isMigratedActivity == false) {
+      ExoSocialActivity comment = new ExoSocialActivityImpl();
+
+      if (isMigratedActivity == false) {
       ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
-      comment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
-    }
+     comment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
+     }
     comment.setUserId(org.exoplatform.social.webui.Utils.getViewerIdentity().getId());
     comment.setTitle(post.getMessage());
     comment.setBody(post.getMessage());
     ForumActivityUtils.getActivityManager().saveComment(getActivity(), comment);
-    
-    //Never save comment's id to a post when comment on a activity that is not applied activity-type specification
-    if (isMigratedActivity == false) {
-      ForumActivityUtils.takeCommentBack(post, comment);
-    }
-    
+      //Never save comment's id to a post when comment on a activity that is not applied activity-type specification
+          if (isMigratedActivity == false) {
+              ForumActivityUtils.takeCommentBack(post, comment);
+             }
     refresh();
   }
   

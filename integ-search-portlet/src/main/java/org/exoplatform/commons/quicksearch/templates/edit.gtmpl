@@ -1,4 +1,3 @@
-
 <div id="quickSearchSetting" class="uiQuickSearchSetting">
   <div class="uiForm">
     <div class="form-horizontal">
@@ -40,8 +39,12 @@
     </div>
 
   </div>
+  
+	<script>
+	  window.require(["PORTLET/unified-search/QuicksearchPortlet"], function() {
+	  	initQuickSearchSetting("${everything}","${alertOk}","${alertNotOk}");
+	  });
+	</script>
+    
 </div>
 
-<script>
-  initQuickSearchSetting("${everything}","${alertOk}","${alertNotOk}");
-</script>
