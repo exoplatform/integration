@@ -357,6 +357,7 @@ public class CalendarUIActivity extends BaseUIActivity {
 	  String[] fields = fieldsChanged.split(",");
 	  for(int i = 0; i < fields.length; i++) {
       String label = getUICalendarLabel(fields[i]);
+      label = label.replace("'","''");
       String childMessage; // message for each updated field
 
       if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED)
