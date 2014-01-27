@@ -1,5 +1,6 @@
 package org.exoplatform.cs.ext.impl;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.exoplatform.calendar.service.CalendarEvent;
 import org.exoplatform.calendar.service.CalendarService;
 import org.exoplatform.calendar.service.CalendarSetting;
@@ -356,6 +357,7 @@ public class CalendarUIActivity extends BaseUIActivity {
 	  String[] fields = fieldsChanged.split(",");
 	  for(int i = 0; i < fields.length; i++) {
       String label = getUICalendarLabel(fields[i]);
+      label = label.replace("'","''");
       String childMessage; // message for each updated field
 
       if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED)
@@ -372,14 +374,12 @@ public class CalendarUIActivity extends BaseUIActivity {
         Calendar calendar = GregorianCalendar.getInstance(locale);
         calendar.setTimeInMillis(time);
         childMessage = MessageFormat.format(label, getDateString(locale, calendar));
-
       } else if(fields[i].equals(CalendarSpaceActivityPublisher.REPEAT_UPDATED)) {
         CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
-        childMessage =  CalendarSpaceActivityPublisher.buildRepeatSummary(event, calService);
+        childMessage = MessageFormat.format(label, CalendarSpaceActivityPublisher.buildRepeatSummary(event, calService));
       } else {
         childMessage = MessageFormat.format(label,tempParams.get(fields[i]));
       }
-
 		  commentMessage.append(childMessage + "<br/>");
 	  }
 	  return commentMessage.toString();
