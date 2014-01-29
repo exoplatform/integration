@@ -16,25 +16,22 @@
  */
 package org.exoplatform.wcm.ext.component.activity.listener;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.jcr.Node;
-
-import org.exoplatform.services.cms.impl.CmsServiceImpl;
+import org.exoplatform.services.cms.CmsService;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
-
-import javax.jcr.Value;
-
-import org.exoplatform.services.cms.CmsService;
-import org.exoplatform.services.cms.JcrInputProperty;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
+
+import javax.jcr.Node;
+import javax.jcr.Value;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -42,6 +39,8 @@ import org.exoplatform.webui.application.portlet.PortletRequestContext;
  * 15, 2011
  */
 public class FileUpdateActivityListener extends Listener<Node, String> {
+
+  private static final Log LOG = ExoLogger.getLogger(FileUpdateActivityListener.class);
 
   private String[]  editedField     = {"exo:title", "exo:summary", "exo:language", "dc:title", "dc:description", "dc:creator", "dc:source", "jcr:data"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editName",
@@ -111,6 +110,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
 	    	}
     	}
     }catch (Exception e) {
+        LOG.info("Cannot get old value");
     }
     newValue = newValue.trim();
     oldValue = oldValue.trim();
@@ -264,7 +264,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     		dcProperty = portletRequestContext.getApplicationResourceBundle().getString("ElementSet.dialog.label." + 
     	  		propertyName.substring(propertyName.lastIndexOf(":") + 1, propertyName.length()));
     	} catch(Exception ex) {
-    		//nothing
+            LOG.info("Cannot get propertyName");
     	}
     	if(newValue.length() > 0) resourceBundle = "SocialIntegration.messages.updateMetadata";
     	else resourceBundle = "SocialIntegration.messages.removeMetadata";    	
