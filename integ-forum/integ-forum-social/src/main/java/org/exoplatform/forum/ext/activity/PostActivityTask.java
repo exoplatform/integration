@@ -16,14 +16,14 @@
  */
 package org.exoplatform.forum.ext.activity;
 
-import java.util.Map;
-
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.ActivityManager;
+
+import java.util.Map;
 
 /**
  * Created by The eXo Platform SAS
@@ -33,7 +33,7 @@ import org.exoplatform.social.core.manager.ActivityManager;
  */
 public abstract class PostActivityTask implements ActivityTask<ForumActivityContext> {
 
-  protected static final Log   LOG = ExoLogger.getExoLogger(PostActivityTask.class);
+  protected static final Log   LOG = ExoLogger.getLogger(PostActivityTask.class);
   
   @Override
   public void start(ForumActivityContext ctx) { }

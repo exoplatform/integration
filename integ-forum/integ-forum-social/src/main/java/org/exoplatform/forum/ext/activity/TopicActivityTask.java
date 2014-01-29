@@ -16,8 +16,6 @@
  */
 package org.exoplatform.forum.ext.activity;
 
-import java.util.Map;
-
 import org.exoplatform.commons.utils.PropertyChangeSupport;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.UserHelper;
@@ -29,6 +27,8 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 
+import java.util.Map;
+
 /**
  * Created by The eXo Platform SAS
  * Author : thanh_vucong
@@ -36,7 +36,7 @@ import org.exoplatform.social.core.manager.ActivityManager;
  * Jan 9, 2013  
  */
 public abstract class TopicActivityTask implements ActivityTask<ForumActivityContext> {
-  protected static final Log   LOG = ExoLogger.getExoLogger(TopicActivityTask.class);
+  protected static final Log   LOG = ExoLogger.getLogger(TopicActivityTask.class);
   
   public static final String SPACE_GROUP_ID  = "SpaceGroupId";
 
