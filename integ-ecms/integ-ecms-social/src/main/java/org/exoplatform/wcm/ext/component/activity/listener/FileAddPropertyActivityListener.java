@@ -63,8 +63,8 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
     		Value[] values = currentNode.getProperty(propertyName).getValues();
     		if(values != null) {
     			for (Value value : values) {
-						newValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
-						commentValue += value.getString() + ", ";
+                        newValue=new StringBuffer(newValue).append(value.getString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR).toString();
+                        commentValue=new StringBuffer(commentValue).append(value.getString()).append(", ").toString();
 					}
     			if(newValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length())
     			  newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
