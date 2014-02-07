@@ -1,4 +1,3 @@
-
 <div id="searchPortlet" class="uiSearchPortlet">
 
   <div id='resultLoading' class="resultLoading">
@@ -62,5 +61,7 @@
 </div>
 
 <script>
+window.require(["PORTLET/unified-search/UnifiedsearchPortlet"], function() {
   initSearch();
+});  
 </script>
