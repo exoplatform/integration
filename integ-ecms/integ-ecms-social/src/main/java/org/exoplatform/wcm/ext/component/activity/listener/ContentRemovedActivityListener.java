@@ -16,15 +16,17 @@
  */
 package org.exoplatform.wcm.ext.component.activity.listener;
 
-import javax.jcr.Node;
-
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.manager.ActivityManager;
+
+import javax.jcr.Node;
 /**
  * Created by The eXo Platform SAS
  * Author : Nguyen The Vinh From ECM Of eXoPlatform
@@ -33,6 +35,8 @@ import org.exoplatform.social.core.manager.ActivityManager;
  * 26 Feb 2013  
  */
 public class ContentRemovedActivityListener extends Listener<Node, String>{
+    private static final Log LOG               = ExoLogger.getExoLogger(ContentRemovedActivityListener.class);
+
   @Override
   public void onEvent(Event<Node, String> event) throws Exception {
     Node currentNode = event.getSource();
@@ -44,7 +48,7 @@ public class ContentRemovedActivityListener extends Listener<Node, String>{
         nodeActivityID = currentNode.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
         activityManager.deleteActivity(nodeActivityID);
       }catch (Exception e){
-        //Activity is not found, stop action
+          LOG.info("No activity is deleted, return no related activity");
       }
     }
   }

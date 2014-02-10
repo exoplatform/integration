@@ -16,17 +16,18 @@
  */
 package org.exoplatform.wcm.ext.component.activity.listener;
 
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.Value;
 
 /**
@@ -34,6 +35,8 @@ import javax.jcr.Value;
  * 15, 2011
  */
 public class FileAddPropertyActivityListener extends Listener<Node, String> {
+
+  private static final Log LOG = ExoLogger.getExoLogger(FileAddPropertyActivityListener.class);
 
   private String[]  editedField     = {"dc:title", "dc:description", "dc:creator", "dc:source"};
   private String[]  bundleMessage   = {"SocialIntegration.messages.editTitle",
@@ -60,8 +63,8 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
     		Value[] values = currentNode.getProperty(propertyName).getValues();
     		if(values != null) {
     			for (Value value : values) {
-						newValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
-						commentValue += value.getString() + ", ";
+                        newValue=new StringBuffer(newValue).append(value.getString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR).toString();
+                        commentValue=new StringBuffer(commentValue).append(value.getString()).append(", ").toString();
 					}
     			if(newValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length())
     			  newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
@@ -107,7 +110,7 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 	    		dcProperty = portletRequestContext.getApplicationResourceBundle().getString("ElementSet.dialog.label." + 
 	    	  		propertyName.substring(propertyName.lastIndexOf(":") + 1, propertyName.length()));
 	    	} catch(Exception ex) {
-	    		//nothing
+                LOG.info("cannot get property name");
 	    	}
 	    	resourceBundle = "SocialIntegration.messages.updateMetadata";
 	    	resourceBundle = portletRequestContext.getApplicationResourceBundle().getString(resourceBundle);

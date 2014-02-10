@@ -163,7 +163,9 @@ public class UIDocActivity extends BaseUIActivity {
       if (rootVersion_ != null) {
         return rootVersion_.getChildren().size();
       }
-    } catch (Exception e) { }
+    } catch (Exception e) {
+        LOG.info("cannot version node");
+    }
     return 0;
   }
 

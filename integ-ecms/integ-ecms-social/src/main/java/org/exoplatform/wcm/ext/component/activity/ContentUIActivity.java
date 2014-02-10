@@ -325,7 +325,7 @@ public class ContentUIActivity extends BaseUIActivity {
       try {
         return contentNode.getPrimaryNodeType().getName().replaceAll(":", "_");
       } catch (RepositoryException e) {
-        
+          LOG.info("Cannot get content node");
       }
     }
     return "";
