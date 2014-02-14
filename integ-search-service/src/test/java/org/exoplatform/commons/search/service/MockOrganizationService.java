@@ -27,20 +27,7 @@ import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.component.ComponentPlugin;
-import org.exoplatform.services.organization.Group;
-import org.exoplatform.services.organization.GroupEventListener;
-import org.exoplatform.services.organization.GroupHandler;
-import org.exoplatform.services.organization.Membership;
-import org.exoplatform.services.organization.MembershipEventListener;
-import org.exoplatform.services.organization.MembershipHandler;
-import org.exoplatform.services.organization.MembershipType;
-import org.exoplatform.services.organization.MembershipTypeHandler;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.Query;
-import org.exoplatform.services.organization.User;
-import org.exoplatform.services.organization.UserEventListener;
-import org.exoplatform.services.organization.UserHandler;
-import org.exoplatform.services.organization.UserProfileHandler;
+import org.exoplatform.services.organization.*;
 
 
 /**
@@ -359,7 +346,7 @@ public class MockOrganizationService implements OrganizationService {
       }
       return null;
     }
-    public User findUserByName(String userName, boolean enabledOnly) throws Exception {
+    public User findUserByName(String userName, UserStatus status) throws Exception {
         return null;
     }
 
@@ -386,21 +373,21 @@ public class MockOrganizationService implements OrganizationService {
     public ListAccess<User> findAllUsers() throws Exception {
       return null;
     }
-    public ListAccess<User> findAllUsers(boolean enabledOnly) throws Exception {
+    public ListAccess<User> findAllUsers(UserStatus status) throws Exception {
         return null;
     }
 
     public ListAccess<User> findUsersByGroupId(String groupId) throws Exception {
       return null;
     }
-    public  ListAccess<User> findUsersByGroupId(String groupId, boolean enabledOnly) throws Exception {
+    public  ListAccess<User> findUsersByGroupId(String groupId, UserStatus status) throws Exception {
         return null;
     }
 
     public ListAccess<User> findUsersByQuery(Query query) throws Exception {
       return null;
     }
-    public ListAccess<User> findUsersByQuery(Query query, boolean enabledOnly) throws Exception {
+    public ListAccess<User> findUsersByQuery(Query query, UserStatus status) throws Exception {
         return null;
     }
 
