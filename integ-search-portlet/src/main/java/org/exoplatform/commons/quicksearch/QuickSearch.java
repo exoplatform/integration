@@ -27,10 +27,9 @@ import juzu.template.Template;
 
 import javax.inject.Inject;
 import javax.portlet.PortletMode;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by The eXo Platform SAS

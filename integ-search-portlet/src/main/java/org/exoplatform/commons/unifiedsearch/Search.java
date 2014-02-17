@@ -17,9 +17,6 @@
 package org.exoplatform.commons.unifiedsearch;
 
 
-import javax.inject.Inject;
-import javax.portlet.PortletMode;
-
 import juzu.Path;
 import juzu.View;
 import juzu.bridge.portlet.JuzuPortlet;
@@ -27,10 +24,12 @@ import juzu.impl.request.Request;
 import juzu.request.RenderContext;
 import juzu.request.RequestContext;
 import juzu.template.Template;
-import java.util.Locale;
-import java.util.ResourceBundle;
+
+import javax.inject.Inject;
+import javax.portlet.PortletMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by The eXo Platform SAS

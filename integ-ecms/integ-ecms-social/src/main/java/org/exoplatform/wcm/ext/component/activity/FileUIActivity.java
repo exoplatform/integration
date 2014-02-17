@@ -358,7 +358,9 @@ public class FileUIActivity extends BaseUIActivity{
     	imageWidth = reader.getWidth(0);
     	iis.close();
     	reader.dispose();   	
-    } catch (Exception e) {}
+    } catch (Exception e) {
+        LOG.info("Cannot get node");
+    }
   	return imageWidth;
   }
   
@@ -372,7 +374,9 @@ public class FileUIActivity extends BaseUIActivity{
     	imageHeight = reader.getHeight(0);
     	iis.close();
     	reader.dispose();   	
-    } catch (Exception e) {}
+    } catch (Exception e) {
+        LOG.info("Cannot get node");
+    }
   	return imageHeight;
   }
   

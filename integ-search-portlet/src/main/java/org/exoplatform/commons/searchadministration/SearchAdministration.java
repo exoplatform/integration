@@ -17,19 +17,17 @@
 package org.exoplatform.commons.searchadministration;
 
 
-import java.util.ResourceBundle;
-
-import javax.inject.Inject;
-
 import juzu.Path;
 import juzu.View;
 import juzu.impl.request.Request;
 import juzu.request.RenderContext;
 import juzu.request.RequestContext;
 import juzu.template.Template;
-import java.util.Locale;
-import java.util.Map;
+
+import javax.inject.Inject;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by The eXo Platform SAS
