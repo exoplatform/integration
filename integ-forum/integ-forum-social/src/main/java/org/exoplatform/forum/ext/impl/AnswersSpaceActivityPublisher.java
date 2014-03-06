@@ -29,10 +29,8 @@ import org.exoplatform.faq.service.Comment;
 import org.exoplatform.faq.service.FAQNodeTypes;
 import org.exoplatform.faq.service.FAQService;
 import org.exoplatform.faq.service.Question;
-import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
 import org.exoplatform.forum.common.CommonUtils;
-import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -43,7 +41,6 @@ import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.processor.I18NActivityUtils;
-import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -139,6 +136,66 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
     activity.setTemplateParams(activityTemplateParams);
     activity.setBody(null);
     activity.setTitle(null);
+  }
+  
+  @Override
+  public void moveQuestions(List<String> questions, String catId) {
+    ExoContainer exoContainer = ExoContainerContext.getCurrentContainer();
+    ActivityManager activityM = (ActivityManager) exoContainer.getComponentInstanceOfType(ActivityManager.class);
+    FAQService faqS = (FAQService) exoContainer.getComponentInstanceOfType(FAQService.class);
+    IdentityManager identityM = (IdentityManager) exoContainer.getComponentInstanceOfType(IdentityManager.class);
+    for (String questionId : questions) {
+      try {	
+        Question question = faqS.getQuestionById(questionId);
+        String activityId = faqS.getActivityIdForQuestion(questionId);
+        Identity streamOwner = null;
+        Map<String, String> templateParams = updateTemplateParams(new HashMap<String, String>(), question.getId(),
+                                                                      ActivityUtils.getQuestionRate(question),
+                                                                      ActivityUtils.getNbOfAnswers(question),
+                                                                      ActivityUtils.getNbOfComments(question),
+                                                                      question.getLanguage(), question.getLink());
+        String questionDetail = ActivityUtils.processContent(question.getDetail());
+        Identity spaceIdentity = getSpaceIdentity(catId);
+        if (spaceIdentity != null) {
+          streamOwner = spaceIdentity;
+          templateParams.put(SPACE_GROUP_ID, ActivityUtils.getSpaceGroupId(catId));
+        }
+        if (activityId != null) {
+          ExoSocialActivity oldActivity = activityM.getActivity(activityId);
+          activityM.deleteActivity(oldActivity);
+          Identity userIdentity = identityM.getOrCreateIdentity(OrganizationIdentityProvider.NAME,question.getAuthor(),false);
+          ExoSocialActivity activity = newActivity(userIdentity,question.getQuestion(),questionDetail,templateParams);
+          activityM.saveActivityNoReturn(streamOwner, activity);
+          faqS.saveActivityIdForQuestion(questionId,activity.getId());
+          for (Answer answer : question.getAnswers()) {
+            ExoSocialActivity comment = createCommentForAnswer(userIdentity, answer);
+            String answerContent = ActivityUtils.processContent(answer.getResponses());
+            comment.setTitle("Answer has been submitted: " + answerContent);
+            I18NActivityUtils.addResourceKey(comment, "answer-add", answerContent);
+            updateActivity(activity, question);
+            activityM.updateActivity(activity);
+            updateCommentTemplateParms(comment, answer.getId());
+            activityM.saveComment(activity, comment);
+            faqS.saveActivityIdForAnswer(questionId, answer, comment.getId());  
+          }
+          for (Comment cm : question.getComments()) {
+            String message = ActivityUtils.processContent(cm.getComments());  
+            ExoSocialActivityImpl comment = new ExoSocialActivityImpl();  
+            Map<String, String> commentTemplateParams = new HashMap<String, String>();
+            commentTemplateParams.put(LINK_KEY, cm.getId());  
+            comment.setTemplateParams(commentTemplateParams);
+            comment.setTitle(message);
+            comment.setUserId(userIdentity.getId());
+            updateActivity(activity, question);
+            activityM.updateActivity(activity);
+            activityM.saveComment(activity, comment);
+            faqS.saveActivityIdForComment(questionId, cm.getId(), question.getLanguage(), comment.getId());
+          }
+        }
+      } catch (Exception e) {
+        LOG.error("Fail to move questions " + e.getMessage());
+      }	
+    }  
   }
   
   @Override
