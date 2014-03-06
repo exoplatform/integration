@@ -2,7 +2,7 @@
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>Failo dydis</fileSize>
     </titles>
     <messages>
       <createdBy>was created by</createdBy>
@@ -21,7 +21,7 @@
       <editSummary>Summary has been updated to: {0}</editSummary>
       <editLanguage>Language has been updated to: {0}</editLanguage>
       <editContent>Content has been updated.</editContent>
-      <editFile>File has been updated.</editFile>
+      <editFile>Failas buvo atnaujintas.</editFile>
       <emptyTitle>The title has been removed.</emptyTitle>
       <emptySummary>The summary has been removed.</emptySummary>
       <emptyContent>The content has been removed.</emptyContent>
@@ -59,16 +59,16 @@
       <obsolete>Obsolete</obsolete>
       <unpublished>Unpublished</unpublished>
       <draft>Draft</draft>
-      <pending>Pending</pending>
+      <pending>Laukiama</pending>
       <approved>Approved</approved>
       <inreview>In Review</inreview>
       <staged>Staged</staged>
       <published>Published</published>
       <live>Published</live>
     </publicationStates>
-    <view>View</view>
+    <view>Rodyti</view>
     <edit>Redaguoti</edit>
-    <download>Download</download>
+    <download>Atsisiųsti</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -78,7 +78,7 @@
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Resource Type</resourceType>        
+        <resourceType>Resurso tipas</resourceType>        
       </label>
     </dialog>
   </ElementSet>
