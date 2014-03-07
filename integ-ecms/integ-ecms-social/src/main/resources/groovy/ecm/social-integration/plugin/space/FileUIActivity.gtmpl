@@ -129,6 +129,7 @@
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
   def description = uicomponent.getSummary(currentNode); 
+  description = ContentReader.getXSSCompatibilityContent(description);
   def commentCount = 0;
   def commentHidden = 0;
   if (allComments) {
