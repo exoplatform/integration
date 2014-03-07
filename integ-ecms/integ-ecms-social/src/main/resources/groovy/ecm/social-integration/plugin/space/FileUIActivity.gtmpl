@@ -214,6 +214,7 @@
 	  def size = uicomponent.getSize(currentNode);
 	  def fileSize = uicomponent.getFileSize(currentNode);
 	  def description = uicomponent.getSummary(currentNode); 
+      description = ContentReader.getXSSCompatibilityContent(description);
   // END ECMS
  %>
 <script language="JavaScript">
