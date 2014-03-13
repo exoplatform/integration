@@ -207,9 +207,9 @@
 						  <%
                  int rateInt = (Integer) uicomponent.getRating();
                  double diff = uicomponent.getRating() - rateInt;
-                 String labelRating = _ctx.appRes("ActivityRating.title.rank${rateInt}");
-                 if (rateInt == 0)
-                   labelRating = _ctx.appRes("ActivityRating.title.NotRateYet");
+                 String labelRating = _ctx.appRes("ActivityRating.title.NotRateYet");
+                 if (rateInt > 0)
+                   labelRating = _ctx.appRes("ActivityRating.title.rank${rateInt}");
               %>
               <div class="avgRatingImages sumaryRate" rel="tooltip" data-placement="bottom" title="$labelRating">
                 <%
