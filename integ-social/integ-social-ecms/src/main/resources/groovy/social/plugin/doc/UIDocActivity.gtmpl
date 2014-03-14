@@ -248,7 +248,7 @@
                     <img src="<%= uicomponent.docThumbnail %>" />
                 </a>
           <%
-            } else if( mimeType.startsWith("application/pdf") || mimeType.startsWith("application/msword") || mimeType.startsWith("application/vnd.oasis.opendocument.text") || mimeType.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") || mimeType.startsWith("application/rtf") ) {
+            } else if (org.exoplatform.services.cms.impl.Utils.isSupportThumbnailView(mimeType)) {
           %>
           <div class="clearfix isPreviewable">
             <div id="MediaContent${activity.id}" class="pull-left mediaContent docTypeContent">
