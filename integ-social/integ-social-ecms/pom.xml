@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ-social</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>4.0.5</version>
+    <version>4.0.x-SNAPSHOT</version>
   </parent>
   <artifactId>integ-social-ecms</artifactId>
   <packaging>jar</packaging>
