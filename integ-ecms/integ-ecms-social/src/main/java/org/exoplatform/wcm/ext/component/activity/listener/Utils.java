@@ -187,6 +187,8 @@ public class Utils {
     ExoContainer container = ExoContainerContext.getCurrentContainer();
     ActivityManager activityManager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
     IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
+    ActivityCommonService activityCommonService =
+            (ActivityCommonService)container.getComponentInstanceOfType(ActivityCommonService.class);
 
     SpaceService spaceService = WCMCoreUtils.getService(SpaceService.class);
 
@@ -208,12 +210,11 @@ public class Utils {
     ExoSocialActivity activity = null ;
     String commentID;
     boolean commentFlag = false;
-    if (node.isNodeType(MIX_COMMENT)) {
-      if (node.hasProperty(MIX_COMMENT_ID)) {
-        commentID = node.getProperty(MIX_COMMENT_ID).getString();
-        activity = activityManager.getActivity(commentID);
-        commentFlag = activity!=null;
-      }
+    if (node.isNodeType(MIX_COMMENT) && node.hasProperty(MIX_COMMENT_ID) && activityCommonService.isEditing(node))
+    {
+      commentID = node.getProperty(MIX_COMMENT_ID).getString();
+      if (StringUtils.isNotBlank(commentID)) activity = activityManager.getActivity(commentID);
+      commentFlag = (activity != null);
     }
     if (activity==null) {
       activity = createActivity(identityManager, activityOwnerId,
@@ -242,9 +243,10 @@ public class Utils {
         activityManager.updateActivity(activity);
       } else {
         activityManager.saveComment(exa, activity);
-        if (node.isNodeType(MIX_COMMENT)) {
+        if (activityCommonService.isEditing(node)) {
           commentID = activity.getId();
-          node.setProperty(MIX_COMMENT_ID, commentID);
+          if (node.canAddMixin(MIX_COMMENT)) node.addMixin(MIX_COMMENT);
+          if (node.isNodeType(MIX_COMMENT)) node.setProperty(MIX_COMMENT_ID, commentID);
         }
       }
       if (needUpdate) {
@@ -274,21 +276,24 @@ public class Utils {
         ActivityTypeUtils.attachActivityId(node, activityId);
       }
       updateMainActivity(activityManager, node, activity);
-        if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
-            try {
-                nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
-                exa = activityManager.getActivity(nodeActivityID);
-            }catch (Exception e){
-                LOG.info("No activity is deleted, return no related activity");
-            }
-            if (exa!=null && !commentFlag  && isSystemComment) {
-                activityManager.saveComment(exa, activity);
-                if (node.isNodeType(MIX_COMMENT)) {
-                    commentID = activity.getId();
-                    node.setProperty(MIX_COMMENT_ID, commentID);
-                }
-            }
+
+      if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
+        try {
+          nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
+          exa = activityManager.getActivity(nodeActivityID);
+        } catch (Exception e) {
+          LOG.info("No activity is deleted, return no related activity");
         }
+        if (exa != null && !commentFlag && isSystemComment) {
+          activityManager.saveComment(exa, activity);
+          if (activityCommonService.isEditing(node)) {
+            commentID = activity.getId();
+            if (node.canAddMixin(MIX_COMMENT)) node.addMixin(MIX_COMMENT);
+            if (node.isNodeType(MIX_COMMENT)) node.setProperty(MIX_COMMENT_ID, commentID);
+          }
+        }
+      }
+
       return activity;
     }
   }
@@ -318,6 +323,8 @@ public class Utils {
     ExoContainer container = ExoContainerContext.getCurrentContainer();
     ActivityManager activityManager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
     IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
+    ActivityCommonService activityCommonService =
+            (ActivityCommonService)container.getComponentInstanceOfType(ActivityCommonService.class);
 
     SpaceService spaceService = WCMCoreUtils.getService(SpaceService.class);
 
@@ -339,11 +346,11 @@ public class Utils {
     ExoSocialActivity activity = null ;
     String commentID;
     boolean commentFlag = false;
-    if (node.isNodeType(MIX_COMMENT)) {
+    if (node.isNodeType(MIX_COMMENT) && activityCommonService.isEditing(node)) {
       if (node.hasProperty(MIX_COMMENT_ID)) {
         commentID = node.getProperty(MIX_COMMENT_ID).getString();
-        activity = activityManager.getActivity(commentID);
-        commentFlag = activity!=null;
+        if (StringUtils.isNotBlank(commentID)) activity = activityManager.getActivity(commentID);
+        commentFlag = (activity != null);
       }
     }
     if (activity==null) {
@@ -373,9 +380,10 @@ public class Utils {
         activityManager.updateActivity(activity);
       } else {
         activityManager.saveComment(exa, activity);
-        if (node.isNodeType(MIX_COMMENT)) {
+        if (activityCommonService.isEditing(node)) {
           commentID = activity.getId();
-          node.setProperty(MIX_COMMENT_ID, commentID);
+          if (node.canAddMixin(MIX_COMMENT)) node.addMixin(MIX_COMMENT);
+          if (node.isNodeType(MIX_COMMENT)) node.setProperty(MIX_COMMENT_ID, commentID);
         }
       }      
       return activity;
@@ -401,23 +409,25 @@ public class Utils {
       if (!StringUtils.isEmpty(activityId)) {
         ActivityTypeUtils.attachActivityId(node, activityId);
       }
-        if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
-            try {
-                nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
-                exa = activityManager.getActivity(nodeActivityID);
-            }catch (Exception e){
-                LOG.info("No activity is deleted, return no related activity");
-            }
-            if (exa!=null && !commentFlag && isSystemComment) {
-                activityManager.saveComment(exa, activity);
-                if (node.isNodeType(MIX_COMMENT)) {
-                    commentID = activity.getId();
-                    node.setProperty(MIX_COMMENT_ID, commentID);
-                }
-            }
-        }
 
-        return activity;
+      if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
+        try {
+          nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
+          exa = activityManager.getActivity(nodeActivityID);
+        } catch (Exception e) {
+          LOG.info("No activity is deleted, return no related activity");
+        }
+        if (exa != null && !commentFlag && isSystemComment) {
+          activityManager.saveComment(exa, activity);
+          if (activityCommonService.isEditing(node)) {
+            commentID = activity.getId();
+            if (node.canAddMixin(MIX_COMMENT)) node.addMixin(MIX_COMMENT);
+            if (node.isNodeType(MIX_COMMENT)) node.setProperty(MIX_COMMENT_ID, commentID);
+          }
+        }
+      }
+
+      return activity;
     }
   }
   
@@ -654,7 +664,7 @@ public class Utils {
   /**
    * Generate the Thumbnail Image URI.
    * 
-   * @param node the node
+   * @param file the node
    * @return the Thumbnail uri with medium size
    * @throws Exception the exception
    */
