@@ -122,6 +122,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       templateContext.put("SUMMARY", Utils.getSummary(currentNode));
       templateContext.put("SIZE", getSize(currentNode));
       templateContext.put("VERSION", getVersion(currentNode));
+      templateContext.put("IS_VIDEO", this.mimeType.startsWith("video"));
 
       String thumbnailUrl = null;
       String docLink = templateParams.get(DOCLINK);
