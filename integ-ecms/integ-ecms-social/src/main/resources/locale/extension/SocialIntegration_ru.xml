@@ -2,83 +2,83 @@
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>Размер файла</fileSize>
     </titles>
     <messages>
-      <createdBy>was created by</createdBy>
-      <editedBy>was edited by</editedBy>
-      <system>the system</system>
-      <readmore>...Read More.</readmore>
-      <editTitle>Title has been updated to: {0}</editTitle>
-      <editName>Name has been updated to: {0}</editName>
-      <editDescription>Description has been updated to: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <addSource>File source: {0} has been added</addSource>
-      <addMultiSource>File sources: {0} have been added</addMultiSource>
-      <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
-      <editSummary>Summary has been updated to: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
-      <editContent>Content has been updated.</editContent>
-      <editFile>File has been updated.</editFile>
-      <emptyTitle>The title has been removed.</emptyTitle>
-      <emptySummary>The summary has been removed.</emptySummary>
-      <emptyContent>The content has been removed.</emptyContent>
-      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} has been removed.</removeMetadata>  
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Name has been removed.</removeName>
-      <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator: {0} has been removed.</removeCreator>
-      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
-      <removeLanguage>Language has been removed.</removeLanguage>
-      <removeContent>Content has been removed.</removeContent>
-      <attachmentAdded>File(s) has been attached.</attachmentAdded>
-      <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
-      <categoryAdded>Category: {0} has been added.</categoryAdded>
-      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
-      <tagAdded>Tag: {0} has been added.</tagAdded>
-      <tagsAdded>Tags: {0} have been added.</tagsAdded>
-      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
+      <createdBy>был создан</createdBy>
+      <editedBy>был изменен</editedBy>
+      <system>система</system>
+      <readmore>...Прочитать больше.</readmore>
+      <editTitle>Обновлен заголовок: {0}</editTitle>
+      <editName>Обновлено название: {0}</editName>
+      <editDescription>Обновлено описание: {0}</editDescription>
+      <singleCreator>Создатель — {0}</singleCreator>
+      <multiCreator>Создатели - {0}</multiCreator>
+      <addSource>Был добавлен источник файла: {0}</addSource>
+      <addMultiSource>Были добавлены источники файлов: {0}</addMultiSource>
+      <removeSource>Был удален источник файла: {0}</removeSource>
+      <removeMultiSource>Были удалены источники файла: {0}</removeMultiSource>
+      <editSummary>Обновлено краткое описание: {0}</editSummary>
+      <editLanguage>Обновлен язык: {0}</editLanguage>
+      <editContent>Обновлено содержимое.</editContent>
+      <editFile>Обновлен файл.</editFile>
+      <emptyTitle>Удален заголовок.</emptyTitle>
+      <emptySummary>Удалено краткое описание.</emptySummary>
+      <emptyContent>Удалено содержимое.</emptyContent>
+      <updateMetadata>Метаданные {0} были обновлены: {1}</updateMetadata>
+      <removeMetadata>Метаданные {0} удалены.</removeMetadata>  
+      <removeTitle>Заголовок был удален.</removeTitle>
+      <removeName>Название было удалено.</removeName>
+      <removeSummary>Краткое описание было удалено.</removeSummary>
+      <removeDescription>Описание было удалено.</removeDescription>
+      <removeCreator>Создатель: {0} был удален.</removeCreator>
+      <removeMultiCreator>Создатели: {0} были удалены.</removeMultiCreator>
+      <removeLanguage>Язык был удален.</removeLanguage>
+      <removeContent>Содержимое было удалено.</removeContent>
+      <attachmentAdded>Файл(ы) были прикреплены.</attachmentAdded>
+      <attachmentRemoved>Файл(ы) были удалены.</attachmentRemoved>
+      <categoryAdded>Была добавлена категория: {0}.</categoryAdded>
+      <categoryRemoved>Категория: {0} была удалена.</categoryRemoved>
+      <tagAdded>Был добавлен тег: {0}.</tagAdded>
+      <tagsAdded>Были добавлены теги: {0}.</tagsAdded>
+      <tagRemoved>Был удален тег: {0}.</tagRemoved>
+      <tagsRemoved>Были удалены теги: {0}.</tagsRemoved>
       <stateChange>
-        <pending>Publication status is now pending.</pending>
-        <approved>Document has been approved.</approved>
-        <staged>Publication has been staged.</staged>
-        <published>Document has been published.</published>
+        <pending>Состояние публикации ожидает подтверждения.</pending>
+        <approved>Документ был утвержден.</approved>
+        <staged>Публикация была размещена.</staged>
+        <published>Документ был опубликован.</published>
       </stateChange>
-      <contentMoved>Publication has been moved to: {0}</contentMoved>
-      <fileMoved>File has been moved to: {0}</fileMoved>
-      <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
-      <version>Version: {0}</version>
+      <contentMoved>Публикация была перемещена в: {0}</contentMoved>
+      <fileMoved>Файл был перемещен в: {0}</fileMoved>
+      <revisionChanged>Публикация была восстановлена до версии: {0}</revisionChanged>
+      <version>Версия: {0}</version>
     </messages>
     <publicationStates>
-      <archived>Archived</archived>
-      <obsolete>Obsolete</obsolete>
-      <unpublished>Unpublished</unpublished>
-      <draft>Draft</draft>
-      <pending>Pending</pending>
-      <approved>Approved</approved>
-      <inreview>In Review</inreview>
-      <staged>Staged</staged>
-      <published>Published</published>
-      <live>Published</live>
+      <archived>В архиве</archived>
+      <obsolete>Устаревшие</obsolete>
+      <unpublished>Неопубликованные</unpublished>
+      <draft>Черновик</draft>
+      <pending>На рассмотрении</pending>
+      <approved>Утверждены</approved>
+      <inreview>На рассмотрении</inreview>
+      <staged>Размещены</staged>
+      <published>Опубликованы</published>
+      <live>Опубликовано</live>
     </publicationStates>
-    <view>View</view>
-    <edit>Edit</edit>
-    <download>Download</download>
+    <view>Показать</view>
+    <edit>Редактировать</edit>
+    <download>Загрузить</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Preview</DocViewer>
+      <DocViewer>Предварительный просмотр</DocViewer>
     </title>
   </UIPopupWindow>
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Resource Type</resourceType>        
+        <resourceType>Тип ресурса</resourceType>        
       </label>
     </dialog>
   </ElementSet>

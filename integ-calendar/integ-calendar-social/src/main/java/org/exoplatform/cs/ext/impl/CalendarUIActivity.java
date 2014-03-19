@@ -1,19 +1,16 @@
 package org.exoplatform.cs.ext.impl;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.jcr.PathNotFoundException;
-
+import org.apache.commons.lang.StringEscapeUtils;
 import org.exoplatform.calendar.service.CalendarEvent;
 import org.exoplatform.calendar.service.CalendarService;
+import org.exoplatform.calendar.service.CalendarSetting;
 import org.exoplatform.calendar.service.Utils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.web.CacheUserProfileFilter;
 import org.exoplatform.webui.application.WebuiRequestContext;
@@ -23,6 +20,17 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+
+import javax.jcr.PathNotFoundException;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 @ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/cs/social-integration/plugin/space/CalendarUIActivity.gtmpl", events = {
     @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
@@ -40,6 +48,7 @@ import org.exoplatform.webui.event.EventListener;
 public class CalendarUIActivity extends BaseUIActivity {
   private static final Log LOG                = ExoLogger.getLogger(CalendarUIActivity.class);
 
+  private static final String LOCALE_US = "en";
   private boolean          isAnswered         = false;
 
   private boolean          isInvited          = false;
@@ -56,6 +65,11 @@ public class CalendarUIActivity extends BaseUIActivity {
 
   private CalendarEvent event =  null ;
 
+  private TimeZone           timeZone;
+  
+
+  protected static final String CALENDAR_PREFIX_KEY = "CalendarUIActivity.msg.";
+
   public CalendarUIActivity() {
     super();
   }
@@ -66,11 +80,13 @@ public class CalendarUIActivity extends BaseUIActivity {
       calendarId = getActivity().getTemplateParams().get(CalendarSpaceActivityPublisher.CALENDAR_ID_KEY);
       String username = ConversationState.getCurrent().getIdentity().getUserId();      
       CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+      CalendarSetting setting = calService.getCalendarSetting(username);
+      timeZone = TimeZone.getTimeZone(setting.getTimeZone());
       try {
         event = calService.getGroupEvent(calendarId, eventId);
       } catch (PathNotFoundException pnf) {
         if (LOG.isDebugEnabled()) 
-                LOG.debug("Couldn't find the event: " + eventId, pnf);
+          LOG.debug("Couldn't find the event: " + eventId, pnf);
       }
       if (event == null) {
         eventNotFound = true;
@@ -234,6 +250,8 @@ public class CalendarUIActivity extends BaseUIActivity {
     return type;
   }
 
+  //SimpleDateFormat dformat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
   public String getEventStartTime(WebuiBindingContext ctx) {
     String timeStr = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_STARTTIME_KEY);
     if (timeStr == null) {
@@ -241,13 +259,10 @@ public class CalendarUIActivity extends BaseUIActivity {
     }
     long time = Long.valueOf(timeStr);
 
-    return CalendarSpaceActivityPublisher.getDateTimeString(getLocale(ctx), time, event,CalendarSpaceActivityPublisher.getUserTimeZone());
+    return getDateTimeString(ctx, time, event);
 
   }
 
-  private Locale getLocale(WebuiBindingContext ctx) {
-    return ctx.getRequestContext().getLocale();
-  }
   public String getDescription() {
     String des = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_DESCRIPTION_KEY);
     return des != null ? des : "";
@@ -265,9 +280,133 @@ public class CalendarUIActivity extends BaseUIActivity {
     }
     long time = Long.valueOf(timeStr);
 
-    return CalendarSpaceActivityPublisher.getDateTimeString(getLocale(ctx), time, event, CalendarSpaceActivityPublisher.getUserTimeZone());
+    return getDateTimeString(ctx, time, event);
 
   }
+  /**
+   * returns localized DateTime string for a time, for ex. Friday, February 22, 2013 6:30 PM
+   * @param ctx
+   * @param time
+   * @param event
+   * @return
+   */
+  public String getDateTimeString(WebuiBindingContext ctx, long time, CalendarEvent event) {
+    WebuiRequestContext requestContext = ctx.getRequestContext();
+    Locale locale = requestContext.getLocale();
+    ResourceBundle rb = requestContext.getApplicationResourceBundle();
+    
+    Calendar calendar = GregorianCalendar.getInstance(locale);
+    calendar.setTimeInMillis(time);
+    
+    StringBuilder sb = new StringBuilder(getDateString(locale,calendar));
+    sb.append(" ");
+    
+    if(event != null && isAllDay(event)) {
+      if(CalendarEvent.TYPE_EVENT.equals(event.getEventType())) {
+        sb.append(rb.getString("CalendarUIActivity.label.allday"));
+      }
+    } else {
+      sb.append(getTimeString(locale, calendar));
+    }
+    return sb.toString();
+  }
+  
+  private String getDateString(Locale locale, Calendar calendar) {
+    DateFormat dformat = DateFormat.getDateInstance(DateFormat.FULL, locale); // date format
+    dformat.setTimeZone(timeZone);
+    return capitalizeFirstChar(dformat.format(calendar.getTime()));
+  }
+  
+  private String getTimeString(Locale locale, Calendar calendar) {
+    String timeStr;
+    DateFormat tformat = DateFormat.getTimeInstance(DateFormat.SHORT, locale); // time format
+    tformat.setTimeZone(timeZone);
+    
+    timeStr = tformat.format(calendar.getTime());
+    if(LOCALE_US.equals(locale) && timeStr.indexOf(":00") > -1) {
+      return timeStr.replace(":00", "");
+    }
+    return timeStr;
+  }
+  
+  private String capitalizeFirstChar(String str) {
+    StringBuilder sb = new StringBuilder(str.substring(0,1).toUpperCase());
+    sb.append(str.substring(1));
+    return sb.toString();
+  }
+
+
+  /**
+   * builds localized string for comment content
+   *
+   * used in template
+   * @see <code>CalendarUIActivity.gtmpl</code>
+   *
+   * @param comment
+   * @return localized string for comment
+   * @since activity-type
+   */
+  public String buildComment(WebuiBindingContext ctx, ExoSocialActivity comment) {
+    StringBuilder commentMessage = new StringBuilder();
+    Map<String,String> tempParams = comment.getTemplateParams();
+    // get updated fields in format {field1,field2,...}
+    String fieldsChanged = tempParams.get(CalendarSpaceActivityPublisher.CALENDAR_FIELDS_CHANGED);
+    if(fieldsChanged == null) {
+      return comment.getTitle();
+    }
+    String[] fields = fieldsChanged.split(",");
+    for(int i = 0; i < fields.length; i++) {
+      String label = getUICalendarLabel(fields[i]);
+      label = label.replace("'","''");
+      String childMessage; // message for each updated field
+
+      if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED)
+              || fields[i].equals(CalendarSpaceActivityPublisher.TO_UPDATED)) {
+        //get date time string from timestamp
+        long time = Long.valueOf(tempParams.get(fields[i]));
+        childMessage = MessageFormat.format(label, getDateTimeString(ctx, time, null));
+
+      } else if(fields[i].equals(CalendarSpaceActivityPublisher.STOP_REPEATING)
+              || fields[i].equals(CalendarSpaceActivityPublisher.EVENT_CANCELLED)) {
+        //get the date string from timestamp
+        long time = Long.valueOf(tempParams.get(fields[i]));
+        Locale locale = ctx.getRequestContext().getLocale();
+        Calendar calendar = GregorianCalendar.getInstance(locale);
+        calendar.setTimeInMillis(time);
+        childMessage = MessageFormat.format(label, getDateString(locale, calendar));
+      } else if(fields[i].equals(CalendarSpaceActivityPublisher.REPEAT_UPDATED)) {
+        CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+        childMessage = MessageFormat.format(label, CalendarSpaceActivityPublisher.buildRepeatSummary(event, calService));
+      } else {
+        childMessage = MessageFormat.format(label,tempParams.get(fields[i]));
+      }
+      commentMessage.append(childMessage + "<br/>");
+    }
+    return commentMessage.toString();
+  }
+
+  /**
+   * get label from resource bundle for CalendarUIActivity
+   * @param label
+   * @return
+   */
+  public static String getUICalendarLabel(String label)
+  {
+    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+    ResourceBundle resourceBundle = requestContext.getApplicationResourceBundle();
+    return resourceBundle.getString(CALENDAR_PREFIX_KEY + label);
+  }
+
+  /**
+   * checks if an event is all day
+   * @param event
+   * @return true if given event is all day
+   */
+  public Boolean isAllDay(CalendarEvent event) {
+    long diff = event.getToDateTime().getTime() - event.getFromDateTime().getTime() + 1;
+    return diff % (24 * 60 * 60 * 1000) == 0;
+  }
+  
 
   public static class AcceptEventActionListener extends EventListener<CalendarUIActivity> {
 

@@ -101,7 +101,9 @@ public class FileUIActivity extends BaseUIActivity{
 
   public static final String CONTENT_LINK       = "contenLink";
 
-  public static final String MESSAGE            = "MESSAGE";
+  public static final String MESSAGE            = "message";
+
+  public static final String ACTIVITY_STATUS    = "MESSAGE";
 
   public static final String REPOSITORY         = "repository";
 
@@ -161,6 +163,7 @@ public class FileUIActivity extends BaseUIActivity{
   private String             docTitle;
   private String             docVersion;
   private String             docSummary;
+  private String             activityStatus;
   public String              docPath;
   public String              repository;
   public String              workspace;
@@ -358,7 +361,9 @@ public class FileUIActivity extends BaseUIActivity{
     	imageWidth = reader.getWidth(0);
     	iis.close();
     	reader.dispose();   	
-    } catch (Exception e) {}
+    } catch (Exception e) {
+        LOG.info("Cannot get node");
+    }
   	return imageWidth;
   }
   
@@ -372,7 +377,9 @@ public class FileUIActivity extends BaseUIActivity{
     	imageHeight = reader.getHeight(0);
     	iis.close();
     	reader.dispose();   	
-    } catch (Exception e) {}
+    } catch (Exception e) {
+        LOG.info("Cannot get node");
+    }
   	return imageHeight;
   }
   
@@ -412,6 +419,14 @@ public class FileUIActivity extends BaseUIActivity{
     return null;
   }
 
+  public String getActivityStatus() {
+    if (message == null) {
+      return activityStatus;
+    } else {
+      return null;
+    }
+  }
+
   public void setUIActivityData(Map<String, String> activityParams) {
     this.contentLink = activityParams.get(FileUIActivity.CONTENT_LINK);
     this.nodeUUID = activityParams.get(FileUIActivity.ID);
@@ -427,6 +442,7 @@ public class FileUIActivity extends BaseUIActivity{
     this.docTitle = activityParams.get(FileUIActivity.DOCUMENT_TITLE);  
     this.docVersion = activityParams.get(FileUIActivity.DOCUMENT_VERSION);
     this.docSummary = activityParams.get(FileUIActivity.DOCUMENT_SUMMARY);
+    this.activityStatus = activityParams.get(FileUIActivity.ACTIVITY_STATUS);
   }
 
 

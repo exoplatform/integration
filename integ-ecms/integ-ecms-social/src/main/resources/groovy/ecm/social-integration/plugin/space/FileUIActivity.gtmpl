@@ -80,7 +80,7 @@
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
   
-  def message = uicomponent.getMessage();
+  def activityStatus = uicomponent.getActivityStatus();
   def contentName = uicomponent.getContentName();
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
   def contentActivityUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");
@@ -267,8 +267,8 @@
 						<%} %>
 					</div>
 				</div><!--end heading-->
-				<% if (message != null) { %>
-				<div class="description">$message</div><!--end description-->
+				<% if (activityStatus != null) { %>
+				<div class="description">$activityStatus</div><!--end description-->
 				<% } %>
 				
 				<div class="uiBox roundedBottom introBox fileShare">	
@@ -338,7 +338,7 @@
 							<%if (currentNode) {%>
 							  <a class="linkTitle" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle" href="$contentActivityUri"> $activityContentTitle </a>
 							<%} else {%>
-							  <span>$message</span>
+							  <span>$activityStatus</span>
 							<%}%>
 							  <div class="descriptionText">$description</div>
 								<div class="inforFile">				        
@@ -604,8 +604,9 @@
 						<%} %>
 					</div>
 				</div><!--end heading-->
-				<div class="description">$message</div><!--end description-->
-				
+                <% if (activityStatus != null) { %>
+                    <div class="description">$activityStatus</div><!--end description-->
+                <% } %>
 				<div class="uiBox roundedBottom introBox fileShare">	
 					<div class="clearfix isPreviewable">
 		              <div id="MediaContent${activity.id}" class="fileTypeContent">

@@ -129,6 +129,7 @@ public class WikiUIActivity extends BaseUIActivity {
         URL oldURL = new URL(pageUrl);
         pageUrl = oldURL.getPath();
       } catch (MalformedURLException ex) {
+          LOG.info("cannot get page url");
       }
     }
     return pageUrl;
