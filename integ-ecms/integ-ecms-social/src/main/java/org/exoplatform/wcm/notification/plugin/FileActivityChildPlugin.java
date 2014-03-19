@@ -33,6 +33,7 @@ import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationChildPlugin;
 import org.exoplatform.commons.api.notification.plugin.NotificationPluginUtils;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
+import org.exoplatform.commons.notification.NotificationUtils;
 import org.exoplatform.commons.notification.template.TemplateUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainer;
@@ -117,7 +118,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       //
       Node currentNode = getContentNode();
       templateContext.put("ACTIVITY_URL", LinkProviderUtils.getRedirectUrl(ACTIVITY_URL, activity.getId()));
-      templateContext.put("ACTIVITY_TITLE", templateParams.get(MESSAGE));
+      templateContext.put("ACTIVITY_TITLE", NotificationUtils.processLinkTitle(templateParams.get(MESSAGE)));
       templateContext.put("DOCUMENT_TITLE", this.documentTitle);
       templateContext.put("SUMMARY", Utils.getSummary(currentNode));
       templateContext.put("SIZE", getSize(currentNode));
@@ -185,7 +186,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
     ManageableRepository manageRepo = null;
     try {
       manageRepo = repositoryService.getCurrentRepository();
-      SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
+      SessionProvider sessionProvider = CommonsUtils.getSystemSessionProvider();
       for (String ws : manageRepo.getWorkspaceNames()) {
         try {
           this.contentNode = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(this.nodeUUID);
