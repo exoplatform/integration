@@ -27,6 +27,7 @@
   import org.exoplatform.social.core.space.model.Space;
   import org.exoplatform.social.webui.Utils;
   import org.exoplatform.social.plugin.link.UILinkUtil;
+  import org.apache.commons.lang.StringEscapeUtils;
   import org.apache.commons.lang.StringUtils;
 
   def pcontext = Util.getPortalRequestContext();
@@ -211,7 +212,7 @@
                   </div>
                   <div class="contentWiki theContent">
                     <% if (!StringUtils.EMPTY.equals(uicomponent.getPageExcerpt())) { %>             
-                    <div class="text"><%=uicomponent.getPageExcerpt()%></div>
+                    <p class="text"><%=StringEscapeUtils.escapeHtml(uicomponent.getPageExcerpt())%></p>
                     <% } %>
                   </div>
                 </div><!--end introBox,linkShare-->  

@@ -131,7 +131,6 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
       excerpt.replace(EXCERPT_LENGTH, excerpt.length(), "...");
     }
     templateParams.put(PAGE_EXCERPT, validateExcerpt(excerpt.toString()));
-    templateParams.put(org.exoplatform.social.core.BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, PAGE_EXCERPT);
     if (!ADD_PAGE_TYPE.equals(activityType)) {
       String verName = ((PageImpl) page).getVersionableMixin().getBaseVersion().getName();
       templateParams.put(VIEW_CHANGE_URL_KEY, Utils.getURL(page.getURL(), verName));
