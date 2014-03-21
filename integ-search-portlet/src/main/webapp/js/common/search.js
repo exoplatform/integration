@@ -383,7 +383,7 @@ window.initSearch = function initSearch() {
         if(append) {
           $("#showMore").hide();
         } else {
-          clearResultPage("No result for <strong>" + $("#txtQuery").val() + "<strong>");
+          clearResultPage("No result for <strong>" + XSSUtils.sanitizeString($("#txtQuery").val()) + "<strong>");
         }
         return;
       }
