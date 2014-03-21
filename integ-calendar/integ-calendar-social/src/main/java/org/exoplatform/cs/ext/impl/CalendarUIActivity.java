@@ -86,7 +86,7 @@ public class CalendarUIActivity extends BaseUIActivity {
         event = calService.getGroupEvent(calendarId, eventId);
       } catch (PathNotFoundException pnf) {
         if (LOG.isDebugEnabled()) 
-        	LOG.debug("Couldn't find the event: " + eventId, pnf);
+          LOG.debug("Couldn't find the event: " + eventId, pnf);
       }
       if (event == null) {
         eventNotFound = true;
@@ -348,14 +348,14 @@ public class CalendarUIActivity extends BaseUIActivity {
    */
   public String buildComment(WebuiBindingContext ctx, ExoSocialActivity comment) {
     StringBuilder commentMessage = new StringBuilder();
-	  Map<String,String> tempParams = comment.getTemplateParams();
-	  // get updated fields in format {field1,field2,...}
-	  String fieldsChanged = tempParams.get(CalendarSpaceActivityPublisher.CALENDAR_FIELDS_CHANGED);
-	  if(fieldsChanged == null) {
-		  return comment.getTitle();
-	  }
-	  String[] fields = fieldsChanged.split(",");
-	  for(int i = 0; i < fields.length; i++) {
+    Map<String,String> tempParams = comment.getTemplateParams();
+    // get updated fields in format {field1,field2,...}
+    String fieldsChanged = tempParams.get(CalendarSpaceActivityPublisher.CALENDAR_FIELDS_CHANGED);
+    if(fieldsChanged == null) {
+      return comment.getTitle();
+    }
+    String[] fields = fieldsChanged.split(",");
+    for(int i = 0; i < fields.length; i++) {
       String label = getUICalendarLabel(fields[i]);
       label = label.replace("'","''");
       String childMessage; // message for each updated field
@@ -380,9 +380,9 @@ public class CalendarUIActivity extends BaseUIActivity {
       } else {
         childMessage = MessageFormat.format(label,tempParams.get(fields[i]));
       }
-		  commentMessage.append(childMessage + "<br/>");
-	  }
-	  return commentMessage.toString();
+      commentMessage.append(childMessage + "<br/>");
+    }
+    return commentMessage.toString();
   }
 
   /**
