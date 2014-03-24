@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -59,6 +60,10 @@ import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.wcm.ext.component.activity.ContentUIActivity;
+import org.exoplatform.webui.application.WebuiRequestContext;
+
+import java.util.ResourceBundle;
+
 
 
 /**
@@ -240,8 +245,10 @@ public class Utils {
         paramsMap.put(ContentUIActivity.MESSAGE, paramMessage);
         paramsMap.put(ContentUIActivity.SYSTEM_COMMENT, paramContent);
         activity.setTemplateParams(paramsMap);
+        updateNotifyMessages(activity, activityMsgBundleKey, systemComment);
         activityManager.updateActivity(activity);
       } else {
+        updateNotifyMessages(activity, activity.getTemplateParams().get(ContentUIActivity.MESSAGE), activity.getTemplateParams().get(ContentUIActivity.SYSTEM_COMMENT));
         activityManager.saveComment(exa, activity);
         if (activityCommonService.isEditing(node)) {
           commentID = activity.getId();
@@ -373,12 +380,14 @@ public class Utils {
         } else {
           paramMessage = activityMsgBundleKey;
           paramContent = systemComment;
-        }
+        }              
         paramsMap.put(ContentUIActivity.MESSAGE, paramMessage);
         paramsMap.put(ContentUIActivity.SYSTEM_COMMENT, paramContent);
         activity.setTemplateParams(paramsMap);
+        updateNotifyMessages(activity, activityMsgBundleKey, systemComment);
         activityManager.updateActivity(activity);
       } else {
+        updateNotifyMessages(activity, activity.getTemplateParams().get(ContentUIActivity.MESSAGE), activity.getTemplateParams().get(ContentUIActivity.SYSTEM_COMMENT));
         activityManager.saveComment(exa, activity);
         if (activityCommonService.isEditing(node)) {
           commentID = activity.getId();
@@ -431,13 +440,32 @@ public class Utils {
     }
   }
   
+  private static void updateNotifyMessages(ExoSocialActivity activity, String activityMsgBundleKey, String systemComment) 
+      throws Exception {     
+    WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
+    Locale locale = new Locale("en");
+    ResourceBundle res = context.getApplication().getResourceBundle(locale);
+    StringBuffer sb = new StringBuffer();
+    String[] keys = activityMsgBundleKey.split(ActivityCommonService.VALUE_SEPERATOR);
+    String[] values = systemComment.split(ActivityCommonService.VALUE_SEPERATOR);
+    for (String key : keys) {      
+      String messsage = res.getString(key);
+      if(values.length > 0) {
+        for(int i = 0; i < values.length; i++) {
+          messsage = messsage.replace("{"+i+"}", values[i]);          
+        }
+      }
+      sb.append(messsage).append("\n");
+    }
+    activity.setTitle(sb.toString());
+  }
+  
   
   private static void updateMainActivity(ActivityManager activityManager, Node contentNode, ExoSocialActivity activity) {
     Map<String, String> activityParams = activity.getTemplateParams();
     String state;
     String nodeTitle;
     String nodeType = null;
-    String nodeIconName = null;
     String documentTypeLabel;
     String currentVersion = null;
     TemplateService templateService = WCMCoreUtils.getService(TemplateService.class);
@@ -613,7 +641,8 @@ public class Utils {
     activity.setUserId(identity.getId());
     activity.setType(activityType);
     activity.setUrl(node.getPath());
-    activity.setTitle(title);
+    if(isSystemComment) updateNotifyMessages(activity, activityMsgBundleKey, systemComment);
+    else activity.setTitle(title);
     activity.setTemplateParams(activityParams);
     return activity;
   }
@@ -622,12 +651,9 @@ public class Utils {
     // get services
     ExoContainer container = ExoContainerContext.getCurrentContainer();
     ActivityManager activityManager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
-    IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
     
     // get owner
-    String activityOwnerId = getActivityOwnerId(node);
     String nodeActivityID = StringUtils.EMPTY;
-    ExoSocialActivity exa =null;
     if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
       try {
         nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
