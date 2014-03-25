@@ -171,6 +171,17 @@ public class AnswerUIActivity extends BaseKSActivity {
     return String.format("%s/%s%s%s", spaceLink, getAnswerPortletInSpace(getSpaceGroupId()), org.exoplatform.faq.service.Utils.QUESTION_ID, questionId);
   }
   
+  @SuppressWarnings("unused")
+  private String getAnswerLink() {
+    String spaceLink = getSpaceHomeURL(getSpaceGroupId());
+    if (spaceLink == null) {
+      return getActivityParamValue(AnswersSpaceActivityPublisher.LINK_KEY).concat(Utils.ANSWER_NOW.concat("true"));
+    }
+    String[] tab = getQuestionId().split("/");
+    String answerLink = String.format("%s/answer%s%s", spaceLink, Utils.QUESTION_ID.concat(tab[tab.length-1]), Utils.ANSWER_NOW.concat("true"));
+    return answerLink;
+  }
+  
   private String getNumberOfAnswers() throws Exception {
     String number_str = getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_ANSWERS);
 
