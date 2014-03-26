@@ -159,6 +159,8 @@
   def version = uicomponent.getPageVersion();
   def versionLabel = _ctx.appRes("WikiUIActivity.label.version") + version;
   def versionNum = Integer.valueOf(version);
+  def activityType = uicomponent.getWikiActivityType();
+  def verName = uicomponent.getVerName();
 %>
 
 <div class="activityStream uiWikiActivity" id="activityContainer${activity.id}">
@@ -199,6 +201,9 @@
                 </div><!--end heading-->
                 <div class="uiBox roundedBottom introBox wikiShare">
                   <div class="headingContainer clearfix">
+                  <% if(!(activityType.equals("add_page"))){
+                    versionLabel = _ctx.appRes("WikiUIActivity.label.version") + verName;
+                   } %>
                     <div class="pull-right versionLabel">$versionLabel</div>
                     <div class="titleWiki">
                       <a class='linkTitle' href='<%=uicomponent.getPageURL()%>'><%=uicomponent.getPageName()%></a>
@@ -215,7 +220,7 @@
                                      def commentLink = "";
                                   %>
                          <!-- View Changes -->
-                         <% if (versionNum > 1) { %>
+                         <% if ((versionNum > 1)||!(activityType.equals("add_page"))) { %>
                          <ul class="pull-left statusAction">
                            <li>
                              <a id="ViewChanges${activity.id}" href="<%=uicomponent.getViewChangeURL();%>" >

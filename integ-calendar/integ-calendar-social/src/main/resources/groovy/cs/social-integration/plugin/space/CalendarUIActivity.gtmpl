@@ -29,6 +29,7 @@
   import org.exoplatform.social.core.service.LinkProvider;
   /* this block is required for rendering calendar content */
   import org.exoplatform.calendar.service.CalendarEvent;
+  import org.exoplatform.cs.ext.impl.CalendarSpaceActivityPublisher
   /* end block */
 	
   uicomponent.init();
@@ -36,6 +37,7 @@
   def jsManager = pcontext.getJavascriptManager();
   //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()     
   
+  def locale = pcontext.getLocale();
   def labelActivityHasBeenDeleted = _ctx.appRes("UIActivity.label.Activity_Has_Been_Deleted");
   def activity = uicomponent.getActivity();
   def activityDeletable = uicomponent.isActivityDeletable();
@@ -50,7 +52,7 @@
   def labelLike = _ctx.appRes("UIActivity.label.Like");
   def labelUnlike = _ctx.appRes("UIActivity.label.Unlike");
   def labelSource = _ctx.appRes("UIActivity.label.Source");
-  def inputWriteAComment = _ctx.appRes("UIActivity.input.Write_A_Comment");
+  def inputWriteAComment = _ctx.appRes("UIActivity.input.Add_your_comment");
   def labelShowAllComments = _ctx.appRes("UIActivity.label.Show_All_Comments");
   def labelHideAllComments = _ctx.appRes("UIActivity.label.Hide_All_Comments");
   def labelShowPreviousComments = _ctx.appRes("UIActivity.label.Show_Previous_Comments");
@@ -347,7 +349,7 @@
 					  def id = Utils.getIdentityManager().getIdentity(it.userId);
 					  commenterFullName = id.profile.fullName;
 					  commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-					  commentMessage = uicomponent.buildComment(_ctx,it);
+					  commentMessage = CalendarSpaceActivityPublisher.buildComment(locale,it);
 					  commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
 					  commenterAvatarImgSrc = id.profile.avatarUrl;
 					  if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;

@@ -162,7 +162,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     							"SocialIntegration.messages.removeMultiCreator" : "SocialIntegration.messages.removeCreator";
     					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsRemoved);
     					
-    					resourceBundle = (addedCount > 1) ?
+    					resourceBundle = (lstNew.size() > 1) ?
     							"SocialIntegration.messages.multiCreator" : "SocialIntegration.messages.singleCreator";
     					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
     	        break;
