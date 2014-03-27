@@ -64,7 +64,7 @@ window.initSearch = function initSearch() {
       var str = this;
       for(var i=0; i<words.length; i++) {
         if(""==words[i]) continue;
-        var regex = new RegExp("(" + words[i] + ")", "gi");
+        var regex = new RegExp("(\\" + words[i] + ")", "gi");
         str = str.replace(regex, "<strong>$1</strong>");
       }
       return str;
@@ -674,12 +674,8 @@ window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk)
 
 initSearch();
 
-})($);
-
-/**
- * Handle error event when image cannot load in unified search
- * 
- */
-function onImgError(object, errorClasses) {
+window.onImgError = function onImgError(object, errorClasses) {
   $(object).parent().empty().append($(document.createElement('i')).addClass(errorClasses));
 }
+
+})($);
