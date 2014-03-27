@@ -136,7 +136,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
       var str = this;
       for(var i=0; i<words.length; i++) {
         if(""==words[i]) continue;
-        var regex = new RegExp("(" + words[i] + ")", "gi");
+        var regex = new RegExp("(\\" + words[i] + ")", "gi");
         str = str.replace(regex, "<strong>$1</strong>");
       }
       return str;
