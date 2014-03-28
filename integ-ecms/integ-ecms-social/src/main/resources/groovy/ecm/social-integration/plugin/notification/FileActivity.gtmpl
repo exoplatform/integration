@@ -30,7 +30,7 @@
 									style="width: 100%; background-color: #ffffff; font-size: 13px; color: #333333; line-height: 18px;">
 									<tr>
 										<td align="center" valign="top" bgcolor="#f9f9f9"
-	                      style="vertical-align: top; background-color: #f9f9f9; padding: 0 15px 0 0; min-width: 110px;">
+	                      style="vertical-align: top; background-color: #f9f9f9; padding: 0 15px 0 0;">
 											<a href="$ACTIVITY_URL" style="margin: 0; padding: 0; display: block; margin-top: 5px;">
 												<% if (THUMBNAIL_URL != null) { %> 
 												     <img style="max-width: 300px;" src="$THUMBNAIL_URL" alt="image" />
@@ -46,6 +46,7 @@
 														border-top: 5px solid transparent;
 														border-bottom: 5px solid transparent;
 														border-left: 5px solid #5073a7; margin-right: 2px;
+														white-space: nowrap;
 													"></span>
 													<%=_ctx.appRes("FileActivityChildPlugin.label.WatchTheVideo")%>
 												</a>
