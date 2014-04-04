@@ -152,7 +152,7 @@ window.initSearch = function initSearch() {
     }
 
     function getSelectedSites(){
-      if(SEARCH_SETTING.searchCurrentSiteOnly) return getUrlParam("currentSite") || parent.eXo.env.portal.portalName;
+      if(SEARCH_SETTING.searchCurrentSiteOnly) return getUrlParam("currentSite") || eXo.env.portal.portalName;
       var selectedSites = [];
       $.each($(":checkbox[name='site'][value!='all']:checked"), function(){
         selectedSites.push(this.value);
@@ -317,7 +317,7 @@ window.initSearch = function initSearch() {
       
       var searchParams = {
         searchContext: {
-          siteName:parent.eXo.env.portal.portalName
+          siteName:eXo.env.portal.portalName
         },
         q: query,
         sites: getSelectedSites(),
