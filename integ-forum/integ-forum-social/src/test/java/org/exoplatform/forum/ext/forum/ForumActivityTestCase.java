@@ -210,6 +210,103 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     assertEquals("message2", getActivityManager().getCommentsWithListAccess(activity).load(0, 10)[3].getTitle());
   }
 
+  public void testSplitTopicWithSpecialCharacter() throws Exception {
+    Topic topic = forumService.getTopic(categoryId, forumId, topicId, "");
+    //Create new topic with special characters
+    topic.setTopicName("sujet avec des caractères spéciaux 1");
+    topic.setDescription("Description dans le sujet avec des caractères spéciaux");
+    forumService.saveTopic(categoryId, forumId, topic, false, false, new MessageBuilder());
+    
+    //Create some post with special characters
+    Post post1 = createdPost("Re:sujet avec des caractères spéciaux 1", "Message en réponse avec des caractères spéciaux 1");
+    Post post2 = createdPost("Re:sujet avec des caractères spéciaux 1", "Message en réponse avec des caractères spéciaux 2");
+    Post post3 = createdPost("Re:sujet avec des caractères spéciaux 1", "Message en réponse avec des caractères spéciaux 3");
+    Post post4 = createdPost("Re:sujet avec des caractères spéciaux 1", "Message en réponse avec des caractères spéciaux 4");
+    forumService.savePost(categoryId, forumId, topicId, post1, true, new MessageBuilder());
+    forumService.savePost(categoryId, forumId, topicId, post2, true, new MessageBuilder());
+    forumService.savePost(categoryId, forumId, topicId, post3, true, new MessageBuilder());
+    forumService.savePost(categoryId, forumId, topicId, post4, true, new MessageBuilder());
+    List<String> postPaths = new ArrayList<String>();
+    postPaths.add(post1.getPath());
+    postPaths.add(post2.getPath());
+    postPaths.add(post3.getPath());
+    postPaths.add(post4.getPath());
+    //Create new topic before split topic
+    Topic newTopic = createdTopic("root");
+    newTopic.setTopicName("sujet avec des caractères spéciaux 2");
+    newTopic.setDescription("Description dans le sujet avec des caractères spéciaux 2");
+    newTopic.setId(post1.getId().replace("post", "topic"));
+    newTopic.setOwner(post1.getOwner());
+    newTopic.setPath(categoryId + "/" + forumId + "/" + post1.getId().replace("post", "topic"));
+    //Split topic
+    forumService.splitTopic(newTopic, post1, postPaths, "", "");
+    
+    assertEquals(1, forumService.getPosts(new PostFilter(topic.getPath())).getSize());
+    assertEquals(4, forumService.getPosts(new PostFilter(newTopic.getPath())).getSize());
+    
+    //2 actitivies created after split topic
+    String activityId1 = forumService.getActivityIdForOwnerPath(topic.getPath());
+    ExoSocialActivity activity1 = getActivityManager().getActivity(activityId1);
+    assertNotNull(activity1);
+    assertEquals("sujet avec des caractères spéciaux 1", activity1.getTitle());
+    assertEquals("Description dans le sujet avec des caractères spéciaux", activity1.getBody());
+    
+    ListAccess<ExoSocialActivity> list1 = getActivityManager().getCommentsWithListAccess(activity1);
+    assertEquals(0, list1.getSize());
+    
+    String activityId2 = forumService.getActivityIdForOwnerPath(newTopic.getPath());
+    ExoSocialActivity activity2 = getActivityManager().getActivity(activityId2);
+    assertNotNull(activity2);
+    assertEquals("sujet avec des caractères spéciaux 2", activity2.getTitle());
+    assertEquals("Description dans le sujet avec des caractères spéciaux 2", activity2.getBody());
+    ListAccess<ExoSocialActivity> list2 = getActivityManager().getCommentsWithListAccess(activity2);
+    assertEquals(3, list2.getSize());
+    assertEquals("Message en réponse avec des caractères spéciaux 2", list2.load(0, 10)[0].getBody());
+    assertEquals("Message en réponse avec des caractères spéciaux 3", list2.load(0, 10)[1].getBody());
+    assertEquals("Message en réponse avec des caractères spéciaux 4", list2.load(0, 10)[2].getBody());
+  }
+  
+  public void testMovePostsWithSpecialCharacter() throws Exception {
+    Topic topic1 = forumService.getTopic(categoryId, forumId, topicId, "");
+    //Create new topic with special characters
+    topic1.setTopicName("sujet avec des caractères spéciaux 1");
+    topic1.setDescription("Description dans le sujet avec des caractères spéciaux");
+    forumService.saveTopic(categoryId, forumId, topic1, false, false, new MessageBuilder());
+    
+    //Create some post with special characters
+    Post post1 = createdPost("Re:sujet avec des caractères spéciaux 1", "Message en réponse avec des caractères spéciaux 1");
+    Post post2 = createdPost("Re:sujet avec des caractères spéciaux 1", "Message en réponse avec des caractères spéciaux 2");
+    forumService.savePost(categoryId, forumId, topicId, post1, true, new MessageBuilder());
+    forumService.savePost(categoryId, forumId, topicId, post2, true, new MessageBuilder());
+    List<String> postPaths = new ArrayList<String>();
+    postPaths.add(post1.getPath());
+    postPaths.add(post2.getPath());
+    //Create new topic before move posts
+    Topic topic2 = createdTopic("root");
+    topic2.setTopicName("sujet avec des caractères spéciaux 2");
+    topic2.setDescription("Description dans le sujet avec des caractères spéciaux 2");
+    forumService.saveTopic(categoryId, forumId, topic2, true, false, new MessageBuilder());
+    //Move posts
+    forumService.movePost(postPaths.toArray(new String[postPaths.size()]), topic2.getPath(), false, "", "");
+    
+    assertEquals(1, forumService.getPosts(new PostFilter(topic1.getPath())).getSize());
+    assertEquals(3, forumService.getPosts(new PostFilter(topic2.getPath())).getSize());
+    
+    //2 actitivies on AS
+    String activityId1 = forumService.getActivityIdForOwnerPath(topic1.getPath());
+    ExoSocialActivity activity1 = getActivityManager().getActivity(activityId1);
+    assertNotNull(activity1);
+    assertEquals("sujet avec des caractères spéciaux 1", activity1.getTitle());
+    assertEquals("Description dans le sujet avec des caractères spéciaux", activity1.getBody());
+    
+    String activityId2 = forumService.getActivityIdForOwnerPath(topic2.getPath());
+    ExoSocialActivity activity2 = getActivityManager().getActivity(activityId2);
+    assertNotNull(activity2);
+    assertEquals("sujet avec des caractères spéciaux 2", activity2.getTitle());
+    assertEquals("Description dans le sujet avec des caractères spéciaux 2", activity2.getBody());
+  }
+  
+  
   private ActivityManager getActivityManager() {
     return (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
   }

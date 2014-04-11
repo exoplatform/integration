@@ -149,6 +149,7 @@ public class ForumActivityUtils {
         comment = ForumActivityBuilder.createActivityComment(post, ForumActivityContext.makeContextForAddPost(post));
         comment.setUserId(getIdentity(post.getOwner()).getId());
       }
+      comment.setTitle(ForumActivityBuilder.getFourFirstLines(post.getMessage()));
       am.saveComment(activity, comment);
       takeCommentBack(post, comment);
       count++;
@@ -300,6 +301,8 @@ public class ForumActivityUtils {
     if (activity == null)
       return;
     activity = ForumActivityBuilder.updateNumberOfReplies(activity, true);
+    activity.setTitle(null);
+    activity.setBody(null);
     am.updateActivity(activity);
     am.deleteComment(activityId, commentId);
   }
