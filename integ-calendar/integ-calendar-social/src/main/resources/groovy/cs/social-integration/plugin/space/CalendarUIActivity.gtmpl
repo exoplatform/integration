@@ -29,7 +29,7 @@
   import org.exoplatform.social.core.service.LinkProvider;
   /* this block is required for rendering calendar content */
   import org.exoplatform.calendar.service.CalendarEvent;
-  import org.exoplatform.cs.ext.impl.CalendarSpaceActivityPublisher
+  import org.exoplatform.cs.ext.impl.CalendarSpaceActivityPublisher;
   /* end block */
 	
   uicomponent.init();
