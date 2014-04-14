@@ -36,7 +36,7 @@
 										<td align="center" valign="top" bgcolor="#f9f9f9"
 	                      style="vertical-align: top; background-color: #f9f9f9; padding: 0 15px 0 0;">
 										<% } %>	
-											<a href="$ACTIVITY_URL" style="margin: 0; padding: 0; display: block; margin-top: 5px;">
+											<a href="$ACTIVITY_URL" style="margin: 0; padding: 0; display: block; margin-top: 5px; min-height: 64px;">
 												<% if (THUMBNAIL_URL != null) { %> 
 												     <img style="max-width: 300px;" src="$THUMBNAIL_URL" alt="image" />
 												<% } else { %>
