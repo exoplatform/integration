@@ -1,6 +1,6 @@
 (function($){
-
-window.initSearch = function initSearch() {
+  
+window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrentSiteOnly,hideSearchForm,hideFacetsFilter) {
 
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
@@ -53,8 +53,28 @@ window.initSearch = function initSearch() {
           %{rating} \
         </div> \
       </div> \
-    ";
-
+    ";    
+      
+    $("document").ready(function(){
+      if (typeof resultsPerPage != 'undefined'
+          & typeof searchTypes != 'undefined'
+          & typeof searchCurrentSiteOnly != 'undefined'
+          & typeof hideSearchForm != 'undefined'
+          & typeof hideFacetsFilter != 'undefined'){
+        var jqxhr = $.post("/rest/search/setting", {
+          resultsPerPage: resultsPerPage,
+          searchTypes: searchTypes,
+          searchCurrentSiteOnly: searchCurrentSiteOnly,
+          hideSearchForm: hideSearchForm,
+          hideFacetsFilter: hideFacetsFilter
+        });
+  
+        jqxhr.complete(function(data) {
+          console.log("ok"==data.responseText?"Your setting has been saved.":"Problem occurred when saving your setting: "+data.responseText);
+        });
+      }
+    });  
+    
     //*** Utility functions ***
     String.prototype.toProperCase = function() {
       return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -671,9 +691,10 @@ window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk)
     });
 }
 
-
-initSearch();
-
+/**
+ * Handle error event when image cannot load in unified search
+ * 
+ */
 window.onImgError = function onImgError(object, errorClasses) {
   $(object).parent().empty().append($(document.createElement('i')).addClass(errorClasses));
 }
