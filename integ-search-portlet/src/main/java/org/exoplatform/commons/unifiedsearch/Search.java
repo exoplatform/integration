@@ -19,6 +19,7 @@ package org.exoplatform.commons.unifiedsearch;
 
 import javax.inject.Inject;
 import javax.portlet.PortletMode;
+import javax.portlet.PortletPreferences;
 
 import juzu.Path;
 import juzu.View;
@@ -49,6 +50,9 @@ public class Search {
   Template edit;
   
   @Inject
+  PortletPreferences portletPreferences;
+  
+  @Inject
   ResourceBundle bundle;    
   
   @View
@@ -56,7 +60,7 @@ public class Search {
     RequestContext requestContext = Request.getCurrent().getContext();
     
     ResourceBundle rs = renderContext.getApplicationContext().resolveBundle(renderContext.getUserContext().getLocale());
-    Map<String, Object> parameters = new HashMap<String, Object>();
+    Map<String, Object> parameters = new HashMap<String, Object>();        
     
     Search_.index().setProperty(JuzuPortlet.PORTLET_MODE, PortletMode.EDIT);
     PortletMode mode = requestContext.getProperty(JuzuPortlet.PORTLET_MODE);
@@ -71,7 +75,6 @@ public class Search {
       parameters.put("everything", rs.getString("unifiedsearch.edit.everything.label"));
       parameters.put("alertOk", rs.getString("unifiedsearch.edit.alert.saveSettings"));
       parameters.put("alertNotOk", rs.getString("unifiedsearch.edit.alert.error.saveSettings"));
-      
       edit.render(parameters);
     }else {
       parameters.put("unifiedsearch", rs.getString("unifiedsearch.index.label"));
@@ -84,6 +87,18 @@ public class Search {
       parameters.put("contentTypes", rs.getString("unifiedsearch.index.contentTypes.label"));
       parameters.put("showmore", rs.getString("unifiedsearch.index.showmore.label"));      
       parameters.put("searching", rs.getString("unifiedsearch.searching.label"));
+      
+      String resultsPerPage = portletPreferences.getValue("resultsPerPage", "10");
+      String searchTypes = portletPreferences.getValue("searchTypes", "all");
+      String searchCurrentSiteOnly = portletPreferences.getValue("searchCurrentSiteOnly", "false");
+      String hideSearchForm = portletPreferences.getValue("hideSearchForm", "false");
+      String hideFacetsFilter = portletPreferences.getValue("hideFacetsFilter", "false");    
+      
+      parameters.put("resultsPerPage", resultsPerPage);
+      parameters.put("searchTypes", searchTypes);
+      parameters.put("searchCurrentSiteOnly", searchCurrentSiteOnly);
+      parameters.put("hideSearchForm", hideSearchForm);
+      parameters.put("hideFacetsFilter", hideFacetsFilter);
       
       index.render(parameters);      
     }

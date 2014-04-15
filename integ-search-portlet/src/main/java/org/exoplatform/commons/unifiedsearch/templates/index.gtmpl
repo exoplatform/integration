@@ -63,6 +63,6 @@
 
 <script>
 window.require(["PORTLET/unified-search/UnifiedsearchPortlet"], function() {
-  initSearch();
+  initSearch(${resultsPerPage},'${searchTypes}',${searchCurrentSiteOnly},${hideSearchForm},${hideFacetsFilter});
 });  
 </script>
