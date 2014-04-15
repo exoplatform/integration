@@ -128,8 +128,9 @@ public class PollUIActivity extends BaseKSActivity {
       String topicId = pollId.replace(Utils.POLL, Utils.TOPIC);
       return BuildLinkUtils.buildLink(getSpaceGroupId(), topicId, PORTLET_INFO.FORUM);
     }
-    //
-    return "#";
+    
+    //case poll is created in a poll portlet
+    return BuildLinkUtils.buildLink(getSpaceGroupId(), pollId, PORTLET_INFO.POLL);
   }
 
   private String getSpaceGroupId() {
