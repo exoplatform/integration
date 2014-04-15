@@ -23,6 +23,9 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.config.DataStorage;
+import org.exoplatform.portal.config.model.ModelObject;
+import org.exoplatform.portal.config.model.Page;
 import org.exoplatform.portal.mop.SiteKey;
 import org.exoplatform.portal.mop.SiteType;
 import org.exoplatform.portal.mop.navigation.NavigationContext;
@@ -33,6 +36,8 @@ import org.exoplatform.portal.mop.navigation.Scope;
 import org.exoplatform.portal.mop.user.UserNavigation;
 import org.exoplatform.portal.mop.user.UserNode;
 import org.exoplatform.portal.mop.user.UserPortal;
+import org.exoplatform.portal.pom.data.ApplicationData;
+import org.exoplatform.portal.pom.data.ModelData;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.web.application.RequestContext;
@@ -45,14 +50,15 @@ public class BuildLinkUtils {
   public static final String CATEGORY     = "category";
 
   public enum PORTLET_INFO {
-    FORUM("ForumPortlet", "forum"),
-    POLL("PollPortlet", "poll"),
-    ANSWER("AnswersPortlet", "answers");
-    private String name, pageId;
+    FORUM("ForumPortlet", "Forum Portlet", "forum"),
+    POLL("PollPortlet", "Polls Portlet", "poll"),
+    ANSWER("AnswersPortlet", "Answers Portlet", "answers");
+    final private String name, description, pageId;
 
-    PORTLET_INFO(String name, String pageId) {
+    PORTLET_INFO(String name, String description, String pageId) {
       this.name = name;
       this.pageId = pageId;
+      this.description = description;
     }
 
     public String getName() {
@@ -62,6 +68,11 @@ public class BuildLinkUtils {
     public String getPageId() {
       return pageId;
     }
+
+    public String getDescription() {
+      return description;
+    }
+    
   }
 
   private static String getType(String objectId) {
@@ -71,6 +82,8 @@ public class BuildLinkUtils {
       return Utils.TOPIC;
     if (objectId.indexOf(Utils.FORUM) == 0)
       return Utils.FORUM;
+    if (objectId.indexOf(Utils.POLL) == 0)
+      return Utils.POLL;
     return "";
   }
 
@@ -139,10 +152,9 @@ public class BuildLinkUtils {
         } else {
           UserPortal userPortal = prc.getUserPortal();
           UserNavigation userNav = userPortal.getNavigation(prc.getSiteKey());
-          UserNode userNode = userPortal.getNode(userNav, Scope.ALL, null, null);
+          UserNode rootNode = userPortal.getNode(userNav, Scope.ALL, null, null);
 
-          //
-          UserNode portletNode = userNode.getChild(portletInfo.getPageId());
+          UserNode portletNode = getPortletNode(rootNode, portletInfo);
           if (portletNode != null) {
             link = new StringBuffer(getNodeURL(portletNode)).append(buildLink_(objectType, objectId, portletInfo)).toString();
           }
@@ -154,7 +166,41 @@ public class BuildLinkUtils {
       return "";
     }
   }
-
+  
+  /**
+   * Try to find the node that contains the application match with the id
+   * 
+   * @param rootNode
+   * @param id id of the portlet to find
+   * @return the usernode associated to the app's id
+   */
+  private static UserNode getPortletNode(UserNode rootNode, PORTLET_INFO portletInfo) {
+    DataStorage dataStorage = CommonsUtils.getService(DataStorage.class);
+    for (UserNode node : rootNode.getChildren()) {
+      Page page;
+      try {
+        page = dataStorage.getPage(node.getPageRef().format());
+      } catch (Exception e) {
+        continue;
+      }
+      for (ModelObject model : page.getChildren()) {
+        ModelData modelData = model.build();
+        if (modelData instanceof ApplicationData) {
+          ApplicationData applicationData = (ApplicationData) model.build();
+          if (applicationData.getDescription() != null && 
+              applicationData.getDescription().equals(portletInfo.getDescription())) {
+            return node;
+          }
+        }
+      }
+      if (node.getChildrenSize() > 0) {
+        UserNode child = getPortletNode(node, portletInfo);
+        if (child != null) return child;
+      }
+    }
+    return null;
+  }
+  
   private static String getNodeURL(UserNode node) {
     RequestContext ctx = RequestContext.getCurrentInstance();
     NodeURL nodeURL = ctx.createURL(NodeURL.TYPE);
