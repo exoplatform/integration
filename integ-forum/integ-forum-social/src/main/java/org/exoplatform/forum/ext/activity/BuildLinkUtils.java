@@ -187,8 +187,10 @@ public class BuildLinkUtils {
         ModelData modelData = model.build();
         if (modelData instanceof ApplicationData) {
           ApplicationData applicationData = (ApplicationData) model.build();
-          if (applicationData.getDescription() != null && 
-              applicationData.getDescription().equals(portletInfo.getDescription())) {
+          if ((applicationData.getDescription() != null && 
+              applicationData.getDescription().equals(portletInfo.getDescription())) || 
+              (applicationData.getTitle() != null && 
+              applicationData.getTitle().equals(portletInfo.getDescription()))) {
             return node;
           }
         }
