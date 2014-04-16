@@ -885,7 +885,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   
   public static String getDateTimeString(Locale locale, long time, CalendarEvent event, TimeZone tz) {
     WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
-    ResourceBundle rb = requestContext.getParentAppRequestContext().getApplicationResourceBundle();
+    ResourceBundle rb = requestContext.getApplicationResourceBundle();
     
     Calendar calendar = GregorianCalendar.getInstance(locale);
     calendar.setTimeInMillis(time);
