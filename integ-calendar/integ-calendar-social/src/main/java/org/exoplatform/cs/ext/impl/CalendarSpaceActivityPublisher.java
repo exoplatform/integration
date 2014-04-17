@@ -280,7 +280,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     ExoSocialActivity activity = getActivityForEvent(originEvent);
     if(activity != null) {
       Map<String,String> params = new HashMap<String, String>();
-      params.put(STOP_REPEATING, String.valueOf(stopDate.getTime()));
+      WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
+      params.put(STOP_REPEATING, CalendarSpaceActivityPublisher.getDateTimeString(context.getLocale(), stopDate.getTime(), null, getUserTimeZone()));
       ExoSocialActivity comment = createComment(params);
       activityManager.saveComment(activity,comment);
     }
