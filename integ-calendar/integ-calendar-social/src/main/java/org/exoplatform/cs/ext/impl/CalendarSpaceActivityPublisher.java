@@ -221,13 +221,13 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 
     String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
     Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+    if(space == null) {
+      return null;
+    }
     String userId = ConversationState.getCurrent().getIdentity().getUserId();
     Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
 
-    if(space == null) {
-      return null;
-    }
 
     ExoSocialActivity activity = null;
 
@@ -264,7 +264,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     ExoSocialActivity activity = getActivityForEvent(event);
     if(activity != null) {
       //add comment to the activity
-      ExoSocialActivity comment = createComment(messagesParams);
+      ExoSocialActivity comment = createComment(messagesParams, null);
       activityManager.saveComment(activity, comment);
     }
   }
@@ -280,8 +280,9 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     ExoSocialActivity activity = getActivityForEvent(originEvent);
     if(activity != null) {
       Map<String,String> params = new HashMap<String, String>();
+      WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
       params.put(STOP_REPEATING, String.valueOf(stopDate.getTime()));
-      ExoSocialActivity comment = createComment(params);
+      ExoSocialActivity comment = createComment(params, originEvent);
       activityManager.saveComment(activity,comment);
     }
   }
@@ -297,7 +298,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     ExoSocialActivity activity = getActivityForEvent(originEvent);
     Map<String,String> params = new HashMap<String, String>();
     params.put(EVENT_CANCELLED,String.valueOf(removedEvent.getFromDateTime().getTime()));
-    ExoSocialActivity comment = createComment(params);
+    ExoSocialActivity comment = createComment(params, null);
     if(comment != null)
     activityManager.saveComment(activity, comment);
   }
@@ -308,7 +309,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * @return a comment object
    * @since activity-type
    */
-  private ExoSocialActivity createComment(Map<String,String> messagesParams) {
+  private ExoSocialActivity createComment(Map<String,String> messagesParams, CalendarEvent repeatEvent) {
     String userId = ConversationState.getCurrent().getIdentity().getUserId();
     if(identityManager == null) return null;
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
@@ -318,7 +319,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     newComment.setUserId(userIdentity.getId());
     newComment.setType("CALENDAR_ACTIVITY");
     StringBuilder fields = new StringBuilder();
-    Map<String, String> data = new LinkedHashMap<String, String>(); 
+    Map<String, String> data = new LinkedHashMap<String, String>();
 
     for(String field : messagesParams.keySet()) {
       String value = messagesParams.get(field);
@@ -329,7 +330,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     data.put(CALENDAR_FIELDS_CHANGED, fieldsChanged);
     newComment.setTitleId(fieldsChanged);
     newComment.setTemplateParams(data);
-    newComment.setTitle(buildComment(Locale.US, newComment)); //default title in English
+    newComment.setTitle(buildComment(newComment, repeatEvent)); //default title in English
     return newComment;
   }
 
@@ -860,7 +861,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     return null;
   }
   
-  public static String buildComment(Locale locale, ExoSocialActivity comment) {
+  public static String buildComment(ExoSocialActivity comment, CalendarEvent repeatEvent) {
+    Locale locale = WebuiRequestContext.getCurrentInstance().getLocale();
     StringBuilder commentMessage = new StringBuilder();
     Map<String,String> tempParams = comment.getTemplateParams();
     // get updated fields in format {field1,field2,...}
@@ -870,14 +872,31 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     }
     String[] fields = fieldsChanged.split(",");
     for(int i = 0; i < fields.length; i++) {
-      String label = getUICalendarLabel(fields[i],locale);
+      String label = getUICalendarLabel(fields[i], locale);
+      label = label.replace("'","''");
       String childMessage; // message for each updated field
-      if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED) || fields[i].equals(CalendarSpaceActivityPublisher.TO_UPDATED)) {
+
+      if(fields[i].equals(CalendarSpaceActivityPublisher.FROM_UPDATED)
+              || fields[i].equals(CalendarSpaceActivityPublisher.TO_UPDATED)) {
+        //get date time string from timestamp
         long time = Long.valueOf(tempParams.get(fields[i]));
-        childMessage = MessageFormat.format(label, CalendarSpaceActivityPublisher.getDateTimeString(locale, time, null,getUserTimeZone()));
+        childMessage = MessageFormat.format(label, getDateTimeString(locale, time, null, getUserTimeZone()));
+
+      } else if(fields[i].equals(CalendarSpaceActivityPublisher.STOP_REPEATING)
+              || fields[i].equals(CalendarSpaceActivityPublisher.EVENT_CANCELLED)) {
+        //get the date string from timestamp
+        long time = Long.valueOf(tempParams.get(fields[i]));
+        Calendar calendar = GregorianCalendar.getInstance(locale);
+        calendar.setTimeInMillis(time);
+        childMessage = MessageFormat.format(label, getDateString(locale, calendar, getUserTimeZone()));
+
+      } else if(fields[i].equals(CalendarSpaceActivityPublisher.REPEAT_UPDATED)) {
+        CalendarService calService = (CalendarService) PortalContainer.getInstance().getComponentInstanceOfType(CalendarService.class);
+        childMessage = MessageFormat.format(label, CalendarSpaceActivityPublisher.buildRepeatSummary(repeatEvent, calService));
       } else {
-        childMessage = MessageFormat.format(label,tempParams.get(fields[i]));  
+        childMessage = MessageFormat.format(label,tempParams.get(fields[i]));
       }
+
       commentMessage.append(childMessage + "<br/>");
     }
     return commentMessage.toString();
