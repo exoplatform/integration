@@ -226,13 +226,13 @@
 			           String solution = vote.key;
 			           String percent = vote.value.get(0) + "%";
 			           String nbVotes = vote.value.get(1);
-            %>
+            		%>
 						     <div class="voteRow clearfix">
 									<div class="progressing">
 										$percent ($nbVotes)
 									</div>	
-									<div class="titleVote">
-										$solution 
+									<div class="titleVote" data-placement="bottom"data-original-title="${solution}">
+										<span class="text-vote">$solution</span>
 									</div>
 									<div class="progressBar">
 										<div class="progress">
@@ -241,7 +241,11 @@
 									</div>
 							 </div>	<!--end voteRow-->
 						<% } %>	
-					
+
+                    <%
+					 jsManager.require("SHARED/jquery", "jq")
+                              .require("SHARED/bts_tooltip").addScripts("jq('.infoVote .titleVote .text-vote').each(function(){ var width = jq(this).width(); if(width >= 290){ jq(this).parent().addClass('has-tooltip'); } }); jq('.has-tooltip').tooltip();");
+				    %>
 				</div>		<!--end hardcode-->
 			</div><!--end pollShare-->
 		<div class="actionBar clearfix ">			
