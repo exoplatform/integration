@@ -32,7 +32,7 @@ public class ActivityUtils {
   }
   
   public static String processContent(String content) {
-    content = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumber(content));
+    content = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(content));
     content = ForumActivityBuilder.getFourFirstLines(content);
     return content;
   }
