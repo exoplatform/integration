@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
@@ -31,7 +32,7 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.space.SpaceUtils;
+
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -97,17 +98,17 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     ExoSocialActivity activity2 = getActivityManager().getActivity(activityId2);
     assertNotNull(activity2);
     ListAccess<ExoSocialActivity> list2 = getActivityManager().getCommentsWithListAccess(activity2);
-    //assertEquals(3, list2.getSize());
-    //assertEquals("message2", list2.load(0, 10)[0].getTitle());
+    assertEquals(3, list2.getSize());
+    assertEquals("message2", list2.load(0, 10)[0].getTitle());
   }
-  
+
   public void testCensoredTopic() throws Exception {
     Identity rootIdentity = getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, "root", true);
     List<ExoSocialActivity> activities = getActivityManager().getActivityFeedWithListAccess(rootIdentity).loadAsList(0, 10);
-    
+
     //By default, root has a topic then there is always an activity on root's stream
     assertEquals(1, activities.size());
-    
+
     //root add a censored topic
     Topic topic1 = createdTopic("root");
     topic1.setTopicName("Topic1111");
@@ -121,7 +122,7 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     assertTrue(activity1.isHidden());
     activities = getActivityManager().getActivityFeedWithListAccess(rootIdentity).loadAsList(0, 10);
     assertEquals(1, activities.size());
-    
+
     List<Topic> topics = new ArrayList<Topic>();
     //approve topic1
     topic1.setIsWaiting(false);
@@ -132,6 +133,81 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     assertFalse(activity1.isHidden());
     activities = getActivityManager().getActivityFeedWithListAccess(rootIdentity).loadAsList(0, 10);
     assertEquals(2, activities.size());
+  }
+  
+  public void testMergeTopics() throws Exception {
+    Forum forum = forumService.getForum(categoryId, forumId);
+    assertNotNull(forum);
+    
+    //create 2 topic
+    Topic topic1 = createdTopic("root");
+    topic1.setDescription("topic 1");
+    Topic topic2 = createdTopic("root");
+    topic2.setDescription("topic 2");
+    forumService.saveTopic(categoryId, forumId, topic1, true, false, new MessageBuilder());
+    forumService.saveTopic(categoryId, forumId, topic2, true, false, new MessageBuilder());
+    
+    //get all post of topic1, include the first post
+    PostFilter filter = new PostFilter(categoryId, forumId, topic1.getId(), "", "", "", "");
+    ListAccess<Post> listPost = forumService.getPosts(filter);
+    assertEquals(1, listPost.getSize());
+    //get all post of topic2, include the first post
+    filter = new PostFilter(categoryId, forumId, topic2.getId(), "", "", "", "");
+    listPost = forumService.getPosts(filter);
+    assertEquals(1, listPost.getSize());
+    
+    Identity rootIdentity = getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, "root", false);
+    List<ExoSocialActivity> activities = getActivityManager().getActivitiesWithListAccess(rootIdentity).loadAsList(0, 10);
+    //there are 3 activities of root, 1 for topic created by default + 1 for topic1 + 1 for topic2
+    assertEquals(3, activities.size());
+    
+    String topicPath1 = categoryId + "/" + forumId + "/" + topic1.getId();
+    String topicPath2 = "/exo:applications/ForumService/ForumData/CategoryHome/" + categoryId + "/" + forumId + "/" + topic2.getId();
+    forumService.mergeTopic(topicPath1, topicPath2, "", "", "topicMerged");
+    
+    listPost = forumService.getPosts(filter);
+    assertEquals(2, listPost.getSize());
+    assertEquals("topic 1", (listPost.load(0, 10)[1]).getMessage());
+    
+    activities = getActivityManager().getActivitiesWithListAccess(rootIdentity).loadAsList(0, 10);
+    assertEquals(2, activities.size());
+    
+    String activityId = forumService.getActivityIdForOwnerPath(topic2.getPath());
+    ExoSocialActivity activity = getActivityManager().getActivity(activityId);
+    assertNotNull(activity);
+    assertEquals(1, getActivityManager().getCommentsWithListAccess(activity).getSize());
+    assertEquals("topic 1", getActivityManager().getCommentsWithListAccess(activity).load(0, 10)[0].getTitle());
+    
+    //Create new topic with 2 posts
+    Topic topic3 = createdTopic("root");
+    topic3.setDescription("topic 3");
+    forumService.saveTopic(categoryId, forumId, topic3, true, false, new MessageBuilder());
+    Post post1 = createdPost("name1", "message1");
+    Post post2 = createdPost("name2", "message2");
+    forumService.savePost(categoryId, forumId, topic3.getId(), post1, true, new MessageBuilder());
+    forumService.savePost(categoryId, forumId, topic3.getId(), post2, true, new MessageBuilder());
+    
+    //merge topic3 into topic2
+    String topicPath3 = categoryId + "/" + forumId + "/" + topic3.getId();
+    forumService.mergeTopic(topicPath3, topicPath2, "", "", "topicMerged");
+    
+    //topic will now have 5 posts
+    filter = new PostFilter(categoryId, forumId, topic2.getId(), "", "", "", "");
+    listPost = forumService.getPosts(filter);
+    assertEquals(5, listPost.getSize());
+    
+    //check activity after merge
+    activities = getActivityManager().getActivitiesWithListAccess(rootIdentity).loadAsList(0, 10);
+    assertEquals(2, activities.size());
+    
+    activityId = forumService.getActivityIdForOwnerPath(topic2.getPath());
+    activity = getActivityManager().getActivity(activityId);
+    assertNotNull(activity);
+    assertEquals(4, getActivityManager().getCommentsWithListAccess(activity).getSize());
+    assertEquals("topic 1", getActivityManager().getCommentsWithListAccess(activity).load(0, 10)[0].getTitle());
+    assertEquals("topic 3", getActivityManager().getCommentsWithListAccess(activity).load(0, 10)[1].getTitle());
+    assertEquals("message1", getActivityManager().getCommentsWithListAccess(activity).load(0, 10)[2].getTitle());
+    assertEquals("message2", getActivityManager().getCommentsWithListAccess(activity).load(0, 10)[3].getTitle());
   }
 
   private ActivityManager getActivityManager() {

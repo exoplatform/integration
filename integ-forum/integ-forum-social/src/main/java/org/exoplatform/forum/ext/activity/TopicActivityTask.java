@@ -772,10 +772,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
-        ForumActivityUtils.removeActivities(ctx.getRemoveActivities());
 
         //
-        ActivityManager am = ForumActivityUtils.getActivityManager();
         Identity streamOwner = getOwnerStream(ctx);
         
         ////FORUM_21 case: merge topic
@@ -784,10 +782,10 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         //
         Identity poster = ForumActivityUtils.getIdentity(ctx.getTopic().getOwner());
-        newActivity.setUserId(poster.getId());
         
-        am.saveActivityNoReturn(streamOwner, newActivity);
+        ForumActivityUtils.saveTopicActivity(poster, streamOwner, newActivity, ctx.getTopic());
         
+        ForumActivityUtils.removeActivities(ctx.getRemoveActivities());
         return newActivity;
       } catch (Exception e) {
         LOG.error("Can not record Activity for merged topics " + ctx.getTopic().getId(), e);
