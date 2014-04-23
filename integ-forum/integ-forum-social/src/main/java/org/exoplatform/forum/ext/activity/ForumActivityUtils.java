@@ -125,12 +125,23 @@ public class ForumActivityUtils {
     
     //
     for (Post post : posts) {
-      //The first post of topic is not a reply and will not be added to the activity
+      //The first post of destination topic will be ignored
       if (post.getId().equals(topic.getId().replace(Utils.TOPIC, Utils.POST))) {
         continue;
       }
       String commentId = getForumService().getActivityIdForOwnerPath(post.getPath());
-      am.saveComment(activity, am.getActivity(commentId));
+      ExoSocialActivity comment = null;
+      if (commentId != null) {
+        comment = am.getActivity(commentId);
+      }
+      //when comment associated to post doesn't exist, we need to create new comment
+      //Case of migrate data or for the first post of the source topic
+      if (commentId == null || comment == null) {
+        comment = ForumActivityBuilder.createActivityComment(post, ForumActivityContext.makeContextForAddPost(post));
+        comment.setUserId(getIdentity(post.getOwner()).getId());
+      }
+      am.saveComment(activity, comment);
+      takeCommentBack(post, comment);
       count++;
     }
     
