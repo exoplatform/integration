@@ -358,8 +358,8 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
       return;
     }
     
-    // Not raise the activity in case of user space or the page is not public
-    if (PortalConfig.USER_TYPE.equals(wikiType) || !isPublic(page)) {
+    // Not raise the activity in case of user space
+    if (PortalConfig.USER_TYPE.equals(wikiType)) {
       return;
     }
     
