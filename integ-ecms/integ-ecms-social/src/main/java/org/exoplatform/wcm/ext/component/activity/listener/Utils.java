@@ -771,9 +771,11 @@ public class Utils {
     result = result.replaceAll("(?i)<script.*>.*</script>", "");
     result = result.replaceAll("(?i)<style.*>.*</style>", "");
     result = result.replaceAll("<([a-z\"]+) *[^/]*?>", "");
-    result = result.replaceAll("</([a-z]+) *[^/]*?>", "<br>");
-    result = result.replaceAll("([\n\t])+", "<br>");
-    result = result.replaceAll("(<br>[ \t\n]+<br>)", "<br>");
+    result = result.replaceAll("</p>", "<br>");
+    result = result.replaceAll("</([a-z]+) *[^/]*?>", "");
+    result = result.replaceAll("([\r\n\t])+", "");
+    result = result.replaceAll("^(<br>)", "");
+    result = result.replaceAll("(<br>[ \r\t\n]+<br>)", "<br>");
     result = result.replaceAll("(<br>)+", "<br>");
     int i = 0;
     int index = -1;
@@ -781,7 +783,7 @@ public class Utils {
       index = result.indexOf("<br>", index+1);
       if (index<0) break;
       i++;
-      if (i>linesCount) break;
+      if (i>=linesCount) break;
     }
     if (index <0) {
       if (result.length()>MAX_SUMMARY_CHAR_COUNT)

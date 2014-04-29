@@ -48,7 +48,7 @@
   def labelLike = _ctx.appRes("UIActivity.label.Like");
   def labelUnlike = _ctx.appRes("UIActivity.label.Unlike");
   def labelSource = _ctx.appRes("UIActivity.label.Source");
-  def inputWriteAComment = _ctx.appRes("UIActivity.input.Write_A_Comment");
+  def inputWriteAComment = _ctx.appRes("UIActivity.input.Add_your_comment");
   def labelShowAllComments = _ctx.appRes("UIActivity.label.Show_All_Comments");
   def labelHideAllComments = _ctx.appRes("UIActivity.label.Hide_All_Comments");
   def labelShowPreviousComments = _ctx.appRes("UIActivity.label.Show_Previous_Comments");
@@ -205,9 +205,9 @@
 						  <%
                  int rateInt = (Integer) uicomponent.getRate();
                  double diff = uicomponent.getRate() - rateInt;
-                 String labelRating = _ctx.appRes("ActivityRating.title.rank${rateInt}");
-                 if (rateInt == 0)
-                   labelRating = _ctx.appRes("ActivityRating.title.NotRateYet");
+                 String labelRating = _ctx.appRes("ActivityRating.title.NotRateYet");
+                 if (rateInt > 0)
+                   labelRating = _ctx.appRes("ActivityRating.title.rank${rateInt}");
               %>
 							<div class="avgRatingImages sumaryRate" rel="tooltip" data-placement="bottom" title="$labelRating">
 								<%
