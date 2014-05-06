@@ -108,6 +108,15 @@ public class ForumActivityUtils {
     ForumActivityUtils.getForumService().saveActivityIdForOwnerPath(post.getPath(), comment.getId());
   }
   
+  public static void updateTopicPostCount(ForumActivityContext ctx, boolean isAdded) throws Exception {
+    Topic topic = getTopic(ctx);
+    ctx.setTopic(topic);
+    ExoSocialActivity topicActivity = getActivityOfTopic(ctx);
+    Map<String, String> templateParams = topicActivity.getTemplateParams();
+    templateParams.put(ForumActivityBuilder.TOPIC_POST_COUNT_KEY, "" + topic.getPostCount());
+    getActivityManager().updateActivity(topicActivity);
+  }
+  
   public static void updateActivityByTopic(Topic topic, ExoSocialActivity activity) throws Exception {
     String topicPath = topic.getPath();
     PostFilter filter = new PostFilter(Utils.getCategoryId(topicPath), Utils.getForumId(topicPath), Utils.getTopicId(topicPath), "", "", "", "");
