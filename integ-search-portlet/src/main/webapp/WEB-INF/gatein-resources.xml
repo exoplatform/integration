@@ -19,7 +19,11 @@
 		<module>
 			<script>
 				<path>/js/common/search.js</path>
-			</script>		
+			</script>
+                        <depends>
+                                <module>xss-utils</module>
+                                <as>XSSUtils</as>
+                        </depends>		
 			<depends>
 				<module>jquery</module>
 				<as>$</as>
@@ -33,6 +37,10 @@
 			<script>
 				<path>/js/common/quicksearch.js</path>
 			</script>
+                        <depends>
+                                <module>xss-utils</module>
+                                <as>XSSUtils</as>
+                        </depends>
 			<depends>
 				<module>jquery</module>
 				<as>$</as>
