@@ -193,6 +193,10 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
         ActivityManager am = ForumActivityUtils.getActivityManager();
+        
+        //FORUM_33 case: update topic activity's number of reply 
+        ForumActivityUtils.updateTopicPostCount(ctx, false);
+        
         String postActivityId = ForumActivityUtils.getForumService().getActivityIdForOwnerPath(ctx.getPost().getPath());
         ExoSocialActivity postActivity = null;
         if (postActivityId != null) {
@@ -228,6 +232,10 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
         ActivityManager am = ForumActivityUtils.getActivityManager();
+        
+        //FORUM_33 case: update topic activity's number of reply 
+        ForumActivityUtils.updateTopicPostCount(ctx, true);
+        
         String postActivityId = ForumActivityUtils.getForumService().getActivityIdForOwnerPath(ctx.getPost().getPath());
         ExoSocialActivity postActivity = null;
         if (postActivityId != null) {
