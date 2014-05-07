@@ -139,30 +139,18 @@ public class ForumUIActivity extends BaseKSActivity {
       return 0.0;
     }
   }
-  
-  private Topic getTopic() {
-    String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
-    try {
-      return (Topic) ForumActivityUtils.getForumService().getObjectNameById(topicId, Utils.TOPIC);
-    } catch (Exception e) {
-      return null;
-    }
-  }
+    private Topic getTopic() {
+        DataStorage dataStorage = (DataStorage) CommonsUtils.getService(DataStorage.class);
+        String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
+            try {
+                return (Topic) dataStorage.getObjectNameById(topicId, Utils.TOPIC);
+            } catch (Exception e) {
+                  return null;
+             }
+         }
   
   public boolean isTopicActivity() {
     if (Utils.isEmpty(getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY)) == false) {
-      return true;
-    }
-    return false;
-  }
-  
-  public boolean isLockedOrClosed() {
-    Topic topic = getTopic();
-    if(topic == null || topic.getIsClosed() || topic.getIsLock()){
-      return true;
-    }
-    Forum forum = ForumActivityUtils.getForumService().getForum(topic.getCategoryId(), topic.getForumId());
-    if(forum.getIsClosed() || forum.getIsLock()){
       return true;
     }
     return false;
