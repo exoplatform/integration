@@ -16,11 +16,12 @@
  */
 package org.exoplatform.forum.ext.impl;
 
-import org.exoplatform.container.PortalContainer;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.faq.service.Category;
-import org.exoplatform.faq.service.FAQService;
+import org.exoplatform.faq.service.DataStorage;
 import org.exoplatform.faq.service.Utils;
+import org.exoplatform.faq.service.impl.JCRDataStorage;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.SpaceListenerPlugin;
@@ -68,7 +69,7 @@ public class AnswerDataInitialize extends SpaceListenerPlugin {
     }
     
     Space space = event.getSpace();
-    FAQService fServie = (FAQService) PortalContainer.getInstance().getComponentInstanceOfType(FAQService.class);
+      DataStorage fServie = CommonsUtils.getService(JCRDataStorage.class);
     try {
       Category parent = fServie.getCategoryById(Utils.CATEGORY_HOME);
       if (parent != null) {
@@ -77,11 +78,11 @@ public class AnswerDataInitialize extends SpaceListenerPlugin {
         cat.setName(space.getDisplayName());
         cat.setUserPrivate(new String[] { space.getGroupId() });
         cat.setDescription(space.getDescription());
-        cat.setIndex(1);
+        cat.setIndex(0);
         // TODO hard text manager should check with portal team
         cat.setModerators(new String[] { SpaceServiceImpl.MANAGER + ":" + space.getGroupId() });
         if (fServie.getCategoryById(cat.getId()) == null) {
-          fServie.saveCategory(Utils.CATEGORY_HOME, cat, true);
+          fServie.saveCategory(Utils.CATEGORY_HOME, cat, true,false);
         }
       } else {
         LOG.error("\n\n Root category null please check to create one !");

@@ -64,7 +64,7 @@ window.initSearch = function initSearch() {
       var str = this;
       for(var i=0; i<words.length; i++) {
         if(""==words[i]) continue;
-        var regex = new RegExp("(" + words[i] + ")", "gi");
+        var regex = new RegExp("(\\" + words[i] + ")", "gi");
         str = str.replace(regex, "<strong>$1</strong>");
       }
       return str;
@@ -152,7 +152,7 @@ window.initSearch = function initSearch() {
     }
 
     function getSelectedSites(){
-      if(SEARCH_SETTING.searchCurrentSiteOnly) return getUrlParam("currentSite") || parent.eXo.env.portal.portalName;
+      if(SEARCH_SETTING.searchCurrentSiteOnly) return getUrlParam("currentSite") || eXo.env.portal.portalName;
       var selectedSites = [];
       $.each($(":checkbox[name='site'][value!='all']:checked"), function(){
         selectedSites.push(this.value);
@@ -317,7 +317,7 @@ window.initSearch = function initSearch() {
       
       var searchParams = {
         searchContext: {
-          siteName:parent.eXo.env.portal.portalName
+          siteName:eXo.env.portal.portalName
         },
         q: query,
         sites: getSelectedSites(),
@@ -383,7 +383,7 @@ window.initSearch = function initSearch() {
         if(append) {
           $("#showMore").hide();
         } else {
-          clearResultPage("No result for <strong>" + $("#txtQuery").val() + "<strong>");
+          clearResultPage("No result for <strong>" + XSSUtils.sanitizeString($("#txtQuery").val()) + "<strong>");
         }
         return;
       }
@@ -674,12 +674,8 @@ window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk)
 
 initSearch();
 
-})($);
-
-/**
- * Handle error event when image cannot load in unified search
- * 
- */
-function onImgError(object, errorClasses) {
+window.onImgError = function onImgError(object, errorClasses) {
   $(object).parent().empty().append($(document.createElement('i')).addClass(errorClasses));
 }
+
+})($);
