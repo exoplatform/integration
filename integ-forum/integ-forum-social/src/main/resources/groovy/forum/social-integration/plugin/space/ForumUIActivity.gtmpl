@@ -405,6 +405,7 @@
 					<% } else { %>
 					  <div class="commentItem commentFormBox" id="CommentFormBlock${activity.id}">
 					<% } %>
+					<%if (!uicomponent.isLockedOrClosed()) {%>
 					  <div class="commmentLeft">
 							<a class="avatarXSmall" rel="tooltip" data-placement="bottom" title="$currentCommenterName" href="$currentCommenterUri">
 								<img src="$currentCommenterAvatar" alt="$currentCommenterName"/>
@@ -415,7 +416,8 @@
 								 <button class="btn pull-right btn-primary" onclick="<%= uicomponent.event("PostComment") %>"  rel="tooltip" data-placement="bottom" title="$labelComment" id="CommentButton${activity.id}">$labelComment</button>
 								<div class="commentInput"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
 							</div>
-						</div><!--end commentRight-->      
+						</div><!--end commentRight-->
+					<%}%>
 					  </div> <!--end commentItem-->		
 					</div><!--end commentlist-->	  
 				</div><!--end commentBox-->

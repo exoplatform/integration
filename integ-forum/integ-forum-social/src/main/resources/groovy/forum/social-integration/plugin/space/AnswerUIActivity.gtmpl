@@ -233,7 +233,6 @@
               </div>
             </div>
             <% def questionTitle = uicomponent.getQuestionTitle();
-               def questionDetail = uicomponent.getQuestionDetail();
             %>
 						<div class="titleAnswer">
 							<a class="linkTitle" href="${uicomponent.getLink()}" title="">$questionTitle</a>
@@ -248,7 +247,7 @@
 							<div>$questionPoint</div>
 								$labelQuestionPoint
 						</div>
-						<p class="text">$questionDetail</p>	
+						<p class="text">$activity.body</p>	
 					</div>
           <% def numberOfAnswers = uicomponent.getNumberOfAnswers();
              def numberOfComments = uicomponent.getNumberOfComments();
