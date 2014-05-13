@@ -29,7 +29,7 @@
   import org.exoplatform.social.core.service.LinkProvider;
   /* this block is required for rendering calendar content */
   import org.exoplatform.calendar.service.CalendarEvent;
-  import org.exoplatform.cs.ext.impl.CalendarSpaceActivityPublisher
+  import org.exoplatform.cs.ext.impl.CalendarSpaceActivityPublisher;
   /* end block */
 	
   uicomponent.init();
@@ -349,7 +349,7 @@
 					  def id = Utils.getIdentityManager().getIdentity(it.userId);
 					  commenterFullName = id.profile.fullName;
 					  commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-					  commentMessage = CalendarSpaceActivityPublisher.buildComment(locale,it);
+					  commentMessage = CalendarSpaceActivityPublisher.buildComment(it, uicomponent.event);
 					  commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
 					  commenterAvatarImgSrc = id.profile.avatarUrl;
 					  if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;

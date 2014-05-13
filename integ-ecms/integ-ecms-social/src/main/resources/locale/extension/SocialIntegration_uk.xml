@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+  <SocialIntegration>
+    <titles>
+      <fileSize>Розмір файлу</fileSize>
+    </titles>
+    <messages>
+      <createdBy>була створена</createdBy>
+      <editedBy>була відредагована</editedBy>
+      <system>система</system>
+      <readmore>...Читати далі.</readmore>
+      <editTitle>Назва була оновлена для: {0}</editTitle>
+      <editName>Ім'я було оновлене: {0}</editName>
+      <editDescription>Оновлено Опис: {0}</editDescription>
+      <singleCreator>Творець є {0}</singleCreator>
+      <multiCreator>Творці – {0}</multiCreator>
+      <addSource>Було додане джерело файлу: {0}</addSource>
+      <addMultiSource>Були додані джерела файлів: {0}</addMultiSource>
+      <removeSource>Було видалене джерело файлу: {0}</removeSource>
+      <removeMultiSource>Були видалені джерела файлів: {0}</removeMultiSource>
+      <editSummary>Оновлено резюме: {0}</editSummary>
+      <editLanguage>Мова була оновлена: {0}</editLanguage>
+      <editContent>Зміст було оновлено.</editContent>
+      <editFile>Файл було оновлено.</editFile>
+      <emptyTitle>Назва була видалена.</emptyTitle>
+      <emptySummary>Резюме буде видалене.</emptySummary>
+      <emptyContent>Вміст було видалено.</emptyContent>
+      <updateMetadata>Метадані {0} були оновлені: {1}</updateMetadata>
+      <removeMetadata>Метадані {0} були видалені.</removeMetadata>  
+      <removeTitle>Назва була видалена.</removeTitle>
+      <removeName>Ім'я було видалене.</removeName>
+      <removeSummary>Резюме було видалене.</removeSummary>
+      <removeDescription>Опис був видалений.</removeDescription>
+      <removeCreator>Творець: {0} був видалений.</removeCreator>
+      <removeMultiCreator>Творці: {0} були видалені.</removeMultiCreator>
+      <removeLanguage>Мова була видалена.</removeLanguage>
+      <removeContent>Вміст був видалений.</removeContent>
+      <attachmentAdded>Файл(и) були прикріплені.</attachmentAdded>
+      <attachmentRemoved>Файл(и) було видалено.</attachmentRemoved>
+      <categoryAdded>Категорія: {0} було додано.</categoryAdded>
+      <categoryRemoved>Категорія: {0} було видалено.</categoryRemoved>
+      <tagAdded>Тег: {0} було додано.</tagAdded>
+      <tagsAdded>Теги: {0} було додано.</tagsAdded>
+      <tagRemoved>Тег: {0} було видалено.</tagRemoved>
+      <tagsRemoved>Теги: {0} було видалено.</tagsRemoved>
+      <stateChange>
+        <pending>Публікація зараз перебуває у стані очікування.</pending>
+        <approved>Документ був схвалений.</approved>
+        <staged>Публікація була розміщена.</staged>
+        <published>Документ був опублікований.</published>
+      </stateChange>
+      <contentMoved>Публікацію переміщено до: {0}</contentMoved>
+      <fileMoved>Файл було переміщено до: {0}</fileMoved>
+      <revisionChanged>Публікація була відновлена до версії: {0}</revisionChanged>
+      <version>Версія {0}</version>
+    </messages>
+    <publicationStates>
+      <archived>Архівні</archived>
+      <obsolete>Застарілий</obsolete>
+      <unpublished>Неопубліковані</unpublished>
+      <draft>Чернетка</draft>
+      <pending>Очікування</pending>
+      <approved>Схвалено</approved>
+      <inreview>В огляді</inreview>
+      <staged>Розміщений</staged>
+      <published>Опубліковано</published>
+      <live>Опубліковано</live>
+    </publicationStates>
+    <view>Перегляд</view>
+    <edit>Редагувати</edit>
+    <download>Завантажити</download>
+  </SocialIntegration>
+  <UIPopupWindow>
+    <title>
+      <DocViewer>Попередній перегляд</DocViewer>
+    </title>
+  </UIPopupWindow>
+  <ElementSet>
+    <dialog>
+      <label>       
+        <resourceType>Тип ресурсу</resourceType>        
+      </label>
+    </dialog>
+  </ElementSet>
+</bundle>

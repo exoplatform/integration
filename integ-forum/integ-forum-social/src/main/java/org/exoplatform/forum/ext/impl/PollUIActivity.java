@@ -61,12 +61,11 @@ public class PollUIActivity extends BaseKSActivity {
     setTotalUsersVotes(getStringFromNumberOfVotes(Integer.parseInt(poll.getVotes())));
 
     int[] votesValues = getVotesOfOption(userVotes, options.length);
-    
     for (int i = 0; i < options.length; i++) {
       List<String> values = new LinkedList<String>();
       values.add(buildPercentVote(votes[i]));
       values.add(getStringFromNumberOfVotes(votesValues[i]));
-      info.put(CommonUtils.decodeSpecialCharToHTMLnumber(options[i]), values);
+      info.put(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(options[i]), values);
     }
     return info;
   }
@@ -128,8 +127,9 @@ public class PollUIActivity extends BaseKSActivity {
       String topicId = pollId.replace(Utils.POLL, Utils.TOPIC);
       return BuildLinkUtils.buildLink(getSpaceGroupId(), topicId, PORTLET_INFO.FORUM);
     }
-    //
-    return "#";
+    
+    //case poll is created in a poll portlet
+    return BuildLinkUtils.buildLink(getSpaceGroupId(), pollId, PORTLET_INFO.POLL);
   }
 
   private String getSpaceGroupId() {

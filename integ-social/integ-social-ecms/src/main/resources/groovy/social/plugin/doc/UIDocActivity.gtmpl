@@ -248,7 +248,7 @@
               <img src="<%=uicomponent.docThumbnail%>" />
             </a>
           <%
-            } else if(uicomponent.isDisplayThumbnail(mimeType) == true ) {
+            } else if (org.exoplatform.services.cms.impl.Utils.isSupportThumbnailView(mimeType)) {
           %>
           <div class="clearfix isPreviewable">
             <div id="MediaContent${activity.id}" class="pull-left mediaContent docTypeContent">

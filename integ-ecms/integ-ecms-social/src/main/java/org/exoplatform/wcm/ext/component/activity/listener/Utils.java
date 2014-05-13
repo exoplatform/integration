@@ -764,19 +764,31 @@ public class Utils {
   public static String getFirstSummaryLines(String source) {
     return getFirstSummaryLines(source, MAX_SUMMARY_LINES_COUNT);
   }
+  
   // Silly function to convert HTML content to plain text
-  public static String getFirstSummaryLines(String source, int linesCount) {
+  public static String convertHTMLContent(String source){
     String result =  source;
     result = result.replaceAll("(?i)<head>.*</head>", "");
     result = result.replaceAll("(?i)<script.*>.*</script>", "");
     result = result.replaceAll("(?i)<style.*>.*</style>", "");
-    result = result.replaceAll("<([a-z\"]+) *[^/]*?>", "");
+    result = result.replaceAll("<([a-zA-Z\"]+) *[^/]*?>", "");
     result = result.replaceAll("</p>", "<br>");
-    result = result.replaceAll("</([a-z]+) *[^/]*?>", "");
+    result = result.replaceAll("</([a-zA-Z]+) *[^/]*?>", "");
     result = result.replaceAll("([\r\n\t])+", "");
     result = result.replaceAll("^(<br>)", "");
     result = result.replaceAll("(<br>[ \r\t\n]+<br>)", "<br>");
     result = result.replaceAll("(<br>)+", "<br>");
+    return result;
+  }
+  
+  /**
+   * 
+   * @param source
+   * @param linesCount
+   * @return first <code>linesCount<code> without HTML tag
+   */
+  public static String getFirstSummaryLines(String source, int linesCount) {
+    String result =  convertHTMLContent(source);
     int i = 0;
     int index = -1;
     while (true) {
