@@ -78,7 +78,7 @@
 
   def ilBinarySrc = uicomponent.getImagePath();
 
-  def state = uicomponent.getState();
+  def state = uicomponent.getContentState();
   def author = uicomponent.getAuthor();
   def lastModified = uicomponent.getLastModified();
   def dateCreated = uicomponent.getDateCreated();
