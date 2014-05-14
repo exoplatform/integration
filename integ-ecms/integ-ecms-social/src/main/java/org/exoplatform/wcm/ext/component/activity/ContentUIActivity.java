@@ -38,6 +38,7 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+import org.exoplatform.services.wcm.publication.WCMPublicationService;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
@@ -200,6 +201,11 @@ public class ContentUIActivity extends BaseUIActivity {
     return state;
   }
 
+  public String getContentState() throws Exception {
+    WCMPublicationService wcmPublicationService = WCMCoreUtils.getService(WCMPublicationService.class);
+    return wcmPublicationService.getContentState(contentNode);  
+  }
+  
   public void setState(String state) {
     this.state = state;
   }
