@@ -389,7 +389,7 @@ window.initSearch = function initSearch() {
       }
 
       NUM_RESULTS_RENDERED = NUM_RESULTS_RENDERED + current.length;
-      var resultHeader = "Results " + 1 + " to " + NUM_RESULTS_RENDERED + " for <strong>" + $("#txtQuery").val() + "<strong>";
+      var resultHeader = "Results " + 1 + " to " + NUM_RESULTS_RENDERED + " for <strong>" +  XSSUtils.sanitizeString($("#txtQuery").val()) + "<strong>";
       $("#resultHeader").html(resultHeader);
       $("#resultSort").show();
       $("#resultPage").show();
