@@ -24,9 +24,14 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.service.impl.model.PostFilter;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.SpaceUtils;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -49,9 +54,9 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     Topic topic = forumService.getTopic(categoryId, forumId, topicId, "");
     assertNotNull(topic);
     String activityId = forumService.getActivityIdForOwnerPath(topic.getPath());
-    ExoSocialActivity activity = getManager().getActivity(activityId);
+    ExoSocialActivity activity = getActivityManager().getActivity(activityId);
     assertNotNull(activity);
-    assertEquals(0, getManager().getCommentsWithListAccess(activity).getSize());
+    assertEquals(0, getActivityManager().getCommentsWithListAccess(activity).getSize());
 
     Post post1 = createdPost("name1", "message1");
     Post post2 = createdPost("name2", "message2");
@@ -62,8 +67,8 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     forumService.savePost(categoryId, forumId, topicId, post3, true, new MessageBuilder());
     forumService.savePost(categoryId, forumId, topicId, post4, true, new MessageBuilder());
     
-    activity = getManager().getActivity(activityId);
-    assertEquals(4, getManager().getCommentsWithListAccess(activity).getSize());
+    activity = getActivityManager().getActivity(activityId);
+    assertEquals(4, getActivityManager().getCommentsWithListAccess(activity).getSize());
     
     List<String> postPaths = new ArrayList<String>();
     postPaths.add(post1.getPath());
@@ -82,22 +87,59 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     
     //2 actitivies created after split topic
     String activityId1 = forumService.getActivityIdForOwnerPath(topic.getPath());
-    ExoSocialActivity activity1 = getManager().getActivity(activityId1);
+    ExoSocialActivity activity1 = getActivityManager().getActivity(activityId1);
     assertNotNull(activity1);
-    ListAccess<ExoSocialActivity> list = getManager().getCommentsWithListAccess(activity1);
+    ListAccess<ExoSocialActivity> list = getActivityManager().getCommentsWithListAccess(activity1);
     assertEquals(0, list.getSize());
     //assertEquals("message3", list.load(0, 10)[0].getTitle());
     
     String activityId2 = forumService.getActivityIdForOwnerPath(newTopic.getPath());
-    ExoSocialActivity activity2 = getManager().getActivity(activityId2);
+    ExoSocialActivity activity2 = getActivityManager().getActivity(activityId2);
     assertNotNull(activity2);
-    ListAccess<ExoSocialActivity> list2 = getManager().getCommentsWithListAccess(activity2);
+    ListAccess<ExoSocialActivity> list2 = getActivityManager().getCommentsWithListAccess(activity2);
     //assertEquals(3, list2.getSize());
     //assertEquals("message2", list2.load(0, 10)[0].getTitle());
   }
+  
+  public void testCensoredTopic() throws Exception {
+    Identity rootIdentity = getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, "root", true);
+    List<ExoSocialActivity> activities = getActivityManager().getActivityFeedWithListAccess(rootIdentity).loadAsList(0, 10);
+    
+    //By default, root has a topic then there is always an activity on root's stream
+    assertEquals(1, activities.size());
+    
+    //root add a censored topic
+    Topic topic1 = createdTopic("root");
+    topic1.setTopicName("Topic1111");
+    topic1.setIsWaiting(true);
+    forumService.saveTopic(categoryId, forumId, topic1, true, false, new MessageBuilder());
+    //the activity associated with topic1 must be hidden
+    topic1 = forumService.getTopic(categoryId, forumId, topic1.getId(), "");
+    String activityId1 = forumService.getActivityIdForOwnerPath(topic1.getPath());
+    ExoSocialActivity activity1 = getActivityManager().getActivity(activityId1);
+    assertNotNull(activity1);
+    assertTrue(activity1.isHidden());
+    activities = getActivityManager().getActivityFeedWithListAccess(rootIdentity).loadAsList(0, 10);
+    assertEquals(1, activities.size());
+    
+    List<Topic> topics = new ArrayList<Topic>();
+    //approve topic1
+    topic1.setIsWaiting(false);
+    topics.add(topic1);
+    forumService.modifyTopic(topics, Utils.WAITING);
+    activity1 = getActivityManager().getActivity(activityId1);
+    assertNotNull(activity1);
+    assertFalse(activity1.isHidden());
+    activities = getActivityManager().getActivityFeedWithListAccess(rootIdentity).loadAsList(0, 10);
+    assertEquals(2, activities.size());
+  }
 
-  private ActivityManager getManager() {
+  private ActivityManager getActivityManager() {
     return (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
+  }
+  
+  private IdentityManager getIdentityManager() {
+    return (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
   }
 
 }
