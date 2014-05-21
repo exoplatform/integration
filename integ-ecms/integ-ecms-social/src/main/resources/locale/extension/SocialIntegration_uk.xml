@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>була створена</createdBy>
-      <editedBy>була відредагована</editedBy>
       <system>система</system>
-      <readmore>...Читати далі.</readmore>
       <editTitle>Назва була оновлена для: {0}</editTitle>
       <editName>Ім'я було оновлене: {0}</editName>
       <editDescription>Оновлено Опис: {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>Творець: {0} був видалений.</removeCreator>
       <removeMultiCreator>Творці: {0} були видалені.</removeMultiCreator>
       <removeLanguage>Мова була видалена.</removeLanguage>
-      <removeContent>Вміст був видалений.</removeContent>
       <attachmentAdded>Файл(и) були прикріплені.</attachmentAdded>
       <attachmentRemoved>Файл(и) було видалено.</attachmentRemoved>
       <categoryAdded>Категорія: {0} було додано.</categoryAdded>

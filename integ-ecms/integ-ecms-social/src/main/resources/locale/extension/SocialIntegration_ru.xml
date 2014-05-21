@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>был создан</createdBy>
-      <editedBy>был изменен</editedBy>
       <system>система</system>
-      <readmore>...Прочитать больше.</readmore>
       <editTitle>Обновлен заголовок: {0}</editTitle>
       <editName>Обновлено название: {0}</editName>
       <editDescription>Обновлено описание: {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>Создатель: {0} был удален.</removeCreator>
       <removeMultiCreator>Создатели: {0} были удалены.</removeMultiCreator>
       <removeLanguage>Язык был удален.</removeLanguage>
-      <removeContent>Содержимое было удалено.</removeContent>
       <attachmentAdded>Файл(ы) были прикреплены.</attachmentAdded>
       <attachmentRemoved>Файл(ы) были удалены.</attachmentRemoved>
       <categoryAdded>Была добавлена категория: {0}.</categoryAdded>

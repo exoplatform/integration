@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>是由创建的</createdBy>
-      <editedBy>是由编辑</editedBy>
       <system>系统</system>
-      <readmore>...阅读更多。</readmore>
       <editTitle>标题已更新到： {0}</editTitle>
       <editName>名称已被更新到: {0}</editName>
       <editDescription>说明已被更新到: {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>创建者: {0} 已被移除。</removeCreator>
       <removeMultiCreator>创作者: {0} 已被删除。</removeMultiCreator>
       <removeLanguage>已删除的语言。</removeLanguage>
-      <removeContent>已删除的内容。</removeContent>
       <attachmentAdded>已附加的文件。</attachmentAdded>
       <attachmentRemoved>文件已被删除。</attachmentRemoved>
       <categoryAdded>类别： {0} 已被添加。</categoryAdded>

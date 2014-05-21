@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>oluşturan</createdBy>
-      <editedBy>düzenleyen</editedBy>
       <system>Sistem</system>
-      <readmore>...Devamını oku.</readmore>
       <editTitle>Başlık güncellendi: {0}</editTitle>
       <editName>Adı güncellendi: {0}</editName>
       <editDescription>Açıklama güncellendi: {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>Hazırlayan: {0} kaldırıldı.</removeCreator>
       <removeMultiCreator>Hazırlayan: {0} kaldırılmıştır.</removeMultiCreator>
       <removeLanguage>Dil kaldırıldı.</removeLanguage>
-      <removeContent>İçerik kaldırıldı.</removeContent>
       <attachmentAdded>Dosya(lar) eklendi.</attachmentAdded>
       <attachmentRemoved>Dosya(lar) kaldırıldı.</attachmentRemoved>
       <categoryAdded>Kategori: {0} eklendi.</categoryAdded>

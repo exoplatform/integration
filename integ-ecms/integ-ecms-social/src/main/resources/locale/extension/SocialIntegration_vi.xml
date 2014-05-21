@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>được tạo bởi</createdBy>
-      <editedBy>được sửa bởi</editedBy>
       <system>hệ thống</system>
-      <readmore>...Xem Thêm.</readmore>
       <editTitle>Tiêu đề đã được cập nhật thành : {0}</editTitle>
       <editName>Tên đã được cập nhật thành: {0}</editName>
       <editDescription>Mô tả đã được cập nhật thành: {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>Tác giả: {0} vừa bị loại bỏ.</removeCreator>
       <removeMultiCreator>Các tác giả: {0} đã bị loại bỏ.</removeMultiCreator>
       <removeLanguage>Ngôn ngữ đã bị xóa.</removeLanguage>
-      <removeContent>Nội dung đã bị xóa.</removeContent>
       <attachmentAdded>Một số tệp đã được đính kèm.</attachmentAdded>
       <attachmentRemoved>Tệp vừa bị loại bỏ.</attachmentRemoved>
       <categoryAdded>Danh mục: {0} đã được thêm vào.</categoryAdded>

@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>sukūrė</createdBy>
-      <editedBy>redagavo</editedBy>
       <system>sistema</system>
-      <readmore>...Skaityti daugiau.</readmore>
       <editTitle>Antraštė atnaujinta į: {0}</editTitle>
       <editName>Pavadinimas atnaujintas į: {0}</editName>
       <editDescription>Aprašymas atnaujintas į: {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>Kūrėjas: {0} pašalintas.</removeCreator>
       <removeMultiCreator>Kūrėjai: {0} pašalinti.</removeMultiCreator>
       <removeLanguage>Kalba pašalinta.</removeLanguage>
-      <removeContent>Turinys pašalintas.</removeContent>
       <attachmentAdded>Failas(-ai) prisegtas(-i).</attachmentAdded>
       <attachmentRemoved>Failas(-ai) pašalintas(-i).</attachmentRemoved>
       <categoryAdded>Kategorija: {0} pridėta.</categoryAdded>

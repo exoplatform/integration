@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>skapades av</createdBy>
-      <editedBy>redigerades av</editedBy>
       <system>systemet</system>
-      <readmore>...Läs mer.</readmore>
       <editTitle>Titeln har uppdaterats till: {0}</editTitle>
       <editName>Namn har uppdaterats till: {0}</editName>
       <editDescription>Beskrivning har uppdaterats till: {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>Upphovsman: {0} har tagits bort.</removeCreator>
       <removeMultiCreator>Skapare: {0} har tagits bort.</removeMultiCreator>
       <removeLanguage>Språket har tagits bort.</removeLanguage>
-      <removeContent>Innehåll har tagits bort.</removeContent>
       <attachmentAdded>Fil(er) har bifogats.</attachmentAdded>
       <attachmentRemoved>Filerna har tagits bort.</attachmentRemoved>
       <categoryAdded>Kategori: {0} har lagts till.</categoryAdded>

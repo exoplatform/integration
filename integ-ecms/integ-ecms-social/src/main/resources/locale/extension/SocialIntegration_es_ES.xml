@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>fue creado por</createdBy>
-      <editedBy>fue editado por</editedBy>
       <system>el sistema</system>
-      <readmore>...Leer más.</readmore>
       <editTitle>Título ha sido actualizado a: {0}</editTitle>
       <editName>El nombre ha sido actualizado a: {0}</editName>
       <editDescription>La descripción ha sido actualizada a: {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>Creador: {0} ha sido eliminado.</removeCreator>
       <removeMultiCreator>Creadores: {0} han sido eliminados.</removeMultiCreator>
       <removeLanguage>Idioma ha sido eliminado.</removeLanguage>
-      <removeContent>Contenido ha sido eliminado.</removeContent>
       <attachmentAdded>Archivo (s) ha sido asignado.</attachmentAdded>
       <attachmentRemoved>Archivo(s) ha sido eliminado.</attachmentRemoved>
       <categoryAdded>Categoría: {0} ha sido añadida.</categoryAdded>

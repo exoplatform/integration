@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>byla vytvořena</createdBy>
-      <editedBy>byla upravena</editedBy>
       <system>systém</system>
-      <readmore>...číst více.</readmore>
       <editTitle>Nadpis byl aktualizován na: {0}</editTitle>
       <editName>Název byl aktualizován na: {0}</editName>
       <editDescription>Popis byl aktualizován na: {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>Tvůrce: {0} byl odstraněn.</removeCreator>
       <removeMultiCreator>Tvůrci: {0} byli odstraněni.</removeMultiCreator>
       <removeLanguage>Jazyk byl odstraněn.</removeLanguage>
-      <removeContent>Obsah byl odstraněn.</removeContent>
       <attachmentAdded>Soubor(y) byl připojen.</attachmentAdded>
       <attachmentRemoved>Soubor(y) byl odstraněn.</attachmentRemoved>
       <categoryAdded>Kategorie: {0} byla přidána.</categoryAdded>

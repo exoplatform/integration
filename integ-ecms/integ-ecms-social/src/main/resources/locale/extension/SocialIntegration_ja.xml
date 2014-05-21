@@ -6,9 +6,7 @@
     </titles>
     <messages>
       <createdBy>が作成されました。作成者：</createdBy>
-      <editedBy>が編集されました。編集者：</editedBy>
       <system>システム</system>
-      <readmore>...続きを読む.</readmore>
       <editTitle>タイトルが更新されました： {0}</editTitle>
       <editName>名前が更新されました：{0}</editName>
       <editDescription>説明文が更新されました： {0}</editDescription>
@@ -34,7 +32,6 @@
       <removeCreator>作成者: {0} が削除されました</removeCreator>
       <removeMultiCreator>作成者: {0} が削除されました</removeMultiCreator>
       <removeLanguage>言語が削除されました</removeLanguage>
-      <removeContent>コンテンツが削除されました</removeContent>
       <attachmentAdded>ファイルが添付されました</attachmentAdded>
       <attachmentRemoved>ファイルが削除されました</attachmentRemoved>
       <categoryAdded>カテゴリ: {0} が追加されました</categoryAdded>
