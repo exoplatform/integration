@@ -14,10 +14,10 @@
       <editDescription>描述已更新到： {0}。</editDescription>
       <singleCreator>創作者是 {0}</singleCreator>
       <multiCreator>創作者是 {0}</multiCreator>
-      <addSource>檔源來源： {0} 已增加</addSource>
-      <addMultiSource>檔源來源： {0} 已增加</addMultiSource>
-      <removeSource>檔源來源： {0} 已被刪除</removeSource>
-      <removeMultiSource>檔源來源： {0} 已被刪除</removeMultiSource>
+      <addSource>檔案來源： {0} 已增加</addSource>
+      <addMultiSource>檔案來源： {0} 已增加</addMultiSource>
+      <removeSource>檔案來源： {0} 已被刪除</removeSource>
+      <removeMultiSource>檔案來源： {0} 已被刪除</removeMultiSource>
       <editSummary>摘要已更新到： {0}。</editSummary>
       <editLanguage>語言已更新到： {0}</editLanguage>
       <editContent>已更新的內容。</editContent>
