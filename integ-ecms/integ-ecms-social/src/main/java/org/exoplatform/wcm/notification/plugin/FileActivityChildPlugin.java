@@ -54,6 +54,9 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.notification.LinkProviderUtils;
 import org.exoplatform.wcm.ext.component.activity.listener.Utils;
+import org.exoplatform.webui.cssfile.CssClassIconFile;
+import org.exoplatform.webui.cssfile.CssClassManager;
+import org.exoplatform.webui.cssfile.CssClassUtils;
 
 
 public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
@@ -72,11 +75,9 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
   public static final String DOCUMENT_TITLE               = "docTitle";
   public static final String CONTENT_NAME                 = "contentName";
   public static final String DOCUMENT_SUMMARY             = "docSummary";
-  public static final String EXO_RESOURCES_URI            = "/eXoResources/skin/images/Icons/TypeIcons";
-  public static final String DEFAULT_FILE_ICON_URI        = EXO_RESOURCES_URI + "/icon-default64x64.png";
-  public static final String DEFAULT_VIDEO_ICON_URI       = EXO_RESOURCES_URI + "/icon-video-default64x64.png";
-  public static final String DEFAULT_AUDIO_ICON_URI       = EXO_RESOURCES_URI + "/icon-audio-default64x64.png";
-  public static final String DEFAULT_ARCHIVE_ICON_URI     = EXO_RESOURCES_URI + "/icon-archive-default64x64.png";
+  public static final String EXO_RESOURCES_URI            = "/eXoResources/skin/images/Icons/TypeIcons/EmailNotificationIcons/";
+  public static final String DOCNAME                      = "DOCNAME";
+  public static final String ICON_FILE_EXTENSION          = ".png";
 
   private String             mimeType;
   private String             nodeUUID;
@@ -87,6 +88,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
   private String             repository;
   private String             workspace;
   private String             baseURI;
+  private String             docName;
 
 
   public FileActivityChildPlugin(InitParams initParams) {
@@ -173,6 +175,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
     this.workspace = templateParams.get(WORKSPACE);
     this.nodeUUID = templateParams.get(NODE_UUID);
     this.mimeType = templateParams.get(MIME_TYPE);
+    this.docName = templateParams.get(DOCNAME);
     
     String documentTitle = templateParams.get(DOCUMENT_TITLE);
     if (documentTitle != null) {
@@ -206,18 +209,13 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
   }
 
   private Object getDefaultThumbnail() {
-    if (this.mimeType.startsWith("video")) { 
-      return baseURI + DEFAULT_VIDEO_ICON_URI;
+    String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(
+        this.docName, this.mimeType, CssClassManager.ICON_SIZE.ICON_64);
+    
+    if (cssClass.indexOf(CssClassIconFile.DEFAULT_CSS) > 0) {
+      return baseURI + EXO_RESOURCES_URI  + "uiIcon64x64Templatent_file.png";
     }
-    else if (this.mimeType.startsWith("audio")) {
-      return baseURI + DEFAULT_AUDIO_ICON_URI;
-    }
-    else if (this.mimeType.endsWith("zip") || this.mimeType.endsWith("rar") || this.mimeType.endsWith("x-gzip")) {
-      return baseURI + DEFAULT_ARCHIVE_ICON_URI;
-    }
-    else { // default
-      return baseURI + DEFAULT_FILE_ICON_URI;
-    }
+    return baseURI + EXO_RESOURCES_URI + cssClass.split(" ")[0] + ICON_FILE_EXTENSION;
   }
 
   private String getThumbnailUrl(Node currentNode) {
