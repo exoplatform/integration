@@ -195,7 +195,7 @@
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
 						<% if (uicomponent.getSpaceGroupId().length() > 0) {
-								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
+								Space spaceSource = Utils.getSpaceService().getSpaceByGroupId(uicomponent.getSpaceGroupId());
 									def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
 									def spaceName = spaceSource.displayName;
 						%>
