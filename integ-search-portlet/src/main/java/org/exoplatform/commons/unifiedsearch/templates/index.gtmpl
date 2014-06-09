@@ -7,30 +7,26 @@
   <div id="searchPage">
 
     <div id="searchForm" class="searchContainer">
-      <div class="searchForm">
-        <input type="text" id="txtQuery" style="width: 250px;">
+      <div class="pull-left searchForm">
+        <input type="text" id="txtQuery" style="width: 220px;">
         <button type="button" class="btn btn-primary" id="btnSearch" value="Search">${unifiedsearch}</button>
-      </div>
-
-      <div class="result clearfix">
-        <div id="resultHeader" class="pull-left resultHeader"></div>
-        <div id="resultSort" class="pull-right resultSort">
-          <div class="btn-group uiDropdownWithIcon pull-right">
-            <a data-toggle="dropdown" class="btn dropdown-toggle">
-              <span id="sortField">${relevancy}</span>
-              <span class="spiter"></span>
-              <span class="caret"></span>
-            </a>
-            <ul id="sortOptions" class="dropdown-menu">
-              <li><a href="#" sort="relevancy">${relevancy}<i class="uiIconSortDown"></i></a></li>
-              <li><a href="#" sort="date">${date}</i></a></li>
-              <li><a href="#" sort="title">${title}</a></li>
-            </ul>
-          </div>
-          <span>Sort By:</span>
+      </div>      
+      <div id="resultSort" class="pull-right resultSort">
+        <div class="btn-group uiDropdownWithIcon pull-right">
+          <a data-toggle="dropdown" class="btn dropdown-toggle">
+            <span id="sortField">${relevancy}</span>
+            <span class="spiter"></span>
+            <span class="caret"></span>
+          </a>
+          <ul id="sortOptions" class="dropdown-menu">
+            <li><a href="#" sort="relevancy">${relevancy}<i class="uiIconSortDown"></i></a></li>
+            <li><a href="#" sort="date">${date}</i></a></li>
+            <li><a href="#" sort="title">${title}</a></li>
+          </ul>
         </div>
-      </div>
-
+        <span>Sort By:</span>
+      </div>      
+      <div id="resultHeader" class="center resultHeader"></div>
     </div>
       <div class="clearfix">
 
@@ -52,10 +48,16 @@
         </div>
 
         <div id="resultPage" class="resultPage uiBox">
-          <div id="result"></div>
+          <div id="result"></div>          
+          <div class="noResultInfo">
+            <h3>No Result Found</h3>
+            <p>Your search <b id="keyword">cloud</b> dis not match any content.
+            <br />
+            Try different keywords.
+            </p>
+          </div>
           <div id="showMore" class="showMore"><button type="button" class="btn" id="btnShowMore" value="Show More Results">${showmore}</button></div>
-        </div>
-
+        </div>	       
       </div>
   </div>
 </div>

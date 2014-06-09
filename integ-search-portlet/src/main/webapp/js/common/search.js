@@ -261,13 +261,22 @@ window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrent
       $("#result").append(html);
     }
 
-    function clearResultPage(message){
+    function clearResultPage(){
       $("#result").html("");
-      $("#resultHeader").html(message?message:"");
+      $("#resultHeader").html("");
       $("#resultSort").hide();
       $("#resultPage").hide();
+      $("#resultPage").removeClass("noResult");
       setWaitingStatus(false);
       return;
+    }
+
+    function showNoResultPage(key){
+      clearResultPage();
+      var resultPage = $("#resultPage");
+      resultPage.addClass("noResult");
+      $("#keyword",resultPage).html(key);
+      resultPage.show();
     }
 
     // Client-side sort functions
@@ -405,7 +414,7 @@ window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrent
         if(append) {
           $("#showMore").hide();
         } else {
-          clearResultPage("No result for <strong>" + XSSUtils.sanitizeString($("#txtQuery").val()) + "<strong>");
+        	showNoResultPage(XSSUtils.sanitizeString($("#txtQuery").val()))
         }
         return;
       }
@@ -414,7 +423,8 @@ window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrent
       var resultHeader = "Results " + 1 + " to " + NUM_RESULTS_RENDERED + " for <strong>" +  XSSUtils.sanitizeString($("#txtQuery").val()) + "<strong>";
       $("#resultHeader").html(resultHeader);
       $("#resultSort").show();
-      $("#resultPage").show();
+      $("#resultPage").removeClass("noResult");
+      $("#resultPage").show();      
 
       if(!append) $("#result").html("");
       $.each(current, function(i, result){
