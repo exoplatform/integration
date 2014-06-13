@@ -172,7 +172,7 @@
   def currentTime = System.currentTimeMillis();
   
   def votes = uicomponent.getVotes();
-  def numberOfVotes = uicomponent.getTotalUsersVotes(); 
+  def numberOfVoters = uicomponent.getTotalOfVoters(); 
 %>
 
 <div class="activityStream uiPollActivity" id="activityContainer${activity.id}"> 
@@ -210,7 +210,7 @@
 			<div class="uiBox roundedBottom introBox pollShare">	
 				<div class="clearfix pollTitle">
 					<div class="pull-right">
-						  <span class="numberVoted">$numberOfVotes</span>
+						  <span class="numberVoted">$numberOfVoters</span>
 					</div>
 					<h5>					
 						 <a  href="${uicomponent.getLink()}">

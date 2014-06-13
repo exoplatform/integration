@@ -52,6 +52,7 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 public class PollUIActivity extends BaseKSActivity {
   
   private String totalOfUsersVote;
+  private String totalOfVoters;
 
   public Map<String, List<String>> getVotes() throws Exception{
     Map<String, List<String>> info = new LinkedHashMap<String, List<String>>();
@@ -63,6 +64,7 @@ public class PollUIActivity extends BaseKSActivity {
     String[] votes = poll.getVote();
 
     setTotalUsersVotes(getStringFromNumberOfVotes(Integer.parseInt(poll.getVotes())));
+    setTotalOfVoters(getStringFromNumberOfVoters(userVotes.length));
 
     int[] votesValues = getVotesOfOption(userVotes, options.length);
     for (int i = 0; i < options.length; i++) {
@@ -111,6 +113,30 @@ public class PollUIActivity extends BaseKSActivity {
     }
   }
 
+  /**
+   * @return the number of voters
+   */
+  public String getTotalOfVoters() {
+    return totalOfVoters;	  
+  }
+
+  public void setTotalOfVoters(String totalOfVoters) {
+     this.totalOfVoters = totalOfVoters;	   
+   }
+
+  /**
+   * 
+   * @param nbVotes
+   * @return i18n label about the number of voters
+   */
+  private String getStringFromNumberOfVoters(int nbVoters) {
+    if (nbVoters <= 1) {
+      return WebUIUtils.getLabel(null, "PollUIActivity.label.voter").replace("{0}", String.valueOf(nbVoters));
+    } else {
+      return WebUIUtils.getLabel(null, "PollUIActivity.label.voters").replace("{0}", String.valueOf(nbVoters));
+    }
+  }  
+  
   private int[] getVotesOfOption(String[] userVotes, int length) {
     int[] tab = new int[length];
     for (String userVote : userVotes) {
