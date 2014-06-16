@@ -94,9 +94,10 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newActivity;
       } catch (Exception e) {
-        LOG.error("Can not record Activity for when add topic's title " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Activity for when add topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
+        return null;
       }
-      return null;
     }
     
   };
@@ -159,7 +160,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when update topic " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when update topic: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -203,7 +205,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when update topic " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when update topic: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -246,7 +249,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when update topic's content " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when update topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -292,7 +296,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when update topic's content " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when update topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -335,7 +340,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when close topic " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when close topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -377,7 +383,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when open topic " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when open topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -421,7 +428,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when lock topic " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when lock topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -466,7 +474,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when unlock topic " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when unlock topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -510,7 +519,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when approved topic " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when approved topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -555,7 +565,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when unapproved topic " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when unapproved topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -620,7 +631,8 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
         
         return a;
       } catch (Exception e) {
-        LOG.error("Can not hide activity for censoring topic " + ctx.getTopic().getId(), e);
+        LOG.warn("Can not record Comment for when hidden topic's id: " + ctx.getTopic().getId());
+        LOG.debug(e.getMessage(), e);
         return null;
       }
     }

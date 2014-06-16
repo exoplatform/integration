@@ -216,7 +216,6 @@ public class ForumActivityUtils {
     //
     if (got == null) {
       got = makeActivity(ctx);
-      
     }
     
     //title and body of activity may contain specials characters and when we get activity, the special character will be encoded
