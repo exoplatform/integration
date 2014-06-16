@@ -2,83 +2,83 @@
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>Filstørrelse</fileSize>
     </titles>
     <messages>
-      <createdBy>was created by</createdBy>
+      <createdBy>ble opprettet av</createdBy>
       <editedBy>was edited by</editedBy>
-      <system>the system</system>
+      <system>systemet</system>
       <readmore>...Read More.</readmore>
-      <editTitle>Title has been updated to: {0}</editTitle>
-      <editName>Name has been updated to: {0}</editName>
-      <editDescription>Description has been updated to: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <addSource>File source: {0} has been added</addSource>
-      <addMultiSource>File sources: {0} have been added</addMultiSource>
-      <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
-      <editSummary>Summary has been updated to: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
-      <editContent>Content has been updated.</editContent>
-      <editFile>File has been updated.</editFile>
-      <emptyTitle>The title has been removed.</emptyTitle>
-      <emptySummary>The summary has been removed.</emptySummary>
-      <emptyContent>The content has been removed.</emptyContent>
-      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} has been removed.</removeMetadata>  
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Name has been removed.</removeName>
-      <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator: {0} has been removed.</removeCreator>
-      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
-      <removeLanguage>Language has been removed.</removeLanguage>
+      <editTitle>Tittelen har blitt oppdatert til: {0}</editTitle>
+      <editName>Navnet har blitt oppdatert til: {0}</editName>
+      <editDescription>Beskrivelsen har blitt oppdatert til: {0}</editDescription>
+      <singleCreator>Skaperen er {0}</singleCreator>
+      <multiCreator>Skaperne er {0}</multiCreator>
+      <addSource>Filkilde: {0} har blitt lagt til</addSource>
+      <addMultiSource>Filkilde: {0} har blitt lagt til</addMultiSource>
+      <removeSource>Filkilde: {0} har blitt fjernet</removeSource>
+      <removeMultiSource>Filkilde: {0} har blitt fjernet</removeMultiSource>
+      <editSummary>Sammendraget er oppdatert til: {0}</editSummary>
+      <editLanguage>Språk har blitt endret til: {0}</editLanguage>
+      <editContent>Innholdet har blitt oppdatert.</editContent>
+      <editFile>Filen har blitt oppdatert.</editFile>
+      <emptyTitle>Tittelen har blitt fjernet.</emptyTitle>
+      <emptySummary>Sammendraget har blitt fjernet.</emptySummary>
+      <emptyContent>Innholdet har blitt fjernet.</emptyContent>
+      <updateMetadata>Metadata {0} har blitt oppdatert til: {1}</updateMetadata>
+      <removeMetadata>Metadata {0} har blitt fjernet.</removeMetadata>  
+      <removeTitle>Tittelen har blitt fjernet.</removeTitle>
+      <removeName>Navnet har blitt fjernet.</removeName>
+      <removeSummary>Sammendrag har blitt fjernet.</removeSummary>
+      <removeDescription>Beskrivelsen har blitt fjernet.</removeDescription>
+      <removeCreator>Skaper: {0} har blitt fjernet.</removeCreator>
+      <removeMultiCreator>Skapere: {0} har blitt fjernet.</removeMultiCreator>
+      <removeLanguage>Språket har blitt fjernet.</removeLanguage>
       <removeContent>Content has been removed.</removeContent>
-      <attachmentAdded>File(s) has been attached.</attachmentAdded>
-      <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
-      <categoryAdded>Category: {0} has been added.</categoryAdded>
-      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
-      <tagAdded>Tag: {0} has been added.</tagAdded>
-      <tagsAdded>Tags: {0} have been added.</tagsAdded>
-      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
+      <attachmentAdded>Fil(er) har blitt lagt ved.</attachmentAdded>
+      <attachmentRemoved>Fil(er) har blitt fjernet.</attachmentRemoved>
+      <categoryAdded>Kategori: {0} er lagt til.</categoryAdded>
+      <categoryRemoved>Kategori: {0} har blitt fjernet.</categoryRemoved>
+      <tagAdded>Tagg: {0} har blitt lagt til.</tagAdded>
+      <tagsAdded>Taggene: {0} har blitt lagt til.</tagsAdded>
+      <tagRemoved>Tagg: {0} har blitt fjernet.</tagRemoved>
+      <tagsRemoved>Taggene: {0} har blitt fjernet.</tagsRemoved>
       <stateChange>
-        <pending>Publication status is now pending.</pending>
-        <approved>Document has been approved.</approved>
-        <staged>Publication has been staged.</staged>
-        <published>Document has been published.</published>
+        <pending>Publikasjonsstatusen er venter.</pending>
+        <approved>Dokumentet har blitt godkjent.</approved>
+        <staged>Publikasjonen har blitt lagt klar.</staged>
+        <published>Dokumentet har blitt publisert.</published>
       </stateChange>
-      <contentMoved>Publication has been moved to: {0}</contentMoved>
-      <fileMoved>File has been moved to: {0}</fileMoved>
-      <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
-      <version>Version: {0}</version>
+      <contentMoved>Publikasjonen har blitt flyttet til: {0}</contentMoved>
+      <fileMoved>Filen har blitt flyttet til: {0}</fileMoved>
+      <revisionChanged>Publikasjonen har blitt tilbakestilt til versjon: {0}</revisionChanged>
+      <version>Versjon {0}</version>
     </messages>
     <publicationStates>
-      <archived>Archived</archived>
-      <obsolete>Obsolete</obsolete>
-      <unpublished>Unpublished</unpublished>
-      <draft>Draft</draft>
+      <archived>Arkivert</archived>
+      <obsolete>Foreldet</obsolete>
+      <unpublished>Upubliserte</unpublished>
+      <draft>Utkast</draft>
       <pending>Venter</pending>
-      <approved>Approved</approved>
-      <inreview>In Review</inreview>
-      <staged>Staged</staged>
-      <published>Published</published>
-      <live>Published</live>
+      <approved>Godkjent</approved>
+      <inreview>Til granskning</inreview>
+      <staged>Lagt klar</staged>
+      <published>Publisert</published>
+      <live>Publisert</live>
     </publicationStates>
-    <view>View</view>
+    <view>Vis</view>
     <edit>Rediger</edit>
-    <download>Download</download>
+    <download>Last ned</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Preview</DocViewer>
+      <DocViewer>Forhåndsvisning</DocViewer>
     </title>
   </UIPopupWindow>
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Resource Type</resourceType>        
+        <resourceType>Ressurstype</resourceType>        
       </label>
     </dialog>
   </ElementSet>
