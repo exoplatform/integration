@@ -56,7 +56,7 @@
     <org.exoplatform.wiki.version>4.1.x-wiki-social-notifications-SNAPSHOT</org.exoplatform.wiki.version>
     <org.exoplatform.calendar.version>4.1.x-cal-social-notifications-SNAPSHOT</org.exoplatform.calendar.version>
     <!-- Platform Project 3rd party Dependencies -->
-    <org.exoplatform.doc.doc-style.version>4.1.0-SNAPSHOT</org.exoplatform.doc.doc-style.version>
+    <org.exoplatform.doc.doc-style.version>4.1.x-SNAPSHOT</org.exoplatform.doc.doc-style.version>
   </properties>
   <dependencyManagement>
     <!-- ### NEVER CHANGE THIS ORDER OF DEPMGT ### -->

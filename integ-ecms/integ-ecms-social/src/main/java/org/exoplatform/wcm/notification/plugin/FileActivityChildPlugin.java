@@ -31,7 +31,6 @@ import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationChildPlugin;
-import org.exoplatform.commons.api.notification.plugin.NotificationPluginUtils;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.NotificationUtils;
 import org.exoplatform.commons.notification.template.TemplateUtils;
@@ -205,7 +204,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
     this.nodeLocation = NodeLocation.getNodeLocationByNode(contentNode);
     
     //
-    this.baseURI = NotificationPluginUtils.getDomain();
+    this.baseURI = CommonsUtils.getCurrentDomain();
   }
 
   private Object getDefaultThumbnail() {

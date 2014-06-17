@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.api.notification.plugin.NotificationPluginUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils.PORTLET_INFO;
@@ -46,7 +47,7 @@ public class ForumNotificationUtils {
     String topicId = getActivityParamValue(activity, ForumActivityBuilder.TOPIC_ID_KEY);
     String forumId = getActivityParamValue(activity, ForumActivityBuilder.FORUM_ID_KEY);
     try {
-      return NotificationPluginUtils.getDomain() + BuildLinkUtils.buildLink(forumId, topicId, PORTLET_INFO.FORUM);
+      return CommonsUtils.getCurrentDomain() + BuildLinkUtils.buildLink(forumId, topicId, PORTLET_INFO.FORUM);
     } catch (Exception ex) {
       return "";
     }
