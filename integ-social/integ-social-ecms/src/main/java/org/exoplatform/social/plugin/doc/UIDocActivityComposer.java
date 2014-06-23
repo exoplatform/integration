@@ -273,7 +273,11 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     }
       
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);
-    ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(), activity_type, docActivityTitle, null);
+    String title = activityParams.get(UIDocActivity.MESSAGE);
+    if (title == null || title.length() == 0) {
+      title = docActivityTitle;
+    }
+    ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(), activity_type, title, null);
     activity.setTemplateParams(activityParams);
     activityManager.saveActivityNoReturn(ownerIdentity, activity);
     
