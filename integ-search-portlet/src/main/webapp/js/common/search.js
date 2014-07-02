@@ -1,6 +1,6 @@
 (function($){
   
-window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrentSiteOnly,hideSearchForm,hideFacetsFilter) {
+window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrentSiteOnly,hideSearchForm,hideFacetsFilter,firstInit) {
 
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
@@ -56,22 +56,24 @@ window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrent
     ";    
       
     $("document").ready(function(){
-      if (typeof resultsPerPage != 'undefined'
-          & typeof searchTypes != 'undefined'
-          & typeof searchCurrentSiteOnly != 'undefined'
-          & typeof hideSearchForm != 'undefined'
-          & typeof hideFacetsFilter != 'undefined'){
-        var jqxhr = $.post("/rest/search/setting", {
-          resultsPerPage: resultsPerPage,
-          searchTypes: searchTypes,
-          searchCurrentSiteOnly: searchCurrentSiteOnly,
-          hideSearchForm: hideSearchForm,
-          hideFacetsFilter: hideFacetsFilter
-        });
-  
-        jqxhr.complete(function(data) {
-          console.log("ok"==data.responseText?"Your setting has been saved.":"Problem occurred when saving your setting: "+data.responseText);
-        });
+      if (Boolean(firstInit)) {
+        var data = {};
+        if (typeof resultsPerPage != 'undefined') {
+          data["resultsPerPage"] = resultsPerPage;
+        }
+        if (typeof searchTypes != 'undefined') {
+          data["searchTypes"] = searchTypes;
+        }
+        if (typeof searchCurrentSiteOnly != 'undefined') {
+          data["searchCurrentSiteOnly"] = searchCurrentSiteOnly;
+        }
+        if (typeof hideSearchForm != 'undefined') {
+          data["hideSearchForm"] = hideSearchForm;
+        }
+        if (typeof hideFacetsFilter != 'undefined') {
+          data["hideFacetsFilter"] = hideFacetsFilter;
+        }
+        $.post("/rest/search/setting", data);
       }
     });  
     

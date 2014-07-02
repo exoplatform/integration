@@ -62,6 +62,6 @@
 
 <script>
 window.require(["PORTLET/unified-search/UnifiedsearchPortlet"], function() {
-  initSearch(${resultsPerPage},'${searchTypes}',${searchCurrentSiteOnly},${hideSearchForm},${hideFacetsFilter});
+  initSearch(${resultsPerPage},'${searchTypes}',${searchCurrentSiteOnly},${hideSearchForm},${hideFacetsFilter},${firstInit}); 
 });  
 </script>
