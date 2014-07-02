@@ -1,6 +1,6 @@
 (function($){
 // Function to be called when the quick search template is ready
-window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching,resultsPerPage,searchTypes,searchCurrentSiteOnly) {
+window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching,resultsPerPage,searchTypes,searchCurrentSiteOnly,firstInit) {
   
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
@@ -126,18 +126,18 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
       ";       
     
     $("document").ready(function(){
-      if (typeof resultsPerPage != 'undefined'
-          & typeof searchTypes != 'undefined'
-          & typeof searchCurrentSiteOnly != 'undefined'){
-        var jqxhr = $.post("/rest/search/setting/quicksearch", {
-          resultsPerPage: resultsPerPage,
-          searchTypes: searchTypes,
-          searchCurrentSiteOnly: searchCurrentSiteOnly
-        });
-  
-        jqxhr.complete(function(data) {
-          console.log("ok"==data.responseText?"Your quick search setting has been saved.":"Problem occurred when saving your setting: "+data.responseText);
-        });
+      if (Boolean(firstInit)) {
+        var data = {};
+        if (typeof resultsPerPage != 'undefined') {
+          data["resultsPerPage"] = resultsPerPage;
+        }
+        if (typeof searchTypes != 'undefined') {
+          data["searchTypes"] = searchTypes;
+        }
+        if (typeof searchCurrentSiteOnly != 'undefined') {
+          data["searchCurrentSiteOnly"] = searchCurrentSiteOnly;
+        }
+        $.post("/rest/search/setting/quicksearch", data);
       }
     });         
     //*** Utility functions ***

@@ -55,6 +55,8 @@ public class QuickSearch {
   
   @Inject
   ResourceBundle bundle;  
+
+  static boolean firstInit = true;
   
   @View
   public void index(RenderContext renderContext){
@@ -65,6 +67,8 @@ public class QuickSearch {
     Map<String, Object> parameters = new HashMap<String, Object>();
     QuickSearch_.index().setProperty(JuzuPortlet.PORTLET_MODE, PortletMode.EDIT);
     PortletMode mode = requestContext.getProperty(JuzuPortlet.PORTLET_MODE);
+    parameters.put("firstInit", firstInit);
+    if (firstInit) firstInit = false;
     if (PortletMode.EDIT == mode){     
       parameters.put("quicksearch", rs.getString("quicksearch.label"));
       parameters.put("resultsPerType", rs.getString("quicksearch.resultsPerType.label"));
