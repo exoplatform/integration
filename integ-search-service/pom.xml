@@ -23,8 +23,16 @@
       <artifactId>commons-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.exoplatform.ecms</groupId>
+      <artifactId>ecms-core-services</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.exoplatform.forum</groupId>
       <artifactId>forum-forum-service</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.forum</groupId>
+      <artifactId>forum-answer-service</artifactId>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.jcr</groupId>
