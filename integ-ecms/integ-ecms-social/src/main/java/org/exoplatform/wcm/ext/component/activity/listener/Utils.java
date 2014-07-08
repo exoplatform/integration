@@ -592,23 +592,6 @@ public class Utils {
 
     return spaceName;
   }
-  
-  /**
-   * Get Space from JCR node path
-   * @param node
-   * @return Space
-   * @throws Exception
-   */
-  public static Space getSpaceFromNode(Node node) throws Exception {
-    String spaceName = getSpaceName(node);
-    if (spaceName != null && spaceName.length() > 0 ) {
-      SpaceService spaceService = WCMCoreUtils.getService(SpaceService.class);
-      Space space = spaceService.getSpaceByGroupId(SpaceUtils.SPACE_GROUP + "/" + spaceName);
-      return space;
-    } else {
-      return null;    	
-    }  
-  }
 
   /**
    * Generate the viewer link to site explorer by node
