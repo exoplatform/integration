@@ -261,9 +261,9 @@
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-								Space spaceSource = org.exoplatform.wcm.ext.component.activity.listener.Utils.getSpaceFromNode(currentNode);
-								def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
-								def spaceName = spaceSource.displayName;
+								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
+									def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+									def spaceName = spaceSource.displayName;
 						%>
 						<a class="spaceName" title="$spaceName" href="$spaceSourceURI"><i class="uiIconSocGroup uiIconSocLightGray"></i>&nbsp;$spaceName</a>
 						<%} %>
