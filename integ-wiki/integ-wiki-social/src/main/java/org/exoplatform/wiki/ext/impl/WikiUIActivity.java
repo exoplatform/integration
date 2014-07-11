@@ -59,6 +59,8 @@ public class WikiUIActivity extends BaseUIActivity {
   public static final String COMMENT_MESSAGE_ARGS_ELEMENT_SAPERATOR = "\n";
   
   public static final String COMMENT_TYPE     = "commentType";
+  
+  public static final String SPACE_TYPE = "/spaces/";
 
   public WikiUIActivity() {
   }
@@ -133,6 +135,32 @@ public class WikiUIActivity extends BaseUIActivity {
       }
     }
     return pageUrl;
+  }
+  
+  private String getPageURLFromSpace(){
+    String spaceGroupId = getActivityParamValue(WikiSpaceActivityPublisher.PAGE_OWNER_KEY);
+    String pageId = getActivityParamValue(WikiSpaceActivityPublisher.PAGE_ID_KEY);
+    SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+    Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+    
+    StringBuffer sb = new StringBuffer("");
+    if (space != null) {
+      sb.append(org.exoplatform.social.webui.Utils.getSpaceHomeURL(space))
+        .append("/" + WikiSpaceActivityPublisher.WIKI_PAGE_NAME + "/")
+        .append(pageId);
+    }
+    
+    return sb.toString();
+  }
+  
+  private String getSpaceGroupId(){
+    String spaceGroupId = "";
+    String pageOwnerKey = getActivityParamValue(WikiSpaceActivityPublisher.PAGE_OWNER_KEY);
+    boolean isASpace = pageOwnerKey.contains(SPACE_TYPE);
+    if(isASpace) {
+      spaceGroupId = pageOwnerKey;
+    }
+    return spaceGroupId;
   }
   
   String getViewChangeURL(){
