@@ -40,6 +40,9 @@ import org.exoplatform.portal.pom.data.ApplicationData;
 import org.exoplatform.portal.pom.data.ModelData;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.social.core.space.SpaceUtils;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.web.url.navigation.NavigationResource;
 import org.exoplatform.web.url.navigation.NodeURL;
@@ -220,7 +223,9 @@ public class BuildLinkUtils {
   private static String buildSpaceLink(String spaceGroupId, String objectType, String objectId, PORTLET_INFO portletInfo) throws Exception {
     String nodeURI = getSiteName(SiteKey.group(spaceGroupId), portletInfo);
     if (!CommonUtils.isEmpty(nodeURI)) {
-      String spaceLink = getSpaceHomeURL(spaceGroupId);
+      SpaceService spaceService  = (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
+      Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+      String spaceLink = org.exoplatform.social.webui.Utils.getSpaceHomeURL(space);
       StringBuffer buffer = new StringBuffer(spaceLink).append("/").append(nodeURI);
       return buffer.append(buildLink_(objectType, objectId, portletInfo)).toString();
     }
