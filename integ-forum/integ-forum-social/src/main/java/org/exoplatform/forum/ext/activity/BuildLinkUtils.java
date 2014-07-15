@@ -41,8 +41,6 @@ import org.exoplatform.portal.pom.data.ModelData;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceService;
-import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.web.url.navigation.NavigationResource;
 import org.exoplatform.web.url.navigation.NodeURL;
@@ -222,9 +220,8 @@ public class BuildLinkUtils {
 
   private static String buildSpaceLink(String spaceGroupId, String objectType, String objectId, PORTLET_INFO portletInfo) throws Exception {
     String nodeURI = getSiteName(SiteKey.group(spaceGroupId), portletInfo);
-    if (!CommonUtils.isEmpty(nodeURI)) {
-      SpaceService spaceService  = (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
-      Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+    if (!CommonUtils.isEmpty(nodeURI)) {      
+      Space space = ForumActivityUtils.getSpaceService().getSpaceByGroupId(spaceGroupId);
       String spaceLink = org.exoplatform.social.webui.Utils.getSpaceHomeURL(space);
       StringBuffer buffer = new StringBuffer(spaceLink).append("/").append(nodeURI);
       return buffer.append(buildLink_(objectType, objectId, portletInfo)).toString();
@@ -262,13 +259,5 @@ public class BuildLinkUtils {
     NavigationResource resource = new NavigationResource(SiteType.PORTAL, siteName, nodeURI);
 
     return nodeURL.setResource(resource).toString();
-  }
-
-  private static String getSpaceHomeURL(String spaceGroupId) {
-    String permanentSpaceName = spaceGroupId.split("/")[2];
-    NodeURL nodeURL = RequestContext.getCurrentInstance().createURL(NodeURL.TYPE);
-    NavigationResource resource = new NavigationResource(SiteType.GROUP, spaceGroupId, permanentSpaceName);
-
-    return nodeURL.setResource(resource).toString();
-  }
+  }  
 }
