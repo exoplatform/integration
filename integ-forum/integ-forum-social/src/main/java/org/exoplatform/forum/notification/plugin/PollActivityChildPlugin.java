@@ -44,6 +44,9 @@ public class PollActivityChildPlugin extends AbstractNotificationChildPlugin {
 
       String activityId = notification.getValueOwnerParameter(ForumNotificationUtils.ACTIVITY_ID.getKey());
       activity = ForumActivityUtils.getActivityManager().getActivity(activityId);
+      if (activity.isComment()) {
+        activity = ForumActivityUtils.getActivityManager().getParentActivity(activity);
+      }
       templateContext.put("ACTIVITY", activity.getTitle());
       //
       String content = TemplateUtils.processGroovy(templateContext);

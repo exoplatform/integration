@@ -50,6 +50,9 @@ public class CalendarActivityChildPlugin extends AbstractNotificationChildPlugin
 
       String activityId = notification.getValueOwnerParameter(ACTIVITY_ID.getKey());
       activity = activityM.getActivity(activityId);
+      if (activity.isComment()) {
+        activity = activityM.getParentActivity(activity);  
+      }
       templateContext.put("ACTIVITY", activity.getTitle());
       //
 //      String eventType = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_TYPE_KEY);

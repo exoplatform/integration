@@ -108,7 +108,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       activity = activityM.getActivity(activityId);
 
       if (activity.isComment()) {
-        activity = org.exoplatform.social.notification.Utils.getActivityManager().getParentActivity(activity);  
+        activity = activityM.getParentActivity(activity);  
       }
 
       //
