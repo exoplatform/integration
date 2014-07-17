@@ -40,6 +40,10 @@
   </component>
   
   <component>
+    <type>org.exoplatform.services.user.UserStateService</type>
+  </component> 
+ 
+  <component>
     <key>org.exoplatform.forum.service.ForumService</key>
     <type>org.exoplatform.forum.service.impl.ForumServiceImpl</type>
     <component-plugins>
