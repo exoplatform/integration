@@ -124,12 +124,13 @@ public class WikiUIActivity extends BaseUIActivity {
 
   String getPageURL() {
     String pageUrl = getActivityParamValue(WikiSpaceActivityPublisher.URL_KEY);
-    if (pageUrl != null) {
+    if (pageUrl != null && pageUrl.contains("://")) {
+    // pageURL might be a full URL, keeps only its path
       try {
         URL oldURL = new URL(pageUrl);
         pageUrl = oldURL.getPath();
       } catch (MalformedURLException ex) {
-          LOG.info("cannot get page url");
+        LOG.info("Failed to create URL object.", ex);
       }
     }
     return pageUrl;
