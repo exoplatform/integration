@@ -48,6 +48,8 @@ import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.wcm.ext.component.activity.ContentUIActivity;
 
 import javax.jcr.Node;
@@ -259,12 +261,13 @@ public class Utils {
       }
       return activity;
     }else {
-      String spaceName = getSpaceName(node);
-      if (spaceName != null && spaceName.length() > 0
-          && spaceService.getSpaceByPrettyName(spaceName) != null) {
+      String spaceGroupName = getSpaceName(node);
+      Space space = spaceService.getSpaceByGroupId(SpaceUtils.SPACE_GROUP + "/" + spaceGroupName);
+      if (spaceGroupName != null && spaceGroupName.length() > 0
+          && space != null) {
         // post activity to space stream
         Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,
-            spaceName,
+            space.getPrettyName(),
             true);
         activityManager.saveActivityNoReturn(spaceIdentity, activity);
       } else if (activityOwnerId != null && activityOwnerId.length() > 0) {
@@ -395,12 +398,13 @@ public class Utils {
       }      
       return activity;
     }else {
-      String spaceName = getSpaceName(node);
-      if (spaceName != null && spaceName.length() > 0
-          && spaceService.getSpaceByPrettyName(spaceName) != null) {
+      String spaceGroupName = getSpaceName(node);
+      Space space = spaceService.getSpaceByGroupId(SpaceUtils.SPACE_GROUP + "/" + spaceGroupName);
+      if (spaceGroupName != null && spaceGroupName.length() > 0
+          && space != null) {
         // post activity to space stream
         Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,
-            spaceName,
+            space.getPrettyName(),
             true);
         activityManager.saveActivityNoReturn(spaceIdentity, activity);
       } else if (activityOwnerId != null && activityOwnerId.length() > 0) {
@@ -571,7 +575,7 @@ public class Utils {
    * get the space name of node
    * 
    * @param node
-   * @return
+   * @return the group name
    * @throws Exception
    */
   private static String getSpaceName(Node node) throws Exception {
