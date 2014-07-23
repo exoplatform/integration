@@ -143,16 +143,22 @@
   activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
 
   def ownerIdentity = uicomponent.ownerIdentity;
+  def pageLink = uicomponent.getPageURL();
+  def spaceGroupId = uicomponent.getSpaceGroupId();
   if (uicomponent.isUserActivity()) {
     ownerUri = LinkProvider.getUserProfileUri(ownerIdentity.getRemoteId());
     ownerAvatar = ownerIdentity.profile.avatarUrl;
     ownerName = ownerIdentity.profile.fullName;
     if (!ownerAvatar) ownerAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
+    if (spaceGroupId.length() > 0) {
+      pageLink = uicomponent.getPageURLFromSpace();
+    }
   } else {
     Space space = Utils.getSpaceService().getSpaceByName(ownerIdentity.remoteId);
     ownerUri = space.url;
     ownerAvatar = space.avatarUrl;
     ownerName = space.displayName;
+    pageLink = uicomponent.getPageURLFromSpace();
     if (!ownerAvatar) ownerAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
   }
   
@@ -211,8 +217,8 @@
                     versionLabel = _ctx.appRes("WikiUIActivity.label.version") + verName;
                    } %>
                     <div class="pull-right versionLabel">$versionLabel</div>
-                    <div class="titleWiki">
-                      <a class='linkTitle' href='<%=uicomponent.getPageURL()%>'><%=uicomponent.getPageName()%></a>
+                    <div class="titleWiki">                     
+                      <a class='linkTitle' href='$pageLink'><%=uicomponent.getPageName()%></a>
                     </div>    
                   </div>
                   <div class="contentWiki theContent">
