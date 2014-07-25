@@ -24,7 +24,7 @@
             <li><a href="#" sort="title">${title}</a></li>
           </ul>
         </div>
-        <span>Sort By:</span>
+        <span>${sortBy}:</span>
       </div>      
       <div id="resultHeader" class="center resultHeader"></div>
     </div>
@@ -50,13 +50,13 @@
         <div id="resultPage" class="resultPage uiBox">
           <div id="result"></div>          
           <div class="noResultInfo">
-            <h3>No Result Found</h3>
-            <p>Your search <b id="keyword">cloud</b> dis not match any content.
+            <h3>${noResult}</h3>
+            <p>${yourSearch} <b id="keyword">cloud</b> ${notMatch}
             <br />
-            Try different keywords.
+            ${tryDiffWord}
             </p>
           </div>
-          <div id="showMore" class="showMore"><button type="button" class="btn" id="btnShowMore" value="Show More Results">${showmore}</button></div>
+          <div id="showMore" class="showMore"><button type="button" class="btn" id="btnShowMore" value="${showmore}">${showmore}</button></div>
         </div>	       
       </div>
   </div>

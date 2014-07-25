@@ -77,6 +77,11 @@ public class Search {
       parameters.put("everything", rs.getString("unifiedsearch.edit.everything.label"));
       parameters.put("alertOk", rs.getString("unifiedsearch.edit.alert.saveSettings"));
       parameters.put("alertNotOk", rs.getString("unifiedsearch.edit.alert.error.saveSettings"));
+      parameters.put("noResult", rs.getString("unifiedsearch.index.noResult.label"));
+      parameters.put("tryDiffWord", rs.getString("unifiedsearch.index.tryDiffWord.label"));
+      parameters.put("yourSearch", rs.getString("unifiedsearch.index.yourSearch.label"));
+      parameters.put("notMatch", rs.getString("unifiedsearch.index.notMatch.label"));
+
       edit.render(parameters);
     }else {
       parameters.put("unifiedsearch", rs.getString("unifiedsearch.index.label"));
@@ -89,6 +94,10 @@ public class Search {
       parameters.put("contentTypes", rs.getString("unifiedsearch.index.contentTypes.label"));
       parameters.put("showmore", rs.getString("unifiedsearch.index.showmore.label"));      
       parameters.put("searching", rs.getString("unifiedsearch.searching.label"));
+      parameters.put("noResult", rs.getString("unifiedsearch.index.noResult.label"));
+      parameters.put("tryDiffWord", rs.getString("unifiedsearch.index.tryDiffWord.label"));
+      parameters.put("yourSearch", rs.getString("unifiedsearch.index.yourSearch.label"));
+      parameters.put("notMatch", rs.getString("unifiedsearch.index.notMatch.label"));
       
       String resultsPerPage = portletPreferences.getValue("resultsPerPage", "10");
       String searchTypes = portletPreferences.getValue("searchTypes", "all");
