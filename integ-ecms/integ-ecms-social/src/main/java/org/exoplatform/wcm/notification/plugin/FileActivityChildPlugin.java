@@ -108,7 +108,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       activity = activityM.getActivity(activityId);
 
       if (activity.isComment()) {
-        activity = org.exoplatform.social.notification.Utils.getActivityManager().getParentActivity(activity);  
+        activity = activityM.getParentActivity(activity);  
       }
 
       //
@@ -118,8 +118,12 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
 
       //
       Node currentNode = getContentNode();
+      
+      // File uploaded to Content Explorer hasn't MESSAGE field
+      String message = templateParams.get(MESSAGE) != null ? NotificationUtils.processLinkTitle(templateParams.get(MESSAGE)) : "";
+      
       templateContext.put("ACTIVITY_URL", LinkProviderUtils.getRedirectUrl(ACTIVITY_URL, activity.getId()));
-      templateContext.put("ACTIVITY_TITLE", NotificationUtils.processLinkTitle(templateParams.get(MESSAGE)));
+      templateContext.put("ACTIVITY_TITLE", message);
       templateContext.put("DOCUMENT_TITLE", this.documentTitle);
       templateContext.put("SUMMARY", Utils.getSummary(currentNode));
       templateContext.put("SIZE", getSize(currentNode));
@@ -130,7 +134,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       String docLink = templateParams.get(DOCLINK);
       String author = templateParams.get(AUTHOR);
       String receiver = notification.getTo();
-      if (docLink.contains(author + PRIVATE_FOLDER_PATH) && (author != receiver)) {
+      if (docLink != null && docLink.contains(author + PRIVATE_FOLDER_PATH) && (author != receiver)) {
         templateContext.put("DEFAULT_THUMBNAIL_URL", getDefaultThumbnail());
       } else {
         thumbnailUrl = getThumbnailUrl(currentNode);
@@ -147,6 +151,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       String content = TemplateUtils.processGroovy(templateContext);
       return content;
     } catch (Exception e) {
+      LOG.error("Failed at makeContent().", e);
       return (activity != null) ? activity.getTitle() : "";
     }
   }

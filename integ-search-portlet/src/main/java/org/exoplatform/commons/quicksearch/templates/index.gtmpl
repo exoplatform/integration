@@ -18,6 +18,6 @@
 
 	<script>
 	  window.require(["PORTLET/unified-search/QuicksearchPortlet"], function() {
-		initQuickSearch("${portletId}","${seeAll}", "${noResults}", "${searching}");	  
+		initQuickSearch("${portletId}","${seeAll}","${noResults}","${searching}",${resultsPerPage},"${searchTypes}",${searchCurrentSiteOnly},${firstInit});  
 	  });
 	</script>

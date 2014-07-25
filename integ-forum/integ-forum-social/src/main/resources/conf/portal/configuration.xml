@@ -1,6 +1,29 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
+  <component>
+    <key>org.exoplatform.forum.ext.activity.ForumTaskManager</key>
+    <type>org.exoplatform.forum.ext.activity.ForumTaskManager</type>
+    <init-params>
+      <value-param>
+        <name>async-execution</name>
+        <value>true</value>
+      </value-param>
+      <value-param>
+        <name>maxPersistSize</name> <!-- Max number of task to process in period time -->
+        <value>${integ.forum.ForumTaskManager.maxPersistSize:10}</value>
+      </value-param>
+      <value-param>
+        <name>periodTime</name><!-- The time to repeat interval call process task -->
+        <value>${integ.forum.ForumTaskManager.periodTime:2000}</value>
+      </value-param>
+      <value-param>
+        <name>thread-priority</name>
+        <value>${integ.forum.ForumTaskManager.threadPriority:1}</value><!--10: HIGH, 5: NORMAL; 1: LOW-->
+      </value-param>
+    </init-params>
+  </component>
+
   <external-component-plugins>
    <target-component>org.exoplatform.social.core.processor.I18NActivityProcessor</target-component>
    <component-plugin>

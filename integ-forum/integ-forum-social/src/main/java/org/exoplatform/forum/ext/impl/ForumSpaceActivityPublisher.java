@@ -19,10 +19,13 @@ package org.exoplatform.forum.ext.impl;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.PropertyChangeSupport;
 import org.exoplatform.forum.ext.activity.ActivityExecutor;
 import org.exoplatform.forum.ext.activity.ForumActivityContext;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
+import org.exoplatform.forum.ext.activity.ForumTaskManager;
+import org.exoplatform.forum.ext.activity.ForumTaskManager.Task;
 import org.exoplatform.forum.ext.activity.PostActivityTask;
 import org.exoplatform.forum.ext.activity.TopicActivityTask;
 import org.exoplatform.forum.service.Category;
@@ -56,11 +59,11 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void addPost(Post post) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     PostActivityTask task = PostActivityTask.ADD_POST;
-    ctx = ForumActivityUtils.processBBCode(ctx);
-    ExoSocialActivity comment = ActivityExecutor.execute(task, ctx);
-    
     //
-    ForumActivityUtils.takeCommentBack(post, comment);
+    ctx = ForumActivityUtils.processBBCode(ctx);
+    //
+    Task<ForumActivityContext> task_ = new Task<ForumActivityContext>(ctx, task);
+    CommonsUtils.getService(ForumTaskManager.class).addTask(task_);
   }
   
   @Override
@@ -106,10 +109,9 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);
     TopicActivityTask task = TopicActivityTask.ADD_TOPIC;
     ctx = ForumActivityUtils.processBBCode(ctx);
-    ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
-    
     //
-    ForumActivityUtils.takeActivityBack(topic, got);
+    Task<ForumActivityContext> task_ = new Task<ForumActivityContext>(ctx, task);
+    CommonsUtils.getService(ForumTaskManager.class).addTask(task_);
   }
   
   @Override

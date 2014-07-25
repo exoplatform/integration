@@ -27,6 +27,7 @@ import juzu.template.Template;
 
 import javax.inject.Inject;
 import javax.portlet.PortletMode;
+import javax.portlet.PortletPreferences;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -48,7 +49,12 @@ public class QuickSearch {
   Template edit;
   
   @Inject
+  PortletPreferences portletPreferences;  
+  
+  @Inject
   ResourceBundle bundle;  
+
+  static boolean firstInit = true;
   
   @View
   public void index(RenderContext renderContext){
@@ -59,6 +65,8 @@ public class QuickSearch {
     Map<String, Object> parameters = new HashMap<String, Object>();
     QuickSearch_.index().setProperty(JuzuPortlet.PORTLET_MODE, PortletMode.EDIT);
     PortletMode mode = requestContext.getProperty(JuzuPortlet.PORTLET_MODE);
+    parameters.put("firstInit", firstInit);
+    if (firstInit) firstInit = false;
     if (PortletMode.EDIT == mode){     
       parameters.put("quicksearch", rs.getString("quicksearch.label"));
       parameters.put("resultsPerType", rs.getString("quicksearch.resultsPerType.label"));
@@ -74,6 +82,14 @@ public class QuickSearch {
       parameters.put("seeAll", rs.getString("quicksearch.seeAll.label"));
       parameters.put("noResults", rs.getString("quicksearch.noResults.label"));      
       parameters.put("searching", rs.getString("quicksearch.searching.label"));
+      
+      String resultsPerPage = portletPreferences.getValue("resultsPerPage", "5");
+      String searchTypes = portletPreferences.getValue("searchTypes", "all");
+      String searchCurrentSiteOnly = portletPreferences.getValue("searchCurrentSiteOnly", "true");
+      
+      parameters.put("resultsPerPage", resultsPerPage);
+      parameters.put("searchTypes", searchTypes);
+      parameters.put("searchCurrentSiteOnly", searchCurrentSiteOnly);      
       index.render(parameters);
     }
   }  

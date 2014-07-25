@@ -21,6 +21,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
+import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.wiki.ext.impl.WikiUIActivity.CommentType;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
@@ -36,6 +37,7 @@ import javax.jcr.Node;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public class WikiSpaceActivityPublisher extends PageWikiListener {
   
@@ -268,6 +270,12 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
        (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
    ExoSocialActivity newComment = new ExoSocialActivityImpl();
    
+   StringBuilder builder = new StringBuilder();
+   //
+   if (userComment == null) {
+     userComment = getValueFromResourceBundle(commentMsgKey1, args1);
+   }
+   builder.append(userComment);
    // 
    newComment.setUserId(userId);
    
@@ -277,7 +285,6 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
    activityParams.put(WikiUIActivity.COMMENT_TYPE, commentType.name());
    switch(commentType) {
      case USER:
-       newComment.setTitle(userComment);
        break;
      case SYSTEM:
        activityParams.put(WikiUIActivity.COMMENT_MESSAGE_KEY, commentMsgKey1);
@@ -291,13 +298,35 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
        activityParams.put(WikiUIActivity.COMMENT_MESSAGE_KEY2, commentMsgKey2);
        activityParams.put(WikiUIActivity.COMMENT_MESSAGE_ARGS2,
                           StringUtils.join(args2, WikiUIActivity.COMMENT_MESSAGE_ARGS_ELEMENT_SAPERATOR));
+       builder.append("<br/>").append(getValueFromResourceBundle(commentMsgKey2, args2));
        break;
    }
    newComment.setTemplateParams(activityParams);
+   newComment.setTitle(builder.toString());
    
    //
    activityM.saveComment(activity, newComment);
  }
+  
+  /**
+   * Get the string from resource bundle file by key and parameter
+   * 
+   * @param key the key in resource bundle file
+   * @param params
+   * @return
+   */
+  private String getValueFromResourceBundle(String key, String[] params) {
+    WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
+    ResourceBundle res = context.getApplicationResourceBundle();
+    if (res.getString(key) == null) return key;
+    String value = res.getString(key);
+    if (params != null) {
+      for (int i = 0; i < params.length; i++) {
+        value = value.replace("{" + i + "}", params[i]);
+      }
+    }
+    return value;
+  }
   
   private boolean isPublic(Page page) throws Exception {
     HashMap<String, String[]> permissions = page.getPermission();

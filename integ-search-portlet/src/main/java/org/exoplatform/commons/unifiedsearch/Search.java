@@ -16,7 +16,6 @@
  */
 package org.exoplatform.commons.unifiedsearch;
 
-
 import juzu.Path;
 import juzu.View;
 import juzu.bridge.portlet.JuzuPortlet;
@@ -27,6 +26,7 @@ import juzu.template.Template;
 
 import javax.inject.Inject;
 import javax.portlet.PortletMode;
+import javax.portlet.PortletPreferences;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -48,17 +48,24 @@ public class Search {
   Template edit;
   
   @Inject
+  PortletPreferences portletPreferences;
+  
+  @Inject
   ResourceBundle bundle;    
+
+  static boolean firstInit = true;
   
   @View
   public void index(RenderContext renderContext){
     RequestContext requestContext = Request.getCurrent().getContext();
     
     ResourceBundle rs = renderContext.getApplicationContext().resolveBundle(renderContext.getUserContext().getLocale());
-    Map<String, Object> parameters = new HashMap<String, Object>();
+    Map<String, Object> parameters = new HashMap<String, Object>();        
     
     Search_.index().setProperty(JuzuPortlet.PORTLET_MODE, PortletMode.EDIT);
     PortletMode mode = requestContext.getProperty(JuzuPortlet.PORTLET_MODE);
+    parameters.put("firstInit", firstInit);
+    if (firstInit) firstInit = false;
     if (PortletMode.EDIT == mode){      
       parameters.put("unifiedsearch", rs.getString("unifiedsearch.edit.label"));
       parameters.put("resultsPerPage", rs.getString("unifiedsearch.edit.resultsPerPage.label"));
@@ -70,7 +77,10 @@ public class Search {
       parameters.put("everything", rs.getString("unifiedsearch.edit.everything.label"));
       parameters.put("alertOk", rs.getString("unifiedsearch.edit.alert.saveSettings"));
       parameters.put("alertNotOk", rs.getString("unifiedsearch.edit.alert.error.saveSettings"));
-      
+      parameters.put("noResult", rs.getString("unifiedsearch.index.noResult.label"));
+      parameters.put("tryDiffWord", rs.getString("unifiedsearch.index.tryDiffWord.label"));
+      parameters.put("notMatch", rs.getString("unifiedsearch.index.notMatch.label"));
+
       edit.render(parameters);
     }else {
       parameters.put("unifiedsearch", rs.getString("unifiedsearch.index.label"));
@@ -83,6 +93,21 @@ public class Search {
       parameters.put("contentTypes", rs.getString("unifiedsearch.index.contentTypes.label"));
       parameters.put("showmore", rs.getString("unifiedsearch.index.showmore.label"));      
       parameters.put("searching", rs.getString("unifiedsearch.searching.label"));
+      parameters.put("noResult", rs.getString("unifiedsearch.index.noResult.label"));
+      parameters.put("tryDiffWord", rs.getString("unifiedsearch.index.tryDiffWord.label"));
+      parameters.put("notMatch", rs.getString("unifiedsearch.index.notMatch.label"));
+      
+      String resultsPerPage = portletPreferences.getValue("resultsPerPage", "10");
+      String searchTypes = portletPreferences.getValue("searchTypes", "all");
+      String searchCurrentSiteOnly = portletPreferences.getValue("searchCurrentSiteOnly", "false");
+      String hideSearchForm = portletPreferences.getValue("hideSearchForm", "false");
+      String hideFacetsFilter = portletPreferences.getValue("hideFacetsFilter", "false");    
+      
+      parameters.put("resultsPerPage", resultsPerPage);
+      parameters.put("searchTypes", searchTypes);
+      parameters.put("searchCurrentSiteOnly", searchCurrentSiteOnly);
+      parameters.put("hideSearchForm", hideSearchForm);
+      parameters.put("hideFacetsFilter", hideFacetsFilter);
       
       index.render(parameters);      
     }

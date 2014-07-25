@@ -151,7 +151,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * Make url for the event of the calendar application. 
    * Format of the url is: 
    * <ul>
-   *    <li>/[portal]/[space]/[calendar]/[username]/invitation/detail/[event id]/[calendar type]</li>
+   *    <li>/[portal]/[space]/[calendar]/invitation/detail/[username]/[event id]/[calendar type]</li>
    * </ul>
    * The format is used to utilize the invitation email feature implemented before.
    * <br>

@@ -82,11 +82,20 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
         
         //FORUM_33 case: update topic activity's number of reply 
         ExoSocialActivity topicActivity = ForumActivityUtils.getActivityOfTopic(ctx);
-        
+        //
+        if(topicActivity == null) {
+          return null;
+        }
         Map<String, String> templateParams = topicActivity.getTemplateParams();
         templateParams.put(ForumActivityBuilder.TOPIC_POST_COUNT_KEY, "" + topic.getPostCount());
         
         ActivityManager am = ForumActivityUtils.getActivityManager();
+        
+        //
+        if (am.getActivity(topicActivity.getId()) == null) {
+          return null;
+        }
+        
         am.updateActivity(topicActivity);
         
         //add new comment with title: first 3 lines
@@ -100,9 +109,11 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
         //
         am.saveComment(topicActivity, newComment);
         
+        
         return newComment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment for when add post " + ctx.getPost().getId(), e);
+        LOG.warn("Can not record comment when add post : " + ctx.getPost().getId());
+        LOG.debug(e.getMessage(), e);
       }
       return null;
     }
@@ -169,7 +180,8 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
         
         return comment;
       } catch (Exception e) {
-        LOG.error("Can not record Comment when updates post " + ctx.getPost().getId(), e);
+        LOG.warn("Can not record Comment when updates post: " + ctx.getPost().getId());
+        LOG.debug(e.getMessage(), e);
       }
       
       return null;
@@ -208,12 +220,11 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
         }
         return postActivity;
       } catch (Exception e) {
-        LOG.error("Can not hide comment when hide post " + ctx.getPost().getId(), e);
+        LOG.warn("Can not hide comment when hide post: " + ctx.getPost().getId());
+        LOG.debug(e.getMessage(), e);
       }
-      
       return null;
     }
-    
   };
   
   public static PostActivityTask UNHIDE_POST = new PostActivityTask() {
@@ -247,7 +258,8 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
         }
         return postActivity;
       } catch (Exception e) {
-        LOG.error("Can not unhide comment when unhide post " + ctx.getPost().getId(), e);
+        LOG.warn("Can not unhide comment when unhide post: " + ctx.getPost().getId());
+        LOG.debug(e.getMessage(), e);
       }
       
       return null;

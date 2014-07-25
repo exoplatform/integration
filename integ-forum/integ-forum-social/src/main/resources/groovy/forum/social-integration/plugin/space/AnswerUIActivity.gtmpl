@@ -123,7 +123,7 @@
   } else {
     if (totalLikesNum > 2) {
       def id = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[0]);
-      labelLikes = labelOneAndOthersLikeThis.replace("{0}", id.profile.fullName).replace("{1}", totalLikesNum + "");
+      labelLikes = labelOneAndOthersLikeThis.replace("{0}", id.profile.fullName).replace("{1}", totalLikesNum - 1 + "");
     } else if (totalLikesNum == 1) {
       def id = Utils.getIdentityManager().getIdentity(displayedIdentityLikes[0]);
       labelLikes = labelOnePersonLikeThis.replace("{0}", id.profile.fullName);
@@ -150,9 +150,10 @@
     if (!ownerAvatar) ownerAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
     if (spaceGroupId.length() > 0) {
       Space space = Utils.getSpaceService().getSpaceByGroupId(spaceGroupId);
-      spaceAvatar = space.avatarUrl;
-      spaceUri = LinkProvider.getSpaceUri(space.url);
-      spaceName = space.displayName;
+      def spaceAvatar;
+      if (space != null) {
+        spaceAvatar = space.avatarUrl;
+      }
       if (!spaceAvatar) spaceAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
     }
   } else {
@@ -195,9 +196,15 @@
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
 						<% if (uicomponent.getSpaceGroupId().length() > 0) {
-								Space spaceSource = Utils.getSpaceService().getSpaceByGroupId(uicomponent.getSpaceGroupId());
-									def spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
-									def spaceName = spaceSource.displayName;
+								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
+                def spaceSourceURI, spaceName;
+                if (spaceSource != null) {
+                  spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+                  spaceName = spaceSource.displayName;
+                } else {
+                  spaceSourceURI = LinkProvider.getActivityUriForSpace(streamOwner, streamOwner);
+                  spaceName = Utils.getSpaceIdentity(streamOwner, false).profile.fullName;
+                }
 						%>
 						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconSocGroup uiIconSocLightGray"></i>&nbsp;$spaceName</a>
 						<%} %>
@@ -232,11 +239,14 @@
                  } %>
               </div>
             </div>
-            <% def questionTitle = uicomponent.getQuestionTitle();
+            <% 
+            if (!uicomponent.isDeletedSpace(streamOwner)) {
+              def questionTitle = uicomponent.getQuestionTitle();
             %>
 						<div class="titleAnswer">
 							<a class="linkTitle" href="${uicomponent.getLink()}" title="">$questionTitle</a>
 						</div>
+						<% } %>
 					</div>	
 				  <div class="contentAnswer theContent">
 				  <% 
@@ -281,7 +291,7 @@
 					  <% }%>											 
 					</ul>  
 				 <% }%>	
-			<% if (! activity.isLocked()) { %>
+			<% if (! activity.isLocked() && !uicomponent.isDeletedSpace(streamOwner)) { %>
 				<ul class="pull-left statusAction">
 					<li>					   
 					   <a onclick="void();" id="AnswerLink${activity.id}" href="${uicomponent.getAnswerLink()}">

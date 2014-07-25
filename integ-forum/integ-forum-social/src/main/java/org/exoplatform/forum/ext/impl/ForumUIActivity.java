@@ -163,6 +163,11 @@ public class ForumUIActivity extends BaseKSActivity {
       return true;
     }
     Forum forum = ForumActivityUtils.getForumService().getForum(topic.getCategoryId(), topic.getForumId());
+    
+    if (forum == null) {
+      return true;
+    }
+    
     if(forum.getIsClosed() || forum.getIsLock()){
       return true;
     }

@@ -20,8 +20,11 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 import javax.jcr.PathNotFoundException;
+
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Calendar;
@@ -152,7 +155,9 @@ public class CalendarUIActivity extends BaseUIActivity {
    *
    * used by template
    * @see <code>CalendarUIActivity.gtmpl</code>
+   * @deprecated use {@link #getEventPreviewLinkInSpace()} instead
    */
+  @Deprecated
   private String getEventLink() {
     String value = null;
     return (value = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_LINK_KEY)) != null ? value
@@ -280,6 +285,32 @@ public class CalendarUIActivity extends BaseUIActivity {
 
   }  
 
+  /**
+   * 
+   * Restore EVENT_LINK_KEY from the information of space and event
+   * URL format is as follows. 
+   * <ul>
+   *    <li>[spaceHome]/[calendar]/invitation/detail/[username]/[event id]/[calendar type]</li>
+   * </ul>
+   * @return empty if the process is failed
+   */
+  private String getEventPreviewLinkInSpace() {
+    SpaceService spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+    String spaceGroupId = Utils.getSpaceGroupIdFromCalendarId(calendarId);
+    Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+	
+    StringBuffer sb = new StringBuffer("");
+    if (space != null) {
+      sb.append(org.exoplatform.social.webui.Utils.getSpaceHomeURL(space)) 
+        .append("/" + Utils.PAGE_NAGVIGATION)
+        .append(CalendarSpaceActivityPublisher.INVITATION_DETAIL)
+        .append(ConversationState.getCurrent().getIdentity().getUserId())
+        .append("/").append(eventId)
+        .append("/").append(event.getCalType());
+    } 
+    return sb.toString();	    
+  }
+  
   public static class AcceptEventActionListener extends EventListener<CalendarUIActivity> {
 
     @Override

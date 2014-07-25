@@ -44,6 +44,9 @@ public class ForumActivityChildPlugin extends AbstractNotificationChildPlugin {
 
       String activityId = notification.getValueOwnerParameter(ForumNotificationUtils.ACTIVITY_ID.getKey());
       activity = ForumActivityUtils.getActivityManager().getActivity(activityId);
+      if (activity.isComment()) {
+        activity = ForumActivityUtils.getActivityManager().getParentActivity(activity);
+      }
       templateContext.put("ACTIVITY", activity.getTitle());
       //
 //      DataStorage dataStorage = CommonsUtils.getService(DataStorage.class);

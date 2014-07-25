@@ -137,6 +137,10 @@ public class AnswerUIActivity extends BaseKSActivity {
     String permanentSpaceName = spaceGroupId.split("/")[2];
     SpaceService spaceService  = (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
     Space space = spaceService.getSpaceByGroupId(spaceGroupId);
+    //In the case, the space had been deleted then return NULL
+    if (space == null) {
+      return null;
+    }
     
     NodeURL nodeURL =  RequestContext.getCurrentInstance().createURL(NodeURL.TYPE);
     NavigationResource resource = new NavigationResource(SiteType.GROUP, SpaceUtils.SPACE_GROUP + "/"
