@@ -79,7 +79,6 @@ public class Search {
       parameters.put("alertNotOk", rs.getString("unifiedsearch.edit.alert.error.saveSettings"));
       parameters.put("noResult", rs.getString("unifiedsearch.index.noResult.label"));
       parameters.put("tryDiffWord", rs.getString("unifiedsearch.index.tryDiffWord.label"));
-      parameters.put("yourSearch", rs.getString("unifiedsearch.index.yourSearch.label"));
       parameters.put("notMatch", rs.getString("unifiedsearch.index.notMatch.label"));
 
       edit.render(parameters);
@@ -96,7 +95,6 @@ public class Search {
       parameters.put("searching", rs.getString("unifiedsearch.searching.label"));
       parameters.put("noResult", rs.getString("unifiedsearch.index.noResult.label"));
       parameters.put("tryDiffWord", rs.getString("unifiedsearch.index.tryDiffWord.label"));
-      parameters.put("yourSearch", rs.getString("unifiedsearch.index.yourSearch.label"));
       parameters.put("notMatch", rs.getString("unifiedsearch.index.notMatch.label"));
       
       String resultsPerPage = portletPreferences.getValue("resultsPerPage", "10");

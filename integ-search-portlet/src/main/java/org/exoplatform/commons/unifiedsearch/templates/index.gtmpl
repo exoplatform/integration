@@ -51,7 +51,7 @@
           <div id="result"></div>          
           <div class="noResultInfo">
             <h3>${noResult}</h3>
-            <p>${yourSearch} <b id="keyword">cloud</b> ${notMatch}
+            <p>${notMatch}
             <br />
             ${tryDiffWord}
             </p>
