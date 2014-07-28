@@ -62,6 +62,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 
@@ -450,8 +451,13 @@ public class Utils {
     StringBuffer sb = new StringBuffer();
     String[] keys = activityMsgBundleKey.split(ActivityCommonService.VALUE_SEPERATOR);
     String[] values = systemComment.split(ActivityCommonService.VALUE_SEPERATOR);
-    for (String key : keys) {      
-      String message = res.getString(key);
+    String message;
+    for (String key : keys) {
+      try {
+        message = res.getString(key);
+      } catch(MissingResourceException mre) {
+        message = key;
+      }
       if(values.length > 0) {
         for(int i = 0; i < values.length; i++) {
           message = message.replace("{"+i+"}", values[i]);
