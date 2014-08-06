@@ -172,8 +172,9 @@
   }
   def currentTime = System.currentTimeMillis();
   
-  def votes = uicomponent.getVotes();
-  def numberOfVoters = uicomponent.getTotalOfVoters(); 
+  if (!uicomponent.isDeletedSpace(streamOwner)){
+    def votes = uicomponent.getVotes();
+    def numberOfVoters = uicomponent.getTotalOfVoters();
 %>
 
 <div class="activityStream uiPollActivity" id="activityContainer${activity.id}"> 
@@ -418,6 +419,7 @@
   </div> <!-- #boxContainer-->	  
   <% uiform.end() %>
 </div><!--activityStream-->
-<% } else { %> <!-- activity deleted -->
+<% } 
+} else { %> <!-- activity deleted -->
 <div class="activityStream deleted">$labelActivityHasBeenDeleted</div>
 <% }%>
