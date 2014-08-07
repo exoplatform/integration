@@ -239,14 +239,16 @@
                  } %>
               </div>
             </div>
-            <% 
-            if (!uicomponent.isDeletedSpace(streamOwner)) {
-              def questionTitle = uicomponent.getQuestionTitle();
+            <%
+            def questionLink = uicomponent.getLink(); 
+            def questionTitle = uicomponent.getQuestionTitle();
+            if (uicomponent.isDeletedSpace(streamOwner)) {
+              questionLink = "";
+            }
             %>
 						<div class="titleAnswer">
-							<a class="linkTitle" href="${uicomponent.getLink()}" title="">$questionTitle</a>
+							<a class="linkTitle" href="$questionLink">$questionTitle</a>
 						</div>
-						<% } %>
 					</div>	
 				  <div class="contentAnswer theContent">
 				  <% 
