@@ -79,8 +79,7 @@ public class UIDocActivityBuilder extends BaseUIActivityBuilder {
   private void saveToNewDataFormat(ExoSocialActivity activity) {
     try {
       final JSONObject jsonObject = new JSONObject(activity.getTitle());
-      final String docActivityTitle = new StringBuffer("Shared a document <a href=\"${").append(UIDocActivity.DOCLINK)
-                                        .append("}\">").append("${").append(UIDocActivity.DOCNAME).append("}</a>").toString();
+      final String docActivityTitle = "<a href=\"${"+ UIDocActivity.DOCLINK +"}\">" + "${" +UIDocActivity.DOCNAME +"}</a>";
       //
       activity.setTitle(docActivityTitle);
       //
