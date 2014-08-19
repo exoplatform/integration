@@ -53,6 +53,8 @@ public class ForumActivityBuilder {
 
   public static final String TOPIC_ID_KEY      = "TopicId";
 
+  public static final String TOPIC_LINK_KEY    = "TopicLink";
+
   public static final String TOPIC_OWNER_KEY   = "TopicOwner";
 
   public static final String TOPIC_POST_COUNT_KEY    = "NumberOfReplies";
@@ -206,7 +208,8 @@ public class ForumActivityBuilder {
     templateParams.put(TOPIC_VOTE_RATE_KEY, "" + topic.getVoteRating());
     templateParams.put(TOPIC_ID_KEY, topic.getId());
     templateParams.put(TOPIC_OWNER_KEY, topic.getOwner());
-    
+    //
+    templateParams.put(TOPIC_LINK_KEY, CommonUtils.getURI(topic.getLink()));
     //
     templateParams.put(FORUM_ID_KEY, topic.getForumId());
     templateParams.put(CATE_ID_KEY, topic.getCategoryId());
