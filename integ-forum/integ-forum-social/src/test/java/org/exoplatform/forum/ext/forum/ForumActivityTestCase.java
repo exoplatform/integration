@@ -306,6 +306,42 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     assertEquals("Description dans le sujet avec des caractères spéciaux 2", activity2.getBody());
   }
   
+  public void testMovePost() throws Exception {
+    // create topic1
+    Topic topic01 = createdTopic("root");
+    topic01.setTopicName("topic01");
+    topic01.setDescription("This is topic01");
+    forumService.saveTopic(categoryId, forumId, topic01, true, false, new MessageBuilder());
+
+    // create reply post on topic01
+    Post post1 = createdPost("Re:topic01", "Reply01 on topic01.");
+    Post post2 = createdPost("Re:topic01", "Reply02 on topic01.");
+    forumService.savePost(categoryId, forumId, topicId, post1, true, new MessageBuilder());
+    forumService.savePost(categoryId, forumId, topicId, post2, true, new MessageBuilder());
+    List<String> postPaths = new ArrayList<String>();
+    postPaths.add(post1.getPath());
+
+    // check comments on topic01
+    String commentId01 = forumService.getCommentIdForOwnerPath(post2.getPath());
+    assertNotNull(commentId01);
+    String commentId02 = forumService.getCommentIdForOwnerPath(post2.getPath());
+    assertNotNull(commentId02);
+
+    // create topic2
+    Topic topic02 = createdTopic("root");
+    topic02.setTopicName("topic02");
+    topic02.setDescription("This is topic02");
+    forumService.saveTopic(categoryId, forumId, topic02, true, false, new MessageBuilder());
+
+    // move reply from topic01 to topic02
+    forumService.movePost(postPaths.toArray(new String[postPaths.size()]), topic02.getPath(), false, "", "");
+
+    // The case to check comment of moved reply not belong comment of topic01 is true but ignored
+    // due to PathNotFoundException is logged out from forum service.
+    // check comment on topic02
+    commentId02 = forumService.getCommentIdForOwnerPath(topic02.getPath() + "/" + post1.getId());
+    assertNotNull(commentId02);
+  }
   
   private ActivityManager getActivityManager() {
     return (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);

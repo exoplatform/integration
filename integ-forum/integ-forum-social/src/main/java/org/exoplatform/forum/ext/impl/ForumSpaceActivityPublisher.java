@@ -33,6 +33,7 @@ import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.ForumEventListener;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.forum.service.Utils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 
 /**
@@ -174,6 +175,26 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
     ForumActivityContext ctx = ForumActivityContext.makeContextForMoveTopic(topic, toCategoryName, toForumName);
     TopicActivityTask task = TopicActivityTask.MOVE_TOPIC;
     ActivityExecutor.execute(task, ctx);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void movePost(List<Post> posts, List<String> srcPostActivityIds, String desTopicPath){
+    for(Post post: posts) {
+      String path = desTopicPath + "/" + post.getId();
+      post.setPath(path);
+  		
+      // add comment for destination topic
+      addPost(post);
+    }
+    
+    String srcTopicPath = Utils.getTopicPath(posts.get(0).getPath());
+    String srcTopicActivityId = ForumActivityUtils.getForumService().getActivityIdForOwnerPath(srcTopicPath);
+    for (String srcPostActivityId : srcPostActivityIds) {
+      //remove comment for source topic
+      removeComment(srcTopicActivityId, srcPostActivityId);
+    }
   }
 
   @Override

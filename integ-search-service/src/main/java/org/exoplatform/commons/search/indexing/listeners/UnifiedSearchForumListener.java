@@ -85,6 +85,9 @@ public class UnifiedSearchForumListener extends ForumEventListener {
     // FIXME No setCategoryId neither setForumId on Topic object. How to update it ?
   }
 
+  public void movePost(List <Post> posts, List<String> srcPostActivityIds, String desTopicPath) {
+  }
+  
   @Override
   public void mergeTopic(Topic topic, String removeActivityId1, String removeActivityId2) {
     // FIXME No mergeTopic(Topic topic1, Topic topic2, Topic mergedTopic) ...
