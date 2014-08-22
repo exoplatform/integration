@@ -282,6 +282,36 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     assertNull(activity);
   }
   
+  public void testMoveQuestions() throws Exception {
+    Category cate = createCategory("WatchedCategory", 6);
+    String categoryId = Utils.CATEGORY_HOME + "/" + cate.getId();
+    faqService_.saveCategory(Utils.CATEGORY_HOME, cate, true);
+    Question question = createQuestion(categoryId);
+    
+    //save new question
+    faqService_.saveQuestion(question, true, faqSetting_);
+    
+    //an activity is created
+    String activityId = faqService_.getActivityIdForQuestion(question.getCategoryPath() + "/" + question.getId());
+    ExoSocialActivity activity = getManager().getActivity(activityId);
+    assertEquals(question.getQuestion(), activity.getTitle());
+    String questionPath = question.getCategoryPath()+ "/" + Utils.QUESTION_HOME + "/" + question.getId();
+    
+    //
+    Category destCate = createCategory("DestCategory", 8);
+    faqService_.saveCategory(Utils.CATEGORY_HOME, destCate, true);
+    List<String> questionIds = new ArrayList<String>();
+    questionIds.add(questionPath);
+    faqService_.moveQuestions(questionIds, Utils.CATEGORY_HOME + "/" + destCate.getId(), null, faqSetting_);
+
+    activity = getManager().getActivity(activityId);
+    assertNull(activity);
+    
+    String newActivityId = faqService_.getActivityIdForQuestion(destCate.getPath() + "/" + question.getId());
+    activity = getManager().getActivity(newActivityId);
+    assertNotNull(activity);
+  }
+  
   public void testAddUpdateAnswer() throws Exception {
     Category cate = createCategory("Category to test question", 6);
     String categoryId = Utils.CATEGORY_HOME + "/" + cate.getId();
