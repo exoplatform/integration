@@ -359,6 +359,8 @@
 					  commenterFullName = id.profile.fullName;
 					  commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
 					  commentMessage = it.title;
+					  commentMessage = commentMessage.replace("<script", "&lt;script")
+                                           .replace("</script>", "&lt;/script&gt;");
 					  commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
 					  commenterAvatarImgSrc = id.profile.avatarUrl;
 					  if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;

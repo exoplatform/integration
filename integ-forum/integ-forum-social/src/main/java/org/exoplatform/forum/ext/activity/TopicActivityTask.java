@@ -114,18 +114,17 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       PropertyChangeSupport newPcs = ctx.getPcs();
       Topic topic = ctx.getTopic();
       StringBuilder sb = new StringBuilder();
-      
       //
       if (newPcs.hasPropertyName(Topic.TOPIC_NAME)) {
-        sb.append(ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(newComment, topic.getTopicName())).append("\n");
+        sb.append(ForumActivityType.UPDATE_TOPIC_TITLE
+                  .getTitle(newComment, CommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName()))).append("\n");
       }
       
       if (newPcs.hasPropertyName(Topic.TOPIC_CONTENT)) {
         sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(newComment, topic.getDescription()));
       }
-      
+
       newComment.setTitle(sb.toString());
-      
       return newComment;
     }
     
