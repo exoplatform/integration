@@ -96,7 +96,13 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     
     //comment
     ExoSocialActivity newComment = task.processComment(ctx);
-    assertEquals(newComment.getTitle(), "Title has been updated to: edited to new title for topic.\nContent has been edited.");
+    assertEquals("Title has been updated to: edited to new title for topic.\nContent has been edited.",
+                 newComment.getTitle());
+    
+    task = TopicActivityTask.UPDATE_TOPIC_TITLE;
+    //comment
+    newComment = task.processComment(ctx);
+    assertEquals("Title has been updated to: edited to new title for topic.", newComment.getTitle());
   }
   
   public void testUpdateTopicTitleWithSpecialCharacters() throws Exception {
@@ -116,7 +122,22 @@ public class TopicActivityTest extends AbstractActivityTypeTest {
     ctx = ForumActivityContext.makeContextForUpdateTopic(topic);
     a = ForumActivityBuilder.createActivity(topic, ctx);
     assertTopicTitle(a, "&-*() / --- == coucou #@");
-    
+    //
+    topic = updateTopicTitle(topic, "&lt;script&gt;alert(1233)&lt;/script&gt;");
+    ctx.setPcs(topic.getPcs());
+    //
+    TopicActivityTask task = TopicActivityTask.UPDATE_TOPIC_PROPERTIES;
+    //comment when update only title and content
+    ExoSocialActivity newComment = task.processComment(ctx);
+    assertEquals("Title has been updated to: <script>alert(1233)</script>\n", newComment.getTitle());
+    assertEquals("&lt;script&gt;alert(1233)&lt;/script&gt;", 
+                 newComment.getTemplateParams().get("RESOURCE_BUNDLE_VALUES_PARAM"));
+    //comment when update only title
+    task = TopicActivityTask.UPDATE_TOPIC_TITLE;
+    newComment = task.processComment(ctx);
+    assertEquals("Title has been updated to: <script>alert(1233)</script>", newComment.getTitle());
+    assertEquals("&lt;script&gt;alert(1233)&lt;/script&gt;", 
+                 newComment.getTemplateParams().get("RESOURCE_BUNDLE_VALUES_PARAM"));
   }
   
   public void testUpdateTopicTitle() throws Exception {

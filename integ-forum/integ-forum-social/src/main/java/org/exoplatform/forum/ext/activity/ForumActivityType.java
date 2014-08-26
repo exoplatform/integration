@@ -62,8 +62,6 @@ public enum ForumActivityType {
   public ExoSocialActivity getActivity(ExoSocialActivity a, String...values) {
     //
     a.setTitle(getTitle(a, values));
-    
-    I18NActivityUtils.addResourceKey(a, resourceBundleKey, values);
     return a;
   }
   
@@ -75,5 +73,9 @@ public enum ForumActivityType {
     
     I18NActivityUtils.addResourceKey(a, resourceBundleKey, values);
     return got;
+  }
+  
+  public String getTitleTemplate() {
+    return titleTemplate;
   }
 }
