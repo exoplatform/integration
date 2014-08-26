@@ -116,12 +116,14 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       StringBuilder sb = new StringBuilder();
       //
       if (newPcs.hasPropertyName(Topic.TOPIC_NAME)) {
-        sb.append(ForumActivityType.UPDATE_TOPIC_TITLE
-                  .getTitle(newComment, CommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName()))).append("\n");
+        String topicName = topic.getTopicName();
+        ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(newComment, CommonUtils.decodeSpecialCharToHTMLnumberIgnore(topicName));
+        sb.append(CommonUtils.decodeSpecialCharToHTMLnumber(topicName)).append("\n");
       }
-      
+
       if (newPcs.hasPropertyName(Topic.TOPIC_CONTENT)) {
-        sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(newComment, topic.getDescription()));
+        String description = topic.getDescription();
+        sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(newComment, description));
       }
 
       newComment.setTitle(sb.toString());
@@ -171,14 +173,15 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.UPDATE_TOPIC_TITLE.getActivity(activity, activity.getTitle());
+      // only apply for new comment
+      String topicName = ctx.getTopic().getTopicName();
+      ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(activity, CommonUtils.decodeSpecialCharToHTMLnumberIgnore(topicName));
+      return activity;
     }
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
       activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(ctx.getTopic().getTopicName()));
-      //processTitle(ctx, activity);
-
       return activity;
     };
 

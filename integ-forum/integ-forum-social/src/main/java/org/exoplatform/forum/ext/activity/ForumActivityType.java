@@ -54,18 +54,14 @@ public enum ForumActivityType {
     if (value != null) {
       got = String.format(titleTemplate, value);
     }
-    
     I18NActivityUtils.addResourceKey(a, resourceBundleKey, value);
     
     return got;
   }
   
   public ExoSocialActivity getActivity(ExoSocialActivity a, String...values) {
-    if (values != null && values.length > 0) {
-      a.setTitle(String.format(titleTemplate, values));
-    } else {
-      a.setTitle(titleTemplate);
-    }
+    //
+    a.setTitle(getTitle(a, values));
     
     I18NActivityUtils.addResourceKey(a, resourceBundleKey, values);
     return a;

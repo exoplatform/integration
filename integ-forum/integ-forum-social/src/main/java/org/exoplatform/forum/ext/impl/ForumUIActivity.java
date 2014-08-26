@@ -1,12 +1,12 @@
 package org.exoplatform.forum.ext.impl;
 
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils;
@@ -25,7 +25,7 @@ import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-import org.exoplatform.social.core.processor.I18NActivityProcessor;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -34,8 +34,6 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
-import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 
 @ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/forum/social-integration/plugin/space/ForumUIActivity.gtmpl", events = {
     @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
@@ -271,17 +269,19 @@ public class ForumUIActivity extends BaseKSActivity {
   
   @Override
   protected ExoSocialActivity getI18N(ExoSocialActivity activity) {
-    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
-    I18NActivityProcessor i18NActivityProcessor = getApplicationComponent(I18NActivityProcessor.class);
-    if (activity.getTitleId() != null) {
-      Locale userLocale = requestContext.getLocale();
-      activity = i18NActivityProcessor.processKeys(activity, userLocale);
+    //
+    activity = super.getI18N(activity);
+    //
+    if (!CommonUtils.isEmpty(activity.getTitle())) {
       String title = activity.getTitle().replaceAll("&amp;", "&");
-      activity.setTitle(title);
-      if (activity.isComment() == false) {
-        String body = activity.getBody().replaceAll("&amp;", "&");
-        activity.setBody(body);
+      if(title.indexOf("<script") >= 0) {
+        title = title.replace("<script", "&lt;script")
+                     .replace("</script>", "&lt;/script&gt;");
       }
+      activity.setTitle(title);
+    }
+    if (!CommonUtils.isEmpty(activity.getBody()) && !activity.isComment()) {
+      activity.setBody(activity.getBody().replaceAll("&amp;", "&"));
     }
     return activity;
   }

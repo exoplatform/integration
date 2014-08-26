@@ -500,11 +500,11 @@ public class AnswersSpaceActivityPublisher extends AnswerEventListener {
   }
   
   private String getQuestionMessage(PropertyChangeEvent e, Question question, ExoSocialActivity comment) {
-    String questionName = CommonUtils.decodeSpecialCharToHTMLnumber(question.getQuestion());
     String questionDetail = ActivityUtils.processContent(question.getDetail());
     if ("questionName".equals(e.getPropertyName())) {
-      I18NActivityUtils.addResourceKey(comment, "question-update-title", questionName);
-      return "Title has been updated to: " + questionName;
+      String questionName = question.getQuestion();
+      I18NActivityUtils.addResourceKey(comment, "question-update-title", CommonUtils.decodeSpecialCharToHTMLnumberIgnore(questionName));
+      return "Title has been updated to: " + CommonUtils.decodeSpecialCharToHTMLnumber(questionName);
     } else if ("questionDetail".equals(e.getPropertyName())) {
       I18NActivityUtils.addResourceKey(comment, "question-update-detail", questionDetail);
       return "Details has been edited to: " + questionDetail;
