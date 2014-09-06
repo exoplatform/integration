@@ -2,83 +2,83 @@
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>Dimensiune fişier</fileSize>
     </titles>
     <messages>
-      <createdBy>was created by</createdBy>
-      <editedBy>was edited by</editedBy>
-      <system>the system</system>
-      <readmore>...Read More.</readmore>
-      <editTitle>Title has been updated to: {0}</editTitle>
-      <editName>Name has been updated to: {0}</editName>
-      <editDescription>Description has been updated to: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <addSource>File source: {0} has been added</addSource>
-      <addMultiSource>File sources: {0} have been added</addMultiSource>
-      <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
-      <editSummary>Summary has been updated to: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
-      <editContent>Content has been updated.</editContent>
-      <editFile>File has been updated.</editFile>
-      <emptyTitle>The title has been removed.</emptyTitle>
-      <emptySummary>The summary has been removed.</emptySummary>
-      <emptyContent>The content has been removed.</emptyContent>
-      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} has been removed.</removeMetadata>  
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Name has been removed.</removeName>
-      <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator: {0} has been removed.</removeCreator>
-      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
-      <removeLanguage>Language has been removed.</removeLanguage>
-      <removeContent>Content has been removed.</removeContent>
-      <attachmentAdded>File(s) has been attached.</attachmentAdded>
-      <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
-      <categoryAdded>Category: {0} has been added.</categoryAdded>
-      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
-      <tagAdded>Tag: {0} has been added.</tagAdded>
-      <tagsAdded>Tags: {0} have been added.</tagsAdded>
-      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
+      <createdBy>a fost creat de</createdBy>
+      <editedBy>a fost editat de</editedBy>
+      <system>sistem</system>
+      <readmore>...Citeste mai mult.</readmore>
+      <editTitle>Titlul a fost actualizat la: {0}</editTitle>
+      <editName>Numele a fost actualizat la: {0}</editName>
+      <editDescription>Descrierea a fost actualizată la: {0}</editDescription>
+      <singleCreator>A fost creat de {0}</singleCreator>
+      <multiCreator>A fost creat de {0}</multiCreator>
+      <addSource>Fișier sursă: {0} a fost adăugat</addSource>
+      <addMultiSource>Fișiere sursă: {0} au fost adăugate</addMultiSource>
+      <removeSource>Fișier sursă: {0} a fost eliminat</removeSource>
+      <removeMultiSource>Fișiere sursă: {0} au fost eliminate</removeMultiSource>
+      <editSummary>Rezumatul a fost actualizat la: {0}</editSummary>
+      <editLanguage>Limba a fost actualizată la: {0}</editLanguage>
+      <editContent>Conţinutul a fost actualizat.</editContent>
+      <editFile>Fişierul a fost actualizat.</editFile>
+      <emptyTitle>Titlul a fost eliminat.</emptyTitle>
+      <emptySummary>Rezumatul a fost eliminat.</emptySummary>
+      <emptyContent>Conţinutul a fost eliminat.</emptyContent>
+      <updateMetadata>Metadatele {0} au fost actualizate la: {1}</updateMetadata>
+      <removeMetadata>Metadatele {0} au fost eliminate.</removeMetadata>  
+      <removeTitle>Titlul a fost eliminat.</removeTitle>
+      <removeName>Numele a fost eliminat.</removeName>
+      <removeSummary>Rezumatul a fost eliminat.</removeSummary>
+      <removeDescription>Descrierea a fost eliminată.</removeDescription>
+      <removeCreator>Creator: {0} a fost eliminat.</removeCreator>
+      <removeMultiCreator>Creatorii: {0} au fost eliminați.</removeMultiCreator>
+      <removeLanguage>Limba a fost eliminată.</removeLanguage>
+      <removeContent>Conţinutul a fost eliminat.</removeContent>
+      <attachmentAdded>Fișier(e) atașat(e).</attachmentAdded>
+      <attachmentRemoved>Fișier(e) șters(e).</attachmentRemoved>
+      <categoryAdded>Categorie: {0} a fost adăugat.</categoryAdded>
+      <categoryRemoved>Categorie: {0} a fost eliminat.</categoryRemoved>
+      <tagAdded>Etichetă: {0} a fost adăugată.</tagAdded>
+      <tagsAdded>Etichete: {0} au fost adăugate.</tagsAdded>
+      <tagRemoved>Etichetă: {0} a fost eliminată.</tagRemoved>
+      <tagsRemoved>Etichete: {0} au fost eliminate.</tagsRemoved>
       <stateChange>
-        <pending>Publication status is now pending.</pending>
-        <approved>Document has been approved.</approved>
-        <staged>Publication has been staged.</staged>
-        <published>Document has been published.</published>
+        <pending>Starea de publicare este acum în curs.</pending>
+        <approved>Documentul a fost aprobat.</approved>
+        <staged>Publicarea a fost pregătită.</staged>
+        <published>Documentul a fost publicat.</published>
       </stateChange>
-      <contentMoved>Publication has been moved to: {0}</contentMoved>
-      <fileMoved>File has been moved to: {0}</fileMoved>
-      <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
-      <version>Version: {0}</version>
+      <contentMoved>Publicarea a fost mutată la: {0}</contentMoved>
+      <fileMoved>Fișierul a fost mutat la: {0}</fileMoved>
+      <revisionChanged>Publicarea a fost restaurată la versiunea: {0}</revisionChanged>
+      <version>Versiunea {0}</version>
     </messages>
     <publicationStates>
-      <archived>Archived</archived>
-      <obsolete>Obsolete</obsolete>
-      <unpublished>Unpublished</unpublished>
-      <draft>Draft</draft>
-      <pending>Pending</pending>
-      <approved>Approved</approved>
-      <inreview>In Review</inreview>
-      <staged>Staged</staged>
-      <published>Published</published>
-      <live>Published</live>
+      <archived>Arhivată</archived>
+      <obsolete>Învechite</obsolete>
+      <unpublished>Nepublicate</unpublished>
+      <draft>Ciornă</draft>
+      <pending>În aşteptare</pending>
+      <approved>Aprobat</approved>
+      <inreview>În revizuire</inreview>
+      <staged>În practică</staged>
+      <published>Publicat</published>
+      <live>Publicat</live>
     </publicationStates>
-    <view>View</view>
-    <edit>Edit</edit>
-    <download>Download</download>
+    <view>Afișare</view>
+    <edit>Modifică</edit>
+    <download>Descarcă</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Preview</DocViewer>
+      <DocViewer>Previzualizare</DocViewer>
     </title>
   </UIPopupWindow>
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Resource Type</resourceType>        
+        <resourceType>Tipul resursei</resourceType>        
       </label>
     </dialog>
   </ElementSet>
