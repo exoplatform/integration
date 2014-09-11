@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+  <SocialIntegration>
+    <titles>
+      <fileSize>Tamany del Fitxer</fileSize>
+    </titles>
+    <messages>
+      <createdBy>va ser creat per</createdBy>
+      <editedBy>va ser editat per</editedBy>
+      <system>el sistema</system>
+      <readmore>...Llegeix més.</readmore>
+      <editTitle>El títol ha estat actualitzat a: {0}</editTitle>
+      <editName>El nom ha estat actualitzat a: {0}</editName>
+      <editDescription>La descripció ha estat actualitzada a: {0}</editDescription>
+      <singleCreator>L'autor es {0}</singleCreator>
+      <multiCreator>Els autors son {0}</multiCreator>
+      <addSource>La font del fitxer: {0} ha estat afegida</addSource>
+      <addMultiSource>Les fonts del fitxer: {0} han estat afegides</addMultiSource>
+      <removeSource>Font del fitxer: {0} s'ha eliminat</removeSource>
+      <removeMultiSource>Fonts de fitxers: {0} s'han eliminat</removeMultiSource>
+      <editSummary>El resum ha estat actualitzat a: {0}</editSummary>
+      <editLanguage>L'idioma s'ha actualitzat a: {0}</editLanguage>
+      <editContent>S'ha actualitzat el contingut.</editContent>
+      <editFile>S'ha actualitzat el fitxer.</editFile>
+      <emptyTitle>El títol ha estat eliminat.</emptyTitle>
+      <emptySummary>El resum ha estat eliminat.</emptySummary>
+      <emptyContent>El contingut ha estat eliminat.</emptyContent>
+      <updateMetadata>Les metadades {0} s'han actualitzades a: {1}</updateMetadata>
+      <removeMetadata>Metadades {0} s'han eliminat.</removeMetadata>  
+      <removeTitle>El títol ha estat eliminat.</removeTitle>
+      <removeName>El nom ha estat eliminat.</removeName>
+      <removeSummary>El resum ha estat eliminat.</removeSummary>
+      <removeDescription>La descripció ha estat eliminada.</removeDescription>
+      <removeCreator>Autor: {0} s'ha eliminat.</removeCreator>
+      <removeMultiCreator>Autors: {0} s'han eliminat.</removeMultiCreator>
+      <removeLanguage>El idioma ha estat eliminat.</removeLanguage>
+      <removeContent>El contingut ha estat eliminat.</removeContent>
+      <attachmentAdded>Els fitxers adjunts s'han adjuntat.</attachmentAdded>
+      <attachmentRemoved>Els fitxer(s) han estat eliminats.</attachmentRemoved>
+      <categoryAdded>Categoria: {0} s'ha afegit.</categoryAdded>
+      <categoryRemoved>Categoria: {0} ha estat eliminada.</categoryRemoved>
+      <tagAdded>Etiqueta: {0} s'ha afegit.</tagAdded>
+      <tagsAdded>Etiquetes: {0} s'han afegit.</tagsAdded>
+      <tagRemoved>Etiqueta: {0} ha estat eliminada.</tagRemoved>
+      <tagsRemoved>Etiquetes: {0} han estat eliminades.</tagsRemoved>
+      <stateChange>
+        <pending>Està pendent l'estatus de publicació.</pending>
+        <approved>El document ha estat aprovat.</approved>
+        <staged>La publicació està llesta.</staged>
+        <published>El document ha estat publicat.</published>
+      </stateChange>
+      <contentMoved>La publicació s'ha traslladat a: {0}</contentMoved>
+      <fileMoved>El fitxer ha estat mogut a: {0}</fileMoved>
+      <revisionChanged>La publicació s'ha restaurat a la versió: {0}</revisionChanged>
+      <version>Versió {0}</version>
+    </messages>
+    <publicationStates>
+      <archived>Arxivat</archived>
+      <obsolete>Obsolet</obsolete>
+      <unpublished>No publicat</unpublished>
+      <draft>Esborrany</draft>
+      <pending>Pendent</pending>
+      <approved>Aprovat</approved>
+      <inreview>En  revisió</inreview>
+      <staged>Llest per publicar</staged>
+      <published>Publicat</published>
+      <live>Publicat</live>
+    </publicationStates>
+    <view>Veure</view>
+    <edit>Edita</edit>
+    <download>Descarrega</download>
+  </SocialIntegration>
+  <UIPopupWindow>
+    <title>
+      <DocViewer>Vista prèvia</DocViewer>
+    </title>
+  </UIPopupWindow>
+  <ElementSet>
+    <dialog>
+      <label>       
+        <resourceType>Tipus de Recurs</resourceType>        
+      </label>
+    </dialog>
+  </ElementSet>
+</bundle>
