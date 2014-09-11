@@ -105,8 +105,8 @@ window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrent
     	$("#resultLoading").show();
     	var w = $("#resultLoading").css('width').replace("px","");
     	var h = $("#resultLoading").css('height').replace("px","");
-    	var left = (window.screen.width/2)-(w/2);
-    	var top = (window.screen.height/2)-(h/2);
+    	var left = (document.width/2)-(w/2);
+    	var top = (document.height/2)-(h/2);
     	
     	$('#resultLoading').css('left',left + 200);
     	$('#resultLoading').css('top',top - 50);
