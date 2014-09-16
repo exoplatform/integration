@@ -194,7 +194,9 @@ public class ForumUIActivity extends BaseKSActivity {
       post.setRemoteAddr(remoteAddr);
 
       post.setModifiedBy(requestContext.getRemoteUser());
-      post.setMessage(message);
+      //
+      message = message.replace("<p>", "").replace("</p>", "\n");
+      post.setMessage(TransformHTML.enCodeHTMLContent(message));
 
       dataStorage.savePost(categoryId, forumId, topicId, post, true, new MessageBuilder());
 
@@ -226,7 +228,7 @@ public class ForumUIActivity extends BaseKSActivity {
       uiFormComment.reset();
       
       //
-      Post post = uiActivity.createPost(TransformHTML.enCodeHTMLContent(message), requestContext);
+      Post post = uiActivity.createPost(message, requestContext);
         boolean isMigratedActivity = false;
 
          //Case of migrate activity, post will be null
