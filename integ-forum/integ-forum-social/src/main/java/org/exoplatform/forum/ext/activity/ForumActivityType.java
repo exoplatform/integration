@@ -54,20 +54,14 @@ public enum ForumActivityType {
     if (value != null) {
       got = String.format(titleTemplate, value);
     }
-    
     I18NActivityUtils.addResourceKey(a, resourceBundleKey, value);
     
     return got;
   }
   
   public ExoSocialActivity getActivity(ExoSocialActivity a, String...values) {
-    if (values != null && values.length > 0) {
-      a.setTitle(String.format(titleTemplate, values));
-    } else {
-      a.setTitle(titleTemplate);
-    }
-    
-    I18NActivityUtils.addResourceKey(a, resourceBundleKey, values);
+    //
+    a.setTitle(getTitle(a, values));
     return a;
   }
   
@@ -79,5 +73,9 @@ public enum ForumActivityType {
     
     I18NActivityUtils.addResourceKey(a, resourceBundleKey, values);
     return got;
+  }
+  
+  public String getTitleTemplate() {
+    return titleTemplate;
   }
 }

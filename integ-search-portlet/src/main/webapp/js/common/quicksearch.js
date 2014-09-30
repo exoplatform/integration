@@ -216,6 +216,9 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
           var results = resultMap[searchType]; //get all results of this type
           if(results && 0!=$(results).size()) { //show the type with result only        	 
             //results.map(function(result){result.type = searchType;}); //assign type for each result
+            results = results.sort(function(a,b){
+                return byRelevancyDESC(a,b);
+            });
             $.map(results, function(result){result.type = searchType;}); //assign type for each result
             var cell = []; //the cell contains results of this type (in the quick search result table)
             $.each(results, function(i, result){
@@ -301,6 +304,14 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
         replace(/%{avatar}/g, avatar);
 
       return html;
+    }
+
+    function byRelevancyDESC(b,a) {
+        if (a.relevancy < b.relevancy)
+            return -1;
+        if (a.relevancy > b.relevancy)
+            return 1;
+        return 0;
     }
 
 

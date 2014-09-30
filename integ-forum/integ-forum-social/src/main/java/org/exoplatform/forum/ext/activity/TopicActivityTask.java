@@ -114,18 +114,22 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
       PropertyChangeSupport newPcs = ctx.getPcs();
       Topic topic = ctx.getTopic();
       StringBuilder sb = new StringBuilder();
-      
       //
       if (newPcs.hasPropertyName(Topic.TOPIC_NAME)) {
-        sb.append(ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(newComment, topic.getTopicName())).append("\n");
+        String topicName = topic.getTopicName();
+        ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(newComment, CommonUtils.decodeSpecialCharToHTMLnumberIgnore(topicName));
+        //
+        String title = ForumActivityType.UPDATE_TOPIC_TITLE.getTitleTemplate();
+        title = String.format(title, CommonUtils.decodeSpecialCharToHTMLnumber(topicName));
+        sb.append(title).append("\n");
       }
-      
+
       if (newPcs.hasPropertyName(Topic.TOPIC_CONTENT)) {
-        sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(newComment, topic.getDescription()));
+        String description = topic.getDescription();
+        sb.append(ForumActivityType.UPDATE_TOPIC_CONTENT.getTitle(newComment, description));
       }
-      
+
       newComment.setTitle(sb.toString());
-      
       return newComment;
     }
     
@@ -172,14 +176,19 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
 
     @Override
     protected ExoSocialActivity processTitle(ForumActivityContext ctx, ExoSocialActivity activity) {
-      return ForumActivityType.UPDATE_TOPIC_TITLE.getActivity(activity, activity.getTitle());
+      // only apply for new comment
+      String topicName = ctx.getTopic().getTopicName();
+      String title = ForumActivityType.UPDATE_TOPIC_TITLE.getTitleTemplate();
+      title = String.format(title, CommonUtils.decodeSpecialCharToHTMLnumber(topicName));
+      activity.setTitle(title);
+      //
+      ForumActivityType.UPDATE_TOPIC_TITLE.getTitle(activity, CommonUtils.decodeSpecialCharToHTMLnumberIgnore(topicName));
+      return activity;
     }
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
       activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(ctx.getTopic().getTopicName()));
-      //processTitle(ctx, activity);
-
       return activity;
     };
 

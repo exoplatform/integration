@@ -11,7 +11,7 @@
 					<tbody>
 						<tr>
 							<td align="left" bgcolor="#f9f9f9"
-								style="background-color: #f9f9f9; padding: 0 20px; line-height: 16px; font-family: HelveticaNeue, Helvetica, Arial, sans-serif; color: #333333;">
+								style="background-color: #f9f9f9; padding: 0 20px 4px; line-height: 16px; font-family: HelveticaNeue, Helvetica, Arial, sans-serif; color: #333333;">
 								$ACTIVITY_TITLE
 							</td>
 						</tr>
@@ -59,11 +59,12 @@
 										<td align="left" bgcolor="#f9f9f9" width="90%" align="top"
 											style="width: 90%; background-color: #f9f9f9; padding: 0 0; vertical-align: top;">
 											<a href="$ACTIVITY_URL" style="display: inline-block; color: #2f5e92; font-family: 'HelveticaNeue Bold', Helvetica, Arial, sans-serif; font-size: 13px; line-height: 18px; font-weight: bold; text-decoration: none; margin: 0 0 5px;">$DOCUMENT_TITLE</a>
-											<p>
-												<% if (SUMMARY != null) { %>
+											<% if (SUMMARY != null) { %>
+												<p>
 												$SUMMARY
+												</p>
 												<% } %>
-											</p> <% if (SIZE.length() != 0) { %>
+											<% if (SIZE.length() != 0) { %>
 											<p style="margin: 0 0 15px; color: #999999; font-size: 13px; line-height: 18px;">
 												<%=_ctx.appRes("FileActivityChildPlugin.label.FileSize")%>:
 												$SIZE
