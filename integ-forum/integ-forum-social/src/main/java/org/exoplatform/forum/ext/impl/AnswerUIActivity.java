@@ -187,7 +187,7 @@ public class AnswerUIActivity extends BaseKSActivity {
   private String getNumberOfAnswers() throws Exception {
     String number_str = getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_ANSWERS);
 
-    int number = Integer.parseInt(isEmpty(number_str) ? ActivityUtils.getNbOfAnswers(getQuestion()) : number_str);
+    int number = Integer.parseInt(CommonUtils.isEmpty(number_str) ? ActivityUtils.getNbOfAnswers(getQuestion()) : number_str);
 
     if (number == 0) {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noAnswer");
@@ -200,7 +200,7 @@ public class AnswerUIActivity extends BaseKSActivity {
   
   private double getRating() {
     String rate = getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_RATING);
-    if (isEmpty(rate)) {
+    if (CommonUtils.isEmpty(rate)) {
       rate = ActivityUtils.getQuestionRate(getQuestion());
     }
     try {
@@ -213,7 +213,7 @@ public class AnswerUIActivity extends BaseKSActivity {
   private String getNumberOfComments() throws Exception {
     String number_str = getActivityParamValue(AnswersSpaceActivityPublisher.NUMBER_OF_COMMENTS);
 
-    int number = Integer.parseInt(isEmpty(number_str) ? ActivityUtils.getNbOfComments(getQuestion()) : number_str);
+    int number = Integer.parseInt(CommonUtils.isEmpty(number_str) ? ActivityUtils.getNbOfComments(getQuestion()) : number_str);
 
     if (number == 0) {
       return WebUIUtils.getLabel(null, "AnswerUIActivity.label.noComment");
@@ -246,7 +246,7 @@ public class AnswerUIActivity extends BaseKSActivity {
   
   private String getQuestionId() {
     String questionId = getActivityParamValue(AnswersSpaceActivityPublisher.QUESTION_ID);
-    return isEmpty(questionId) ? getActivityParamValue("QuestionId") : questionId;
+    return CommonUtils.isEmpty(questionId) ? getActivityParamValue("QuestionId") : questionId;
   }
   
   private ExoSocialActivity toActivity(Comment comment) {
@@ -281,10 +281,6 @@ public class AnswerUIActivity extends BaseKSActivity {
     }
   }
   
-  private boolean isEmpty(String s) {
-    return (s == null || s.trim().length() <= 0) ? true : false;
-  }
-
   public int getQuestionPoint() {
 
     try {
@@ -329,7 +325,8 @@ public class AnswerUIActivity extends BaseKSActivity {
                                                   ApplicationMessage.WARNING));
         return;
       }
-
+      message = message.replace("<p>", "").replace("</p>", "\n");
+      String enCodeMessage = TransformHTML.enCodeHTMLContent(message);
       DataStorage faqService = CommonsUtils.getService(DataStorage.class);
       Question question = faqService.getQuestionById(uiActivity.getQuestionId());
       Comment comment = new Comment();
@@ -355,7 +352,7 @@ public class AnswerUIActivity extends BaseKSActivity {
               post.setOwner(context.getRemoteUser());
               post.setIcon("ViewIcon");
               post.setName("Re: " + question.getQuestion());
-              post.setMessage(comment.getComments());
+              post.setMessage(enCodeMessage);
               post.setLink(postId);
               post.setIsApproved(!topic.getIsModeratePost());
               post.setRemoteAddr(remoteAddr);
@@ -377,7 +374,7 @@ public class AnswerUIActivity extends BaseKSActivity {
                 post.setModifiedBy(context.getRemoteUser());
               }
               post.setIsApproved(!topic.getIsModeratePost());
-              post.setMessage(TransformHTML.enCodeHTMLContent(message));
+              post.setMessage(enCodeMessage);
               forumService.savePost(ids[t - 3],
                                     ids[t - 2],
                                     topicId,
@@ -405,8 +402,8 @@ public class AnswerUIActivity extends BaseKSActivity {
         uiActivity.getParent().broadcast(event, event.getExecutionPhase());
         return;
       }
-      
-      comment.setComments(TransformHTML.enCodeHTMLContent(message));
+      //
+      comment.setComments(enCodeMessage);
       faqService.saveComment(question.getPath(), comment,  true);
       Map<String, String> templateParams = activity.getTemplateParams();
       question = uiActivity.getQuestion();
