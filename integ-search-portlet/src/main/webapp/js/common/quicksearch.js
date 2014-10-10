@@ -150,12 +150,27 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
     String.prototype.highlight = function(words) {
       var str = this;
       for(var i=0; i<words.length; i++) {
-        if(""==words[i]) continue;
-        var regex = new RegExp("(\\" + words[i] + ")", "gi");
+        if("" == words[i]) continue;
+        var regex;
+        if(isSpecialExpressionCharacter(words[i].charAt(0))) {
+          regex = new RegExp("(\\" + words[i] + ")", "gi");
+        } else {
+          regex = new RegExp("(" + words[i] + ")", "gi");
+        }
         str = str.replace(regex, "<strong>$1</strong>");
       }
       return str;
     };
+
+    function isSpecialExpressionCharacter(c) {
+        var specials = '`~!@#$%^&*()-=+{}[]\|;:\'"<>,./?';
+        for(var i = 0; i < specials.length; i++) {
+            if(c == specials.charAt(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     function getRegistry(callback) {
