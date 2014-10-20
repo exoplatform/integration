@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +44,7 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -428,8 +430,12 @@ public class AnswerUIActivity extends BaseKSActivity {
   
   @Override
   protected ExoSocialActivity getI18N(ExoSocialActivity activity) {
-    //
-    activity = super.getI18N(activity);
+    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+    I18NActivityProcessor i18NActivityProcessor = getApplicationComponent(I18NActivityProcessor.class);
+    if (activity.getTitleId() != null) {
+      Locale userLocale = requestContext.getLocale();
+      activity = i18NActivityProcessor.processKeys(activity, userLocale);
+    }
     //
     if (!CommonUtils.isEmpty(activity.getTitle())) {
       String title = activity.getTitle().replaceAll("&amp;", "&");
