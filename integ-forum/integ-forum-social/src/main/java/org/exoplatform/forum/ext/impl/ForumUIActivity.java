@@ -1,5 +1,6 @@
 package org.exoplatform.forum.ext.impl;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
+import org.exoplatform.social.core.processor.I18NActivityProcessor;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -271,8 +273,12 @@ public class ForumUIActivity extends BaseKSActivity {
   
   @Override
   protected ExoSocialActivity getI18N(ExoSocialActivity activity) {
-    //
-    activity = super.getI18N(activity);
+    WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+    I18NActivityProcessor i18NActivityProcessor = getApplicationComponent(I18NActivityProcessor.class);
+    if (activity.getTitleId() != null) {
+      Locale userLocale = requestContext.getLocale();
+      activity = i18NActivityProcessor.processKeys(activity, userLocale);
+    }
     //
     if (!CommonUtils.isEmpty(activity.getTitle())) {
       String title = activity.getTitle().replaceAll("&amp;", "&");
