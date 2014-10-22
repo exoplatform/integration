@@ -44,6 +44,7 @@
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
   def streamOwner = activity.getStreamOwner();
   def event = uicomponent.event ;
+  def userTimeZone = CalendarSpaceActivityPublisher.getUserTimeZone();
 %>
 
 <% if (activity && event != null) { //process if not null   
@@ -225,9 +226,11 @@
 						%>
 						<div class="pull-left statusTask"><i class="uiIconStatus-<%=event.getEventState()%>"  ></i></div>
 						<%} else { 
-					    SimpleDateFormat sdf = new SimpleDateFormat("MMM");   
+					    SimpleDateFormat sdf = new SimpleDateFormat("MMM");
+					    sdf.setTimeZone(userTimeZone);
 						def month = sdf.format(event.getFromDateTime());    
-						sdf = new SimpleDateFormat("dd");    
+						sdf = new SimpleDateFormat("dd");
+						sdf.setTimeZone(userTimeZone);
 						def day = (sdf.format(event.getFromDateTime())) ;
 						
 						%> <!-- check if is event-->

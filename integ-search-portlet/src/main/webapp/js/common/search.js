@@ -205,7 +205,10 @@ window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrent
 
       switch(result.type) {
         case "event":
-          var date = new Date(result.fromDateTime).toString().split(/\s+/g);
+          var d = new Date(result.fromDateTime);
+          // Convert fromDateTime to user calendar timezone
+          var fromDateTime = d.getTime() + d.getTimezoneOffset() * 60 * 1000 + result.timeZoneOffset;
+          var date = new Date(fromDateTime).toString().split(/\s+/g);
           avatar = EVENT_AVATAR_TEMPLATE.
             replace(/%{month}/g, date[1]).
             replace(/%{date}/g, date[2]);
