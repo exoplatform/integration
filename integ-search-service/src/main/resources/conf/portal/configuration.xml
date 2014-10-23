@@ -36,7 +36,6 @@
   <component>
     <key>org.exoplatform.commons.api.search.SearchService</key>
     <type>org.exoplatform.commons.search.driver.jcr.JcrSearchDriver</type>
-    
     <!-- Ecms -->
     <component-plugins>
       <component-plugin>
@@ -190,6 +189,14 @@
       </component-plugin>
             
     </component-plugins>
+
+    <init-params>
+      <value-param>
+        <name>exo.search.excluded-characters</name>
+        <value>${search.excluded-characters:.}</value>
+      </value-param>
+    </init-params>
+
   </component>
 
   <component>

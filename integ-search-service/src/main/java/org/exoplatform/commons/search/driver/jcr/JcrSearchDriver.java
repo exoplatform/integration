@@ -7,7 +7,7 @@ import org.exoplatform.commons.api.search.data.SearchResult;
 import org.exoplatform.commons.search.service.UnifiedSearchService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-
+import org.exoplatform.container.xml.InitParams;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,10 +19,15 @@ import java.util.regex.Pattern;
 
 public class JcrSearchDriver extends SearchService {
     private final static Log LOG = ExoLogger.getLogger(JcrSearchDriver.class);
+  private String specialCharacters;
 
+  public JcrSearchDriver(InitParams initParams){
+    this.specialCharacters = initParams.get("exo.search.excluded-characters").toString();
+  }
     @Override
     public Map<String, Collection<SearchResult>> search(SearchContext context, String query, Collection<String> sites, Collection<String> types, int offset, int limit, String sort, String order) {
         String fuzzySyntax = getFuzzySyntax();
+      query = replaceSpecialCharacters(query);
         HashMap<String, ArrayList<String>> terms = parse(query); //parse query for single and quoted terms
         query = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s" + fuzzySyntax, terms.get("single"), " "); //add a fuzzySyntax after each single term (for fuzzy search)
 
@@ -124,4 +129,7 @@ public class JcrSearchDriver extends SearchService {
         return false;
     }
 
+  private String replaceSpecialCharacters(String query){
+    return query.replaceAll("\\" + specialCharacters, " ");
+  }
 }
