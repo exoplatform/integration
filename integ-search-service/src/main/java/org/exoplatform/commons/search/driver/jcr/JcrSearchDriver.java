@@ -130,6 +130,6 @@ public class JcrSearchDriver extends SearchService {
     }
 
   private String replaceSpecialCharacters(String query){
-    return query.replaceAll("\\" + specialCharacters, " ");
+    return query.replaceAll("[" + specialCharacters + "]", " ");
   }
 }
