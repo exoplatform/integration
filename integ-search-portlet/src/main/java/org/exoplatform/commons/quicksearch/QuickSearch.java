@@ -18,11 +18,13 @@ package org.exoplatform.commons.quicksearch;
 
 
 import juzu.Path;
+import juzu.Response;
 import juzu.View;
 import juzu.bridge.portlet.JuzuPortlet;
 import juzu.impl.request.Request;
-import juzu.request.RenderContext;
+import juzu.request.ApplicationContext;
 import juzu.request.RequestContext;
+import juzu.request.UserContext;
 import juzu.template.Template;
 
 import javax.inject.Inject;
@@ -57,32 +59,16 @@ public class QuickSearch {
   static boolean firstInit = true;
   
   @View
-  public void index(RenderContext renderContext){
-    RequestContext requestContext = Request.getCurrent().getContext();
-    
-    ResourceBundle rs = renderContext.getApplicationContext().resolveBundle(renderContext.getUserContext().getLocale());
-    
+  public Response.Content index(RequestContext requestContext){
     Map<String, Object> parameters = new HashMap<String, Object>();
     QuickSearch_.index().setProperty(JuzuPortlet.PORTLET_MODE, PortletMode.EDIT);
     PortletMode mode = requestContext.getProperty(JuzuPortlet.PORTLET_MODE);
     parameters.put("firstInit", firstInit);
     if (firstInit) firstInit = false;
-    if (PortletMode.EDIT == mode){     
-      parameters.put("quicksearch", rs.getString("quicksearch.label"));
-      parameters.put("resultsPerType", rs.getString("quicksearch.resultsPerType.label"));
-      parameters.put("searchIn", rs.getString("quicksearch.searchIn.label"));
-      parameters.put("everything", rs.getString("quicksearch.everything.label"));
-      parameters.put("currentsite", rs.getString("quicksearch.currentsite.label"));
-      parameters.put("saveSettings", rs.getString("quicksearch.saveSettings.label"));
-      parameters.put("alertOk", rs.getString("quicksearch.alert.saveSetting"));
-      parameters.put("alertNotOk", rs.getString("quicksearch.alert.error.saveSetting"));
-      edit.render(parameters);
+    if (PortletMode.EDIT == mode){
+      return edit.ok(parameters);
     }else {
-      parameters.put("SearchInInput", rs.getString("quicksearch.input.label"));
-      parameters.put("seeAll", rs.getString("quicksearch.seeAll.label"));
-      parameters.put("noResults", rs.getString("quicksearch.noResults.label"));      
-      parameters.put("searching", rs.getString("quicksearch.searching.label"));
-      
+
       String resultsPerPage = portletPreferences.getValue("resultsPerPage", "5");
       String searchTypes = portletPreferences.getValue("searchTypes", "all");
       String searchCurrentSiteOnly = portletPreferences.getValue("searchCurrentSiteOnly", "true");
@@ -90,7 +76,7 @@ public class QuickSearch {
       parameters.put("resultsPerPage", resultsPerPage);
       parameters.put("searchTypes", searchTypes);
       parameters.put("searchCurrentSiteOnly", searchCurrentSiteOnly);      
-      index.render(parameters);
+      return index.ok(parameters);
     }
   }  
 }
