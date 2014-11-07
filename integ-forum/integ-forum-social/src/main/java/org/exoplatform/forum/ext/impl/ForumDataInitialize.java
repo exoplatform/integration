@@ -20,8 +20,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.component.ComponentRequestLifecycle;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.service.Category;
@@ -80,8 +82,9 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
     ForumService fServie = (ForumService) exoContainer.getComponentInstanceOfType(ForumService.class);
     Space space = event.getSpace();
     String parentGrId = "";
+    OrganizationService service = (OrganizationService) exoContainer.getComponentInstanceOfType(OrganizationService.class);
+    CommonsUtils.startRequest(service);
     try {
-      OrganizationService service = (OrganizationService) exoContainer.getComponentInstanceOfType(OrganizationService.class);
       Group group = service.getGroupHandler().findGroupById(space.getGroupId());
       parentGrId = group.getParentId();
 
@@ -120,6 +123,8 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
       if(LOG.isDebugEnabled()) {
         LOG.debug("Failed to add forum space. " + e.getMessage());
       }
+    } finally {
+      CommonsUtils.endRequest(service);
     }
   }
 
