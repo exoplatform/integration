@@ -1,5 +1,6 @@
 package org.exoplatform.commons.search.driver.jcr;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.api.search.SearchService;
 import org.exoplatform.commons.api.search.SearchServiceConnector;
 import org.exoplatform.commons.api.search.data.SearchContext;
@@ -30,8 +31,8 @@ public class JcrSearchDriver extends SearchService {
       query = replaceSpecialCharacters(query);
         HashMap<String, ArrayList<String>> terms = parse(query); //parse query for single and quoted terms
         query = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s" + fuzzySyntax, terms.get("single"), " "); //add a fuzzySyntax after each single term (for fuzzy search)
-
         Map<String, Collection<SearchResult>> results = new HashMap<String, Collection<SearchResult>>();
+      if(StringUtils.isBlank(query)) return results;
         if(null==types || types.isEmpty()) return results;
         List<String> enabledTypes = UnifiedSearchService.getEnabledSearchTypes();
         for(SearchServiceConnector connector:this.getConnectors()){
