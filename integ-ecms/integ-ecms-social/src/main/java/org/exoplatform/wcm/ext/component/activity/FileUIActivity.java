@@ -61,6 +61,7 @@ import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.ComponentConfigs;
 import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -565,22 +566,40 @@ public class FileUIActivity extends BaseUIActivity{
       return "";
     }
   }
+
+  public void showDocumentPreview(UIComponent uiComp) throws Exception {
+    UIActivitiesContainer uiActivitiesContainer = this.getParent();
+    UIDocumentPreview uiDocumentPreview = uiActivitiesContainer.findComponentById("UIDocumentPreview");
+    if (uiDocumentPreview == null) {
+      uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
+    }
+    uiDocumentPreview.setShowMask(true);
+    uiDocumentPreview.setUIComponent(uiComp) ;
+    uiDocumentPreview.setShow(true) ;
+    uiDocumentPreview.setResizable(false) ;
+  }
+
   public static class ViewDocumentActionListener extends EventListener<FileUIActivity> {
     @Override
     public void execute(Event<FileUIActivity> event) throws Exception {
       final FileUIActivity docActivity = event.getSource();
       final UIActivitiesContainer activitiesContainer = docActivity.getParent();
       final PopupContainer popupContainer = activitiesContainer.getPopupContainer();
-      UIDocViewer docViewer = popupContainer.createUIComponent(UIDocViewer.class, null, "DocViewer");
+      UIDocViewer docViewer = docActivity.createUIComponent(UIDocViewer.class, null, "DocViewer");
+      //UIDocViewer docViewer = popupContainer.createUIComponent(UIDocViewer.class, null, "DocViewer");
+
       docViewer.docPath = docActivity.docPath;
       docViewer.repository = docActivity.repository;
       docViewer.workspace = docActivity.workspace;
       final Node docNode = docActivity.getContentNode();
       docViewer.setOriginalNode(docNode);
       docViewer.setNode(docNode);
-      popupContainer.activate(docViewer, 800, 600, true);
+      //popupContainer.activate(docViewer, 800, 600, true);
+      docActivity.showDocumentPreview(docViewer);
       
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+      event.getRequestContext().addUIComponentToUpdateByAjax(activitiesContainer);
+      //event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+
     }
   }
   
