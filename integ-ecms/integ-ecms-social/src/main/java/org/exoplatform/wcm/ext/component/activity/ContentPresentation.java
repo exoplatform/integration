@@ -58,9 +58,6 @@ public class ContentPresentation extends UIBaseNodePresentation {
   /** The resource resolver. */
   private JCRResourceResolver resourceResolver;
 
-  /** The repository. */
-  //private String              repository;
-
   public ContentPresentation() {    
   }
 

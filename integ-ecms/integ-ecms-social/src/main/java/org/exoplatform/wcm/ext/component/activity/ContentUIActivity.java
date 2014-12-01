@@ -53,6 +53,7 @@ import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
@@ -144,7 +145,11 @@ public class ContentUIActivity extends BaseUIActivity {
   private String             docTitle;
   private String             docVersion;
   private String             docSummary;
-  
+
+  public String              docPath;
+  public String              repository;
+  public String              workspace;
+
   public ContentUIActivity() throws Exception {
     super();
   }
@@ -430,13 +435,20 @@ public class ContentUIActivity extends BaseUIActivity {
     return null;
   }
   public String getViewLink() {
+    String viewLink = StringUtils.EMPTY;
+    Node data = getContentNode();
     try {
-      String result = org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
-      return result;
-    }catch (Exception e) {
-      return "";
+      if (isContentSupportPreview(data)) {
+        viewLink = this.event("ViewDocument", this.getId(), StringUtils.EMPTY);
+      } else {
+        viewLink = org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
+      }
+      return viewLink;
+    } catch (Exception e) {
+      return viewLink;
     }
   }
+
   public String getEditLink() {
     try {
       return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), true, false);
@@ -455,19 +467,55 @@ public class ContentUIActivity extends BaseUIActivity {
     }
     return Integer.parseInt(currentVersion);
   }
+
+  public void showDocumentPreview(UIComponent uiComp) throws Exception {
+    UIActivitiesContainer uiActivitiesContainer = this.getParent();
+    UIDocumentPreview uiDocumentPreview = uiActivitiesContainer.findComponentById("UIDocumentPreview");
+    if (uiDocumentPreview == null) {
+      uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
+    }
+    uiDocumentPreview.setShowMask(true);
+    uiDocumentPreview.setUIComponent(uiComp) ;
+    uiDocumentPreview.setShow(true) ;
+    uiDocumentPreview.setResizable(false) ;
+  }
+
+  /**
+   * <h2>Check if node content is supported by preview on activity stream
+   * A preview from the activity stream is available for the following contents:
+   * </h2>
+   * <ul>
+   * <li>Webcontent</li>
+   * </ul>
+   * @param data Content node
+   * @return true: support; false: not support
+   * @throws Exception
+   */
+  public boolean isContentSupportPreview(Node data) throws RepositoryException{
+    if (data.isNodeType(org.exoplatform.ecm.webui.utils.Utils.EXO_WEBCONTENT)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   
   public static class ViewDocumentActionListener extends EventListener<ContentUIActivity> {
     @Override
     public void execute(Event<ContentUIActivity> event) throws Exception {
-      final ContentUIActivity docActivity = event.getSource();
-      final UIActivitiesContainer activitiesContainer = docActivity.getParent();
-      final PopupContainer popupContainer = activitiesContainer.getPopupContainer();
-      UIDocViewer docViewer = popupContainer.createUIComponent(UIDocViewer.class, null, "DocViewer");
-      final Node docNode = docActivity.getContentNode();
+      ContentUIActivity contentUIActivity = event.getSource();
+
+      Node docNode = contentUIActivity.getContentNode();
+      UIDocViewer docViewer = contentUIActivity.createUIComponent(UIDocViewer.class, null, "DocViewer");
+      docViewer.docPath = contentUIActivity.docPath;
+      docViewer.repository = contentUIActivity.repository;
+      docViewer.workspace = contentUIActivity.workspace;
       docViewer.setOriginalNode(docNode);
       docViewer.setNode(docNode);
-      popupContainer.activate(docViewer, 800, 600, true);
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+
+      contentUIActivity.showDocumentPreview(docViewer);
+
+      UIActivitiesContainer activitiesContainer = contentUIActivity.getParent();
+      event.getRequestContext().addUIComponentToUpdateByAjax(activitiesContainer);
     }
   }
 }

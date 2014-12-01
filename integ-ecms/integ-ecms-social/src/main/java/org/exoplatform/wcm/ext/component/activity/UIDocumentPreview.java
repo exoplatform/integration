@@ -20,7 +20,7 @@ public class UIDocumentPreview extends UIPopupWindow {
         return;
       uiDocumentPreview.setShow(false);
       uiDocumentPreview.setUIComponent(null);
-      event.getRequestContext().addUIComponentToUpdateByAjax(uiDocumentPreview);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiDocumentPreview.getParent());
     }
   }
 }

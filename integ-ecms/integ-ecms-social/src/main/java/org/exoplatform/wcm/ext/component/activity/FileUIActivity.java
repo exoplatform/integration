@@ -19,6 +19,8 @@ package org.exoplatform.wcm.ext.component.activity;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -70,6 +72,8 @@ import org.exoplatform.webui.cssfile.CssClassManager;
 import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.webui.ext.UIExtension;
+import org.exoplatform.webui.ext.UIExtensionManager;
 
 
 /**
@@ -521,13 +525,16 @@ public class FileUIActivity extends BaseUIActivity{
     }
     return null;
   }
-  public String getViewLink() {
+
+  public String getContentExplorerViewLink() {
     try {
-    return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
-    }catch (Exception e) {
-      return "";
+      return  org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
+    } catch (Exception e) {
+      LOG.error(e.getMessage(), e);
+      return StringUtils.EMPTY;
     }
   }
+
   public String getEditLink() {
     try {
       return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), true, false);
@@ -570,36 +577,64 @@ public class FileUIActivity extends BaseUIActivity{
   public void showDocumentPreview(UIComponent uiComp) throws Exception {
     UIActivitiesContainer uiActivitiesContainer = this.getParent();
     UIDocumentPreview uiDocumentPreview = uiActivitiesContainer.findComponentById("UIDocumentPreview");
-    if (uiDocumentPreview == null) {
-      uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
+    if (uiDocumentPreview != null) {
+      uiActivitiesContainer.removeChildById("UIDocumentPreview");
     }
+    uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
     uiDocumentPreview.setShowMask(true);
     uiDocumentPreview.setUIComponent(uiComp) ;
     uiDocumentPreview.setShow(true) ;
     uiDocumentPreview.setResizable(false) ;
   }
 
+  /**
+   * <h2>Check if file node is supported by preview on activity stream
+   * A preview from the activity stream is available for the following contents:
+   * </h2>
+   * <ul>
+   * <li>pdf and office file</li>
+   * <li>media (audio, video, image)</li>
+   * </ul>
+   * @param data Content node
+   * @return true: support; false: not support
+   * @throws Exception
+   */
+  public boolean isFileSupportPreview(Node data) throws Exception {
+
+    if (!data.isNodeType(org.exoplatform.ecm.webui.utils.Utils.NT_FILE)) return false;
+    String mimeType = data.getNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT).getProperty(org.exoplatform.ecm
+            .webui.utils.Utils.JCR_MIMETYPE).getString();
+
+    UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
+    Map<String, Object> context = new HashMap<String, Object>();
+    context.put(org.exoplatform.ecm.webui.utils.Utils.MIME_TYPE, mimeType);
+    List<UIExtension> extensions = manager.getUIExtensions(org.exoplatform.ecm.webui.utils.Utils.FILE_VIEWER_EXTENSION_TYPE);
+    for (UIExtension extension : extensions) {
+      UIComponent uiComponent = manager.addUIExtension(extension, context, this);
+      if (uiComponent != null && !"Text".equals(extension.getName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public static class ViewDocumentActionListener extends EventListener<FileUIActivity> {
     @Override
     public void execute(Event<FileUIActivity> event) throws Exception {
-      final FileUIActivity docActivity = event.getSource();
-      final UIActivitiesContainer activitiesContainer = docActivity.getParent();
-      final PopupContainer popupContainer = activitiesContainer.getPopupContainer();
-      UIDocViewer docViewer = docActivity.createUIComponent(UIDocViewer.class, null, "DocViewer");
-      //UIDocViewer docViewer = popupContainer.createUIComponent(UIDocViewer.class, null, "DocViewer");
+      FileUIActivity fileUIActivity = event.getSource();
 
-      docViewer.docPath = docActivity.docPath;
-      docViewer.repository = docActivity.repository;
-      docViewer.workspace = docActivity.workspace;
-      final Node docNode = docActivity.getContentNode();
+      Node docNode = fileUIActivity.getContentNode();
+      UIDocViewer docViewer = fileUIActivity.createUIComponent(UIDocViewer.class, null, "DocViewer");
+      docViewer.docPath = fileUIActivity.docPath;
+      docViewer.repository = fileUIActivity.repository;
+      docViewer.workspace = fileUIActivity.workspace;
       docViewer.setOriginalNode(docNode);
       docViewer.setNode(docNode);
-      //popupContainer.activate(docViewer, 800, 600, true);
-      docActivity.showDocumentPreview(docViewer);
-      
-      event.getRequestContext().addUIComponentToUpdateByAjax(activitiesContainer);
-      //event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
 
+      fileUIActivity.showDocumentPreview(docViewer);
+
+      UIActivitiesContainer activitiesContainer = fileUIActivity.getParent();
+      event.getRequestContext().addUIComponentToUpdateByAjax(activitiesContainer);
     }
   }
   

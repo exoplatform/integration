@@ -84,7 +84,9 @@
   def activityStatus = uicomponent.getActivityStatus();
   def contentName = uicomponent.getContentName();
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
-  def contentActivityUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");
+  def contentNode = uicomponent.getContentNode();
+
+  def contentActivityUri =  uicomponent.event("ViewDocument", uicomponent.getId(), "");
   def mimeType = uicomponent.getMimeType();
   
   //
@@ -208,7 +210,6 @@
 	  //ECMS declare variables - END
 	  def docTypeName = uicomponent.getDocTypeName();
 	  def docSummary = uicomponent.getDocSummary();
-	  def viewLink = uicomponent.getViewLink();
 	  def editLink = uicomponent.getEditLink();
 	  def downloadLink = uicomponent.getDownloadLink();
 	  def size = uicomponent.getSize(currentNode);
