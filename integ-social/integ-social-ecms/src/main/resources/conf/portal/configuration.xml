@@ -78,35 +78,33 @@
       </init-params>
     </component-plugin>
   </external-component-plugins>
+
   <external-component-plugins>
-	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
-	  <component-plugin>
-	    <name>notification.plugins</name>
-	    <set-method>addChildPlugin</set-method>
-	    <type>org.exoplatform.social.doc.notification.plugin.DocActivityChildPlugin</type>
-	    <description>Initial information for forum child notification plugin.</description>
-	    <init-params>
-	      <object-param>
-	        <name>template.DocActivityChildPlugin</name>
-	        <description>The template of DocActivityChildPlugin</description>
-	        <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
-	          <field name="pluginId">
-	            <string>DOC_ACTIVITY</string>
-	          </field>
-	          <field name="templateConfig">
-	            <object type="org.exoplatform.commons.api.notification.plugin.config.TemplateConfig">
-	              <field name="bundlePath">
-	                <string>locale.social.plugin.doc.notification.DocNotification</string>
-	              </field>
-	              <field name="templatePath">
-	                <string>classpath:/groovy/social/plugin/doc/notification/DocumentActivity.gtmpl</string>
-	              </field>
-	            </object>
-	          </field>
-	        </object>
-	      </object-param>
-	    </init-params>
-	  </component-plugin>
-	</external-component-plugins>
+    <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+    <component-plugin>
+      <name>notification.plugins</name>
+      <set-method>addChildPlugin</set-method>
+      <type>org.exoplatform.social.doc.notification.plugin.DocActivityChildPlugin</type>
+      <description>Initial information for forum child notification plugin.</description>
+      <init-params>
+        <value-param>
+          <name>templatePath</name>
+          <value><![CDATA[classpath:/groovy/social/plugin/doc/notification/DocumentActivity.gtmpl]]></value>
+        </value-param>
+        <object-param>
+          <name>template.DocActivityChildPlugin</name>
+          <description>The template of DocActivityChildPlugin</description>
+          <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
+            <field name="pluginId">
+              <string>DOC_ACTIVITY</string>
+            </field>
+            <field name="bundlePath">
+              <string>locale.social.plugin.doc.notification.DocNotification</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
   
 </configuration>
