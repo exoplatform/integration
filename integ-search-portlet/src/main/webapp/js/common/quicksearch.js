@@ -1,11 +1,12 @@
 (function($){
 // Function to be called when the quick search template is ready
-window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching,resultsPerPage,searchTypes,searchCurrentSiteOnly,firstInit) {
+window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching, resultsPerPage, searchTypes, searchCurrentSiteOnly,firstInit) {
   
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
     var SEARCH_TYPES; //enabled search types
     var QUICKSEARCH_SETTING; //quick search setting
+    var DELAY_SEARCH_TIME = 1000; // Search time delay
 
     var txtQuickSearchQuery_id = "#adminkeyword-" + portletId;
     var linkQuickSearchQuery_id = "#adminSearchLink-" + portletId;
@@ -16,13 +17,13 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
     var isEnterKey = false;
     window['isSearching'] = false;
     var durationKeyup = 0;
-    var firstKeyup = 0;
-    var nextKeyup = 0;
+    var keypressed = false;
     var skipKeyup = 0;
     var textVal = "";
     var firstBackSpace = true;
     var index = 0;
     var currentFocus = 0;
+    var searchTimeout;
     //var skipKeyUp = [9,16,17,18,19,20,33,34,35,36,37,38,39,40,45,49];
     
     var mapKeyUp = {"0":"48","1":"49","2":"50","3":"51","4":"52","5":"53","6":"54","7":"55","8":"56","9":"57",
@@ -125,6 +126,15 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
         </table> \
       ";       
     
+    searchTimeout = setTimeout(searchWhenNoKeypress, DELAY_SEARCH_TIME);
+    
+    function searchWhenNoKeypress() {
+      if (keypressed) {
+        quickSearch();
+        keypressed = false;
+      }
+    }
+    
     $("document").ready(function(){
       if (Boolean(firstInit)) {
         var data = {};
@@ -198,11 +208,10 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
             	$(quickSearchResult_id).show();                      	
             }            
     	}else {
-    		window['isSearching'] = false;    		
+    		window['isSearching'] = false;
     	}    	    
     	
     }
-
     function quickSearch() {
       var query = $(txtQuickSearchQuery_id).val();
       setWaitingStatus(true);
@@ -332,7 +341,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
 
     //*** Event handlers - Quick search ***
     $(document).on("click",seeAll_id, function(){
-      window.location.href = $(this).attr("href"); //open the main search page
+      window.location.href = generateAllResultsURL(); //open the main search page
       $(quickSearchResult_id).hide();
     });
 
@@ -343,32 +352,17 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
         return;
       }
       if(13==e.keyCode) {
-        $(seeAll_id).click(); //go to main search page if Enter is pressed
+        $(seeAll_id).trigger("click"); //go to main search page if Enter is pressed
       } else {
+          keypressed = true;
+          if (searchTimeout) {
+            clearTimeout(searchTimeout);
+          }
+          searchTimeout = setTimeout(searchWhenNoKeypress, DELAY_SEARCH_TIME);
           //quickSearch(); //search for the text just being typed in
-		  var currentVal = $(txtQuickSearchQuery_id).val();    	  
+          var currentVal = $(txtQuickSearchQuery_id).val();
     	  if (!charDeletedIsEmpty(e,textVal, currentVal)){
     		  $.each(mapKeyUp, function(key, value){
-        		  
-    	    	  if (value == e.keyCode){
-    	    		var query = $(txtQuickSearchQuery_id).val();
-    	    		nextKeyup = new Date().getTime();	    
-    	    		
-    		    	if (query.length <= 2)
-    		      	{
-    		    		quickSearch(); //search for the text just being typed in
-    		      	}else if (nextKeyup - firstKeyup >= 1000){
-    			    		firstKeyup = nextKeyup;	    		
-    			    		quickSearch(); //search for the text just being typed in	    		
-    			    }else skipKeyup ++;
-    		    	
-    	 		    if (skipKeyup == 2)
-    			    {
-    				   skipKeyup = 0;
-    				   quickSearch();
-    				   firstKeyup = nextKeyup;
-    				}
-    	    	  }
     	    	  textVal = $(txtQuickSearchQuery_id).val();
         	  });
     	  }    	      	      	 
@@ -467,24 +461,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
     	  if(!window['isSearching']) {      
     		  $(seeAll_id).click(); //go to main search page if Enter is pressed
     	  }else if (window['isSearching']){    	  	 
-          
-	          var query = $(txtQuickSearchQuery_id).val();
-	          var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
-	
-	          var searchParams = {
-	            searchContext: {
-	              siteName:eXo.env.portal.portalName
-	            },
-	            q: query,
-	            sites: QUICKSEARCH_SETTING.searchCurrentSiteOnly ? eXo.env.portal.portalName : "all",
-	            types: types,
-	            offset: 0,
-	            limit: QUICKSEARCH_SETTING.resultsPerPage,
-	            sort: "relevancy",
-	            order: "desc"
-	          };          
-	          var searchPage = "/portal/"+eXo.env.portal.portalName+"/search";
-	          $(linkQuickSearchQuery_id).attr("onclick","window.location.href='"+searchPage +"?q="+query+"&types="+types+"'");
+	          $(linkQuickSearchQuery_id).attr("onclick","window.location.href='"+ generateAllResultsURL() + "'");
 	          window['isSearching'] = false;
     	  }
       }
@@ -516,6 +493,13 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
       });
 
     });
+    
+    function generateAllResultsURL() {
+      var query = $(txtQuickSearchQuery_id).val();
+      var types = QUICKSEARCH_SETTING.searchTypes.join(","); //search for the types specified in quick search setting only
+      var searchPage = "/portal/"+eXo.env.portal.portalName+"/search";
+      return searchPage + "?q="+query+"&types="+types;
+    }
 
   //$ = jQuery; //undo .conflict();
 }
