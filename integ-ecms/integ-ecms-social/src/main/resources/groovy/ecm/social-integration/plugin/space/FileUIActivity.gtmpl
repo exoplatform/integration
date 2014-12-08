@@ -86,7 +86,7 @@
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
   def contentNode = uicomponent.getContentNode();
 
-  def contentActivityUri =  uicomponent.event("ViewDocument", uicomponent.getId(), "");
+  def contentActivityUri =  uicomponent.getViewLink();
   def mimeType = uicomponent.getMimeType();
   
   //

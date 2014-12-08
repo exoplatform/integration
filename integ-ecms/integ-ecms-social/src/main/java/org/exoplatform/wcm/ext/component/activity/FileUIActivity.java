@@ -57,7 +57,6 @@ import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
-import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -74,6 +73,7 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.ext.UIExtension;
 import org.exoplatform.webui.ext.UIExtensionManager;
+import org.exoplatform.ecm.webui.utils.Utils;
 
 
 /**
@@ -255,7 +255,7 @@ public class FileUIActivity extends BaseUIActivity{
   }
   
   public String getTitle(Node node) throws Exception {
-    return org.exoplatform.ecm.webui.utils.Utils.getTitle(node);
+    return Utils.getTitle(node);
   } 
   
   private String convertDateFormat(String strDate, String strOldFormat, String strNewFormat) throws ParseException {
@@ -307,7 +307,7 @@ public class FileUIActivity extends BaseUIActivity{
    * @return the summary of Node. Return empty string if catch an exception.
    */
   public String getSummary(Node node) {
-    return Utils.getSummary(node);
+    return org.exoplatform.wcm.ext.component.activity.listener.Utils.getSummary(node);
   }
   
   public String getDocumentSummary(Map<String, String> activityParams) {
@@ -323,10 +323,10 @@ public class FileUIActivity extends BaseUIActivity{
   protected String getSize(Node node) {
     double size = 0;    
     try {
-      if (node.hasNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT)) {
-        Node contentNode = node.getNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT);
-        if (contentNode.hasProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA)) {
-          size = contentNode.getProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA).getLength();
+      if (node.hasNode(Utils.JCR_CONTENT)) {
+        Node contentNode = node.getNode(Utils.JCR_CONTENT);
+        if (contentNode.hasProperty(Utils.JCR_DATA)) {
+          size = contentNode.getProperty(Utils.JCR_DATA).getLength();
         }
         
         return FileUtils.byteCountToDisplaySize((long)size);
@@ -346,10 +346,10 @@ public class FileUIActivity extends BaseUIActivity{
   protected double getFileSize(Node node) {
     double fileSize = 0;    
     try {
-      if (node.hasNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT)) {
-        Node contentNode = node.getNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT);
-        if (contentNode.hasProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA)) {
-        	fileSize = contentNode.getProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA).getLength();
+      if (node.hasNode(Utils.JCR_CONTENT)) {
+        Node contentNode = node.getNode(Utils.JCR_CONTENT);
+        if (contentNode.hasProperty(Utils.JCR_DATA)) {
+        	fileSize = contentNode.getProperty(Utils.JCR_DATA).getLength();
         }
       }
     } catch(Exception ex) { fileSize = 0; }
@@ -526,9 +526,14 @@ public class FileUIActivity extends BaseUIActivity{
     return null;
   }
 
-  public String getContentExplorerViewLink() {
+  public String getViewLink() {
     try {
-      return  org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
+      Node data = getContentNode();
+      if (isFileSupportPreview(data)) {
+        return this.event("ViewDocument", this.getId(), "");
+      } else {
+        return org.exoplatform.wcm.webui.Utils.getEditLink(data, false, false);
+      }
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
       return StringUtils.EMPTY;
@@ -600,21 +605,20 @@ public class FileUIActivity extends BaseUIActivity{
    * @throws Exception
    */
   public boolean isFileSupportPreview(Node data) throws Exception {
+    if (data.isNodeType(Utils.NT_FILE)) {
+      UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
+      List<UIExtension> extensions = manager.getUIExtensions(Utils.FILE_VIEWER_EXTENSION_TYPE);
 
-    if (!data.isNodeType(org.exoplatform.ecm.webui.utils.Utils.NT_FILE)) return false;
-    String mimeType = data.getNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT).getProperty(org.exoplatform.ecm
-            .webui.utils.Utils.JCR_MIMETYPE).getString();
+      Map<String, Object> context = new HashMap<String, Object>();
+      context.put(Utils.MIME_TYPE, data.getNode(Utils.JCR_CONTENT).getProperty(Utils.JCR_MIMETYPE).getString());
 
-    UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
-    Map<String, Object> context = new HashMap<String, Object>();
-    context.put(org.exoplatform.ecm.webui.utils.Utils.MIME_TYPE, mimeType);
-    List<UIExtension> extensions = manager.getUIExtensions(org.exoplatform.ecm.webui.utils.Utils.FILE_VIEWER_EXTENSION_TYPE);
-    for (UIExtension extension : extensions) {
-      UIComponent uiComponent = manager.addUIExtension(extension, context, this);
-      if (uiComponent != null && !"Text".equals(extension.getName())) {
-        return true;
+      for (UIExtension extension : extensions) {
+        if (manager.accept(Utils.FILE_VIEWER_EXTENSION_TYPE, extension.getName(), context) && !"Text".equals(extension.getName())) {
+          return true;
+        }
       }
     }
+
     return false;
   }
 
@@ -644,7 +648,7 @@ public class FileUIActivity extends BaseUIActivity{
     	FileUIActivity uiComp = event.getSource() ;
       String downloadLink = null;
       if (getRealNode(uiComp.getContentNode()).getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
-        downloadLink = org.exoplatform.ecm.webui.utils.Utils.getDownloadRestServiceLink(uiComp.getContentNode());
+        downloadLink = Utils.getDownloadRestServiceLink(uiComp.getContentNode());
       }
       event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
     }
