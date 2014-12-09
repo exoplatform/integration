@@ -16,17 +16,20 @@ import javax.jcr.Node;
 )
 public class UIDocumentPreview extends UIPopupWindow {
 
-  public boolean isWebContent() throws Exception {
+  private boolean isWebContent() throws Exception {
     UIDocViewer uiDocViewer = findFirstComponentOfType(UIDocViewer.class);
-    if (uiDocViewer != null) {
-      Node previewNode = uiDocViewer.getNode();
-      if (previewNode != null) {
-        return previewNode.isNodeType(org.exoplatform.ecm.webui.utils.Utils.EXO_WEBCONTENT);
-      }
+    Node previewNode = uiDocViewer.getNode();
+    if (previewNode != null) {
+      return previewNode.isNodeType(org.exoplatform.ecm.webui.utils.Utils.EXO_WEBCONTENT);
     }
 
     return false;
   }
+
+  private Node getOriginalNode() throws Exception {
+    UIDocViewer uiDocViewer = findFirstComponentOfType(UIDocViewer.class);
+    return uiDocViewer.getOriginalNode();
+   }
 
   public static class CloseActionListener extends EventListener<UIDocumentPreview> {
     public void execute(Event<UIDocumentPreview> event) throws Exception {
@@ -34,7 +37,6 @@ public class UIDocumentPreview extends UIPopupWindow {
       if (!uiDocumentPreview.isShow())
         return;
       uiDocumentPreview.setShow(false);
-      uiDocumentPreview.setUIComponent(null);
       event.getRequestContext().addUIComponentToUpdateByAjax(uiDocumentPreview.getParent());
     }
   }
