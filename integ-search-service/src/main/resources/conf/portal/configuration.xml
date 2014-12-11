@@ -171,21 +171,6 @@
              <property name="displayName" value="Tasks"/>
           </properties-param>
         </init-params>      
-      </component-plugin>              
-      
-      <!-- Forum --> 
-      <component-plugin profiles="all">
-        <name>AnswerSearchConnector</name>
-        <set-method>addConnector</set-method>
-        <type>org.exoplatform.faq.service.search.AnswerSearchConnector</type>
-        <description>eXo Answers answers</description>
-        <init-params>
-          <properties-param>
-             <name>constructor.params</name>
-             <property name="searchType" value="answer"/>
-             <property name="displayName" value="Answers"/>
-          </properties-param>
-        </init-params>      
       </component-plugin>
             
     </component-plugins>
@@ -238,15 +223,6 @@
       <set-method>addListenerPlugin</set-method>
       <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchForumListener</type>
       <description>Forum listener for Unified Search</description>
-    </component-plugin>
-  </external-component-plugins>
-  <external-component-plugins>
-    <target-component>org.exoplatform.faq.service.FAQService</target-component>
-    <component-plugin>
-      <name>unifiedsearch.listeners.answer</name>
-      <set-method>addListenerPlugin</set-method>
-      <type>org.exoplatform.commons.search.indexing.listeners.UnifiedSearchAnswerListener</type>
-      <description>Answer listener for Unified Search</description>
     </component-plugin>
   </external-component-plugins>
   <external-component-plugins>

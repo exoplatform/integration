@@ -105,8 +105,6 @@ public class BuildLinkUtils {
       return true;
     if (objectId.indexOf(Utils.CATEGORY_SPACE_ID_PREFIX) == 0)
       return true;
-    if (objectId.indexOf(org.exoplatform.faq.service.Utils.CATE_SPACE_ID_PREFIX) == 0)
-      return true;
     return false;
   }
   
@@ -116,11 +114,7 @@ public class BuildLinkUtils {
       spaceGroupId.append(parentObjectId);
     } else {
       spaceGroupId.append("/").append(SPACES_GROUP).append("/");
-      if (portletInfo.equals(PORTLET_INFO.ANSWER)) {
-        spaceGroupId.append(parentObjectId.replace(Utils.CATEGORY_SPACE_ID_PREFIX, ""));
-      } else {
-        spaceGroupId.append(parentObjectId.replace(Utils.FORUM_SPACE_ID_PREFIX, ""));
-      }
+      spaceGroupId.append(parentObjectId.replace(Utils.FORUM_SPACE_ID_PREFIX, ""));
     }
     return spaceGroupId.toString();
   }
@@ -212,9 +206,6 @@ public class BuildLinkUtils {
 
   private static String buildLink_(String objectType, String objectId, PORTLET_INFO portletInfo) {
     StringBuffer buffer = new StringBuffer();
-    if (portletInfo.equals(PORTLET_INFO.ANSWER)) {
-      return buffer.append(org.exoplatform.faq.service.Utils.QUESTION_ID).append(objectId).toString();
-    }
     return buffer.append("/").append(objectType).append("/").append(objectId).toString();
   }
 
