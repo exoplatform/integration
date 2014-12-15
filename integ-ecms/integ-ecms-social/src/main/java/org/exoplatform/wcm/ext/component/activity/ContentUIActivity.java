@@ -440,7 +440,6 @@ public class ContentUIActivity extends BaseUIActivity {
     if (uiDocumentPreview == null) {
       uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
     }
-    uiDocumentPreview.setActivity(this.getActivity());
     uiDocumentPreview.setBaseUIActivity(this);
     uiDocumentPreview.setShowMask(true);
     uiDocumentPreview.setUIComponent(uiComp) ;
