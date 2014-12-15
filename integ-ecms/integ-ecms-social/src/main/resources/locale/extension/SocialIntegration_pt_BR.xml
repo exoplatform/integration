@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bundle>
+  <UIConfirmMessage>
+    <label>
+      <ReadOnly>Abrir como somente leitura</ReadOnly>
+    </label>
+  </UIConfirmMessage>
+
+  <UISocialPopupWindow>
+    <title>
+      <UIReadOnlyFileConfirmMessage>Abrir documento</UIReadOnlyFileConfirmMessage>
+    </title>
+  </UISocialPopupWindow>
   <SocialIntegration>
     <titles>
       <fileSize>Tamanho do arquivo</fileSize>
@@ -73,6 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Pré-visualizar</DocViewer>
+      <UIReadOnlyFileConfirmMessage>Abrir documento</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -82,4 +94,26 @@
       </label>
     </dialog>
   </ElementSet>
+  <UIPreviewCommentArea>
+    <label>
+      <commentTextAreaPreview>Adicione seu comentário...</commentTextAreaPreview>
+      <no-comment-yet>No comment yet</no-comment-yet>
+    </label>
+  </UIPreviewCommentArea>
+
+  <OpenDocumentInOffice>
+    <label>
+      <exo.remote-edit.word>Open In Word</exo.remote-edit.word>
+      <exo.remote-edit.excel>Open In Excel</exo.remote-edit.excel>
+      <exo.remote-edit.powerpoint>Open In Powerpoint</exo.remote-edit.powerpoint>
+      <exo.remote-edit.desktop>Open On Desktop</exo.remote-edit.desktop>
+      <exo.remote-edit.desktop-app>Open In</exo.remote-edit.desktop-app>
+    </label>
+  </OpenDocumentInOffice>
+
+  <UIPopupMenu>
+    <msg>
+      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+    </msg>
+  </UIPopupMenu>
 </bundle>
