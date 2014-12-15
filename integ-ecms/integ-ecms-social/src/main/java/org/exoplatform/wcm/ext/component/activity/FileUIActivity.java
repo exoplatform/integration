@@ -487,43 +487,11 @@ public class FileUIActivity extends BaseUIActivity{
   }
 
   public String[] getSystemCommentBundle(Map<String, String> activityParams) {
-    String[] result;
-    if (activityParams==null) return null;
-    String tmp = activityParams.get(FileUIActivity.IS_SYSTEM_COMMENT);
-    String commentMessage;
-    if (tmp==null) return null;
-    try {
-      if (Boolean.parseBoolean(tmp)) {
-        commentMessage  = activityParams.get(FileUIActivity.MESSAGE);
-        if (!StringUtils.isEmpty(commentMessage)) {
-          if (commentMessage.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
-            result = commentMessage.split(ActivityCommonService.VALUE_SEPERATOR); 
-            return result;
-          }else {
-            return new String[] {commentMessage};
-          }
-        }
-      } 
-    }catch (Exception e) {
-      
-      return null;
-    }
-    return null;
-    
+    return org.exoplatform.wcm.ext.component.activity.listener.Utils.getSystemCommentBundle(activityParams);
   }
+
   public String[] getSystemCommentTitle(Map<String, String> activityParams) {
-    String[] result;
-    if (activityParams==null) return null;
-    String commentValue = activityParams.get(FileUIActivity.SYSTEM_COMMENT);
-    if (!StringUtils.isEmpty(commentValue)) {
-      if (commentValue.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
-        result = commentValue.split(ActivityCommonService.VALUE_SEPERATOR); 
-        return result;
-      }else {
-        return new String[] {commentValue};
-      }
-    }
-    return null;
+    return org.exoplatform.wcm.ext.component.activity.listener.Utils.getSystemCommentTitle(activityParams);
   }
 
   public String getViewLink() {
@@ -586,6 +554,8 @@ public class FileUIActivity extends BaseUIActivity{
       uiActivitiesContainer.removeChildById("UIDocumentPreview");
     }
     uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
+    uiDocumentPreview.setActivity(this.getActivity());
+    uiDocumentPreview.setBaseUIActivity(this);
     uiDocumentPreview.setShowMask(true);
     uiDocumentPreview.setUIComponent(uiComp) ;
     uiDocumentPreview.setShow(true) ;
