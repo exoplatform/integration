@@ -434,17 +434,15 @@ public class ContentUIActivity extends BaseUIActivity {
     return Integer.parseInt(currentVersion);
   }
 
-  public void showDocumentPreview(UIComponent uiComp) throws Exception {
+  public void showDocumentPreview() throws Exception {
     UIActivitiesContainer uiActivitiesContainer = this.getParent();
     UIDocumentPreview uiDocumentPreview = uiActivitiesContainer.findComponentById("UIDocumentPreview");
     if (uiDocumentPreview == null) {
       uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
     }
     uiDocumentPreview.setBaseUIActivity(this);
-    uiDocumentPreview.setShowMask(true);
-    uiDocumentPreview.setUIComponent(uiComp) ;
-    uiDocumentPreview.setShow(true) ;
-    uiDocumentPreview.setResizable(false) ;
+    uiDocumentPreview.setContentInfo(docPath, repository, workspace, this.getContentNode());
+    uiDocumentPreview.setRendered(true);
   }
 
   /**
@@ -471,15 +469,7 @@ public class ContentUIActivity extends BaseUIActivity {
     public void execute(Event<ContentUIActivity> event) throws Exception {
       ContentUIActivity contentUIActivity = event.getSource();
 
-      Node docNode = contentUIActivity.getContentNode();
-      UIDocViewer docViewer = contentUIActivity.createUIComponent(UIDocViewer.class, null, "DocViewer");
-      docViewer.docPath = contentUIActivity.docPath;
-      docViewer.repository = contentUIActivity.repository;
-      docViewer.workspace = contentUIActivity.workspace;
-      docViewer.setOriginalNode(docNode);
-      docViewer.setNode(docNode);
-
-      contentUIActivity.showDocumentPreview(docViewer);
+      contentUIActivity.showDocumentPreview();
 
       UIActivitiesContainer activitiesContainer = contentUIActivity.getParent();
       event.getRequestContext().addUIComponentToUpdateByAjax(activitiesContainer);
