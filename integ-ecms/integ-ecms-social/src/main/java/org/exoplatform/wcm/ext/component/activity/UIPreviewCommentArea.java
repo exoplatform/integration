@@ -62,7 +62,7 @@ public class UIPreviewCommentArea extends UIComponent {
           String[] titles = systemCommentTitle[count].split(ActivityCommonService.METADATA_VALUE_SEPERATOR);
           for (int i = 0; i < titles.length; i++) {
             commentMessage = commentMessage.replace("{" + i + "}", titles[i]);
-            commentMessage = ContentReader.getXSSCompatibilityContent(commentMessage);
+            commentMessage = org.exoplatform.wcm.ext.component.activity.listener.Utils.getFirstSummaryLines(commentMessage);
           }
         }
 
