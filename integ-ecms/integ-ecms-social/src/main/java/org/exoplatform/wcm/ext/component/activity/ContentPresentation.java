@@ -147,15 +147,16 @@ public class ContentPresentation extends UIBaseNodePresentation {
   }
 
   public UIComponent getUIComponent(String mimeType) throws Exception {
-    if (mimeType != null && !mimeType.startsWith("text") && !mimeType.startsWith("application")) {
-      UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
-      List<UIExtension> extensions = manager.getUIExtensions(org.exoplatform.ecm.webui.utils.Utils.FILE_VIEWER_EXTENSION_TYPE);
-      Map<String, Object> context = new HashMap<String, Object>();
-      context.put(org.exoplatform.ecm.webui.utils.Utils.MIME_TYPE, mimeType);
-      for (UIExtension extension : extensions) {
-        UIComponent uiComponent = manager.addUIExtension(extension, context, this);
-        if (uiComponent != null)
-          return uiComponent;
+    UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
+    List<UIExtension> extensions = manager.getUIExtensions(org.exoplatform.ecm.webui.utils.Utils.FILE_VIEWER_EXTENSION_TYPE);
+
+    Map<String, Object> context = new HashMap<String, Object>();
+    context.put(org.exoplatform.ecm.webui.utils.Utils.MIME_TYPE, mimeType);
+
+    for (UIExtension extension : extensions) {
+      UIComponent uiComponent = manager.addUIExtension(extension, context, this);
+      if (uiComponent != null && !"Text".equals(extension.getName())) {
+        return uiComponent;
       }
     }
 
