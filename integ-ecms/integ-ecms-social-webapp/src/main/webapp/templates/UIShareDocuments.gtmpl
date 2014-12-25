@@ -1,0 +1,105 @@
+<style type="text/css">
+	/* UI Mention*/
+	.uiMention {
+		background-color: #e2eafa;
+		border: 1px solid #215ab2;
+		border-radius: 3px;
+		font-size: 13px;
+		color: #2f5e92;
+		display: inline-block;
+		padding: 1px 5px;
+		line-height: 20px;
+	}
+	.uiMention > [class^="uiIcon"] {
+		margin-left: 5px;
+		text-indent: -9999px;
+	}
+	.uiMention > [class^="uiIcon"]:hover {
+		cursor: pointer;
+	}
+	/* UI Share Document */
+	.uiShareDocuments {
+		padding: 10px;
+	}
+	.uiShareDocuments .attachedFile {
+	    margin-bottom: 15px;
+	    white-space: nowrap;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	}
+	.uiShareDocuments .attachedFile > i, .uiShareDocuments .attachedFile > .fileName{
+		vertical-align: middle;
+	}
+	.uiShareDocuments .attachedFile > i {
+		margin-right: 5px;
+	}
+	.spaceSwitcherContainer {
+		margin-bottom: 15px;
+	}
+	.spaceSwitcherContainer > .pull-left{
+		height: 32px;
+		line-height: 32px;
+		margin-right: 10px;
+		margin-bottom: 0;
+	}
+
+	.uiShareDocuments .listMention {
+		margin-bottom: 10px;
+	}
+	.uiShareDocuments .listMention .uiMention {
+		margin-bottom: 5px;
+		margin-right: 5px;
+	}
+	.uiShareDocuments .addComment textarea {
+		width: 100%;
+	}
+	.accessSpaceMember {
+		margin-top: 15px;
+	}
+	.accessSpaceMember .pull-left {
+		height: 28px;
+		line-height: 28px;
+		margin-right: 10px;
+		margin-bottom: 0;
+	}
+	.spaceOption > i {
+	    margin-right: 10px;
+	}
+</style>
+<div class="UIForm uiShareDocuments">
+<% import org.exoplatform.webui.core.model.SelectItemOption %>
+<% import org.exoplatform.webui.form.UIFormSelectBox %>
+<% import org.exoplatform.services.jcr.access.PermissionType %>
+  <%uiform.begin()%>
+
+  <div class="attachedFile">
+  	<i class="<%=uiform.getIconURL()%>"></i> <b class="fileName"><%=uiform.getDocumentName()%></b>
+  </div>
+  <div class="spaceSwitcherContainer clearfix">
+	  	<label class="pull-left"><%=_ctx.appRes("UIShareDocuments.label.ShareWith")%></label>
+	  	<% uiform.getSpace().setCurrentSpaceName(_ctx.appRes("UIShareDocuments.label.SelectASpace")) %>
+  		<% uiform.renderField(uiform.getSpace()) %>
+  </div>
+  <div class="listMention">
+  	  	  <%for(s in uiform.getSpaces()){%>
+  	<span class="uiMention"><%=s%><i contenteditable="true" class="uiIconClose uiIconLightGray" onclick="<%=uicomponent.event("RemoveSpace",s)%>">&times;</i></span>	
+  <%}%>
+  </div>
+  <div id="TextArea" class="addComment">
+  	<textarea class="textarea" name="textAreaInput" id="textAreaInput" rows="10" cols="30" placeholder="<%=_ctx.appRes("UIShareDocuments.label.TextAreaInit")%>"><%=uicomponent.getComment()%></textarea>
+  	
+  </div>
+  <div class="accessSpaceMember clearfix">
+ 	<label class="pull-left"><b><%=_ctx.appRes("UIShareDocuments.label.Access")%>:</b> <%=_ctx.appRes("UIShareDocuments.label.SpaceMember")%></label>
+      
+<% uiform.renderField("permissionDropDown") %>
+  </div>
+
+
+
+<div class="uiActionBorder">
+	<button type="button" class="btn btn-primary" onclick="<%=uicomponent.event("Share")%>"><%=_ctx.appRes("UIShareDocuments.label.ShareButton")%></button>
+	<button type="button" class="btn" onclick="<%=uicomponent.event("Cancel")%>"><%=_ctx.appRes("UIShareDocuments.label.CancelButton")%></button>
+</div>
+  <%uiform.end()%>
+  </div>

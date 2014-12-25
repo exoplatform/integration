@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>integ-ecms</artifactId>
+    <groupId>org.exoplatform.integration</groupId>
+    <version>4.2.x-integ-share-content-SNAPSHOT</version>
+  </parent>
+  <artifactId>share-content-webapp</artifactId>
+  <packaging>war</packaging>
+  <name>Share content webapp</name>
+  <build>
+    <finalName>integ-ecms-social-webapp</finalName>
+    <plugins>
+    <plugin>            
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-war-plugin</artifactId>
+</plugin>
+      <!-- plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+          <webXml>src\main\webapp\WEB-INF\web.xml</webXml>
+        </configuration>
+      </plugin> -->
+      <!-- Copy project less files -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/src/main/webapp</directory>
+                  <includes>
+                    <include>skin/less/**</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Copy common less files -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.exoplatform.platform-ui</groupId>
+                  <artifactId>platform-ui-web-eXoResources</artifactId>
+                  <type>war</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+                  <includes>skin/less/mixins.less,skin/less/variables.less</includes>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Plugin to create css from less File to be able to build        the skin --> 
+        
+        <plugin>
+          <groupId>org.lesscss</groupId>
+          <artifactId>lesscss-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>administration</id>
+              <phase>process-resources</phase>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+              <configuration>
+                <sourceDirectory>${project.build.directory}/${project.build.finalName}/skin/less</sourceDirectory>
+                <outputDirectory>${project.build.directory}/${project.build.finalName}/skin/css</outputDirectory>
+                <includes>
+                  <include>share-content.less</include>
+                </includes>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.gatein.portal</groupId>
+      <artifactId>exo.portal.webui.core</artifactId>
+      <version>3.5.2.Final</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.commons</groupId>
+      <artifactId>commons-webui-ext</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ecms</groupId>
+      <artifactId>ecms-core-webui-explorer</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.integration</groupId>
+      <artifactId>integ-ecms-social</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>

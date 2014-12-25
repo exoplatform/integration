@@ -1,0 +1,34 @@
+<bundle>
+	<ECMContextMenu>
+		<event>
+			<ShareDocuments>Share Document</ShareDocuments>
+		</event>
+	</ECMContextMenu>
+	<UIPopupWindow>
+		<title>
+			<UIShareDocuments>Share</UIShareDocuments>
+		</title>
+	</UIPopupWindow>
+	<UIShareDocuments>
+		<label>
+			<ShareButton>Share</ShareButton>
+			<CancelButton>Cancel</CancelButton>
+			<TextAreaInit>Add a comment about this file...</TextAreaInit>
+			<ShareWith>Share with</ShareWith>
+			<Access>Access</Access>
+			<SpaceMember>Space Member</SpaceMember>
+			<SelectASpace>Select a space</SelectASpace>
+			<SharedADocument>Shared a document</SharedADocument>
+			<option>
+				<read>Can View</read>
+				<modify>Can Modify</modify>
+			</option>
+		</label>
+	</UIShareDocuments>
+
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Share Documents</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
+</bundle>

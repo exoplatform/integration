@@ -113,5 +113,14 @@
       <groupId>org.gatein.shindig</groupId>
       <artifactId>shindig-social-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.gatein.portal</groupId>
+      <artifactId>exo.portal.component.resources</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ecms</groupId>
+      <artifactId>ecms-core-webui-explorer</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 </project>
