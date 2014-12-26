@@ -96,6 +96,19 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+	    <groupId>org.exoplatform.integration</groupId>
+	    <artifactId>integ-ecms-social-webapp</artifactId>
+	    <version>${project.version}</version>
+	    <type>pom</type>
+	  </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-ecms-social-webapp</artifactId>
+        <version>${project.version}</version>
+		<type>war</type>
+      </dependency>
+
+      <dependency>
         <groupId>org.exoplatform.integration</groupId>
         <artifactId>integ-forum-social</artifactId>
         <version>${project.version}</version>

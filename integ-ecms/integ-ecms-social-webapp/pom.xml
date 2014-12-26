@@ -7,9 +7,9 @@
     <groupId>org.exoplatform.integration</groupId>
     <version>4.2.x-integ-share-content-SNAPSHOT</version>
   </parent>
-  <artifactId>share-content-webapp</artifactId>
+  <artifactId>integ-ecms-social-webapp</artifactId>
   <packaging>war</packaging>
-  <name>Share content webapp</name>
+  <name>Integ ECMS - Social webapp</name>
   <build>
     <finalName>integ-ecms-social-webapp</finalName>
     <plugins>
