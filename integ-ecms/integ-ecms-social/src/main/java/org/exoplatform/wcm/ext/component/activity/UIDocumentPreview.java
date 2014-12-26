@@ -1,6 +1,7 @@
 package org.exoplatform.wcm.ext.component.activity;
 
 
+import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -8,8 +9,13 @@ import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.webui.ext.UIExtension;
+import org.exoplatform.webui.ext.UIExtensionManager;
 
 import javax.jcr.Node;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @ComponentConfig(
         template = "war:/groovy/ecm/social-integration/UIDocumentPreview.gtmpl",
@@ -45,6 +51,32 @@ public class UIDocumentPreview extends UIContainer {
     Node previewNode = uiDocViewer.getNode();
     if (previewNode != null) {
       return previewNode.isNodeType(org.exoplatform.ecm.webui.utils.Utils.EXO_WEBCONTENT);
+    }
+
+    return false;
+  }
+
+  /**
+   * Check if a node is media/image
+   * @param data
+   * @return
+   * @throws Exception
+   */
+  private boolean isMediaFile(Node data) throws Exception {
+    if (data.isNodeType(Utils.NT_FILE)) {
+      UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
+      List<UIExtension> extensions = manager.getUIExtensions(Utils.FILE_VIEWER_EXTENSION_TYPE);
+
+      Map<String, Object> context = new HashMap<String, Object>();
+      context.put(Utils.MIME_TYPE, data.getNode(Utils.JCR_CONTENT).getProperty(Utils.JCR_MIMETYPE).getString());
+
+      for (UIExtension extension : extensions) {
+        if (manager.accept(Utils.FILE_VIEWER_EXTENSION_TYPE, extension.getName(), context)
+                && !"Text".equals(extension.getName())
+                && !"PDF".equals(extension.getName())) {
+          return true;
+        }
+      }
     }
 
     return false;

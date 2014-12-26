@@ -306,7 +306,7 @@
 		                        
 									   %>
 									   <a href="$contentActivityUri" style="cursor:pointer"  rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle">
-									   	<img src="$thumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" alt="$activityContentTitle" />
+									   	<img style="max-width:330px;max-height: 200px" src="$thumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" alt="$activityContentTitle" />
 									   </a>
 									   <a href="$contentActivityUri" style="display: none;" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle"><i class="<%=classIconName%>"></i></a>
 									 </div>
