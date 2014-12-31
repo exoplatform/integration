@@ -93,7 +93,12 @@ public class UIDocumentPreview extends UIContainer {
   public String getEmbedHtml() {
     BaseUIActivity baseUIActivity = this.getBaseUIActivity();
     if (baseUIActivity instanceof UILinkActivity) {
-      return ((UILinkActivity) baseUIActivity).getEmbedHtml();
+      String embedHtml = ((UILinkActivity) baseUIActivity).getEmbedHtml();
+      if (embedHtml != null) {
+        embedHtml = embedHtml.replaceFirst("width=\\\"[0-9]*\\\"","width=\"100%\"")
+                .replaceFirst("height=\\\"[0-9]*\\\"","height=\"100%\"");
+      }
+      return embedHtml;
     }
 
     return null;
