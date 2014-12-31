@@ -17,6 +17,7 @@
 package org.exoplatform.social.plugin.link;
 
 import junit.framework.TestCase;
+import org.exoplatform.wcm.ext.component.activity.UILinkUtil;
 
 /**
  * Unit tests for {@link UILinkUtil}.
