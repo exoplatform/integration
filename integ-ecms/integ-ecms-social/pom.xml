@@ -76,10 +76,6 @@
       <artifactId>social-component-webui</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.exoplatform.social</groupId>
-      <artifactId>social-extras-link-composer-plugin</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.gatein.portal</groupId>
       <artifactId>exo.portal.component.common</artifactId>
     </dependency>

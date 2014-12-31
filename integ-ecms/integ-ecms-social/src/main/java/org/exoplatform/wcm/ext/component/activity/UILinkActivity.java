@@ -16,7 +16,6 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
-import org.exoplatform.social.plugin.link.UILinkUtil;
 import org.exoplatform.social.service.rest.Util;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
@@ -40,7 +39,53 @@ import org.exoplatform.webui.event.EventListener;
                 @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class)
         }
 )
-public class UILinkActivity extends org.exoplatform.social.plugin.link.UILinkActivity {
+public class UILinkActivity extends BaseUIActivity {
+
+  public static final String ACTIVITY_TYPE = "LINK_ACTIVITY";
+
+  private String linkSource = "";
+  private String linkTitle = "";
+  private String linkImage = "";
+  private String linkDescription = "";
+  private String linkComment = "";
+  private String embedHtml = "";
+
+  public String getLinkComment() {
+    return linkComment;
+  }
+  public void setLinkComment(String linkComment) {
+    this.linkComment = linkComment;
+  }
+  public String getLinkDescription() {
+    return UILinkUtil.simpleEscapeHtml(Util.getDecodeQueryURL(linkDescription));
+  }
+  public void setLinkDescription(String linkDescription) {
+    this.linkDescription = linkDescription;
+  }
+  public String getLinkImage() {
+    return linkImage;
+  }
+  public void setLinkImage(String linkImage) {
+    this.linkImage = linkImage;
+  }
+  public String getLinkSource() {
+    return UILinkUtil.simpleEscapeHtml(Util.getDecodeQueryURL(linkSource));
+  }
+  public void setLinkSource(String linkSource) {
+    this.linkSource = linkSource;
+  }
+  public String getLinkTitle() {
+    return UILinkUtil.simpleEscapeHtml(Util.getDecodeQueryURL(linkTitle));
+  }
+  public void setLinkTitle(String linkTitle) {
+    this.linkTitle = linkTitle;
+  }
+  public String getEmbedHtml() {
+    return embedHtml;
+  }
+  public void setEmbedHtml(String embedHtml) {
+    this.embedHtml = embedHtml;
+  }
 
   public void showDocumentPreview() throws Exception {
     UIActivitiesContainer uiActivitiesContainer = this.getParent();

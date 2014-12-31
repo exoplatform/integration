@@ -3,8 +3,6 @@ package org.exoplatform.wcm.ext.component.activity;
 
 import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
-import org.exoplatform.social.plugin.link.*;
-import org.exoplatform.social.plugin.link.UILinkActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -94,7 +92,7 @@ public class UIDocumentPreview extends UIContainer {
 
   public String getEmbedHtml() {
     BaseUIActivity baseUIActivity = this.getBaseUIActivity();
-    if (baseUIActivity instanceof org.exoplatform.social.plugin.link.UILinkActivity) {
+    if (baseUIActivity instanceof UILinkActivity) {
       return ((UILinkActivity) baseUIActivity).getEmbedHtml();
     }
 

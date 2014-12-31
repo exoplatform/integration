@@ -4,7 +4,6 @@ import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.space.SpaceException;
 import org.exoplatform.wcm.ext.component.activity.listener.Utils;
-import org.exoplatform.wcm.webui.reader.ContentReader;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
