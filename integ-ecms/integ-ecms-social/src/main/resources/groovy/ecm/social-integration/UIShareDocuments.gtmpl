@@ -86,7 +86,7 @@
   <%}%>
   </div>
   <div id="TextArea" class="addComment">
-  	<textarea class="textarea" name="textAreaInput" id="textAreaInput" rows="10" cols="30" placeholder="<%=_ctx.appRes("UIShareDocuments.label.TextAreaInit")%>"><%=uicomponent.getComment()%></textarea>
+  	<textarea class="textarea" name="textAreaInput" id="textAreaInput" rows="10" cols="30" placeholder="<%=_ctx.appRes("UIShareDocuments.label.TextAreaInit")%>" onchange="<%=uicomponent.event("TextChange")%>"><%=uicomponent.getComment()%></textarea>
   	
   </div>
   <div class="accessSpaceMember clearfix">

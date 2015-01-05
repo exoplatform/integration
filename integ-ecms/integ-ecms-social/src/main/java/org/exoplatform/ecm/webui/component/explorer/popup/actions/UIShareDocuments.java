@@ -22,6 +22,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.exoplatform.portal.webui.container.UIContainer;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.ext.app.SessionProviderService;
@@ -65,6 +66,7 @@ import org.exoplatform.ecm.webui.utils.Utils;
                  events = {
                    @EventConfig(listeners = UIShareDocuments.ShareActionListener.class),
                    @EventConfig(listeners = UIShareDocuments.CancelActionListener.class),
+                   @EventConfig(listeners = UIShareDocuments.TextChangeActionListener.class),
                    @EventConfig(listeners = UIShareDocuments.RemoveSpaceActionListener.class),
                    @EventConfig(listeners = UIShareDocuments.SelectSpaceActionListener.class, phase=Phase.PROCESS)
                  }
@@ -90,6 +92,15 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
     @Override
     public void execute(Event<UIShareDocuments> event) throws Exception {
       event.getSource().getAncestorOfType(UIJCRExplorer.class).cancelAction() ;
+    }
+  }
+  public static class TextChangeActionListener extends EventListener<UIShareDocuments>{
+
+    @Override
+    public void execute(Event<UIShareDocuments> event) throws Exception {
+      UIShareDocuments uiform = event.getSource();
+      uiform.comment = event.getSource().getChild(UIFormTextAreaInput.class).getValue();
+      event.getRequestContext().addUIComponentToUpdateByAjax(event.getSource().getChild(UIFormTextAreaInput.class));
     }
   }
 
