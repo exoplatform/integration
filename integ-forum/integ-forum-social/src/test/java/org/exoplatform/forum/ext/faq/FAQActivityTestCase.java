@@ -46,7 +46,14 @@ import org.exoplatform.faq.service.impl.MultiLanguages;
 import org.exoplatform.forum.common.NotifyInfo;
 import org.exoplatform.forum.ext.impl.AnswersSpaceActivityPublisher;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.impl.DefaultSpaceApplicationHandler;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 @SuppressWarnings("unused")
 public class FAQActivityTestCase extends FAQServiceBaseTestCase {
@@ -73,6 +80,45 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
 
   public void testFAQService() throws Exception {
     assertNotNull(faqService_);
+  }
+  
+  public void testSpaceSubCategory() throws Exception {
+    Identity rootIdentity = getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, USER_ROOT,true);
+    assertNotNull(rootIdentity);
+    
+    Space space1 = getSpaceInstance(getSpaceService(), 1);
+    String spaceGroupId = "/spaces/" + space1.getPrettyName();
+    assertNotNull(getSpaceService().getSpaceByGroupId(spaceGroupId));
+    
+    //
+    Category spaceCategory = createCategory("Category to test question", 1);
+    spaceCategory.setId("CategorySpace" + space1.getPrettyName());
+    faqService_.saveCategory(Utils.CATEGORY_HOME, spaceCategory, true);
+    
+    Category subSpaceCategory = createCategory("Category to test question", 1);
+    faqService_.saveCategory(spaceCategory.getPath(), subSpaceCategory, true);
+    String categoryId2 = subSpaceCategory.getPath();
+    
+    Question question = createQuestion(categoryId2);
+    faqService_.saveQuestion(question, true, faqSetting_);
+    
+    String activityId = faqService_.getActivityIdForQuestion(question.getCategoryPath() + "/" + question.getId());
+    ExoSocialActivity activity = getManager().getActivity(activityId);
+    assertNotNull(activity);
+    
+    //The activity created must be a space's activity and owned by space1
+    assertTrue(isSpaceActivity(activity));
+    
+    //delete question will delete the activity
+    String questionPath = question.getCategoryPath()+ "/" + Utils.QUESTION_HOME + "/" + question.getId();
+    faqService_.removeQuestion(questionPath);
+    activity = getManager().getActivity(activityId);
+    assertNull(activity);
+  }
+  
+  private boolean isSpaceActivity(ExoSocialActivity activity) {
+    Identity spaceIdentity = getIdentityManager().getOrCreateIdentity(SpaceIdentityProvider.NAME, activity.getStreamOwner(), false);
+    return spaceIdentity != null;
   }
   
   public void testQuestionTitle() throws Exception {
@@ -436,9 +482,17 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
     activity = getManager().getActivity(activityId);
     assertNull(activity);
   }
+  
+  private IdentityManager getIdentityManager() {
+    return (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
+  }
 
   private ActivityManager getManager() {
     return (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
+  }
+  
+  private SpaceService getSpaceService() {
+    return (SpaceService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SpaceService.class);
   }
   
   private FileAttachment createUserAvatar(String fileName) throws Exception {
@@ -453,6 +507,30 @@ public class FAQActivityTestCase extends FAQServiceBaseTestCase {
       LOG.error("Fail to create user avatar: ", e);
     }
     return attachment;
+  }
+  
+  private Space getSpaceInstance(SpaceService spaceService, int number) throws Exception {
+    Space space = new Space();
+    space.setDisplayName("space" + number);
+    space.setPrettyName(space.getDisplayName());
+    space.setRegistration(Space.OPEN);
+    space.setDescription("add new space " + number);
+    space.setType(DefaultSpaceApplicationHandler.NAME);
+    space.setVisibility(Space.PUBLIC);
+    space.setRegistration(Space.VALIDATION);
+    space.setPriority(Space.INTERMEDIATE_PRIORITY);
+    space.setGroupId("/spaces/space" + number);
+    space.setUrl(space.getPrettyName());
+    String[] managers = new String[] {USER_ROOT};
+    String[] members = new String[] {USER_ROOT};
+    String[] invitedUsers = new String[] {};
+    String[] pendingUsers = new String[] {};
+    space.setInvitedUsers(invitedUsers);
+    space.setPendingUsers(pendingUsers);
+    space.setManagers(managers);
+    space.setMembers(members);
+    spaceService.saveSpace(space, true);
+    return space;
   }
   
 }

@@ -5,8 +5,14 @@ import org.exoplatform.faq.service.Utils;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.social.core.space.SpaceUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.faq.service.Category;
+import org.exoplatform.faq.service.FAQService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 public class ActivityUtils {
+  private static final Log LOG = ExoLogger.getLogger(ActivityUtils.class);
 
   public static String getQuestionRate(Question question) {
     if (question == null) {
@@ -39,9 +45,21 @@ public class ActivityUtils {
   
   public static String getSpaceGroupId(String categoryId) {
     String spaceGroupId = "";
-    if (categoryId.indexOf(Utils.CATE_SPACE_ID_PREFIX) < 0) 
+    String spaceCateId = categoryId;
+    try {
+      // Get category id in case of sub-category in a space
+      FAQService faqService = CommonsUtils.getService(FAQService.class);
+      Category category = faqService.getCategoryById(categoryId);
+      String categoryPath = category.getPath();
+      if (categoryPath.indexOf(Utils.CATE_SPACE_ID_PREFIX) >= 0){
+        spaceCateId = categoryPath.split("/")[1];
+      }
+    } catch (Exception e) {
+      LOG.warn("Get category id failed.", e);
+    }
+    if (spaceCateId.indexOf(Utils.CATE_SPACE_ID_PREFIX) < 0) 
       return "";
-    String prettyname = categoryId.split(Utils.CATE_SPACE_ID_PREFIX)[1];
+    String prettyname = spaceCateId.split(Utils.CATE_SPACE_ID_PREFIX)[1];
     spaceGroupId = SpaceUtils.SPACE_GROUP + CommonUtils.SLASH + prettyname;
     return spaceGroupId;
   }
