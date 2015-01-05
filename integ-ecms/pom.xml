@@ -11,7 +11,6 @@
   <name>eXo Integration - Content</name>
   <modules>
     <module>integ-ecms-social</module>
-    <module>integ-ecms-social-webapp</module>
   </modules>
 
 </project>

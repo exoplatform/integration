@@ -29,11 +29,13 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.commons.EventUIComponent;
 import org.exoplatform.webui.commons.EventUIComponent.EVENTTYPE;
 import org.exoplatform.webui.commons.UISpacesSwitcher;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -44,6 +46,7 @@ import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.ecm.webui.component.explorer.UIDocumentInfo;
 import org.exoplatform.ecm.webui.component.explorer.UIJCRExplorer;
 import org.exoplatform.wcm.ext.component.document.service.IShareDocumentService;
 import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
@@ -58,7 +61,7 @@ import org.exoplatform.ecm.webui.utils.Utils;
  */
 @ComponentConfig(
                  lifecycle = UIFormLifecycle.class,
-                 template =  "app:/templates/UIShareDocuments.gtmpl",
+                 template =  "classpath:groovy/ecm/social-integration/UIShareDocuments.gtmpl",
                  events = {
                    @EventConfig(listeners = UIShareDocuments.ShareActionListener.class),
                    @EventConfig(listeners = UIShareDocuments.CancelActionListener.class),
@@ -124,6 +127,11 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
           else service.publicDocumentToSpace(space,node,message,perm);
         }
         event.getSource().getAncestorOfType(UIJCRExplorer.class).cancelAction() ;
+      }else{
+        UIShareDocuments uicomp = event.getSource() ;
+        UIApplication uiApp = uicomp.getAncestorOfType(UIApplication.class);
+        uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoSpace", null,
+                                                ApplicationMessage.WARNING)) ;
       }
     }
   }
@@ -190,6 +198,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   }
   public List<String> getSpaces(){return spaces;}
   public String getComment(){
+    if(this.comment == null) return "";
     return this.comment;
   }
   @Override
