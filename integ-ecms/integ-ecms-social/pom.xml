@@ -36,6 +36,10 @@
       <artifactId>ecms-core-webui</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.exoplatform.ecms</groupId>
+      <artifactId>ecms-core-webui-explorer</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.exoplatform.integration</groupId>
       <artifactId>integ-social-ecms</artifactId>
     </dependency>
