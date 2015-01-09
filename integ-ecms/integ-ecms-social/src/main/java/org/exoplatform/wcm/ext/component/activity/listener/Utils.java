@@ -149,6 +149,9 @@ public class Utils {
     if (isSystemComment) {
       activityParams.put(ContentUIActivity.IS_SYSTEM_COMMENT, String.valueOf(isSystemComment));
     	activityParams.put(ContentUIActivity.SYSTEM_COMMENT, systemComment);
+    }else{
+      activityParams.put(ContentUIActivity.IS_SYSTEM_COMMENT, String.valueOf(false));
+      activityParams.put(ContentUIActivity.SYSTEM_COMMENT, "");
     }
     return activityParams;
   }
