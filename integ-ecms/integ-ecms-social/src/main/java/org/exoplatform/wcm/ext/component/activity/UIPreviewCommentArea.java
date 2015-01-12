@@ -3,8 +3,11 @@ package org.exoplatform.wcm.ext.component.activity;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.space.SpaceException;
+import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.exoplatform.web.application.ApplicationMessage;
+import org.exoplatform.web.application.JavascriptManager;
+import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIApplication;
@@ -22,7 +25,9 @@ import java.util.Map;
         events = {
                 @EventConfig(listeners = UIPreviewCommentArea.RefreshCommentsActionListener.class),
                 @EventConfig(listeners = UIPreviewCommentArea.RemoveCommentActionListener.class,
-                        confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment")
+                        confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment"),
+                @EventConfig(listeners = UIPreviewCommentArea.LikeActivityActionListener.class)
+
         }
 )
 public class UIPreviewCommentArea extends UIComponent {
@@ -30,24 +35,51 @@ public class UIPreviewCommentArea extends UIComponent {
   public static final String REFRESH_COMMENTS = "RefreshComments";
   public static final String REMOVE_COMMENT = "RemoveComment";
 
+  private static final String DEFAULT_ACTIVITY = "DEFAULT_ACTIVITY";
+  private static final String LINK_ACTIVITY = "LINK_ACTIVITY";
+  private static final String DOC_ACTIVITY = "DOC_ACTIVITY";
+
   private Node getOriginalNode() throws Exception {
     UIDocumentPreview uiDocumentPreview = this.getParent();
     return uiDocumentPreview.getOriginalNode();
   }
 
-  private String getActivityId() {
+  private String[] getDisplayedIdentityLikes() throws Exception {
+    return this.getBaseUIActivity().getDisplayedIdentityLikes();
+  }
+
+  private BaseUIActivity getBaseUIActivity() {
     UIDocumentPreview uiDocumentPreview = this.getParent();
-    return uiDocumentPreview.getBaseUIActivity().getActivity().getId();
+    return uiDocumentPreview.getBaseUIActivity();
+  }
+
+  private ExoSocialActivity getActivity() {
+    return this.getBaseUIActivity().getActivity();
+  }
+
+  private String getActivityId() {
+    return this.getActivity().getId();
+  }
+
+  public String getActivityStatus() {
+    Map<String, String> activityParams = this.getActivity().getTemplateParams();
+    if (activityParams.get(FileUIActivity.MESSAGE) == null) {
+      return activityParams.get(FileUIActivity.ACTIVITY_STATUS);
+    } else {
+      return null;
+    }
   }
 
   private boolean isCommentDeletable(String activityUserId) throws SpaceException {
-    UIDocumentPreview uiDocumentPreview = this.getParent();
-    return uiDocumentPreview.getBaseUIActivity().isCommentDeletable(activityUserId);
+    return this.getBaseUIActivity().isCommentDeletable(activityUserId);
+  }
+
+  private boolean isLiked() throws Exception {
+    return this.getBaseUIActivity().isLiked();
   }
 
   private List<ExoSocialActivity> getAllComments() {
-    UIDocumentPreview uiDocumentPreview = this.getParent();
-    return uiDocumentPreview.getBaseUIActivity().getAllComments();
+    return this.getBaseUIActivity().getAllComments();
   }
 
   private String getCommentMessage(Map<String, String> activityParams) {
@@ -72,8 +104,7 @@ public class UIPreviewCommentArea extends UIComponent {
   }
 
   private String getPostedTimeString(WebuiBindingContext resourceBundle, long postedTime) throws Exception {
-    UIDocumentPreview uiDocumentPreview = this.getParent();
-    return uiDocumentPreview.getBaseUIActivity().getPostedTimeString(resourceBundle, postedTime);
+    return this.getBaseUIActivity().getPostedTimeString(resourceBundle, postedTime);
   }
 
   private String[] getSystemCommentTitle(Map<String, String> activityParams) {
@@ -116,8 +147,29 @@ public class UIPreviewCommentArea extends UIComponent {
       }
 
       org.exoplatform.social.webui.Utils.getActivityManager().deleteComment(activityId, commentId);
-
       event.getRequestContext().addUIComponentToUpdateByAjax(uiPreviewCommentArea);
+    }
+  }
+
+  public static class LikeActivityActionListener extends EventListener<UIPreviewCommentArea> {
+    @Override
+    public void execute(Event<UIPreviewCommentArea> event) throws Exception {
+      UIPreviewCommentArea uiPreviewCommentArea = event.getSource();
+      String activityId = uiPreviewCommentArea.getActivityId();
+      BaseUIActivity uiActivity = uiPreviewCommentArea.getBaseUIActivity();
+
+      if (uiPreviewCommentArea.isNoLongerExisting(activityId, event)) {
+        return;
+      }
+
+      WebuiRequestContext requestContext = event.getRequestContext();
+      String isLikedStr = requestContext.getRequestParameter(OBJECTID);
+      uiActivity.setLike(Boolean.parseBoolean(isLikedStr));
+      //
+      JavascriptManager jm = requestContext.getJavascriptManager();
+      //jm.require("SHARED/social-ui-activity", "activity").addScripts("activity.displayLike('#ContextBox" + activityId + "');");
+
+      requestContext.addUIComponentToUpdateByAjax(uiPreviewCommentArea);
     }
   }
 }
