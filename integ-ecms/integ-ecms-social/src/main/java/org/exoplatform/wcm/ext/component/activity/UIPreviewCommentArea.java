@@ -64,6 +64,9 @@ public class UIPreviewCommentArea extends UIComponent {
   public String getActivityStatus() {
     Map<String, String> activityParams = this.getActivity().getTemplateParams();
     if (activityParams.get(FileUIActivity.MESSAGE) == null) {
+      if (this.getEmbedHtml() != null) {
+        return activityParams.get("comment");
+      }
       return activityParams.get(FileUIActivity.ACTIVITY_STATUS);
     } else {
       return null;
@@ -101,6 +104,11 @@ public class UIPreviewCommentArea extends UIComponent {
       }
     }
     return commentBuffer.toString();
+  }
+
+  private String getEmbedHtml() {
+    UIDocumentPreview uiDocumentPreview = this.getParent();
+    return uiDocumentPreview.getEmbedHtml();
   }
 
   private String getPostedTimeString(WebuiBindingContext resourceBundle, long postedTime) throws Exception {
