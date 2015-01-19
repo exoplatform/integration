@@ -74,7 +74,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
   public static final String DOCUMENT_TITLE               = "docTitle";
   public static final String CONTENT_NAME                 = "contentName";
   public static final String DOCUMENT_SUMMARY             = "docSummary";
-  public static final String EXO_RESOURCES_URI            = "/eXoResources/skin/images/Icons/TypeIcons/EmailNotificationIcons/";
+  public static final String EXO_RESOURCES_URI            = "/eXoSkin/skin/images/themes/default/Icons/TypeIcons/EmailNotificationIcons/";
   public static final String DOCNAME                      = "DOCNAME";
   public static final String ICON_FILE_EXTENSION          = ".png";
 
