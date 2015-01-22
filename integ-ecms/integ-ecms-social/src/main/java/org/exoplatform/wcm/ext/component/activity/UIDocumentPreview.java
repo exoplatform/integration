@@ -7,6 +7,8 @@ import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
+import org.exoplatform.webui.core.UIPopupContainer;
+import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.ext.UIExtension;
@@ -107,8 +109,14 @@ public class UIDocumentPreview extends UIContainer {
   public static class CloseActionListener extends EventListener<UIDocumentPreview> {
     public void execute(Event<UIDocumentPreview> event) throws Exception {
       UIDocumentPreview uiDocumentPreview = event.getSource();
-      uiDocumentPreview.setRendered(false);
-      event.getRequestContext().addUIComponentToUpdateByAjax(uiDocumentPreview.getParent());
+      UIPopupWindow uiPopupWindow = uiDocumentPreview.getAncestorOfType(UIPopupWindow.class);
+      if (!uiPopupWindow.isShow())
+        return;
+      uiPopupWindow.setShow(false);
+      uiPopupWindow.setUIComponent(null);
+      UIPopupContainer popupContainer = uiPopupWindow.getAncestorOfType(UIPopupContainer.class);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiDocumentPreview.getBaseUIActivity());
+      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
     }
   }
 }

@@ -16,35 +16,23 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.portlet.PortletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.webui.util.Util;
-import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
-import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.services.wcm.publication.WCMPublicationService;
+import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
-import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
@@ -53,10 +41,18 @@ import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.portlet.PortletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
@@ -434,17 +430,6 @@ public class ContentUIActivity extends BaseUIActivity {
     return Integer.parseInt(currentVersion);
   }
 
-  public void showDocumentPreview() throws Exception {
-    UIActivitiesContainer uiActivitiesContainer = this.getParent();
-    UIDocumentPreview uiDocumentPreview = uiActivitiesContainer.findComponentById("UIDocumentPreview");
-    if (uiDocumentPreview == null) {
-      uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
-    }
-    uiDocumentPreview.setBaseUIActivity(this);
-    uiDocumentPreview.setContentInfo(docPath, repository, workspace, this.getContentNode());
-    uiDocumentPreview.setRendered(true);
-  }
-
   /**
    * <h2>Check if node content is supported by preview on activity stream
    * A preview from the activity stream is available for the following contents:
@@ -468,11 +453,18 @@ public class ContentUIActivity extends BaseUIActivity {
     @Override
     public void execute(Event<ContentUIActivity> event) throws Exception {
       ContentUIActivity contentUIActivity = event.getSource();
+      UIActivitiesContainer uiActivitiesContainer = contentUIActivity.getParent();
+      PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
 
-      contentUIActivity.showDocumentPreview();
+      UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,
+              "UIDocumentPreview");
+      uiDocumentPreview.setBaseUIActivity(contentUIActivity);
+      uiDocumentPreview.setContentInfo(contentUIActivity.docPath, contentUIActivity.repository,
+              contentUIActivity.workspace,
+              contentUIActivity.getContentNode());
 
-      UIActivitiesContainer activitiesContainer = contentUIActivity.getParent();
-      event.getRequestContext().addUIComponentToUpdateByAjax(activitiesContainer);
+      uiPopupContainer.activate(uiDocumentPreview, 0, 0, true);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiPopupContainer);
     }
   }
 }

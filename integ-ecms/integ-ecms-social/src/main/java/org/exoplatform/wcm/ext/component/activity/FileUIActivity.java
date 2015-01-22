@@ -16,23 +16,6 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-import javax.portlet.PortletRequest;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ISO8601;
@@ -40,8 +23,8 @@ import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.PortalContainerInfo;
+import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.portal.webui.util.Util;
-import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
@@ -53,7 +36,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
-import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
@@ -62,7 +44,6 @@ import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.ComponentConfigs;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -73,7 +54,22 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.ext.UIExtension;
 import org.exoplatform.webui.ext.UIExtensionManager;
-import org.exoplatform.ecm.webui.utils.Utils;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+import javax.portlet.PortletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -81,19 +77,17 @@ import org.exoplatform.ecm.webui.utils.Utils;
  * 15, 2011
  */
 @ComponentConfigs({
-    @ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/ecm/social-integration/plugin/space/FileUIActivity.gtmpl", events = {
-        @EventConfig(listeners = FileUIActivity.ViewDocumentActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) }),
-    @ComponentConfig(
-       type = UIPopupWindow.class, template = "system:/groovy/webui/core/UIPopupWindow.gtmpl",
-       events = @EventConfig(listeners = FileUIActivity.CloseActionListener.class, name="ClosePopup"))
-    })
+        @ComponentConfig(lifecycle = UIFormLifecycle.class,
+                template = "classpath:groovy/ecm/social-integration/plugin/space/FileUIActivity.gtmpl", events = {
+                @EventConfig(listeners = FileUIActivity.ViewDocumentActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class)}),
+})
 public class FileUIActivity extends BaseUIActivity{
 
   private static final String NEW_DATE_FORMAT = "hh:mm:ss MMM d, yyyy";
@@ -455,7 +449,6 @@ public class FileUIActivity extends BaseUIActivity{
   /**
    * Gets the webdav url.
    * 
-   * @param node the node
    * @return the webdav url
    * @throws Exception the exception
    */
@@ -547,17 +540,6 @@ public class FileUIActivity extends BaseUIActivity{
     }
   }
 
-  public void showDocumentPreview() throws Exception {
-    UIActivitiesContainer uiActivitiesContainer = this.getParent();
-    UIDocumentPreview uiDocumentPreview = uiActivitiesContainer.findComponentById("UIDocumentPreview");
-    if (uiDocumentPreview == null) {
-      uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
-    }
-    uiDocumentPreview.setBaseUIActivity(this);
-    uiDocumentPreview.setContentInfo(docPath, repository, workspace, this.getContentNode());
-    uiDocumentPreview.setRendered(true);
-  }
-
   /**
    * <h2>Check if file node is supported by preview on activity stream
    * A preview from the activity stream is available for the following contents:
@@ -592,11 +574,17 @@ public class FileUIActivity extends BaseUIActivity{
     @Override
     public void execute(Event<FileUIActivity> event) throws Exception {
       FileUIActivity fileUIActivity = event.getSource();
+      UIActivitiesContainer uiActivitiesContainer = fileUIActivity.getParent();
+      PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
 
-      fileUIActivity.showDocumentPreview();
+      UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,
+              "UIDocumentPreview");
+      uiDocumentPreview.setBaseUIActivity(fileUIActivity);
+      uiDocumentPreview.setContentInfo(fileUIActivity.docPath, fileUIActivity.repository, fileUIActivity.workspace,
+              fileUIActivity.getContentNode());
 
-      UIActivitiesContainer activitiesContainer = fileUIActivity.getParent();
-      event.getRequestContext().addUIComponentToUpdateByAjax(activitiesContainer);
+      uiPopupContainer.activate(uiDocumentPreview, 0, 0, true);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiPopupContainer);
     }
   }
   
@@ -618,18 +606,6 @@ public class FileUIActivity extends BaseUIActivity{
         return node.getSession().getNodeByUUID(uuid);
       }
       return node;
-    }
-  }
-
-  public static class CloseActionListener extends EventListener<UIPopupWindow> {
-    public void execute(Event<UIPopupWindow> event) throws Exception {
-      UIPopupWindow uiPopupWindow = event.getSource();
-      if (!uiPopupWindow.isShow())
-          return;
-      uiPopupWindow.setShow(false);
-      uiPopupWindow.setUIComponent(null);
-      UIPopupContainer popupContainer = uiPopupWindow.getAncestorOfType(UIPopupContainer.class);
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
     }
   }
 }
