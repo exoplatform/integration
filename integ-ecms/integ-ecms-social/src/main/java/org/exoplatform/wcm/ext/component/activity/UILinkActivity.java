@@ -19,6 +19,7 @@ package org.exoplatform.wcm.ext.component.activity;
 import org.exoplatform.social.service.rest.Util;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
+import org.exoplatform.social.webui.composer.PopupContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -87,25 +88,19 @@ public class UILinkActivity extends BaseUIActivity {
     this.embedHtml = embedHtml;
   }
 
-  public void showDocumentPreview() throws Exception {
-    UIActivitiesContainer uiActivitiesContainer = this.getParent();
-    UIDocumentPreview uiDocumentPreview = uiActivitiesContainer.findComponentById("UIDocumentPreview");
-    if (uiDocumentPreview == null) {
-      uiDocumentPreview = uiActivitiesContainer.addChild(UIDocumentPreview.class, null, "UIDocumentPreview");
-    }
-    uiDocumentPreview.setBaseUIActivity(this);
-    uiDocumentPreview.setRendered(true);
-  }
-
   public static class ViewDocumentActionListener extends EventListener<UILinkActivity> {
     @Override
     public void execute(Event<UILinkActivity> event) throws Exception {
       UILinkActivity uiLinkActivity = event.getSource();
+      UIActivitiesContainer uiActivitiesContainer = uiLinkActivity.getParent();
+      PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
 
-      uiLinkActivity.showDocumentPreview();
+      UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,
+              "UIDocumentPreview");
+      uiDocumentPreview.setBaseUIActivity(uiLinkActivity);
 
-      UIActivitiesContainer activitiesContainer = uiLinkActivity.getParent();
-      event.getRequestContext().addUIComponentToUpdateByAjax(activitiesContainer);
+      uiPopupContainer.activate(uiDocumentPreview, 0, 0, true);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiPopupContainer);
     }
   }
 }
