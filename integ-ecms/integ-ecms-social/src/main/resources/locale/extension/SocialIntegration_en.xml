@@ -82,4 +82,10 @@
       </label>
     </dialog>
   </ElementSet>
+  <UIPreviewCommentArea>
+    <label>
+      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
+      <no-comment-yet>No comment yet</no-comment-yet>
+    </label>
+  </UIPreviewCommentArea>
 </bundle>
