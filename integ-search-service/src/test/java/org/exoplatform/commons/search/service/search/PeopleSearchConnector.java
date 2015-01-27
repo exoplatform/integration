@@ -46,7 +46,7 @@ public class PeopleSearchConnector extends SearchServiceConnector {
         "root",
         "admin",
         "root@localhost",
-        "social-resources/skin/images/ShareImages/UserAvtDefault.png",
+        "eXoSkin/skin/images/system/UserAvtDefault.png",
         createDate.getTime(),
         1000);
     results.add(result1);
@@ -62,7 +62,7 @@ public class PeopleSearchConnector extends SearchServiceConnector {
        "john",
        "manager",
        "john@localhost",
-       "social-resources/skin/images/ShareImages/UserAvtDefault.png",
+       "eXoSkin/skin/images/system/UserAvtDefault.png",
        johnCreateDate.getTime(),
        900);
    results.add(result2);

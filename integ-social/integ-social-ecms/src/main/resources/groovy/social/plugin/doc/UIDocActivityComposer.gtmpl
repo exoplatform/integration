@@ -32,7 +32,7 @@
                .addScripts("composer.activeShareButton();");
       %>
 
-      <div class="inputDoc">
+      <div class="uiActivityFileAttachment">
         <i class="<%=uicomponent.getDocumentIcon()%>"></i>&nbsp;<%=uicomponent.getDocumentName()%>&nbsp;
         <a class="uiIconLightGray uiIconClose" href="<%=uicomponent.event("RemoveDocument")%>"></a>
       </div>
@@ -41,7 +41,7 @@
     } else {
       %>
 	  
-        <div class="inputDoc" style="display:none">
+        <div class="uiActivityFileAttachment" style="display:none">
           <a class="browseFile" href="<%= uicomponent.event("SelectDocument")%>">$selectFileLabel</a>
         </div>
 		

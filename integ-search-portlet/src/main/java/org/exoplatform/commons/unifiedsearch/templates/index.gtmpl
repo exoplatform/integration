@@ -16,7 +16,7 @@
           <a data-toggle="dropdown" class="btn dropdown-toggle">
             <span id="sortField">${relevancy}</span>
             <span class="spiter"></span>
-            <span class="caret"></span>
+            <i class="uiIconMiniArrowDown uiIconLightGray"></i>
           </a>
           <ul id="sortOptions" class="dropdown-menu">
             <li><a href="#" sort="relevancy">${relevancy}<i class="uiIconSortDown"></i></a></li>

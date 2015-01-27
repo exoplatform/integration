@@ -437,7 +437,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
     $(linkQuickSearchQuery_id).click(function () {
       if ($(txtQuickSearchQuery_id).is(':hidden')) {
         $(txtQuickSearchQuery_id).val(value);
-        $(txtQuickSearchQuery_id).css('color', '#555');
+       // $(txtQuickSearchQuery_id).css('color', '#555');
         isDefault = true;
         $(txtQuickSearchQuery_id).show();
         $(txtQuickSearchQuery_id).focus();
@@ -477,7 +477,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
 
     $(txtQuickSearchQuery_id).focus(function(){
       $(this).val('');
-      $(this).css('color', '#000');
+     // $(this).css('color', '#000');
       isDefault = false;
     });
     
