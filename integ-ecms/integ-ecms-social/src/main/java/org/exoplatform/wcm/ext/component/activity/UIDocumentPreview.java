@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @ComponentConfig(
-        template = "war:/groovy/ecm/social-integration/UIDocumentPreview.gtmpl",
+        template = "classpath:groovy/ecm/social-integration/UIDocumentPreview.gtmpl",
         events = {
                 @EventConfig(listeners = UIDocumentPreview.CloseActionListener.class)
         }

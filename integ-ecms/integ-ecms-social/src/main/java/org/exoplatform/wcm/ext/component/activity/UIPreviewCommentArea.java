@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @ComponentConfig(
-        template = "war:/groovy/ecm/social-integration/UIPreviewCommentArea.gtmpl",
+        template = "classpath:groovy/ecm/social-integration/UIPreviewCommentArea.gtmpl",
         events = {
                 @EventConfig(listeners = UIPreviewCommentArea.RefreshCommentsActionListener.class),
                 @EventConfig(listeners = UIPreviewCommentArea.RemoveCommentActionListener.class,
