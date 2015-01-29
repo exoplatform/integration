@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bundle>
+  <UISocialPopupWindow>
+    <title>
+      <UIReadOnlyFileConfirmMessage>Open Document Read-only</UIReadOnlyFileConfirmMessage>
+    </title>
+  </UISocialPopupWindow>
   <SocialIntegration>
     <titles>
       <fileSize>File Size</fileSize>
@@ -73,7 +78,6 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Preview</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document Read-only</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
