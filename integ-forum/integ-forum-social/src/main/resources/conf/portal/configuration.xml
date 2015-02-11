@@ -48,75 +48,6 @@
      </init-params>
    </component-plugin>
    <component-plugin>
-     <name>answer:spaces</name> <!-- activity type -->
-     <set-method>addActivityResourceBundlePlugin</set-method>
-     <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
-     <init-params>
-       <object-param>
-         <name>locale.forum.integration.integration</name> <!-- resource bundle key file -->
-         <description>activity key type resource bundle mapping for answer:activity</description>
-         <object type="org.exoplatform.social.core.processor.ActivityResourceBundlePlugin">
-           <field name="activityKeyTypeMapping">
-             <map type="java.util.HashMap">
-               <entry>
-                 <key><string>answer-add</string></key>
-                 <value><string>AnswerUIActivity.label.answer-add</string></value>
-               </entry>
-               <entry>
-                 <key><string>answer-update-content</string></key>
-                 <value><string>AnswerUIActivity.label.answer-update-content</string></value>
-               </entry>
-               <entry>
-                 <key><string>answer-promoted</string></key>
-                 <value><string>AnswerUIActivity.label.answer-promoted</string></value>
-               </entry>
-               <entry>
-                 <key><string>answer-activated</string></key>
-                 <value><string>AnswerUIActivity.label.answer-activated</string></value>
-               </entry>
-               <entry>
-                 <key><string>answer-unactivated</string></key>
-                 <value><string>AnswerUIActivity.label.answer-unactivated</string></value>
-               </entry>
-               <entry>
-                 <key><string>answer-approved</string></key>
-                 <value><string>AnswerUIActivity.label.answer-approved</string></value>
-               </entry>
-               <entry>
-                 <key><string>answer-disapproved</string></key>
-                 <value><string>AnswerUIActivity.label.answer-disapproved</string></value>
-               </entry>
-               <entry>
-                 <key><string>question-update-title</string></key>
-                 <value><string>AnswerUIActivity.label.question-update-title</string></value>
-               </entry>
-               <entry>
-                 <key><string>question-activated</string></key>
-                 <value><string>AnswerUIActivity.label.question-activated</string></value>
-               </entry>
-               <entry>
-                 <key><string>question-unactivated</string></key>
-                 <value><string>AnswerUIActivity.label.question-unactivated</string></value>
-               </entry>
-               <entry>
-                 <key><string>question-update-detail</string></key>
-                 <value><string>AnswerUIActivity.label.question-update-detail</string></value>
-               </entry>
-               <entry>
-                 <key><string>question-add-language</string></key>
-                 <value><string>AnswerUIActivity.label.question-add-language</string></value>
-               </entry>
-               <entry>
-                 <key><string>question-add-attachment</string></key>
-                 <value><string>AnswerUIActivity.label.question-add-attachment</string></value>
-               </entry>
-             </map>
-           </field>
-         </object>
-       </object-param>
-     </init-params>
-   </component-plugin>
-   <component-plugin>
      <name>ks-forum:spaces</name> <!-- activity type -->
      <set-method>addActivityResourceBundlePlugin</set-method>
      <type>org.exoplatform.social.core.processor.ActivityResourceBundlePlugin</type>
@@ -210,17 +141,6 @@
 			</init-params>
     </component-plugin>
     <component-plugin>
-      <name>AnswerDataInitialize</name>
-      <set-method>addSpaceListener</set-method>
-      <type>org.exoplatform.forum.ext.impl.AnswerDataInitialize</type>
-      <init-params>
-				<value-param>
-					<name>portletName</name>
-					<value>AnswersPortlet</value>
-				</value-param>
-			</init-params>
-    </component-plugin>
-    <component-plugin>
       <name>PollDataInitialize</name>
       <set-method>addSpaceListener</set-method>
       <type>org.exoplatform.forum.ext.impl.PollDataInitialize</type>
@@ -243,15 +163,6 @@
   </external-component-plugins>
   
   <external-component-plugins>
-    <target-component>org.exoplatform.faq.service.FAQService</target-component>
-    <component-plugin>
-      <name>AnswerEventListener</name>
-      <set-method>addListenerPlugin</set-method>
-      <type>org.exoplatform.forum.ext.impl.AnswersSpaceActivityPublisher</type>
-    </component-plugin>
-  </external-component-plugins>
-  
-  <external-component-plugins>
     <target-component>org.exoplatform.poll.service.PollService</target-component>
     <component-plugin>
       <name>PollEventListener</name>
@@ -270,7 +181,6 @@
         <values-param>
           <name>portletsPrefsRequired</name>
           <value>ForumPortlet</value>
-          <value>AnswersPortlet</value>
           <value>FAQPortlet</value>
           <value>PollPortlet</value>
         </values-param>
@@ -293,22 +203,6 @@
             <field name="name"><string>ks-forum:spaces</string></field>
             <field name="component"><string>org.exoplatform.forum.ext.impl.ForumUIActivity</string></field>
             <field name="activityBuiderClass"><string>org.exoplatform.forum.ext.impl.ForumSpaceUIActivityBuilder</string></field>
-          </object>
-        </object-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>add.answer.activity.plugin</name>
-      <set-method>registerUIExtensionPlugin</set-method>
-      <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
-      <init-params>
-        <object-param>
-          <name>Answer Space Activity</name>
-          <object type="org.exoplatform.social.webui.activity.UIActivityExtension">
-            <field name="type"><string>org.exoplatform.social.webui.activity.BaseUIActivity</string></field>
-            <field name="name"><string>ks-answer:spaces</string></field>
-            <field name="component"><string>org.exoplatform.forum.ext.impl.AnswerUIActivity</string></field>
-            <field name="activityBuiderClass"><string>org.exoplatform.forum.ext.impl.AnswerSpaceUIActivityBuilder</string></field>
           </object>
         </object-param>
       </init-params>
@@ -393,44 +287,7 @@
 	    </init-params>
 	  </component-plugin>
 	</external-component-plugins>
-	
-	<external-component-plugins>
-	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
-	  <component-plugin>
-	    <name>notification.plugins</name>
-	    <set-method>addChildPlugin</set-method>
-	    <type>org.exoplatform.forum.notification.plugin.AnswerActivityChildPlugin</type>
-	    <description>Initial information for answer child notification plugin.</description>
-	    <init-params>
-	      <values-param>
-	        <name>parentIds</name>
-	        <description>The list parent plugin' id</description>
-	        <value>LikePlugin</value>
-	        <value>ActivityCommentPlugin</value>
-	      </values-param>
-	      <object-param>
-	        <name>template.AnswerActivityChildPlugin</name>
-	        <description>The template of AnswerActivityChildPlugin</description>
-	        <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
-	          <field name="pluginId">
-	            <string>ks-answer:spaces</string>
-	          </field>
-	          <field name="templateConfig">
-	            <object type="org.exoplatform.commons.api.notification.plugin.config.TemplateConfig">
-	              <field name="bundlePath">
-	                <string>locale.forum.integration.notification.ForumNotification</string>
-	              </field>
-	              <field name="templatePath">
-	                <string>classpath:/groovy/forum/social-integration/plugin/notification/AnswerActivity.gtmpl</string>
-	              </field>
-	            </object>
-	          </field>
-	        </object>
-	      </object-param>
-	    </init-params>
-	  </component-plugin>
-	</external-component-plugins>
-	
+
 	<external-component-plugins>
 	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
 	  <component-plugin>
