@@ -518,11 +518,11 @@ public class FileUIActivity extends BaseUIActivity{
   }
   
   protected String getCssClassIconFile(String fileName, String fileType) {
-    String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(fileName, fileType, CssClassManager.ICON_SIZE.ICON_64);
-    if (cssClass.indexOf(CssClassIconFile.DEFAULT_CSS) > 0) {
+    try {
+      return org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(this.getContentNode(), "uiIcon64x64");
+    } catch (RepositoryException e) {
       return "uiIcon64x64Templatent_file uiIcon64x64nt_file";
     }
-    return cssClass;
   }
 
   protected String getContainerName() {
