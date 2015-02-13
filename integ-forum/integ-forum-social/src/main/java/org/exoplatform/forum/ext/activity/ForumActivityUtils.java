@@ -8,7 +8,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
@@ -18,8 +18,8 @@ package org.exoplatform.forum.ext.activity;
 
 import java.util.Map;
 
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
-import org.exoplatform.container.PortalContainer;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
@@ -46,12 +46,10 @@ import org.exoplatform.social.core.space.spi.SpaceService;
  */
 public class ForumActivityUtils {
 
-  private static final int   TYPE_PRIVATE      = 2;
-  
-  private static ForumService forumService;
-  private static ActivityManager activityManager;
-  private static IdentityManager identityManager;
-  private static SpaceService spaceService;
+  private static final int TYPE_PRIVATE = 2;
+  /*
+   * INTEG-391 : Do not keep the services on this class, make thread safety issue in multitenant environment
+   */
   
   public static Identity getSpaceIdentity(String forumId) {
     Space space = getSpaceService().getSpaceByGroupId(getSpaceGroupId(forumId));
@@ -94,18 +92,18 @@ public class ForumActivityUtils {
   
   public static Topic getTopic(ForumActivityContext ctx) throws Exception {
     Post p = ctx.getPost();
-    return ForumActivityUtils.getForumService().getTopic(p.getCategoryId(),
+    return getForumService().getTopic(p.getCategoryId(),
                                                          p.getForumId(),
                                                          p.getTopicId(),
                                                          "");
   }
   
   public static void takeActivityBack(Topic topic, ExoSocialActivity activity) {
-    ForumActivityUtils.getForumService().saveActivityIdForOwnerPath(topic.getPath(), activity.getId());
+    getForumService().saveActivityIdForOwnerPath(topic.getPath(), activity.getId());
   }
   
   public static void takeCommentBack(Post post, ExoSocialActivity comment) {
-    ForumActivityUtils.getForumService().saveActivityIdForOwnerPath(post.getPath(), comment.getId());
+    getForumService().saveActivityIdForOwnerPath(post.getPath(), comment.getId());
   }
   
   public static void updateTopicPostCount(ForumActivityContext ctx, boolean isAdded) throws Exception {
@@ -178,7 +176,7 @@ public class ForumActivityUtils {
    * @return
    */
   public static String getActivityId(ForumActivityContext ctx) {
-    ForumService fs = ForumActivityUtils.getForumService();
+    ForumService fs = getForumService();
     String activityId = fs.getActivityIdForOwnerPath(ctx.getTopic().getPath());
     
     //
@@ -187,7 +185,7 @@ public class ForumActivityUtils {
       ExoSocialActivity got = ActivityExecutor.execute(task, ctx);
       
       //
-      ForumActivityUtils.takeActivityBack(ctx.getTopic(), got);
+      takeActivityBack(ctx.getTopic(), got);
       activityId = got.getId();
     }
     
@@ -201,29 +199,27 @@ public class ForumActivityUtils {
    * @return
    */
   public static ExoSocialActivity getActivityOfTopic(ForumActivityContext ctx) {
-    ForumService fs = ForumActivityUtils.getForumService();
+    ForumService fs = getForumService();
     String activityId = fs.getActivityIdForOwnerId(ctx.getTopic().getId());
-    
-    ActivityManager am = ForumActivityUtils.getActivityManager();
-    
+
     //
     if (Utils.isEmpty(activityId)) {
       return makeActivity(ctx);
     }
-    
+
     //
-    ExoSocialActivity got = am.getActivity(activityId);
-    
+    ExoSocialActivity got = getActivityManager().getActivity(activityId);
+
     //
     if (got == null) {
       got = makeActivity(ctx);
     }
-    
+
     //title and body of activity may contain specials characters and when we get activity, the special character will be encoded
     //To avoid activity use these encodes when update, we set title and body = null
     got.setBody(null);
     got.setTitle(null);
-    
+
     return got;
   }
   
@@ -252,19 +248,19 @@ public class ForumActivityUtils {
    * @return
    */
   public static ExoSocialActivity getCommentOfPost(ForumActivityContext ctx) {
-    ForumService fs = ForumActivityUtils.getForumService();
+    ForumService fs = getForumService();
     String activityId = fs.getActivityIdForOwnerPath(ctx.getPost().getPath());
-    
+
     ActivityManager am = ForumActivityUtils.getActivityManager();
-    
+
     //
     if (Utils.isEmpty(activityId)) {
       return null;
     }
-    
+
     //
     ExoSocialActivity got = am.getActivity(activityId);
-    
+
     return got;
   }
   
@@ -306,59 +302,40 @@ public class ForumActivityUtils {
     am.updateActivity(activity);
     am.deleteComment(activityId, commentId);
   }
-  
+
   public static void updateActivities(ExoSocialActivity activity) {
     ActivityManager am = getActivityManager();
     am.updateActivity(activity);
   }
-  
+
   public static ForumService getForumService() {
-    if (forumService == null) {
-      forumService = (ForumService) PortalContainer.getInstance().getComponentInstanceOfType(ForumService.class);
-    }
-    
-    return forumService;
+    return CommonsUtils.getService(ForumService.class);
   }
-  
+
   public static ActivityManager getActivityManager() {
-    if (activityManager == null) {
-      activityManager = (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
-    }
-    return activityManager;
+    return CommonsUtils.getService(ActivityManager.class);
   }
-  
+
   public static IdentityManager getIdentityManager() {
-    if (identityManager == null) {
-      identityManager = (IdentityManager) PortalContainer.getInstance().getComponentInstanceOfType(IdentityManager.class);
-    }
-    return identityManager;
+    return CommonsUtils.getService(IdentityManager.class);
   }
-  
+
   public static SpaceService getSpaceService() {
-    if (spaceService == null) {
-      spaceService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
-    }
-    return spaceService;
+    return CommonsUtils.getService(SpaceService.class);
   }
-  
+
   public static Identity getIdentity(String remoteId) {
     return getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteId, false);
   }
-  
   /**
    * Gets ActivityId of poll from existing Topic in Context.
    * @param ctx
    * @return
    */
   public static ExoSocialActivity getActivityOfPollTopic(ForumActivityContext ctx) {
-    ForumService fs = ForumActivityUtils.getForumService();
     String path = ctx.getTopic().getPath().concat("/").concat(ctx.getTopic().getId().replace(Utils.TOPIC, Utils.POLL));
-    String pollActivityId = fs.getActivityIdForOwnerPath(path);
-    
-    ActivityManager am = ForumActivityUtils.getActivityManager();
-    
-    ExoSocialActivity got = am.getActivity(pollActivityId);
-    
+    String pollActivityId = getForumService().getActivityIdForOwnerPath(path);
+    ExoSocialActivity got = getActivityManager().getActivity(pollActivityId);
     return got;
   }
   

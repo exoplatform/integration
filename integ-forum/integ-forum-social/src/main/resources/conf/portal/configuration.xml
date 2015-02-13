@@ -7,7 +7,7 @@
     <init-params>
       <value-param>
         <name>async-execution</name>
-        <value>true</value>
+        <value>${integ.forum.ForumTaskManager.asyncExecution:true}</value>
       </value-param>
       <value-param>
         <name>maxPersistSize</name> <!-- Max number of task to process in period time -->
