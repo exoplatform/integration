@@ -86,6 +86,7 @@ import java.util.Map;
                 @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
                 @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
                 @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
+                @EventConfig(listeners = FileUIActivity.OpenFileActionListener.class),
                 @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class)}),
 })
 public class FileUIActivity extends BaseUIActivity{
@@ -169,6 +170,7 @@ public class FileUIActivity extends BaseUIActivity{
   
   public FileUIActivity() throws Exception {
     super();
+    addChild(UIPopupContainer.class, null, "UIDocViewerPopupContainer");
   }
 
   public String getContentLink() {
@@ -516,7 +518,7 @@ public class FileUIActivity extends BaseUIActivity{
       return "";
     }
   }
-  
+
   protected String getCssClassIconFile(String fileName, String fileType) {
     try {
       return org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(this.getContentNode(), "uiIcon64x64");
@@ -606,6 +608,21 @@ public class FileUIActivity extends BaseUIActivity{
         return node.getSession().getNodeByUUID(uuid);
       }
       return node;
+    }
+  }
+
+  public static class OpenFileActionListener extends EventListener<FileUIActivity> {
+    public void execute(Event<FileUIActivity> event) throws Exception {
+      FileUIActivity fileUIActivity = event.getSource();
+
+      Node currentNode = fileUIActivity.getContentNode();
+
+
+      FileUIActivity docActivity = event.getSource();
+      UIActivitiesContainer activitiesContainer = docActivity.getParent();
+      PopupContainer popupContainer = activitiesContainer.getPopupContainer();
+
+      org.exoplatform.ecm.webui.utils.Utils.openDocumentInDesktop(currentNode, popupContainer, event);
     }
   }
 }
