@@ -6,10 +6,10 @@
 
 <div class="uiSearchPlatformToolBarPortlet uiDropdownWithIcon dropdown" id="ToolBarSearch" tabindex="0">
 	<input type="hidden" id="portletIdQuickSearch" name="portletId" value="${portletId}"/>
-	<input type="hidden" id="seeAllQuickSearch" name="seeAll" value="${seeAll}"/>
-	<input type="hidden" id="noResultsQuickSearch" name="noResults" value="${noResults}"/>
-	<input type="hidden" id="searchingQuickSearch" name="searching" value="${searching}"/>
-	<input id="adminkeyword-${portletId}" name="adminkeyword" value="${SearchInInput}" type="text" style="display: none;"/>
+	<input type="hidden" id="seeAllQuickSearch" name="seeAll" value="&{quicksearch.seeAll.label}"/>
+	<input type="hidden" id="noResultsQuickSearch" name="noResults" value="&{quicksearch.noResults.label}"/>
+	<input type="hidden" id="searchingQuickSearch" name="searching" value="&{quicksearch.searching.label}"/>
+	<input id="adminkeyword-${portletId}" name="adminkeyword" value="&{quicksearch.input.label}" type="text" style="display: none;"/>
 	<a href="#" id="adminSearchLink-${portletId}" class="dropdown-toggle">
     	<i class="uiIconPLF24x24Search"></i>
 	</a>
@@ -18,6 +18,6 @@
 
 	<script>
 	  window.require(["PORTLET/unified-search/QuicksearchPortlet"], function() {
-		initQuickSearch("${portletId}","${seeAll}","${noResults}","${searching}",${resultsPerPage},"${searchTypes}",${searchCurrentSiteOnly},${firstInit});  
+		initQuickSearch("${portletId}","&{quicksearch.seeAll.label}","&{quicksearch.noResults.label}","&{quicksearch.searching.label}",${resultsPerPage},"${searchTypes}",${searchCurrentSiteOnly},${firstInit});
 	  });
 	</script>

@@ -1,7 +1,7 @@
 <div id="searchPortlet" class="uiSearchPortlet">
 
   <div id='resultLoading' class="resultLoading">
-  ${searching}
+  &{unifiedsearch.searching.label}
   </div>
 
   <div id="searchPage">
@@ -9,22 +9,22 @@
     <div id="searchForm" class="searchContainer">
       <div class="pull-left searchForm">
         <input type="text" id="txtQuery" style="width: 220px;">
-        <button type="button" class="btn btn-primary" id="btnSearch" value="Search">${unifiedsearch}</button>
+        <button type="button" class="btn btn-primary" id="btnSearch" value="Search">&{unifiedsearch.index.label}</button>
       </div>      
       <div id="resultSort" class="pull-right resultSort">
         <div class="btn-group uiDropdownWithIcon pull-right">
           <a data-toggle="dropdown" class="btn dropdown-toggle">
-            <span id="sortField">${relevancy}</span>
+            <span id="sortField">&{unifiedsearch.index.relevancy.label}</span>
             <span class="spiter"></span>
             <i class="uiIconMiniArrowDown uiIconLightGray"></i>
           </a>
           <ul id="sortOptions" class="dropdown-menu">
-            <li><a href="#" sort="relevancy">${relevancy}<i class="uiIconSortDown"></i></a></li>
-            <li><a href="#" sort="date">${date}</i></a></li>
-            <li><a href="#" sort="title">${title}</a></li>
+            <li><a href="#" sort="relevancy">&{unifiedsearch.index.relevancy.label}<i class="uiIconSortDown"></i></a></li>
+            <li><a href="#" sort="date">&{unifiedsearch.index.date.label}</i></a></li>
+            <li><a href="#" sort="title">&{unifiedsearch.index.title.label}</a></li>
           </ul>
         </div>
-        <span>${sortBy}:</span>
+        <span>&{unifiedsearch.index.sortBy.label}:</span>
       </div>      
       <div id="resultHeader" class="center resultHeader"></div>
     </div>
@@ -32,15 +32,15 @@
 
         <div id="facetsFilter" class="filterContainer pull-left">
           <div class="uiBox">
-            <h5 class="title">${filterBy}</h5>
+            <h5 class="title">&{unifiedsearch.index.filterBy.label}</h5>
             <div class="uiContentBox">
               <div id="siteFilter" class="siteFilter">
-                <h6><span class="uiCheckbox"><input type="checkbox" class="checkbox" name="site" value="all"><span></span></span>${allsites}</h6>
+                <h6><span class="uiCheckbox"><input type="checkbox" class="checkbox" name="site" value="all"><span></span></span>&{unifiedsearch.index.allsites.label}</h6>
                 <ul id="lstSites" class="listFilter"></ul>
               </div>
 
               <div class="contentTypeFilter">
-                <h6><span class="uiCheckbox"><input class="checkbox" type="checkbox" name="contentType" value="all"><span></span></span>${contentTypes}</h6>
+                <h6><span class="uiCheckbox"><input class="checkbox" type="checkbox" name="contentType" value="all"><span></span></span>&{unifiedsearch.index.contentTypes.label}</h6>
                 <ul id="lstContentTypes" class="listFilter"></ul>
               </div>
             </div>
@@ -50,13 +50,13 @@
         <div id="resultPage" class="resultPage uiBox">
           <div id="result"></div>          
           <div class="noResultInfo">
-            <h3>${noResult}</h3>
-            <p>${notMatch}
+            <h3>&{unifiedsearch.index.noResult.label}</h3>
+            <p>&{unifiedsearch.index.notMatch.label}
             <br />
-            ${tryDiffWord}
+            &{unifiedsearch.index.tryDiffWord.label}
             </p>
           </div>
-          <div id="showMore" class="showMore"><button type="button" class="btn" id="btnShowMore" value="${showmore}">${showmore}</button></div>
+          <div id="showMore" class="showMore"><button type="button" class="btn" id="btnShowMore" value="&{unifiedsearch.index.showmore.label}">&{unifiedsearch.index.showmore.label}</button></div>
         </div>	       
       </div>
   </div>

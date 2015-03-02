@@ -18,15 +18,11 @@ package org.exoplatform.commons.searchadministration;
 
 
 import juzu.Path;
+import juzu.Response;
 import juzu.View;
-import juzu.impl.request.Request;
-import juzu.request.RenderContext;
-import juzu.request.RequestContext;
 import juzu.template.Template;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -45,18 +41,7 @@ public class SearchAdministration {
   ResourceBundle bundle;  
     
   @View
-  public void index(RenderContext renderContext){
-    RequestContext requestContext = Request.getCurrent().getContext();
-    
-    ResourceBundle rs = renderContext.getApplicationContext().resolveBundle(renderContext.getUserContext().getLocale());
-    Map<String, Object> parameters = new HashMap<String, Object>();
-
-    parameters.put("searchadministration", rs.getString("searchadministration.label"));
-    parameters.put("contentType", rs.getString("searchadministration.contentType.label"));
-    parameters.put("description", rs.getString("searchadministration.description.label"));
-    parameters.put("action", rs.getString("searchadministration.action.label"));
-    parameters.put("disable", rs.getString("searchadministration.disable.label"));
-    
-    index.render(parameters);      
+  public Response.Content index(){
+    return index.ok();
   }  
 }
