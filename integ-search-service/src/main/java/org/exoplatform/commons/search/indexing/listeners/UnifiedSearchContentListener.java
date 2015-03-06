@@ -19,7 +19,7 @@ import java.util.Map;
  * - type : (file|document)
  * - name : question id
  *
- * FIXME No event for content deletion
+ * TODO No event for content deletion
  */
 public class UnifiedSearchContentListener extends Listener {
 

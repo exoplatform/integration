@@ -52,7 +52,8 @@ public class UnifiedSearchOrganizationProfileListener extends UserProfileEventLi
 
   @Override
   public void postDelete(UserProfile user) throws Exception {
-    // FIXME this method is never called as org.exoplatform.services.organization.idm.UserDAOImpl.removeUser() calls orgService.getUserProfileHandler().removeUserProfile() with an hardcoded broadcast to false
+    // TODO this method is never called as org.exoplatform.services.organization.idm.UserDAOImpl.removeUser() calls 
+    // orgService.getUserProfileHandler().removeUserProfile() with an hardcoded broadcast to false
 
     if(indexingService != null) {
       SearchEntryId searchEntryId = new SearchEntryId("social", "profile", user.getUserName());

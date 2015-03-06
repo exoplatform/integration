@@ -78,43 +78,46 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     if(currentNode.isNodeType(NodetypeConstant.MIX_REFERENCEABLE)) nodeUUID = currentNode.getUUID();
     else nodeUUID = currentNode.getName();
     String propertyName = event.getData();
-    String oldValue = "";
-    String newValue = "";
-    String commentValue = "";
+    StringBuilder oldValueBuilder = new StringBuilder();
+    StringBuilder newValueBuilder = new StringBuilder();
+    StringBuilder commentValueBuilder = new StringBuilder();
     try {
     	if(!propertyName.equals(NodetypeConstant.JCR_DATA)) {
 	    	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
 	    		Value[] values = currentNode.getProperty(propertyName).getValues();
 	    		if(values != null && values.length > 0) {
 	    			for (Value value : values) {
-                            newValue= new StringBuffer(newValue).append(value.getString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR).toString();
-                            commentValue=new StringBuffer(commentValue).append(value.getString()).append(", ").toString();
+              newValueBuilder.append(value.getString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR);
+              commentValueBuilder.append(value.getString()).append(", ");
 						}
-	    			if(newValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
-	    				newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
-	    			if(commentValue.length() >=2) commentValue = commentValue.substring(0, commentValue.length() - 2);
+	    			if(newValueBuilder.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
+	    				newValueBuilder.delete(newValueBuilder.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length(),
+	    				                       newValueBuilder.length());
+	    			if(commentValueBuilder.length() >=2) 
+	    			  commentValueBuilder.delete(commentValueBuilder.length() - 2, commentValueBuilder.length());
 	    		}
 	    		values = (Value[]) properties.get(nodeUUID + "_" + propertyName);
 	    		if(values != null && values.length > 0) {
 	    			for (Value value : values) {
-	    				oldValue += value.getString() + ActivityCommonService.METADATA_VALUE_SEPERATOR;
+	    				oldValueBuilder.append(value.getString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR);
 						}
-	    			if(oldValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
-	    				oldValue = oldValue.substring(0, oldValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
+	    			if(oldValueBuilder.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
+	    				oldValueBuilder.delete(oldValueBuilder.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length(),
+	    				                       oldValueBuilder.length());
 	    		}
 	    	} else {
-	    		newValue= currentNode.getProperty(propertyName).getString();
-	    		commentValue = newValue;
+	    		newValueBuilder = new StringBuilder(currentNode.getProperty(propertyName).getString());
+	    		commentValueBuilder = newValueBuilder;
 	    		if(properties.containsKey(nodeUUID + "_" + propertyName)) 
-	    			oldValue = properties.get(nodeUUID + "_" + propertyName).toString();
+	    			oldValueBuilder = new StringBuilder(properties.get(nodeUUID + "_" + propertyName).toString());
 	    	}
     	}
     }catch (Exception e) {
         LOG.info("Cannot get old value");
     }
-    newValue = newValue.trim();
-    oldValue = oldValue.trim();
-    commentValue = commentValue.trim();
+    String newValue = newValueBuilder.toString().trim();
+    String oldValue = oldValueBuilder.toString().trim();
+    String commentValue = commentValueBuilder.toString().trim();
     
     if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();
     String resourceBundle = "";

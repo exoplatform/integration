@@ -17,7 +17,7 @@ import java.util.Map;
  * - type : (event|task)
  * - name : object id
  *
- * FIXME Listeners only for public events. What about others events ?
+ * TODO Listeners only for public events. What about others events ?
  */
 public class UnifiedSearchCalendarListener extends CalendarEventListener {
 
@@ -31,7 +31,7 @@ public class UnifiedSearchCalendarListener extends CalendarEventListener {
 
   @Override
   public void savePublicEvent(CalendarEvent event, String calendarId) {
-    // FIXME No need of the calendarId argument as it is already contained in the event object
+    // TODO No need of the calendarId argument as it is already contained in the event object
 
     if(indexingService != null) {
       Map<String, Object> content = new HashMap<String, Object>();
@@ -43,7 +43,7 @@ public class UnifiedSearchCalendarListener extends CalendarEventListener {
 
   @Override
   public void updatePublicEvent(CalendarEvent event, String calendarId) {
-    // FIXME No need of the calendarId argument as it is already contained in the event object
+    // TODO No need of the calendarId argument as it is already contained in the event object
 
     if(indexingService != null) {
       Map<String, Object> content = new HashMap<String, Object>();
@@ -63,7 +63,7 @@ public class UnifiedSearchCalendarListener extends CalendarEventListener {
 
   @Override
   public void updatePublicEvent(CalendarEvent oldEvent, CalendarEvent event, String calendarId) {
-    // FIXME Why 2 methods for an event update ?
+    // TODO Why 2 methods for an event update ?
 
     if(indexingService != null) {
       Map<String, Object> content = new HashMap<String, Object>();

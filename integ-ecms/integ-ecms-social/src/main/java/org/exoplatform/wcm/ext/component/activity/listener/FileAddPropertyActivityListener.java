@@ -56,34 +56,36 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
   public void onEvent(Event<Node, String> event) throws Exception {
     Node currentNode = event.getSource();
     String propertyName = event.getData();
-    String newValue = "";
-    String commentValue = "";
+    StringBuilder newValueBuilder = new StringBuilder();
+    StringBuilder commentValueBuilder = new StringBuilder();
     try {      
     	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
     		Value[] values = currentNode.getProperty(propertyName).getValues();
     		if(values != null) {
     			for (Value value : values) {
-                        newValue=new StringBuffer(newValue).append(value.getString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR).toString();
-                        commentValue=new StringBuffer(commentValue).append(value.getString()).append(", ").toString();
+            newValueBuilder.append(value.getString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR);
+            commentValueBuilder.append(value.getString()).append(", ");
 					}
-    			if(newValue.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length())
-    			  newValue = newValue.substring(0, newValue.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length());
-    			if(commentValue.length() >=2) commentValue = commentValue.substring(0, commentValue.length() - 2);
+    			if(newValueBuilder.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length())
+    			  newValueBuilder.delete(newValueBuilder.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length(), 
+    			                         newValueBuilder.length());
+    			if(commentValueBuilder.length() >=2) 
+    			  commentValueBuilder.delete(commentValueBuilder.length() - 2, commentValueBuilder.length());
     		}
     	} else {
     	  Property prop = currentNode.getProperty(propertyName);
     	  if (prop.getDefinition().getRequiredType() == PropertyType.BINARY) {
-    	    newValue = "";
+    	    newValueBuilder = new StringBuilder();
     	  } else {
-    	    newValue= currentNode.getProperty(propertyName).getString();
+    	    newValueBuilder = new StringBuilder(currentNode.getProperty(propertyName).getString());
     	  }
     	}
     }catch (Exception e) {
-      newValue = "";
-      commentValue = "";
+      newValueBuilder = new StringBuilder();
+      commentValueBuilder = new StringBuilder();
     }
-    newValue = newValue.trim();
-    commentValue = commentValue.trim();
+    String newValue = newValueBuilder.toString().trim();
+    String commentValue = commentValueBuilder.toString().trim();
     
     if(newValue != null && newValue.length() > 0) {
 	    if(currentNode.isNodeType(NodetypeConstant.NT_RESOURCE)) currentNode = currentNode.getParent();

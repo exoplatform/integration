@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wcm.notification.plugin;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
 
@@ -134,7 +135,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       String docLink = templateParams.get(DOCLINK);
       String author = templateParams.get(AUTHOR);
       String receiver = notification.getTo();
-      if (docLink != null && docLink.contains(author + PRIVATE_FOLDER_PATH) && (author != receiver)) {
+      if (docLink != null && docLink.contains(author + PRIVATE_FOLDER_PATH) && !(StringUtils.equals(author, receiver))) {
         templateContext.put("DEFAULT_THUMBNAIL_URL", getDefaultThumbnail());
       } else {
         thumbnailUrl = getThumbnailUrl(currentNode);
@@ -325,7 +326,11 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       imageWidth = reader.getWidth(0);
       iis.close();
       reader.dispose();     
-    } catch (Exception e) {}
+    } catch (RepositoryException | IOException e ){
+      if (LOG.isWarnEnabled()) {
+        LOG.warn("Can not get image width in " + this.getClass().getName());
+      }
+    }
     return imageWidth;
   }
 
@@ -339,7 +344,11 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       imageHeight = reader.getHeight(0);
       iis.close();
       reader.dispose();     
-    } catch (Exception e) {}
+    } catch (RepositoryException | IOException e ){
+      if (LOG.isWarnEnabled()) {
+        LOG.warn("Can not get image height in " + this.getClass().getName());
+      }
+    }
     return imageHeight;
   }
 

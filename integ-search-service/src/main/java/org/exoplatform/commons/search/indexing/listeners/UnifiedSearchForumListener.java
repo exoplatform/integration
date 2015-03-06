@@ -17,7 +17,7 @@ import java.util.Map;
  * - type : (category|forum|topic|post)
  * - name : object id
  *
- * FIXME No method for category and forum deletion
+ * TODO No method for category and forum deletion
  */
 public class UnifiedSearchForumListener extends ForumEventListener {
 
@@ -31,7 +31,7 @@ public class UnifiedSearchForumListener extends ForumEventListener {
 
   @Override
   public void saveCategory(Category category) {
-    // FIXME How to know of it is a new category or an update ?
+    // TODO How to know of it is a new category or an update ?
 
     if(indexingService != null) {
       Map<String, Object> content = new HashMap<String, Object>();
@@ -43,7 +43,7 @@ public class UnifiedSearchForumListener extends ForumEventListener {
 
   @Override
   public void saveForum(Forum forum) {
-    // FIXME How to know of it is a new forum or an update ?
+    // TODO How to know of it is a new forum or an update ?
 
     if(indexingService != null) {
       Map<String, Object> content = new HashMap<String, Object>();
@@ -82,7 +82,7 @@ public class UnifiedSearchForumListener extends ForumEventListener {
 
   @Override
   public void moveTopic(Topic topic, String toCategoryName, String toForumName) {
-    // FIXME No setCategoryId neither setForumId on Topic object. How to update it ?
+    // TODO No setCategoryId neither setForumId on Topic object. How to update it ?
   }
 
   public void movePost(List <Post> posts, List<String> srcPostActivityIds, String desTopicPath) {
@@ -90,7 +90,7 @@ public class UnifiedSearchForumListener extends ForumEventListener {
   
   @Override
   public void mergeTopic(Topic topic, String removeActivityId1, String removeActivityId2) {
-    // FIXME No mergeTopic(Topic topic1, Topic topic2, Topic mergedTopic) ...
+    // TODO No mergeTopic(Topic topic1, Topic topic2, Topic mergedTopic) ...
   }
 
   @Override
@@ -135,11 +135,11 @@ public class UnifiedSearchForumListener extends ForumEventListener {
 
   @Override
   public void removeActivity(String activityId) {
-    // FIXME No removeTopic(Topic topic) ...
+    // TODO No removeTopic(Topic topic) ...
   }
 
   @Override
   public void removeComment(String activityId, String commentId) {
-    // FIXME No removeTopic(Post post) ...
+    // TODO No removeTopic(Post post) ...
   }
 }
