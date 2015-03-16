@@ -78,6 +78,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Preview</DocViewer>
+      <UIReadOnlyFileConfirmMessage>Open Document Read-only</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
