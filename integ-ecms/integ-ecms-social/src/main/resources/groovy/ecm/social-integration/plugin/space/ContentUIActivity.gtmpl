@@ -316,7 +316,9 @@
             </ul>
           <% }%>	
           <ul class="pull-left statusAction">
-            <li><a href="$viewLink"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
+            <% if (uicomponent.isContentSupportPreview(currentNode)) { %>
+              <li><a href="$viewLink"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
+            <% }%>
             <li><a href="$editLink"><i class="uiIconEdit uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.edit");%></a></li>
           </ul>
         </div><!--end actionBar-->
