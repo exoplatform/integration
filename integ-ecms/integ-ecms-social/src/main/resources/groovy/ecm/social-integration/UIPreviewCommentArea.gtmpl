@@ -18,10 +18,12 @@ def rcontext = _ctx.getRequestContext();
 rcontext.getJavascriptManager()
     .require("SHARED/document-preview", "docPre")
     .require("SHARED/jquery", "gj")
-    .addScripts("eXo.ecm.DocumentPreview.bindPostCommentEvent();")
+    .addScripts("eXo.ecm.DocumentPreview.bindCommentEvent();")
     .addScripts("eXo.ecm.DocumentPreview.setRefreshCommentsAction('" + refreshCommentsAction + "') ;")
     .addScripts("gj('.commentList', '#UIDocumentPreview').scrollTop(20000);")
     .addScripts("gj(window).resize();gj('#commentTextAreaPreview').focus();");
+
+def labelToDeleteThisComment=_ctx.appRes("UIActivity.msg.Are_You_Sure_To_Delete_This_Comment");
 
 def commentList = uicomponent.getAllComments();
 int commentSize = commentList.size();
@@ -107,9 +109,10 @@ def isLiked = uicomponent.isLiked();
               def commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
               def commenterAvatarImgSrc = commentIdentity.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
+              def idPreviewCommentContainer = "previewCommentContainer${it.id}";
 
             %>
-                <li class="clearfix">
+                <li class="clearfix" id = "$idPreviewCommentContainer">
                     <a class="avatarXSmall pull-left" href="$commenterProfileUri" title="$commenterFullName"><img src="$commenterAvatarImgSrc" alt="" /></a>
                     <div class="rightBlock">
                         <div class="tit">
@@ -117,8 +120,11 @@ def isLiked = uicomponent.isLiked();
                             <span class="pull-right dateTime">$commentPostedTime</span>
                         </div>
                         <p class="cont">$commentMessage</p>
-                      <%if (uicomponent.isCommentDeletable(it.userId)) { %>
-                        <a href="<%=uicomponent.event(uicomponent.REMOVE_COMMENT, it.id); %>" class="close"><i class="uiIconLightGray uiIconClose " commentId="$it.id"></i></a>
+                      <%if (uicomponent.isCommentDeletable(it.userId)) {
+                        String idDeleteComment = "DeleteCommentButton${it.id}";
+                        %>
+                        <!-- <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment" data-delete="<%=uicomponent.event(uicomponent.REMOVE_COMMENT, it.id); %>"  class="uiIconClose uiIconLightGray controllDelete"></a> -->
+                        <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment" data-delete="<%=uicomponent.event(uicomponent.REMOVE_COMMENT, it.id); %>"  class="close previewControllDelete"><i class="uiIconLightGray uiIconClose " commentId="$it.id"></i></a>
                       <% } %>
                     </div>
                 </li>

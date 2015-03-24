@@ -24,8 +24,7 @@ import java.util.Map;
         template = "classpath:groovy/ecm/social-integration/UIPreviewCommentArea.gtmpl",
         events = {
                 @EventConfig(listeners = UIPreviewCommentArea.RefreshCommentsActionListener.class),
-                @EventConfig(listeners = UIPreviewCommentArea.RemoveCommentActionListener.class,
-                        confirm = "UIActivity.msg.Are_You_Sure_To_Delete_This_Comment"),
+                @EventConfig(listeners = UIPreviewCommentArea.RemoveCommentActionListener.class),
                 @EventConfig(listeners = UIPreviewCommentArea.LikeActivityActionListener.class)
 
         }
