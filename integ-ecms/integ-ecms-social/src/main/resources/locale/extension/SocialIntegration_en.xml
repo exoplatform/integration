@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bundle>
+  <UIConfirmMessage>
+    <label>
+      <ReadOnly>Open Read-only</ReadOnly>
+    </label>
+  </UIConfirmMessage>
+
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document Read-only</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -78,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Preview</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document Read-only</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -107,7 +113,7 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
 </bundle>

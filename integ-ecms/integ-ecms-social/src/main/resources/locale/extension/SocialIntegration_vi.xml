@@ -73,7 +73,6 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Xem lại</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Tệp tin bị khóa </UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
