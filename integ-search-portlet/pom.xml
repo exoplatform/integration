@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>4.1.x-integ-upgrade-gatein-3.7.x-SNAPSHOT</version>
+    <version>4.x-integ-upgrade-gatein-3.7.x-SNAPSHOT</version>
   </parent>
   <artifactId>integ-search-portlet</artifactId>
   <!-- we don't put war due to juzu packaging with assembly -->

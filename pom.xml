@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.exoplatform.integration</groupId>
   <artifactId>integ</artifactId>
-  <version>4.1.x-integ-upgrade-gatein-3.7.x-SNAPSHOT</version>
+  <version>4.x-integ-upgrade-gatein-3.7.x-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>eXo Integration</name>
   <modules>
@@ -47,15 +47,14 @@
       <org.exoplatform.jcr.version>1.15.x-SNAPSHOT</org.exoplatform.jcr.version>
     <!-- GateIn Project Dependencies -->
     <org.gatein.shindig.version>2.0.2.Final-gatein-4</org.gatein.shindig.version>
-    <org.gatein.portal.version>4.2.x-PLF-SNAPSHOT</org.gatein.portal.version>
-
+    <org.gatein.portal.version>4.x-upgrade-gatein-3.7.x-SNAPSHOT</org.gatein.portal.version>
     <!-- Platform Project Dependencies -->
-    <org.exoplatform.commons.version>4.1.x-commons-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.commons.version>
-    <org.exoplatform.ecms.version>4.1.x-ecms-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.ecms.version>
-    <org.exoplatform.social.version>4.1.x-soc-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.social.version>
-    <org.exoplatform.forum.version>4.1.x-forum-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.forum.version>
-    <org.exoplatform.wiki.version>4.1.x-wiki-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.wiki.version>
-    <org.exoplatform.calendar.version>4.1.x-cal-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.calendar.version>
+    <org.exoplatform.commons.version>4.x-commons-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.commons.version>
+    <org.exoplatform.ecms.version>4.x-ecms-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.ecms.version>
+    <org.exoplatform.social.version>4.x-soc-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.social.version>
+    <org.exoplatform.forum.version>4.x-forum-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.forum.version>
+    <org.exoplatform.wiki.version>4.x-wiki-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.wiki.version>
+    <org.exoplatform.calendar.version>4.x-cal-upgrade-gatein-3.7.x-SNAPSHOT</org.exoplatform.calendar.version>
 
     <!-- Platform Project 3rd party Dependencies -->
     <org.exoplatform.doc.doc-style.version>4.2.x-SNAPSHOT</org.exoplatform.doc.doc-style.version>
