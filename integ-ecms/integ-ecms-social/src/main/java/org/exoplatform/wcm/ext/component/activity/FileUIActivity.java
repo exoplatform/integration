@@ -59,6 +59,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import javax.jcr.Node;
+import org.exoplatform.services.jcr.core.ExtendedNode;
+import org.exoplatform.services.jcr.access.PermissionType;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
@@ -625,4 +627,21 @@ public class FileUIActivity extends BaseUIActivity{
       org.exoplatform.ecm.webui.utils.Utils.openDocumentInDesktop(currentNode, popupContainer, event);
     }
   }
+
+  /**
+   * <h2>Check file node can edit on activity stream</h2>
+   * The file only can edit when user have modify permission on parent folder
+   * @param data File node
+   * @return true: can edit; false: cannot edit
+   * @throws Exception
+   */
+  public boolean canEditDocument(Node data){
+    try {
+      ((ExtendedNode)data.getParent()).checkPermission(PermissionType.ADD_NODE);
+      return true;
+    } catch(Exception e) {
+      return false;
+    }
+  }
+
 }
