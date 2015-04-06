@@ -726,6 +726,7 @@ window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk)
  * 
  */
 window.onImgError = function onImgError(object, errorClasses) {
+  object.onerror = null;
   $(object).parent().empty().append($(document.createElement('i')).addClass(errorClasses));
 }
 
