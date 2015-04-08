@@ -251,72 +251,60 @@
 			</init-params>
 		</component-plugin>
 	</external-component-plugins>
-  <external-component-plugins>
-	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
-	  <component-plugin>
-	    <name>notification.plugins</name>
-	    <set-method>addChildPlugin</set-method>
-	    <type>org.exoplatform.forum.notification.plugin.PollActivityChildPlugin</type>
-	    <description>Initial information for poll child notification plugin.</description>
-	    <init-params>
-	      <values-param>
-	        <name>parentIds</name>
-	        <description>The list parent plugin' id</description>
-	        <value>LikePlugin</value>
-	        <value>ActivityCommentPlugin</value>
-	      </values-param>
-	      <object-param>
-	        <name>template.PollActivityChildPlugin</name>
-	        <description>The template of PollActivityChildPlugin</description>
-	        <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
-	          <field name="pluginId">
-	            <string>ks-poll:spaces</string>
-	          </field>
-	          <field name="templateConfig">
-	            <object type="org.exoplatform.commons.api.notification.plugin.config.TemplateConfig">
-	              <field name="bundlePath">
-	                <string>locale.forum.integration.notification.ForumNotification</string>
-	              </field>
-	              <field name="templatePath">
-	                <string>classpath:/groovy/forum/social-integration/plugin/notification/PollActivity.gtmpl</string>
-	              </field>
-	            </object>
-	          </field>
-	        </object>
-	      </object-param>
-	    </init-params>
-	  </component-plugin>
-	</external-component-plugins>
 
-	<external-component-plugins>
-	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
-	  <component-plugin>
-	    <name>notification.plugins</name>
-	    <set-method>addChildPlugin</set-method>
-	    <type>org.exoplatform.forum.notification.plugin.ForumActivityChildPlugin</type>
-	    <description>Initial information for forum child notification plugin.</description>
-	    <init-params>
-	      <object-param>
-	        <name>template.ForumActivityChildPlugin</name>
-	        <description>The template of ForumActivityChildPlugin</description>
-	        <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
-	          <field name="pluginId">
-	            <string>ks-forum:spaces</string>
-	          </field>
-	          <field name="templateConfig">
-	            <object type="org.exoplatform.commons.api.notification.plugin.config.TemplateConfig">
-	              <field name="bundlePath">
-	                <string>locale.forum.integration.notification.ForumNotification</string>
-	              </field>
-	              <field name="templatePath">
-	                <string>classpath:/groovy/forum/social-integration/plugin/notification/ForumActivity.gtmpl</string>
-	              </field>
-	            </object>
-	          </field>
-	        </object>
-	      </object-param>
-	    </init-params>
-	  </component-plugin>
-	</external-component-plugins>
-  
-  </configuration>
+  <external-component-plugins>
+    <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+    <component-plugin>
+      <name>notification.plugins</name>
+      <set-method>addChildPlugin</set-method>
+      <type>org.exoplatform.forum.notification.plugin.PollActivityChildPlugin</type>
+      <description>Initial information for poll child notification plugin.</description>
+      <init-params>
+        <value-param>
+          <name>templatePath</name>
+          <value><![CDATA[classpath:/groovy/forum/social-integration/plugin/notification/PollActivity.gtmpl]]></value>
+        </value-param>
+        <object-param>
+          <name>template.PollActivityChildPlugin</name>
+          <description>The template of PollActivityChildPlugin</description>
+          <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
+            <field name="pluginId">
+              <string>ks-poll:spaces</string>
+            </field>
+            <field name="bundlePath">
+              <string>locale.forum.integration.notification.ForumNotification</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+    <component-plugin>
+      <name>notification.plugins</name>
+      <set-method>addChildPlugin</set-method>
+      <type>org.exoplatform.forum.notification.plugin.ForumActivityChildPlugin</type>
+      <description>Initial information for forum child notification plugin.</description>
+      <init-params>
+        <value-param>
+          <name>templatePath</name>
+          <value><![CDATA[classpath:/groovy/forum/social-integration/plugin/notification/ForumActivity.gtmpl]]></value>
+        </value-param>
+        <object-param>
+          <name>template.ForumActivityChildPlugin</name>
+          <description>The template of ForumActivityChildPlugin</description>
+          <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
+            <field name="pluginId">
+              <string>ks-forum:spaces</string>
+            </field>
+            <field name="bundlePath">
+              <string>locale.forum.integration.notification.ForumNotification</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+</configuration>

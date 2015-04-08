@@ -64,4 +64,9 @@ public class UnifiedSearchSocialProfileListener extends ProfileListenerPlugin {
       indexingService.update(searchEntryId, content);
     }
   }
+
+  @Override
+  public void aboutMeUpdated(ProfileLifeCycleEvent event) {
+    
+  }
 }
