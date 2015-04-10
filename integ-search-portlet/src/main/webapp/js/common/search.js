@@ -1,6 +1,6 @@
 (function($){
   
-window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrentSiteOnly,hideSearchForm,hideFacetsFilter,firstInit) {
+window.initSearch = function initSearch() {
 
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
@@ -55,27 +55,6 @@ window.initSearch = function initSearch(resultsPerPage,searchTypes,searchCurrent
       </div> \
     ";    
       
-    $("document").ready(function(){
-      if (Boolean(firstInit)) {
-        var data = {};
-        if (typeof resultsPerPage != 'undefined') {
-          data["resultsPerPage"] = resultsPerPage;
-        }
-        if (typeof searchTypes != 'undefined') {
-          data["searchTypes"] = searchTypes;
-        }
-        if (typeof searchCurrentSiteOnly != 'undefined') {
-          data["searchCurrentSiteOnly"] = searchCurrentSiteOnly;
-        }
-        if (typeof hideSearchForm != 'undefined') {
-          data["hideSearchForm"] = hideSearchForm;
-        }
-        if (typeof hideFacetsFilter != 'undefined') {
-          data["hideFacetsFilter"] = hideFacetsFilter;
-        }
-        $.post("/rest/search/setting", data);
-      }
-    });  
     
     //*** Utility functions ***
     String.prototype.toProperCase = function() {

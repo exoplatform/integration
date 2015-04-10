@@ -1,6 +1,6 @@
 (function($){
 // Function to be called when the quick search template is ready
-window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching, resultsPerPage, searchTypes, searchCurrentSiteOnly,firstInit) {
+window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultMsg, searching) {
   
     //*** Global variables ***
     var CONNECTORS; //all registered SearchService connectors
@@ -135,21 +135,6 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
       }
     }
     
-    $("document").ready(function(){
-      if (Boolean(firstInit)) {
-        var data = {};
-        if (typeof resultsPerPage != 'undefined') {
-          data["resultsPerPage"] = resultsPerPage;
-        }
-        if (typeof searchTypes != 'undefined') {
-          data["searchTypes"] = searchTypes;
-        }
-        if (typeof searchCurrentSiteOnly != 'undefined') {
-          data["searchCurrentSiteOnly"] = searchCurrentSiteOnly;
-        }
-        $.post("/rest/search/setting/quicksearch", data);
-      }
-    });         
     //*** Utility functions ***
     
     String.prototype.toProperCase = function() {
