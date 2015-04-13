@@ -343,6 +343,38 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     assertNotNull(commentId02);
   }
   
+  public void testUpdateForum() throws Exception {
+    Forum forum = forumService.getForum(categoryId, forumId);
+    assertNotNull(forum);
+    
+    //create a topic
+    Topic topic1 = createdTopic("root");
+    topic1.setDescription("topic 1");
+    forumService.saveTopic(categoryId, forumId, topic1, true, false, new MessageBuilder());
+    
+    String activityId1 = forumService.getActivityIdForOwnerPath(topic1.getPath());
+    ExoSocialActivity activity1 = getActivityManager().getActivity(activityId1);
+    assertFalse(activity1.isLocked());
+    
+    //close forum
+    forum.setIsClosed(true);
+    forumService.modifyForum(forum, Utils.CLOSE);
+    activity1 = getActivityManager().getActivity(activityId1);
+    assertTrue(activity1.isLocked());
+    
+    //open forum
+    forum.setIsClosed(false);
+    forumService.modifyForum(forum, Utils.CLOSE);
+    activity1 = getActivityManager().getActivity(activityId1);
+    assertFalse(activity1.isLocked());
+    
+    //lock forum
+    forum.setIsLock(true);
+    forumService.modifyForum(forum, Utils.LOCK);
+    activity1 = getActivityManager().getActivity(activityId1);
+    assertTrue(activity1.isLocked());
+  }
+  
   private ActivityManager getActivityManager() {
     return (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
   }
