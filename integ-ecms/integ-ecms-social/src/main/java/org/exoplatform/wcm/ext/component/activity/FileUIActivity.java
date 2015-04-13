@@ -557,7 +557,7 @@ public class FileUIActivity extends BaseUIActivity{
    * @throws Exception
    */
   public boolean isFileSupportPreview(Node data) throws Exception {
-    if (data.isNodeType(Utils.NT_FILE)) {
+    if (data != null && data.isNodeType(Utils.NT_FILE)) {
       UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
       List<UIExtension> extensions = manager.getUIExtensions(Utils.FILE_VIEWER_EXTENSION_TYPE);
 
