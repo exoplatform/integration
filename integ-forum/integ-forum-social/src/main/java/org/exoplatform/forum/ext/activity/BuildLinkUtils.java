@@ -16,8 +16,10 @@
  */
 package org.exoplatform.forum.ext.activity;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.forum.common.CommonUtils;
@@ -37,8 +39,11 @@ import org.exoplatform.portal.mop.user.UserNavigation;
 import org.exoplatform.portal.mop.user.UserNode;
 import org.exoplatform.portal.mop.user.UserPortal;
 import org.exoplatform.portal.pom.data.ApplicationData;
+import org.exoplatform.portal.pom.data.ComponentData;
+import org.exoplatform.portal.pom.data.ContainerData;
 import org.exoplatform.portal.pom.data.ModelData;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.web.application.RequestContext;
@@ -49,6 +54,8 @@ public class BuildLinkUtils {
   public static final String SPACES_GROUP = SpaceUtils.SPACE_GROUP.substring(1);
 
   public static final String CATEGORY     = "category";
+  
+  private static final String FORUM_PORTLET_PUBLIC_KEY     = "FORUM_PORTLET_PUBLIC_KEY";
 
   public enum PORTLET_INFO {
     FORUM("ForumPortlet", "Forum Portlet", "forum"),
@@ -134,8 +141,15 @@ public class BuildLinkUtils {
       if (isInSpace(parentObjectId)) {
         link = buildSpaceLink(getGroupId(parentObjectId, portletInfo), objectType, objectId, portletInfo);
       } else {
+        //caching the topic link
+        ConversationState state = ConversationState.getCurrent();
+        String forumLink = (String) state.getAttribute(FORUM_PORTLET_PUBLIC_KEY);
+        
+        if (forumLink != null && forumLink.length() > 0) {
+          return new StringBuffer(forumLink).append(buildLink_(objectType, objectId, portletInfo)).toString();
+        }
+        
         PortalRequestContext prc = Util.getPortalRequestContext();
-
         if (!CommonUtils.isEmpty(siteName) && !prc.getSiteKey().getName().equals(siteName)) {
           SiteKey siteKey = SiteKey.portal(siteName);
           String nodeURI = getSiteName(siteKey, portletInfo);
@@ -151,9 +165,12 @@ public class BuildLinkUtils {
 
           UserNode portletNode = getPortletNode(rootNode, portletInfo);
           if (portletNode != null) {
-            link = new StringBuffer(getNodeURL(portletNode)).append(buildLink_(objectType, objectId, portletInfo)).toString();
+            forumLink = getNodeURL(portletNode);
+            state.setAttribute(FORUM_PORTLET_PUBLIC_KEY, forumLink);
+            link = new StringBuffer(forumLink).append(buildLink_(objectType, objectId, portletInfo)).toString();
           }
         }
+        
       }
       //
       return link;
@@ -178,18 +195,17 @@ public class BuildLinkUtils {
       } catch (Exception e) {
         continue;
       }
+      List<ComponentData> dataModels = new ArrayList<ComponentData>();
       for (ModelObject model : page.getChildren()) {
         ModelData modelData = model.build();
-        if (modelData instanceof ApplicationData) {
-          ApplicationData applicationData = (ApplicationData) model.build();
-          if ((applicationData.getDescription() != null && 
-              applicationData.getDescription().equals(portletInfo.getDescription())) || 
-              (applicationData.getTitle() != null && 
-              applicationData.getTitle().equals(portletInfo.getDescription()))) {
-            return node;
-          }
+        if (modelData instanceof ComponentData) {
+          dataModels.add((ComponentData) modelData);
         }
       }
+      if (getUserNode(dataModels, portletInfo)) {
+        return node;
+      }
+
       if (node.getChildrenSize() > 0) {
         UserNode child = getPortletNode(node, portletInfo);
         if (child != null) return child;
@@ -197,7 +213,26 @@ public class BuildLinkUtils {
     }
     return null;
   }
-  
+
+  private static Boolean getUserNode(List<ComponentData> models, PORTLET_INFO portletInfo) {
+    for (ModelData modelData : models) {
+      if (modelData instanceof ApplicationData) {
+        ApplicationData<?> applicationData = (ApplicationData<?>) modelData;
+        if ((applicationData.getDescription() != null 
+            && applicationData.getDescription().equals(portletInfo.getDescription()))
+            || (applicationData.getTitle() != null
+            && applicationData.getTitle().equals(portletInfo.getDescription()))) {
+          return true;
+        }
+      } else if (modelData instanceof ContainerData) {
+        ContainerData containerData = (ContainerData) modelData;
+        List<ComponentData> models_ = containerData.getChildren();
+        return getUserNode(models_, portletInfo);
+      }
+    }
+    return false;
+  }
+
   private static String getNodeURL(UserNode node) {
     RequestContext ctx = RequestContext.getCurrentInstance();
     NodeURL nodeURL = ctx.createURL(NodeURL.TYPE);
