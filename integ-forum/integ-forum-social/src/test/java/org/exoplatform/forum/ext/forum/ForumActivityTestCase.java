@@ -17,6 +17,7 @@
 package org.exoplatform.forum.ext.forum;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.exoplatform.commons.utils.ListAccess;
@@ -32,7 +33,6 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
-
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -373,6 +373,35 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     forumService.modifyForum(forum, Utils.LOCK);
     activity1 = getActivityManager().getActivity(activityId1);
     assertTrue(activity1.isLocked());
+  }
+  
+  public void testModerateTopic() throws Exception {
+    Forum forum = forumService.getForum(categoryId, forumId);
+    assertNotNull(forum);
+    
+    //create a topic
+    Topic topic1 = createdTopic("root");
+    topic1.setDescription("topic 1");
+    topic1.setIsModeratePost(true);
+    forumService.saveTopic(categoryId, forumId, topic1, true, false, new MessageBuilder());
+   
+    String activityId1 = forumService.getActivityIdForOwnerPath(topic1.getPath());
+    ExoSocialActivity activity1 = getActivityManager().getActivity(activityId1);
+    List<ExoSocialActivity> comments = getActivityManager().getCommentsWithListAccess(activity1).loadAsList(0, 10);
+    assertEquals(0, comments.size());
+    
+    Post post1 = createdPost("Re:topic1", "Reply1 on topic1.");
+    post1.setIsApproved(!topic1.getIsModeratePost());
+    forumService.savePost(categoryId, forumId, topic1.getId(), post1, true, new MessageBuilder());
+    
+    activity1 = getActivityManager().getActivity(activityId1);
+    comments = getActivityManager().getCommentsWithListAccess(activity1).loadAsList(0, 10);
+    assertEquals(0, comments.size());
+    
+    forumService.modifyPost(Arrays.asList(post1), Utils.APPROVE);
+    activity1 = getActivityManager().getActivity(activityId1);
+    comments = getActivityManager().getCommentsWithListAccess(activity1).loadAsList(0, 10);
+    assertEquals(1, comments.size());
   }
   
   private ActivityManager getActivityManager() {
