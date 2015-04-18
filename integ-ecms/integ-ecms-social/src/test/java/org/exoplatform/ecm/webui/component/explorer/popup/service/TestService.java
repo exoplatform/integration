@@ -17,10 +17,8 @@
 
 package org.exoplatform.ecm.webui.component.explorer.popup.service;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.StandaloneContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.cms.link.LinkManager;
@@ -31,8 +29,6 @@ import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.app.SessionProviderService;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityConstants;
@@ -44,7 +40,6 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.wcm.ext.component.document.service.IShareDocumentService;
 import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Session;
@@ -134,7 +129,6 @@ public class TestService extends TestCase {
     sessionProviderService_ = (SessionProviderService) container.getComponentInstanceOfType(SessionProviderService.class);
     //linkManager = (LinkManager)container.getComponentInstanceOfType(LinkManager.class);
     applySystemSession();
-    reset();
     
     //init Node to share
     this.nodeLocation = NodeLocation.getNodeLocationByNode(this.session.getRootNode().addNode(nodePath));
@@ -159,7 +153,6 @@ public class TestService extends TestCase {
     System.out.println("Setup complete!!!");
   }
 
-  
   public void testShare() throws Exception {
   //share node
     IShareDocumentService temp = (IShareDocumentService) container.getComponentInstanceOfType(IShareDocumentService.class);
@@ -171,7 +164,7 @@ public class TestService extends TestCase {
     assertEquals(1, nodeIterator.getSize());
     Node target = nodeIterator.nextNode();
     assertEquals("exo:symlink", target.getPrimaryNodeType().getName());
-    Node origin = linkManager.getTarget(target);
+    Node origin = linkManager.getTarget(target,true);
     assertEquals("/" + nodePath, origin.getPath());
     //Test permission
     ExtendedNode extendedNode = (ExtendedNode) origin;
@@ -182,23 +175,10 @@ public class TestService extends TestCase {
     assertEquals(this.comment, activity.getTemplateParams().get(ShareDocumentService.MESSAGE));
   }
 
-
-
-
-
-  private void reset() throws Exception {
-    Node rootNode = session.getRootNode();
-    Node blog = (rootNode.hasNode("Blog")) ? rootNode.getNode("Blog") : rootNode.addNode("Blog");
-    blog.remove();
-    rootNode.save();
-  }
-
   public void applySystemSession() throws Exception{
     System.setProperty("gatein.tenant.repository.name", REPO_NAME);
     container = StandaloneContainer.getInstance();
 
-    repositoryService = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
-    sessionProviderService_ = (SessionProviderService) container.getComponentInstanceOfType(SessionProviderService.class);
     repositoryService.setCurrentRepositoryName(REPO_NAME);
     repository = repositoryService.getCurrentRepository();
 
