@@ -34,11 +34,16 @@ import org.exoplatform.services.cms.templates.TemplateService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
+import org.exoplatform.social.webui.activity.UIActivitiesContainer;
+import org.exoplatform.social.webui.composer.PopupContainer;
 import org.exoplatform.web.application.JavascriptManager;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
+import org.exoplatform.webui.core.UIContainer;
+import org.exoplatform.webui.core.UIPopupContainer;
+import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.Lifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
@@ -56,11 +61,14 @@ import org.exoplatform.webui.ext.UIExtensionManager;
 @ComponentConfig(
   lifecycle = Lifecycle.class,
   events = {
-    @EventConfig(listeners = UIDocViewer.DownloadActionListener.class)
+    @EventConfig(listeners = UIDocViewer.DownloadActionListener.class),
+    @EventConfig(listeners = UIBaseNodePresentation.OpenDocInDesktopActionListener.class)    
   }
 )
 public class UIDocViewer extends UIBaseNodePresentation {
 
+  private static final String UIDocViewerPopup = "UIDocViewerPopup";
+  
   /**
    * The logger.
    */
@@ -190,4 +198,15 @@ public class UIDocViewer extends UIBaseNodePresentation {
     NodeLocation nodeLocation = new NodeLocation(repository, workspace, docPath);
     return NodeLocation.getNodeByLocation(nodeLocation);
   }
+
+  @Override
+  public UIPopupContainer getPopupContainer() throws Exception {
+    UIPopupContainer pContainer1 = getAncestorOfType(UIPopupContainer.class); 
+    UIPopupContainer pContainer2 = pContainer1.getChildById(UIDocViewerPopup);
+    if (pContainer2 == null) {
+      pContainer2 = pContainer1.addChild(UIPopupContainer.class, null, UIDocViewerPopup);
+    }
+    return pContainer2;
+  }
+  
 }

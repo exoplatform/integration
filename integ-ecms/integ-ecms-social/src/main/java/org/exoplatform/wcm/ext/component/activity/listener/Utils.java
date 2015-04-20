@@ -51,6 +51,8 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.wcm.ext.component.activity.ContentUIActivity;
+import org.exoplatform.wcm.ext.component.activity.FileUIActivity;
+import org.exoplatform.webui.application.WebuiRequestContext;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -147,6 +149,9 @@ public class Utils {
     if (isSystemComment) {
       activityParams.put(ContentUIActivity.IS_SYSTEM_COMMENT, String.valueOf(isSystemComment));
     	activityParams.put(ContentUIActivity.SYSTEM_COMMENT, systemComment);
+    }else{
+      activityParams.put(ContentUIActivity.IS_SYSTEM_COMMENT, String.valueOf(false));
+      activityParams.put(ContentUIActivity.SYSTEM_COMMENT, "");
     }
     return activityParams;
   }
@@ -813,5 +818,55 @@ public class Utils {
     if (index>MAX_SUMMARY_CHAR_COUNT) index = MAX_SUMMARY_CHAR_COUNT-1;
     result = result.substring(0, index) + "<br>...";
     return result;
-  }  
+  }
+
+  public static String[] getSystemCommentTitle(Map<String, String> activityParams) {
+    String[] result;
+    if (activityParams == null) return null;
+    String commentValue = activityParams.get(FileUIActivity.SYSTEM_COMMENT);
+    if (!StringUtils.isEmpty(commentValue)) {
+      if (commentValue.indexOf(ActivityCommonService.VALUE_SEPERATOR) >= 0) {
+        result = commentValue.split(ActivityCommonService.VALUE_SEPERATOR);
+        return result;
+      } else {
+        return new String[]{commentValue};
+      }
+    }
+    return null;
+  }
+
+  public static String[] getSystemCommentBundle(Map<String, String> activityParams) {
+    String[] result;
+    if (activityParams == null) return null;
+    String tmp = activityParams.get(FileUIActivity.IS_SYSTEM_COMMENT);
+    String commentMessage;
+    if (tmp == null) return null;
+    try {
+      if (Boolean.parseBoolean(tmp)) {
+        commentMessage = activityParams.get(FileUIActivity.MESSAGE);
+        if (!StringUtils.isEmpty(commentMessage)) {
+          if (commentMessage.indexOf(ActivityCommonService.VALUE_SEPERATOR) >= 0) {
+            result = commentMessage.split(ActivityCommonService.VALUE_SEPERATOR);
+            return result;
+          } else {
+            return new String[]{commentMessage};
+          }
+        }
+      }
+    } catch (Exception e) {
+      return null;
+    }
+    return null;
+  }
+
+  public static String getBundleValue(String key) {
+    try {
+      WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
+      ResourceBundle res = context.getApplicationResourceBundle();
+      String value = res.getString(key);
+      return value;
+    } catch (MissingResourceException e) {
+      return key;
+    }
+  }
 }

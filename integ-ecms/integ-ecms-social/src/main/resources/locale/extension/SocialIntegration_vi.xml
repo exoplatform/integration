@@ -82,4 +82,19 @@
       </label>
     </dialog>
   </ElementSet>
+  <OpenDocumentInOffice>
+    <label>
+      <exo.remote-edit.word>Mở với Word</exo.remote-edit.word>
+      <exo.remote-edit.excel>Mở với Excel</exo.remote-edit.excel>
+      <exo.remote-edit.powerpoint>Mở với Powerpoint</exo.remote-edit.powerpoint>
+      <exo.remote-edit.desktop>Mở với Desktop</exo.remote-edit.desktop>
+      <exo.remote-edit.desktop-app>Mở với</exo.remote-edit.desktop-app>
+    </label>
+  </OpenDocumentInOffice>
+  <UIPopupMenu>
+    <msg>
+      <lock-node-read-only>Tệp tin này bị khóa bởi user {0}. Mở chỉ đọc?</lock-node-read-only>
+    </msg>
+  </UIPopupMenu>
+
 </bundle>

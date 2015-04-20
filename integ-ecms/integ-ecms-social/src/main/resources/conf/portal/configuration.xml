@@ -257,60 +257,132 @@
 		</component-plugin>
 	</external-component-plugins>
 
-	  <external-component-plugins>
-    <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+	<external-component-plugins>
+	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+	  <component-plugin>
+	    <name>notification.plugins</name>
+	    <set-method>addChildPlugin</set-method>
+	    <type>org.exoplatform.wcm.notification.plugin.ContentActivityChildPlugin</type>
+	    <description>Initial information for content child notification plugin.</description>
+	    <init-params>
+	      <value-param>
+	        <name>templatePath</name>
+	        <value><![CDATA[classpath:/groovy/ecm/social-integration/plugin/notification/ContentActivity.gtmpl]]></value>
+	      </value-param>
+	      <object-param>
+	        <name>template.ContentActivityChildPlugin</name>
+	        <description>The template of ContentActivityChildPlugin</description>
+	        <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
+	          <field name="pluginId">
+	            <string>contents:spaces</string>
+	          </field>
+	          <field name="bundlePath">
+	            <string>locale.extension.notification.ECMSNotification</string>
+	          </field>
+	        </object>
+	      </object-param>
+	    </init-params>
+	  </component-plugin>
+	</external-component-plugins>
+
+	<external-component-plugins>
+	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+	  <component-plugin>
+	    <name>notification.plugins</name>
+	    <set-method>addChildPlugin</set-method>
+	    <type>org.exoplatform.wcm.notification.plugin.FileActivityChildPlugin</type>
+	    <description>Initial information for file child notification plugin.</description>
+	    <init-params>
+	      <value-param>
+	        <name>templatePath</name>
+	        <value><![CDATA[classpath:/groovy/ecm/social-integration/plugin/notification/FileActivity.gtmpl]]></value>
+	      </value-param>
+	      <object-param>
+	        <name>template.FileActivityChildPlugin</name>
+	        <description>The template of FileActivityChildPlugin</description>
+	        <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
+	          <field name="pluginId">
+	            <string>files:spaces</string>
+	          </field>
+	          <field name="bundlePath">
+	            <string>locale.extension.notification.ECMSNotification</string>
+	          </field>
+	        </object>
+	      </object-param>
+	    </init-params>
+	  </component-plugin>
+	</external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.resources.ResourceBundleService</target-component>
     <component-plugin>
-      <name>notification.plugins</name>
-      <set-method>addChildPlugin</set-method>
-      <type>org.exoplatform.wcm.notification.plugin.ContentActivityChildPlugin</type>
-      <description>Initial information for content child notification plugin.</description>
+      <name>Link Composer Plugin Resource Bundle</name>
+      <set-method>addResourceBundle</set-method>
+      <type>org.exoplatform.services.resources.impl.BaseResourceBundlePlugin</type>
       <init-params>
-        <value-param>
-          <name>templatePath</name>
-          <value><![CDATA[classpath:/groovy/ecm/social-integration/plugin/notification/ContentActivity.gtmpl]]></value>
-        </value-param>
-        <object-param>
-          <name>template.ContentActivityChildPlugin</name>
-          <description>The template of ContentActivityChildPlugin</description>
-          <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
-            <field name="pluginId">
-              <string>contents:spaces</string>
-            </field>
-            <field name="bundlePath">
-              <string>locale.extension.notification.ECMSNotification</string>
-            </field>
-          </object>
-        </object-param>
+        <values-param>
+          <name>classpath.resources</name>
+          <description>The resources that start with the following package name should be load from file system</description>
+          <value>locale.social.plugin.link.UILinkComposerPlugin</value>
+        </values-param>
+        <values-param>
+          <name>portal.resource.names</name>
+          <description>The resources that start with the following package name should be load from file system</description>
+          <value>locale.social.plugin.link.UILinkComposerPlugin</value>
+        </values-param>
       </init-params>
     </component-plugin>
   </external-component-plugins>
 
   <external-component-plugins>
-    <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+    <target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
     <component-plugin>
-      <name>notification.plugins</name>
-      <set-method>addChildPlugin</set-method>
-      <type>org.exoplatform.wcm.notification.plugin.FileActivityChildPlugin</type>
-      <description>Initial information for file child notification plugin.</description>
+      <name>add.action</name>
+      <set-method>registerUIExtensionPlugin</set-method>
+      <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
       <init-params>
-        <value-param>
-          <name>templatePath</name>
-          <value><![CDATA[classpath:/groovy/ecm/social-integration/plugin/notification/FileActivity.gtmpl]]></value>
-        </value-param>
         <object-param>
-          <name>template.FileActivityChildPlugin</name>
-          <description>The template of FileActivityChildPlugin</description>
-          <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
-            <field name="pluginId">
-              <string>files:spaces</string>
+          <name>Document Activity</name>
+          <object type="org.exoplatform.social.webui.activity.UIActivityExtension">
+            <field name="type">
+              <string>org.exoplatform.social.webui.activity.BaseUIActivity</string>
             </field>
-            <field name="bundlePath">
-              <string>locale.extension.notification.ECMSNotification</string>
+            <field name="name">
+              <string>LINK_ACTIVITY</string>
+            </field>
+            <field name="component">
+              <string>org.exoplatform.wcm.ext.component.activity.UILinkActivity</string>
+            </field>
+            <field name="activityBuiderClass">
+              <string>org.exoplatform.wcm.ext.component.activity.UILinkActivityBuilder</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>add.action</name>
+      <set-method>registerUIExtensionPlugin</set-method>
+      <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+      <init-params>
+        <object-param>
+          <name>Document Composer</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type">
+              <string>org.exoplatform.social.webui.composer.UIActivityComposer</string>
+            </field>
+            <field name="name">
+              <string>LINK_ACTIVITY</string>
+            </field>
+            <field name="component">
+              <string>org.exoplatform.wcm.ext.component.activity.UILinkActivityComposer</string>
+            </field>
+            <field name="rank">
+              <int>1</int>
             </field>
           </object>
         </object-param>
       </init-params>
     </component-plugin>
   </external-component-plugins>
-	
 </configuration>

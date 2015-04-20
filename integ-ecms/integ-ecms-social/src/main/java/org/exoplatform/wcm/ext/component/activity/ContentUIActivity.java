@@ -16,35 +16,23 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.portlet.PortletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.webui.util.Util;
-import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
-import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.services.wcm.publication.WCMPublicationService;
+import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
-import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
@@ -56,6 +44,15 @@ import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.portlet.PortletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
@@ -144,7 +141,11 @@ public class ContentUIActivity extends BaseUIActivity {
   private String             docTitle;
   private String             docVersion;
   private String             docSummary;
-  
+
+  public String              docPath;
+  public String              repository;
+  public String              workspace;
+
   public ContentUIActivity() throws Exception {
     super();
   }
@@ -359,7 +360,6 @@ public class ContentUIActivity extends BaseUIActivity {
   /**
    * Gets the webdav url.
    * 
-   * @param node the node
    * @return the webdav url
    * @throws Exception the exception
    */
@@ -391,52 +391,26 @@ public class ContentUIActivity extends BaseUIActivity {
   }
 
   public String[] getSystemCommentBundle(Map<String, String> activityParams) {
-    String[] result;
-    if (activityParams==null) return null;
-    String tmp = activityParams.get(ContentUIActivity.IS_SYSTEM_COMMENT);
-    String commentMessage;
-    if (tmp==null) return null;
-    try {
-      if (Boolean.parseBoolean(tmp)) {
-        commentMessage  = activityParams.get(ContentUIActivity.MESSAGE);
-        if (!StringUtils.isEmpty(commentMessage)) {
-          if (commentMessage.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
-            result = commentMessage.split(ActivityCommonService.VALUE_SEPERATOR); 
-            return result;
-          }else {
-            return new String[] {commentMessage};
-          }
-        }
-      } 
-    }catch (Exception e) {
-      
-      return null;
-    }
-    return null;
-    
+    return Utils.getSystemCommentBundle(activityParams);
   }
   public String[] getSystemCommentTitle(Map<String, String> activityParams) {
-    String[] result;
-    if (activityParams==null) return null;
-    String commentValue = activityParams.get(ContentUIActivity.SYSTEM_COMMENT);
-    if (!StringUtils.isEmpty(commentValue)) {
-      if (commentValue.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
-        result = commentValue.split(ActivityCommonService.VALUE_SEPERATOR); 
-        return result;
-      }else {
-        return new String[] {commentValue};
-      }
-    }
-    return null;
+    return Utils.getSystemCommentTitle(activityParams);
   }
   public String getViewLink() {
+    String viewLink = StringUtils.EMPTY;
+    Node data = getContentNode();
     try {
-      String result = org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
-      return result;
-    }catch (Exception e) {
-      return "";
+      if (isContentSupportPreview(data)) {
+        viewLink = this.event("ViewDocument", this.getId(), StringUtils.EMPTY);
+      } else {
+        viewLink = org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
+      }
+      return viewLink;
+    } catch (Exception e) {
+      return viewLink;
     }
   }
+
   public String getEditLink() {
     try {
       return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), true, false);
@@ -455,19 +429,42 @@ public class ContentUIActivity extends BaseUIActivity {
     }
     return Integer.parseInt(currentVersion);
   }
+
+  /**
+   * <h2>Check if node content is supported by preview on activity stream
+   * A preview from the activity stream is available for the following contents:
+   * </h2>
+   * <ul>
+   * <li>Webcontent</li>
+   * </ul>
+   * @param data Content node
+   * @return true: support; false: not support
+   * @throws Exception
+   */
+  public boolean isContentSupportPreview(Node data) throws RepositoryException{
+    if (data.isNodeType(org.exoplatform.ecm.webui.utils.Utils.EXO_WEBCONTENT)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   
   public static class ViewDocumentActionListener extends EventListener<ContentUIActivity> {
     @Override
     public void execute(Event<ContentUIActivity> event) throws Exception {
-      final ContentUIActivity docActivity = event.getSource();
-      final UIActivitiesContainer activitiesContainer = docActivity.getParent();
-      final PopupContainer popupContainer = activitiesContainer.getPopupContainer();
-      UIDocViewer docViewer = popupContainer.createUIComponent(UIDocViewer.class, null, "DocViewer");
-      final Node docNode = docActivity.getContentNode();
-      docViewer.setOriginalNode(docNode);
-      docViewer.setNode(docNode);
-      popupContainer.activate(docViewer, 800, 600, true);
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+      ContentUIActivity contentUIActivity = event.getSource();
+      UIActivitiesContainer uiActivitiesContainer = contentUIActivity.getParent();
+      PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
+
+      UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,
+              "UIDocumentPreview");
+      uiDocumentPreview.setBaseUIActivity(contentUIActivity);
+      uiDocumentPreview.setContentInfo(contentUIActivity.docPath, contentUIActivity.repository,
+              contentUIActivity.workspace,
+              contentUIActivity.getContentNode());
+
+      uiPopupContainer.activate(uiDocumentPreview, 0, 0, true);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiPopupContainer);
     }
   }
 }

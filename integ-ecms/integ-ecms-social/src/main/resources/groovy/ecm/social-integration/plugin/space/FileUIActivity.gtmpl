@@ -39,6 +39,9 @@
   import org.exoplatform.container.xml.PortalContainerInfo;
   import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 
+  import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+  import org.exoplatform.wcm.connector.collaboration.OpenInOfficeConnector;
+
   //ECMS import END
 
   def pcontext = Util.getPortalRequestContext();
@@ -51,7 +54,13 @@
   
   def rcontext = _ctx.getRequestContext();
   rcontext.getJavascriptManager().require("SHARED/jquery", "gj").addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
-  
+
+  if(currentNode!=null) {
+    def currentNodePath = currentNode.getSession().getWorkspace().getName()+":"+currentNode.getPath();
+    rcontext.getJavascriptManager().require("SHARED/openDocumentInOffice", "od")
+    .addScripts("gj(document).ready(function(){od.OpenDocumentInOffice.updateLabel('"+currentNodePath+"', '"+activity.id+"'); }); ");
+  }
+
 %>
 
 
@@ -84,7 +93,8 @@
   def activityStatus = uicomponent.getActivityStatus();
   def contentName = uicomponent.getContentName();
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
-  def contentActivityUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");
+  def contentNode = uicomponent.getContentNode();
+  def contentActivityUri =  uicomponent.getViewLink();
   def mimeType = uicomponent.getMimeType();
   
   //
@@ -208,13 +218,18 @@
 	  //ECMS declare variables - END
 	  def docTypeName = uicomponent.getDocTypeName();
 	  def docSummary = uicomponent.getDocSummary();
-	  def viewLink = uicomponent.getViewLink();
-	  def editLink = uicomponent.getEditLink();
 	  def downloadLink = uicomponent.getDownloadLink();
 	  def size = uicomponent.getSize(currentNode);
 	  def fileSize = uicomponent.getFileSize(currentNode);
 	  def description = uicomponent.getSummary(currentNode); 
       description = ContentReader.getXSSCompatibilityContent(description);
+
+	  def openInOfficeConnector = WCMCoreUtils.getService(OpenInOfficeConnector.class);
+	  def _documentInfos = openInOfficeConnector.getDocumentInfos(currentNode.getName());
+
+	  def remoteEditClass=_documentInfos[1];
+	  def remoteEditTitle=_ctx.appRes(_documentInfos[0]);
+
   // END ECMS
  %>
 <script language="JavaScript">
@@ -395,14 +410,15 @@
 						</li>
 					  <% }%>											 
 					</ul>  
-				 <% }%>	
-					 <ul class="pull-left statusAction">					 
+				 <% }%>
+					 <ul class="pull-left statusAction">
+				 	<% if(uicomponent.canEditDocument(currentNode)){%>
+						<li><a href="<%=uicomponent.event("OpenFile")%>"><i class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_$activity.id $remoteEditClass" ></i>&nbsp;$remoteEditTitle</a></li>
+				 	<%}%>
+					<% if (uicomponent.isFileSupportPreview(contentNode)) { %>
 						<li><a href="$contentActivityUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
+					<% }%>
 						<li><a href="$downloadLink"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
-						<% if(editLink != null && editLink.length() > 0) {%>
-		          <li><a href="$editLink"><i class="uiIconEdit uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.edit");%></a></li>
-		        <% } %>
-						
 					 </ul>
 				</div><!--end actionBar-->
 				
