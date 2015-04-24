@@ -100,6 +100,17 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
           ActivityExecutor.execute(task, ctx);
         }
         break;
+      case APPROVE:
+        if (post.getIsApproved() == false) {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.HIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        } else {
+          ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
+          PostActivityTask task = PostActivityTask.UNHIDE_POST;
+          ActivityExecutor.execute(task, ctx);
+        }
+        break;
       default:
         return;
     }

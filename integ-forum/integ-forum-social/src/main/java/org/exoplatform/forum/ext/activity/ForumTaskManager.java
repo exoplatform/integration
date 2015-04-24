@@ -32,6 +32,7 @@ import org.exoplatform.forum.common.InitParamsValue;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.idm.PicketLinkIDMServiceImpl;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.hibernate.TransactionException;
 import org.picocontainer.Startable;
@@ -109,7 +110,6 @@ public class ForumTaskManager implements Startable {
         try {
           if (idmServiceImpl.getIdentitySession().getTransaction().isActive()) {
             idmServiceImpl.getIdentitySession().getTransaction().commit();
-            RequestLifeCycle.end();
           }
         } catch (TransactionException e) {
           LOG.debug("The PoolingConnection is null ", e);
@@ -117,6 +117,7 @@ public class ForumTaskManager implements Startable {
           LOG.debug("End request life cycle unsuccessfully ", e);
         }
       }
+      RequestLifeCycle.end();
     }
     return true;
   }
@@ -169,26 +170,15 @@ public class ForumTaskManager implements Startable {
     try {
       //
       Queue<Task<ForumActivityContext>> tasks = popTasks();
-      
+
       Task<ForumActivityContext> task;
       while (!forceStop && (task = tasks.poll()) != null) {
-        ActivityTask<ForumActivityContext> activityTask = task.getTask();
-        //
-        ExoSocialActivity got = ActivityExecutor.execute(activityTask, task.getContext());
-        //
-        if (activityTask instanceof PostActivityTask) {
-          //
-          PostActivityTask task_ = PostActivityTask.ADD_POST;
-          if (got != null && activityTask.equals(task_)) {
-            //
-            ForumActivityUtils.takeCommentBack(task.getContext().getPost(), got);
-          }
-        } else if (activityTask instanceof TopicActivityTask) {
-          //
-          TopicActivityTask task_ = TopicActivityTask.ADD_TOPIC;
-          if (got != null && activityTask.equals(task_)) {
-            ForumActivityUtils.takeActivityBack(task.getContext().getTopic(), got);
-          }
+        ConversationState lastState = ConversationState.getCurrent();
+        try {
+          startProcess(task);
+          processTask(task);
+        } finally {
+          endProcess(task, lastState);
         }
       }
     } catch (Exception e) {
@@ -199,13 +189,52 @@ public class ForumTaskManager implements Startable {
     }
   }
 
+  private void startProcess(Task<ForumActivityContext> task) {
+    try{
+      ConversationState.setCurrent(task.getState());
+    }catch(Exception e){
+      LOG.warn("Failed to set state context for forum activity task", e);
+    }
+  }
+
+  private void processTask(Task<ForumActivityContext> task) {
+    ActivityTask<ForumActivityContext> activityTask = task.getTask();
+    //
+    ExoSocialActivity got = ActivityExecutor.execute(activityTask, task.getContext());
+    //
+    if (activityTask instanceof PostActivityTask) {
+      //
+      PostActivityTask task_ = PostActivityTask.ADD_POST;
+      if (got != null && activityTask.equals(task_)) {
+        //
+        ForumActivityUtils.takeCommentBack(task.getContext().getPost(), got);
+      }
+    } else if (activityTask instanceof TopicActivityTask) {
+      //
+      TopicActivityTask task_ = TopicActivityTask.ADD_TOPIC;
+      if (got != null && activityTask.equals(task_)) {
+        ForumActivityUtils.takeActivityBack(task.getContext().getTopic(), got);
+      }
+    }
+  }
+
+  private void endProcess(Task<ForumActivityContext> task, ConversationState lastState) {
+    try{
+      ConversationState.setCurrent(lastState);
+    }catch(Exception e){
+      LOG.warn("Failed to reset state context for forum activity task executing", e);
+    }
+  }
+
   public static class Task<T> {
     private ForumActivityContext ctx;
     private ActivityTask<T>      task;
+    private final ConversationState state;
 
     public Task(ForumActivityContext ctx, ActivityTask<T> task) {
       this.ctx = ctx;
       this.task = task;
+      this.state = ConversationState.getCurrent();
     }
 
     public ForumActivityContext getContext() {
@@ -214,6 +243,10 @@ public class ForumTaskManager implements Startable {
 
     public ActivityTask<T> getTask() {
       return task;
+    }
+    
+    public ConversationState getState(){
+      return this.state;
     }
   }
 }

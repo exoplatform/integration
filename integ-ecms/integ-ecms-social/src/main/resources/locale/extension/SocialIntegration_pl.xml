@@ -2,83 +2,83 @@
 <bundle>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>Rozmiar pliku</fileSize>
     </titles>
     <messages>
-      <createdBy>was created by</createdBy>
-      <editedBy>was edited by</editedBy>
-      <system>the system</system>
-      <readmore>...Read More.</readmore>
-      <editTitle>Title has been updated to: {0}</editTitle>
-      <editName>Name has been updated to: {0}</editName>
-      <editDescription>Description has been updated to: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <addSource>File source: {0} has been added</addSource>
-      <addMultiSource>File sources: {0} have been added</addMultiSource>
-      <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
-      <editSummary>Summary has been updated to: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
-      <editContent>Content has been updated.</editContent>
-      <editFile>File has been updated.</editFile>
-      <emptyTitle>The title has been removed.</emptyTitle>
-      <emptySummary>The summary has been removed.</emptySummary>
-      <emptyContent>The content has been removed.</emptyContent>
-      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} has been removed.</removeMetadata>  
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Name has been removed.</removeName>
-      <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator: {0} has been removed.</removeCreator>
-      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
-      <removeLanguage>Language has been removed.</removeLanguage>
-      <removeContent>Content has been removed.</removeContent>
-      <attachmentAdded>File(s) has been attached.</attachmentAdded>
-      <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
-      <categoryAdded>Category: {0} has been added.</categoryAdded>
-      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
-      <tagAdded>Tag: {0} has been added.</tagAdded>
-      <tagsAdded>Tags: {0} have been added.</tagsAdded>
-      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
+      <createdBy>został stworzony przez</createdBy>
+      <editedBy>był edytowany przez</editedBy>
+      <system>system</system>
+      <readmore>...Czytaj więcej.</readmore>
+      <editTitle>Tytuł został zaktualizowany: {0}</editTitle>
+      <editName>Nazwa została zaktualizowana: {0}</editName>
+      <editDescription>Opis został zaktualizowany: {0}</editDescription>
+      <singleCreator>Twórcą jest {0}</singleCreator>
+      <multiCreator>Twórcami są {0}</multiCreator>
+      <addSource>Źródło pliku: {0} zostało dodane</addSource>
+      <addMultiSource>Źródła pliku: {0}, zostały dodane</addMultiSource>
+      <removeSource>Źródło pliku: {0} zostało usunięte</removeSource>
+      <removeMultiSource>Źródła pliku: {0} zostały usunięte</removeMultiSource>
+      <editSummary>Streszczenie zostało zaktualizowane: {0}</editSummary>
+      <editLanguage>Język został zaktualizowany: {0}</editLanguage>
+      <editContent>Zawartość została zaktualizowana.</editContent>
+      <editFile>Plik został zaktualizowany.</editFile>
+      <emptyTitle>Tytuł został usunięty.</emptyTitle>
+      <emptySummary>Streszczenie zostało usunięte.</emptySummary>
+      <emptyContent>Zawartość została usunięta.</emptyContent>
+      <updateMetadata>Metadane {0} zostały zaktualizowane: {1}</updateMetadata>
+      <removeMetadata>Metadane {0} zostały usunięte.</removeMetadata>  
+      <removeTitle>Tytuł został usunięty.</removeTitle>
+      <removeName>Nazwa została usunięta.</removeName>
+      <removeSummary>Streszczenie została usunięte.</removeSummary>
+      <removeDescription>Opis został usunięty.</removeDescription>
+      <removeCreator>Twórca: {0} został usunięty.</removeCreator>
+      <removeMultiCreator>Twórcy: {0} zostali usunięci.</removeMultiCreator>
+      <removeLanguage>Język został usunięty.</removeLanguage>
+      <removeContent>Zawartość została usunięta.</removeContent>
+      <attachmentAdded>Plik(i) zostały dołączone.</attachmentAdded>
+      <attachmentRemoved>Plik(i) zostały usunięte.</attachmentRemoved>
+      <categoryAdded>Kategoria: {0} została dodana.</categoryAdded>
+      <categoryRemoved>Kategoria: {0} została usunięta.</categoryRemoved>
+      <tagAdded>Tag: {0} został dodany.</tagAdded>
+      <tagsAdded>Tagi: {0}, zostały dodane.</tagsAdded>
+      <tagRemoved>Tag: {0} został usunięty.</tagRemoved>
+      <tagsRemoved>Tagi: {0} zostały usunięte.</tagsRemoved>
       <stateChange>
-        <pending>Publication status is now pending.</pending>
-        <approved>Document has been approved.</approved>
-        <staged>Publication has been staged.</staged>
-        <published>Document has been published.</published>
+        <pending>Stan publikacja jest w toku.</pending>
+        <approved>Dokument został zatwierdzony.</approved>
+        <staged>Publikacja została wystawiona.</staged>
+        <published>Dokument został opublikowany.</published>
       </stateChange>
-      <contentMoved>Publication has been moved to: {0}</contentMoved>
-      <fileMoved>File has been moved to: {0}</fileMoved>
-      <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
-      <version>Version: {0}</version>
+      <contentMoved>Publikacja została przeniesiona do: {0}</contentMoved>
+      <fileMoved>Plik został przeniesiony do: {0}</fileMoved>
+      <revisionChanged>Publikacja została przywrócona do wersji: {0}</revisionChanged>
+      <version>Wersja: {0}</version>
     </messages>
     <publicationStates>
-      <archived>Archived</archived>
-      <obsolete>Obsolete</obsolete>
-      <unpublished>Unpublished</unpublished>
-      <draft>Draft</draft>
-      <pending>Pending</pending>
-      <approved>Approved</approved>
-      <inreview>In Review</inreview>
-      <staged>Staged</staged>
-      <published>Published</published>
-      <live>Published</live>
+      <archived>Zarchiwizowane</archived>
+      <obsolete>Przestarzałe</obsolete>
+      <unpublished>Nieopublikowane</unpublished>
+      <draft>Projekt</draft>
+      <pending>Oczekuje</pending>
+      <approved>Zatwierdzony</approved>
+      <inreview>W trakcie weryfikacji</inreview>
+      <staged>Wystawione</staged>
+      <published>Opublikowane</published>
+      <live>Opublikowane</live>
     </publicationStates>
-    <view>View</view>
-    <edit>Edit</edit>
-    <download>Download</download>
+    <view>Zobacz</view>
+    <edit>Edytuj</edit>
+    <download>Pobierz</download>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Preview</DocViewer>
+      <DocViewer>Podgląd</DocViewer>
     </title>
   </UIPopupWindow>
   <ElementSet>
     <dialog>
       <label>       
-        <resourceType>Resource Type</resourceType>        
+        <resourceType>Typ zasobu</resourceType>        
       </label>
     </dialog>
   </ElementSet>

@@ -29,149 +29,6 @@
 		<target-component>org.exoplatform.wcm.ext.component.document.service.DocumentService</target-component>
 	</external-component-plugins>
 	
-	<external-component-plugins>
-		<target-component>org.exoplatform.services.listener.ListenerService</target-component>
-		
-		<component-plugin profiles="all">
-			<name>ActivityNotify.event.NodeCreated</name>
-			<set-method>addListener</set-method>
-			<type>org.exoplatform.wcm.ext.component.activity.listener.ContentCreateActivityListener</type>
-			<description>this listener will publish an activity when a content has been	created and initiated state</description>
-		</component-plugin>
-		
-		<component-plugin profiles="all">
-			<name>ActivityNotify.event.FileCreated</name>
-			<set-method>addListener</set-method>
-			<type>org.exoplatform.wcm.ext.component.activity.listener.FileCreateActivityListener</type>
-			<description>this listener will publish an activity when a file has been	created and initiated state</description>
-		</component-plugin>
-		
-		<component-plugin profiles="all">
-			<name>ActivityNotify.event.StateChanged</name>
-			<set-method>addListener</set-method>
-			<type>org.exoplatform.wcm.ext.component.activity.listener.PublicationStateActivityListener</type>
-			<description>this listener will publish an activity when the state of a content	has been changed</description>
-		</component-plugin>
-		
-		<component-plugin profiles="all">
-			<name>ActivityNotify.event.PropertyUpdated</name>
-			<set-method>addListener</set-method>
-			<type>org.exoplatform.wcm.ext.component.activity.listener.ContentUpdateActivityListener</type>
-			<description>this listener will publish an activity when a content has been	updated</description>
-		</component-plugin>
-		
-		<component-plugin profiles="all">
-			<name>FileActivityNotify.event.PropertyAdded</name>
-			<set-method>addListener</set-method>
-			<type>org.exoplatform.wcm.ext.component.activity.listener.FileAddPropertyActivityListener</type>
-			<description>this listener will create a new comment when a property has been	added</description>
-		</component-plugin>
-		
-		<component-plugin profiles="all">
-			<name>FileActivityNotify.event.PropertyRemoved</name>
-			<set-method>addListener</set-method>
-			<type>org.exoplatform.wcm.ext.component.activity.listener.FileRemovePropertyActivityListener</type>
-			<description>this listener will create a new comment/activity when a property has been removed</description>
-		</component-plugin>		
-		
-		<component-plugin profiles="all">
-			<name>FileActivityNotify.event.FileRemoved</name>
-			<set-method>addListener</set-method>
-			<type>org.exoplatform.wcm.ext.component.activity.listener.FileRemoveActivityListener</type>
-			<description>this listener will create a new comment/activity when a property has been removed</description>
-		</component-plugin>
-		
-		<component-plugin profiles="all">
-			<name>FileActivityNotify.event.PropertyUpdated</name>
-			<set-method>addListener</set-method>
-			<type>org.exoplatform.wcm.ext.component.activity.listener.FileUpdateActivityListener</type>
-			<description>this listener will create a new comment when a property has been	updated</description>
-		</component-plugin>
-		
-		<component-plugin profiles="all">
-      <name>ActivityNotify.event.AttachmentAdded</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.AttachmentActivityListener</type>
-      <description>this listener will publish an activity when an attachment added</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.AttachmentRemoved</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.AttachmentActivityListener</type>
-      <description>this listener will publish an activity when an attachment removed</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.CategoryAdded</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.CategoryActivityListener</type>
-      <description>this listener will publish an activity when a Category added</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.CategoryRemoved</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.CategoryActivityListener</type>
-      <description>this listener will publish an activity when a Category removed</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.TagAdded</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.TagActivityListener</type>
-      <description>this listener will publish an activity when tags added</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.TagRemoved</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.TagActivityListener</type>
-      <description>this listener will publish an activity when tags removed</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.CommentAdded</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.CommentAddedActivityListener</type>
-      <description>this listener will publish an activity when comment added</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.CommentUpdated</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.CommentUpdatedActivityListener</type>
-      <description>this listener will publish an activity when comment updated</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.CommentRemoved</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.CommentRemovedActivityListener</type>
-      <description>this listener will publish an activity when comment removed</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.NodeMoved</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.ContentMovedActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.NodeRemoved</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.ContentRemovedActivityListener</type>
-      <description>this listener will publish an activity when a content has been updated</description>
-    </component-plugin>
-    
-    <component-plugin profiles="all">
-      <name>ActivityNotify.event.RevisionChanged</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.wcm.ext.component.activity.listener.ContentRevisionActivityListener</type>
-      <description>this listener will publish an activity when content revision changed</description>
-    </component-plugin>
-	</external-component-plugins>
 	
 	<external-component-plugins>
 		<target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
@@ -256,6 +113,7 @@
 			</init-params>
 		</component-plugin>
 	</external-component-plugins>
+
 	<external-component-plugins>
 	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
 	  <component-plugin>
@@ -264,12 +122,10 @@
 	    <type>org.exoplatform.wcm.notification.plugin.ContentActivityChildPlugin</type>
 	    <description>Initial information for content child notification plugin.</description>
 	    <init-params>
-	      <values-param>
-	        <name>parentIds</name>
-	        <description>The list parent plugin' id</description>
-	        <value>LikePlugin</value>
-	        <value>ActivityCommentPlugin</value>
-	      </values-param>
+	      <value-param>
+	        <name>templatePath</name>
+	        <value><![CDATA[classpath:/groovy/ecm/social-integration/plugin/notification/ContentActivity.gtmpl]]></value>
+	      </value-param>
 	      <object-param>
 	        <name>template.ContentActivityChildPlugin</name>
 	        <description>The template of ContentActivityChildPlugin</description>
@@ -277,22 +133,15 @@
 	          <field name="pluginId">
 	            <string>contents:spaces</string>
 	          </field>
-	          <field name="templateConfig">
-	            <object type="org.exoplatform.commons.api.notification.plugin.config.TemplateConfig">
-	              <field name="bundlePath">
-	                <string>locale.extension.notification.ECMSNotification</string>
-	              </field>
-	              <field name="templatePath">
-	                <string>classpath:/groovy/ecm/social-integration/plugin/notification/ContentActivity.gtmpl</string>
-	              </field>
-	            </object>
+	          <field name="bundlePath">
+	            <string>locale.extension.notification.ECMSNotification</string>
 	          </field>
 	        </object>
 	      </object-param>
 	    </init-params>
 	  </component-plugin>
 	</external-component-plugins>
-	
+
 	<external-component-plugins>
 	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
 	  <component-plugin>
@@ -301,6 +150,10 @@
 	    <type>org.exoplatform.wcm.notification.plugin.FileActivityChildPlugin</type>
 	    <description>Initial information for file child notification plugin.</description>
 	    <init-params>
+	      <value-param>
+	        <name>templatePath</name>
+	        <value><![CDATA[classpath:/groovy/ecm/social-integration/plugin/notification/FileActivity.gtmpl]]></value>
+	      </value-param>
 	      <object-param>
 	        <name>template.FileActivityChildPlugin</name>
 	        <description>The template of FileActivityChildPlugin</description>
@@ -308,20 +161,85 @@
 	          <field name="pluginId">
 	            <string>files:spaces</string>
 	          </field>
-	          <field name="templateConfig">
-	            <object type="org.exoplatform.commons.api.notification.plugin.config.TemplateConfig">
-	              <field name="bundlePath">
-	                <string>locale.extension.notification.ECMSNotification</string>
-	              </field>
-	              <field name="templatePath">
-	                <string>classpath:/groovy/ecm/social-integration/plugin/notification/FileActivity.gtmpl</string>
-	              </field>
-	            </object>
+	          <field name="bundlePath">
+	            <string>locale.extension.notification.ECMSNotification</string>
 	          </field>
 	        </object>
 	      </object-param>
 	    </init-params>
 	  </component-plugin>
 	</external-component-plugins>
-	
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.resources.ResourceBundleService</target-component>
+    <component-plugin>
+      <name>Link Composer Plugin Resource Bundle</name>
+      <set-method>addResourceBundle</set-method>
+      <type>org.exoplatform.services.resources.impl.BaseResourceBundlePlugin</type>
+      <init-params>
+        <values-param>
+          <name>classpath.resources</name>
+          <description>The resources that start with the following package name should be load from file system</description>
+          <value>locale.social.plugin.link.UILinkComposerPlugin</value>
+        </values-param>
+        <values-param>
+          <name>portal.resource.names</name>
+          <description>The resources that start with the following package name should be load from file system</description>
+          <value>locale.social.plugin.link.UILinkComposerPlugin</value>
+        </values-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
+    <component-plugin>
+      <name>add.action</name>
+      <set-method>registerUIExtensionPlugin</set-method>
+      <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+      <init-params>
+        <object-param>
+          <name>Document Activity</name>
+          <object type="org.exoplatform.social.webui.activity.UIActivityExtension">
+            <field name="type">
+              <string>org.exoplatform.social.webui.activity.BaseUIActivity</string>
+            </field>
+            <field name="name">
+              <string>LINK_ACTIVITY</string>
+            </field>
+            <field name="component">
+              <string>org.exoplatform.wcm.ext.component.activity.UILinkActivity</string>
+            </field>
+            <field name="activityBuiderClass">
+              <string>org.exoplatform.wcm.ext.component.activity.UILinkActivityBuilder</string>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>add.action</name>
+      <set-method>registerUIExtensionPlugin</set-method>
+      <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+      <init-params>
+        <object-param>
+          <name>Document Composer</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type">
+              <string>org.exoplatform.social.webui.composer.UIActivityComposer</string>
+            </field>
+            <field name="name">
+              <string>LINK_ACTIVITY</string>
+            </field>
+            <field name="component">
+              <string>org.exoplatform.wcm.ext.component.activity.UILinkActivityComposer</string>
+            </field>
+            <field name="rank">
+              <int>1</int>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
 </configuration>

@@ -38,11 +38,11 @@ public class ContentUIActivityBuilder extends BaseUIActivityBuilder {
   
   @Override
   protected void extendUIActivity(BaseUIActivity uiActivity, ExoSocialActivity activity) {
-    ContentUIActivity contentActivity = (ContentUIActivity) uiActivity;
+    ContentUIActivity contentUIActivity = (ContentUIActivity) uiActivity;
 
     //set data into the UI component of activity
     if (activity.getTemplateParams() != null) {
-      contentActivity.setUIActivityData(activity.getTemplateParams());
+      contentUIActivity.setUIActivityData(activity.getTemplateParams());
     }
     
     //get node data
@@ -54,7 +54,10 @@ public class ContentUIActivityBuilder extends BaseUIActivityBuilder {
       SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
       for (String ws : manageRepo.getWorkspaceNames()) {
         try {
-          contentNode = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(contentActivity.getNodeUUID());
+          contentNode = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(contentUIActivity.getNodeUUID());
+          contentUIActivity.docPath = contentNode.getPath();
+          contentUIActivity.workspace = ws;
+          contentUIActivity.repository = manageRepo.toString();
           break;
         } catch (RepositoryException e) {
           continue;
@@ -64,7 +67,7 @@ public class ContentUIActivityBuilder extends BaseUIActivityBuilder {
       LOG.error("Can not get the repository. ", re);
     }
       
-    contentActivity.setContentNode(contentNode);
+    contentUIActivity.setContentNode(contentNode);
   }
 
 }

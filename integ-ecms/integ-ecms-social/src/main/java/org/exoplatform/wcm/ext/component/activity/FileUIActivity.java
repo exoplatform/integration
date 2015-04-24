@@ -16,21 +16,6 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-import javax.portlet.PortletRequest;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ISO8601;
@@ -38,8 +23,8 @@ import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.PortalContainerInfo;
+import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.portal.webui.util.Util;
-import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
@@ -51,11 +36,9 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
-import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
-import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -69,6 +52,26 @@ import org.exoplatform.webui.cssfile.CssClassManager;
 import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.webui.ext.UIExtension;
+import org.exoplatform.webui.ext.UIExtensionManager;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.jcr.Node;
+import org.exoplatform.services.jcr.core.ExtendedNode;
+import org.exoplatform.services.jcr.access.PermissionType;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+import javax.portlet.PortletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -76,19 +79,18 @@ import org.exoplatform.webui.event.EventListener;
  * 15, 2011
  */
 @ComponentConfigs({
-    @ComponentConfig(lifecycle = UIFormLifecycle.class, template = "classpath:groovy/ecm/social-integration/plugin/space/FileUIActivity.gtmpl", events = {
-        @EventConfig(listeners = FileUIActivity.ViewDocumentActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) }),
-    @ComponentConfig(
-       type = UIPopupWindow.class, template = "system:/groovy/webui/core/UIPopupWindow.gtmpl",
-       events = @EventConfig(listeners = FileUIActivity.CloseActionListener.class, name="ClosePopup"))
-    })
+        @ComponentConfig(lifecycle = UIFormLifecycle.class,
+                template = "classpath:groovy/ecm/social-integration/plugin/space/FileUIActivity.gtmpl", events = {
+                @EventConfig(listeners = FileUIActivity.ViewDocumentActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.LoadLikesActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.ToggleDisplayCommentFormActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.LikeActivityActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
+                @EventConfig(listeners = FileUIActivity.OpenFileActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class)}),
+})
 public class FileUIActivity extends BaseUIActivity{
 
   private static final String NEW_DATE_FORMAT = "hh:mm:ss MMM d, yyyy";
@@ -170,6 +172,7 @@ public class FileUIActivity extends BaseUIActivity{
   
   public FileUIActivity() throws Exception {
     super();
+    addChild(UIPopupContainer.class, null, "UIDocViewerPopupContainer");
   }
 
   public String getContentLink() {
@@ -250,7 +253,7 @@ public class FileUIActivity extends BaseUIActivity{
   }
   
   public String getTitle(Node node) throws Exception {
-    return org.exoplatform.ecm.webui.utils.Utils.getTitle(node);
+    return Utils.getTitle(node);
   } 
   
   private String convertDateFormat(String strDate, String strOldFormat, String strNewFormat) throws ParseException {
@@ -302,7 +305,7 @@ public class FileUIActivity extends BaseUIActivity{
    * @return the summary of Node. Return empty string if catch an exception.
    */
   public String getSummary(Node node) {
-    return Utils.getSummary(node);
+    return org.exoplatform.wcm.ext.component.activity.listener.Utils.getSummary(node);
   }
   
   public String getDocumentSummary(Map<String, String> activityParams) {
@@ -318,10 +321,10 @@ public class FileUIActivity extends BaseUIActivity{
   protected String getSize(Node node) {
     double size = 0;    
     try {
-      if (node.hasNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT)) {
-        Node contentNode = node.getNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT);
-        if (contentNode.hasProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA)) {
-          size = contentNode.getProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA).getLength();
+      if (node.hasNode(Utils.JCR_CONTENT)) {
+        Node contentNode = node.getNode(Utils.JCR_CONTENT);
+        if (contentNode.hasProperty(Utils.JCR_DATA)) {
+          size = contentNode.getProperty(Utils.JCR_DATA).getLength();
         }
         
         return FileUtils.byteCountToDisplaySize((long)size);
@@ -341,10 +344,10 @@ public class FileUIActivity extends BaseUIActivity{
   protected double getFileSize(Node node) {
     double fileSize = 0;    
     try {
-      if (node.hasNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT)) {
-        Node contentNode = node.getNode(org.exoplatform.ecm.webui.utils.Utils.JCR_CONTENT);
-        if (contentNode.hasProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA)) {
-        	fileSize = contentNode.getProperty(org.exoplatform.ecm.webui.utils.Utils.JCR_DATA).getLength();
+      if (node.hasNode(Utils.JCR_CONTENT)) {
+        Node contentNode = node.getNode(Utils.JCR_CONTENT);
+        if (contentNode.hasProperty(Utils.JCR_DATA)) {
+        	fileSize = contentNode.getProperty(Utils.JCR_DATA).getLength();
         }
       }
     } catch(Exception ex) { fileSize = 0; }
@@ -450,7 +453,6 @@ public class FileUIActivity extends BaseUIActivity{
   /**
    * Gets the webdav url.
    * 
-   * @param node the node
    * @return the webdav url
    * @throws Exception the exception
    */
@@ -482,51 +484,27 @@ public class FileUIActivity extends BaseUIActivity{
   }
 
   public String[] getSystemCommentBundle(Map<String, String> activityParams) {
-    String[] result;
-    if (activityParams==null) return null;
-    String tmp = activityParams.get(FileUIActivity.IS_SYSTEM_COMMENT);
-    String commentMessage;
-    if (tmp==null) return null;
-    try {
-      if (Boolean.parseBoolean(tmp)) {
-        commentMessage  = activityParams.get(FileUIActivity.MESSAGE);
-        if (!StringUtils.isEmpty(commentMessage)) {
-          if (commentMessage.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
-            result = commentMessage.split(ActivityCommonService.VALUE_SEPERATOR); 
-            return result;
-          }else {
-            return new String[] {commentMessage};
-          }
-        }
-      } 
-    }catch (Exception e) {
-      
-      return null;
-    }
-    return null;
-    
+    return org.exoplatform.wcm.ext.component.activity.listener.Utils.getSystemCommentBundle(activityParams);
   }
+
   public String[] getSystemCommentTitle(Map<String, String> activityParams) {
-    String[] result;
-    if (activityParams==null) return null;
-    String commentValue = activityParams.get(FileUIActivity.SYSTEM_COMMENT);
-    if (!StringUtils.isEmpty(commentValue)) {
-      if (commentValue.indexOf(ActivityCommonService.VALUE_SEPERATOR) >=0) {
-        result = commentValue.split(ActivityCommonService.VALUE_SEPERATOR); 
-        return result;
-      }else {
-        return new String[] {commentValue};
-      }
-    }
-    return null;
+    return org.exoplatform.wcm.ext.component.activity.listener.Utils.getSystemCommentTitle(activityParams);
   }
+
   public String getViewLink() {
     try {
-    return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
-    }catch (Exception e) {
-      return "";
+      Node data = getContentNode();
+      if (isFileSupportPreview(data)) {
+        return this.event("ViewDocument", this.getId(), "");
+      } else {
+        return org.exoplatform.wcm.webui.Utils.getEditLink(data, false, false);
+      }
+    } catch (Exception e) {
+      LOG.error(e.getMessage(), e);
+      return StringUtils.EMPTY;
     }
   }
+
   public String getEditLink() {
     try {
       return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), true, false);
@@ -542,13 +520,13 @@ public class FileUIActivity extends BaseUIActivity{
       return "";
     }
   }
-  
+
   protected String getCssClassIconFile(String fileName, String fileType) {
-    String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(fileName, fileType, CssClassManager.ICON_SIZE.ICON_64);
-    if (cssClass.indexOf(CssClassIconFile.DEFAULT_CSS) > 0) {
+    try {
+      return org.exoplatform.ecm.webui.utils.Utils.getNodeTypeIcon(this.getContentNode(), "uiIcon64x64");
+    } catch (RepositoryException e) {
       return "uiIcon64x64Templatent_file uiIcon64x64nt_file";
     }
-    return cssClass;
   }
 
   protected String getContainerName() {
@@ -565,22 +543,52 @@ public class FileUIActivity extends BaseUIActivity{
       return "";
     }
   }
+
+  /**
+   * <h2>Check if file node is supported by preview on activity stream
+   * A preview from the activity stream is available for the following contents:
+   * </h2>
+   * <ul>
+   * <li>pdf and office file</li>
+   * <li>media (audio, video, image)</li>
+   * </ul>
+   * @param data Content node
+   * @return true: support; false: not support
+   * @throws Exception
+   */
+  public boolean isFileSupportPreview(Node data) throws Exception {
+    if (data != null && data.isNodeType(Utils.NT_FILE)) {
+      UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
+      List<UIExtension> extensions = manager.getUIExtensions(Utils.FILE_VIEWER_EXTENSION_TYPE);
+
+      Map<String, Object> context = new HashMap<String, Object>();
+      context.put(Utils.MIME_TYPE, data.getNode(Utils.JCR_CONTENT).getProperty(Utils.JCR_MIMETYPE).getString());
+
+      for (UIExtension extension : extensions) {
+        if (manager.accept(Utils.FILE_VIEWER_EXTENSION_TYPE, extension.getName(), context) && !"Text".equals(extension.getName())) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   public static class ViewDocumentActionListener extends EventListener<FileUIActivity> {
     @Override
     public void execute(Event<FileUIActivity> event) throws Exception {
-      final FileUIActivity docActivity = event.getSource();
-      final UIActivitiesContainer activitiesContainer = docActivity.getParent();
-      final PopupContainer popupContainer = activitiesContainer.getPopupContainer();
-      UIDocViewer docViewer = popupContainer.createUIComponent(UIDocViewer.class, null, "DocViewer");
-      docViewer.docPath = docActivity.docPath;
-      docViewer.repository = docActivity.repository;
-      docViewer.workspace = docActivity.workspace;
-      final Node docNode = docActivity.getContentNode();
-      docViewer.setOriginalNode(docNode);
-      docViewer.setNode(docNode);
-      popupContainer.activate(docViewer, 800, 600, true);
-      
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+      FileUIActivity fileUIActivity = event.getSource();
+      UIActivitiesContainer uiActivitiesContainer = fileUIActivity.getParent();
+      PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
+
+      UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,
+              "UIDocumentPreview");
+      uiDocumentPreview.setBaseUIActivity(fileUIActivity);
+      uiDocumentPreview.setContentInfo(fileUIActivity.docPath, fileUIActivity.repository, fileUIActivity.workspace,
+              fileUIActivity.getContentNode());
+
+      uiPopupContainer.activate(uiDocumentPreview, 0, 0, true);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiPopupContainer);
     }
   }
   
@@ -590,7 +598,7 @@ public class FileUIActivity extends BaseUIActivity{
     	FileUIActivity uiComp = event.getSource() ;
       String downloadLink = null;
       if (getRealNode(uiComp.getContentNode()).getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
-        downloadLink = org.exoplatform.ecm.webui.utils.Utils.getDownloadRestServiceLink(uiComp.getContentNode());
+        downloadLink = Utils.getDownloadRestServiceLink(uiComp.getContentNode());
       }
       event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
     }
@@ -605,15 +613,35 @@ public class FileUIActivity extends BaseUIActivity{
     }
   }
 
-  public static class CloseActionListener extends EventListener<UIPopupWindow> {
-    public void execute(Event<UIPopupWindow> event) throws Exception {
-      UIPopupWindow uiPopupWindow = event.getSource();
-      if (!uiPopupWindow.isShow())
-          return;
-      uiPopupWindow.setShow(false);
-      uiPopupWindow.setUIComponent(null);
-      UIPopupContainer popupContainer = uiPopupWindow.getAncestorOfType(UIPopupContainer.class);
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+  public static class OpenFileActionListener extends EventListener<FileUIActivity> {
+    public void execute(Event<FileUIActivity> event) throws Exception {
+      FileUIActivity fileUIActivity = event.getSource();
+
+      Node currentNode = fileUIActivity.getContentNode();
+
+
+      FileUIActivity docActivity = event.getSource();
+      UIActivitiesContainer activitiesContainer = docActivity.getParent();
+      PopupContainer popupContainer = activitiesContainer.getPopupContainer();
+
+      org.exoplatform.ecm.webui.utils.Utils.openDocumentInDesktop(currentNode, popupContainer, event);
     }
   }
+
+  /**
+   * <h2>Check file node can edit on activity stream</h2>
+   * The file only can edit when user have modify permission on parent folder
+   * @param data File node
+   * @return true: can edit; false: cannot edit
+   * @throws Exception
+   */
+  public boolean canEditDocument(Node data){
+    try {
+      ((ExtendedNode)data.getParent()).checkPermission(PermissionType.ADD_NODE);
+      return true;
+    } catch(Exception e) {
+      return false;
+    }
+  }
+
 }
