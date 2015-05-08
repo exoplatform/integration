@@ -65,7 +65,11 @@
   def preferenceWS;  
   def fileComponent;
   if (currentNode) {
-    activityContentTitle = uicomponent.getTitle(currentNode);
+    if (uicomponent.isSymlink()) {
+      activityContentTitle = uicomponent.getDocTitle();
+    } else {
+      activityContentTitle = uicomponent.getTitle(currentNode);
+    }
     docSummary = uicomponent.getSummary(currentNode);
     binarySrc = uicomponent.getWebdavURL();
     summary =  uicomponent.getSummary(currentNode);

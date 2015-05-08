@@ -36,6 +36,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
+import org.exoplatform.social.plugin.doc.UIDocActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
@@ -169,6 +170,8 @@ public class FileUIActivity extends BaseUIActivity{
   public String              docPath;
   public String              repository;
   public String              workspace;
+
+  private boolean            isSymlink;
   
   public FileUIActivity() throws Exception {
     super();
@@ -251,7 +254,11 @@ public class FileUIActivity extends BaseUIActivity{
   public String getDocSummary() {
     return docSummary;
   }
-  
+
+  public boolean isSymlink() {
+    return isSymlink;
+  }
+
   public String getTitle(Node node) throws Exception {
     return Utils.getTitle(node);
   } 
@@ -446,6 +453,7 @@ public class FileUIActivity extends BaseUIActivity{
     this.docVersion = activityParams.get(FileUIActivity.DOCUMENT_VERSION);
     this.docSummary = activityParams.get(FileUIActivity.DOCUMENT_SUMMARY);
     this.activityStatus = activityParams.get(FileUIActivity.ACTIVITY_STATUS);
+    this.isSymlink = Boolean.parseBoolean(activityParams.get(UIDocActivity.IS_SYMLINK));
   }
 
 
