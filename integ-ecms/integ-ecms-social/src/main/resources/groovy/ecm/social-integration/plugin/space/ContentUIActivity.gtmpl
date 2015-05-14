@@ -29,7 +29,7 @@
   import org.exoplatform.social.core.service.LinkProvider;
   import org.apache.commons.lang.StringUtils;
   import org.apache.commons.lang.StringEscapeUtils;
-  
+  import org.exoplatform.wcm.webui.reader.ContentReader;
   //ECMS import BEGIN
   import org.exoplatform.wcm.ext.component.activity.ContentPresentation;
   import org.exoplatform.services.jcr.util.Text;
@@ -292,6 +292,7 @@
                   else
                     publishInfo = publishInfo + " - " + _ctx.appRes("SocialIntegration.publicationStates." + state);
                 }
+		publishInfo = ContentReader.getXSSCompatibilityContent(publishInfo);
               %>
               <span class="versionFile">$publishInfo</span>
             </div>
@@ -416,6 +417,7 @@
               } else {
                 commentMessage = it.title;
               }
+	      commentMessage = ContentReader.getXSSCompatibilityContent(commentMessage);
               commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
               commenterAvatarImgSrc = commentId.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
