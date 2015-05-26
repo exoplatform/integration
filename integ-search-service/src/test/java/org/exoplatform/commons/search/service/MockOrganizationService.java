@@ -27,20 +27,7 @@ import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.component.ComponentPlugin;
-import org.exoplatform.services.organization.Group;
-import org.exoplatform.services.organization.GroupEventListener;
-import org.exoplatform.services.organization.GroupHandler;
-import org.exoplatform.services.organization.Membership;
-import org.exoplatform.services.organization.MembershipEventListener;
-import org.exoplatform.services.organization.MembershipHandler;
-import org.exoplatform.services.organization.MembershipType;
-import org.exoplatform.services.organization.MembershipTypeHandler;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.Query;
-import org.exoplatform.services.organization.User;
-import org.exoplatform.services.organization.UserEventListener;
-import org.exoplatform.services.organization.UserHandler;
-import org.exoplatform.services.organization.UserProfileHandler;
+import org.exoplatform.services.organization.*;
 
 
 /**
@@ -134,6 +121,11 @@ public class MockOrganizationService implements OrganizationService {
       }
       return groups;
     }
+
+      @Override
+      public Collection<Group> resolveGroupByMembership(String userName, String membershipType) throws Exception {
+          return null;
+      }
 
     public Collection<Group> findGroups(Group parent) throws Exception {
       Collection<Group> groups = new HashSet<Group>();
@@ -302,6 +294,9 @@ public class MockOrganizationService implements OrganizationService {
     public User removeUser(String userName, boolean broadcast) throws Exception {
       return null;
     }
+    public User setEnabled(String userName, boolean enabled, boolean broadcast) throws Exception, UnsupportedOperationException {
+        return null;
+    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public PageList<User> getUserPageList(int pageSize) throws Exception {
@@ -351,6 +346,9 @@ public class MockOrganizationService implements OrganizationService {
       }
       return null;
     }
+    public User findUserByName(String userName, UserStatus status) throws Exception {
+        return null;
+    }
 
     public User createUserInstance(String username) {
       return null;
@@ -375,13 +373,22 @@ public class MockOrganizationService implements OrganizationService {
     public ListAccess<User> findAllUsers() throws Exception {
       return null;
     }
+    public ListAccess<User> findAllUsers(UserStatus status) throws Exception {
+        return null;
+    }
 
     public ListAccess<User> findUsersByGroupId(String groupId) throws Exception {
       return null;
     }
+    public  ListAccess<User> findUsersByGroupId(String groupId, UserStatus status) throws Exception {
+        return null;
+    }
 
     public ListAccess<User> findUsersByQuery(Query query) throws Exception {
       return null;
+    }
+    public ListAccess<User> findUsersByQuery(Query query, UserStatus status) throws Exception {
+        return null;
     }
 
     @Override
@@ -494,6 +501,9 @@ public class MockOrganizationService implements OrganizationService {
 
     public void setDisplayName(String displayName) {
    
+    }
+    public  boolean isEnabled() {
+        return true;
     }
   }
 

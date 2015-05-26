@@ -40,11 +40,13 @@
     <!-- **************************************** -->
     <!-- Project Dependencies                     -->
     <!-- **************************************** -->
+
     <org.exoplatform.depmgt.version>11-SNAPSHOT</org.exoplatform.depmgt.version>
     <!-- JCR Project Dependencies -->
-      <org.exoplatform.kernel.version>2.4.x-SNAPSHOT</org.exoplatform.kernel.version>
-      <org.exoplatform.core.version>2.5.x-SNAPSHOT</org.exoplatform.core.version>
-      <org.exoplatform.jcr.version>1.15.x-SNAPSHOT</org.exoplatform.jcr.version>
+
+      <org.exoplatform.kernel.version>2.5.1-GA</org.exoplatform.kernel.version>
+      <org.exoplatform.core.version>2.6.1-GA</org.exoplatform.core.version>
+      <org.exoplatform.jcr.version>1.16.1-GA</org.exoplatform.jcr.version>
     <!-- GateIn Project Dependencies -->
     <org.gatein.shindig.version>2.0.2.Final-gatein-4</org.gatein.shindig.version>
     <org.gatein.portal.version>4.3.x-PLF-SNAPSHOT</org.gatein.portal.version>
@@ -55,8 +57,8 @@
     <org.exoplatform.forum.version>4.3.x-SNAPSHOT</org.exoplatform.forum.version>
     <org.exoplatform.wiki.version>4.3.x-SNAPSHOT</org.exoplatform.wiki.version>
     <org.exoplatform.calendar.version>4.3.x-SNAPSHOT</org.exoplatform.calendar.version>
-    <!-- Platform Project 3rd party Dependencies -->
     <org.exoplatform.doc.doc-style.version>4.3.x-SNAPSHOT</org.exoplatform.doc.doc-style.version>
+
     <!-- For surefire and failsafe to be compatible with jacoco -->
     <argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
   </properties>
