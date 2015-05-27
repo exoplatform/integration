@@ -25,6 +25,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
     var currentFocus = 0;
     var searchTimeout;
     //var skipKeyUp = [9,16,17,18,19,20,33,34,35,36,37,38,39,40,45,49];
+
     
     var mapKeyUp = {"0":"48","1":"49","2":"50","3":"51","4":"52","5":"53","6":"54","7":"55","8":"56","9":"57",
     		"a":"65","b":"66","c":"67","d":"68","e":"69","f":"70","g":"71","h":"72","i":"73","j":"74",
@@ -234,7 +235,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
               index = index + 1; 	
               cell.push(renderQuickSearchResult(result, index)); //add this result to the cell
             });
-            var row = QUICKSEARCH_TABLE_ROW_TEMPLATE.replace(/%{type}/g, CONNECTORS[searchType].displayName).replace(/%{results}/g, cell.join(""));
+            var row = QUICKSEARCH_TABLE_ROW_TEMPLATE.replace(/%{type}/g,eXo.ecm.WCMUtils.getBundle("quicksearch.type." +  CONNECTORS[searchType].displayName , eXo.env.portal.language)).replace(/%{results}/g, cell.join(""));
             rows.push(row);
           }
         });
@@ -562,7 +563,7 @@ window.initQuickSearchSetting = function(allMsg,alertOk,alertNotOk){
         if(CONNECTORS[type]) searchInOpts.push(CHECKBOX_TEMPLATE.
           replace(/%{name}/g, "searchInOption").
           replace(/%{value}/g, type).
-          replace(/%{text}/g, CONNECTORS[type].displayName));
+          replace(/%{text}/g, eXo.ecm.WCMUtils.getBundle("quicksearch.type." +  CONNECTORS[type].displayName , eXo.env.portal.language)));
       });
       $("#lstSearchInOptions").html(searchInOpts.join(""));
 
