@@ -262,4 +262,6 @@
     </component-plugin>
   </external-component-plugins>
 
+  <import>classpath:/conf/portal/resource-bundle-configuration.xml</import>
+
 </configuration>
