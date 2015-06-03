@@ -103,6 +103,11 @@
       <groupId>org.gatein.portal</groupId>
       <artifactId>exo.portal.webui.portlet</artifactId>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- mvn dependency:analyze marks unused but build failed if remove -->
     <dependency>
       <groupId>org.gatein.shindig</groupId>

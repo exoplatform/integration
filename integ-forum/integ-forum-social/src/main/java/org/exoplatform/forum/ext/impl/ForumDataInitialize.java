@@ -16,18 +16,14 @@
  */
 package org.exoplatform.forum.ext.impl;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.exoplatform.container.ExoContainer;
-import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.service.Category;
+import org.exoplatform.forum.service.DataStorage;
 import org.exoplatform.forum.service.Forum;
-import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Utils;
+import org.exoplatform.forum.service.impl.JCRDataStorage;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.Group;
@@ -76,12 +72,11 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
        */
       return;
     }
-    ExoContainer exoContainer = ExoContainerContext.getCurrentContainer();
-    ForumService fServie = (ForumService) exoContainer.getComponentInstanceOfType(ForumService.class);
+      DataStorage fServie = CommonsUtils.getService(JCRDataStorage.class);
     Space space = event.getSpace();
     String parentGrId = "";
     try {
-      OrganizationService service = (OrganizationService) exoContainer.getComponentInstanceOfType(OrganizationService.class);
+        OrganizationService service = CommonsUtils.getService(OrganizationService.class);
       Group group = service.getGroupHandler().findGroupById(space.getGroupId());
       parentGrId = group.getParentId();
 
@@ -97,14 +92,12 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         fServie.saveCategory(category, true);
       }
       String forumId = Utils.FORUM_SPACE_ID_PREFIX + group.getGroupName();
+        String groupId = space.getGroupId();
       if (fServie.getForum(categorySpId, forumId) == null) {
-        Set<String> prs = new HashSet<String>(Arrays.asList(category.getUserPrivate()));
-        prs.add(space.getGroupId());
-        category.setUserPrivate(prs.toArray(new String[prs.size()]));
-        fServie.saveCategory(category, false);
-        String[] roles = new String[] { space.getGroupId() };
+          String[] roles = new String[] { groupId };
+
         String[] moderators = new String[] { new StringBuilder(SpaceServiceImpl.MANAGER).append(CommonUtils.COLON)
-                                              .append(space.getGroupId()).toString() };
+                                              .append(groupId).toString() };
         Forum forum = new Forum();
         forum.setOwner(space.getManagers()[0]);
         forum.setId(forumId);
@@ -115,6 +108,7 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         forum.setPoster(roles);
         forum.setViewer(roles);
         fServie.saveForum(categorySpId, forum, true);
+          fServie.saveUserPrivateOfCategory(categorySpId, groupId);
       }
     } catch (Exception e) { //ForumService      
       if(LOG.isDebugEnabled()) {
