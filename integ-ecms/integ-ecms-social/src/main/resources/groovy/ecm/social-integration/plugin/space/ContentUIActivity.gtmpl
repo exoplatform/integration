@@ -292,7 +292,7 @@
                   else
                     publishInfo = publishInfo + " - " + _ctx.appRes("SocialIntegration.publicationStates." + state);
                 }
-		publishInfo = ContentReader.getXSSCompatibilityContent(publishInfo);
+              publishInfo = StringEscapeUtils.escapeHtml(publishInfo);
               %>
               <span class="versionFile">$publishInfo</span>
             </div>
@@ -417,7 +417,7 @@
               } else {
                 commentMessage = it.title;
               }
-	      commentMessage = ContentReader.getXSSCompatibilityContent(commentMessage);
+              commentMessage = ContentReader.simpleEscapeHtml(commentMessage);
               commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
               commenterAvatarImgSrc = commentId.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
