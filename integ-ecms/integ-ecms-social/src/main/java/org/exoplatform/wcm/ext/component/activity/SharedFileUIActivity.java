@@ -22,7 +22,9 @@ import org.exoplatform.webui.config.annotation.ComponentConfigs;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
-
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.webui.core.UIPopupContainer;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
@@ -101,6 +103,18 @@ public class SharedFileUIActivity extends FileUIActivity{
     } else {
       return this.getMessage();
     }
+  }
+
+
+  public static class CloseActionListener extends EventListener<UIPopupWindow> {
+    public void execute(Event<UIPopupWindow> event) throws Exception {
+      UIPopupWindow uiPopupWindow = event.getSource();
+      if (!uiPopupWindow.isShow()) return;
+      uiPopupWindow.setShow(false);
+        uiPopupWindow.setUIComponent(null);
+        UIPopupContainer popupContainer = uiPopupWindow.getAncestorOfType(UIPopupContainer.class);
+        event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+      }
   }
 
 }
