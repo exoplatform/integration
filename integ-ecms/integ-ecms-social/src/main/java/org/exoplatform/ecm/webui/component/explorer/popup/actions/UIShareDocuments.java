@@ -18,18 +18,23 @@ package org.exoplatform.ecm.webui.component.explorer.popup.actions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.exoplatform.portal.webui.container.UIContainer;
-import org.exoplatform.services.cms.link.LinkManager;
-import org.exoplatform.services.jcr.RepositoryService;
-import org.exoplatform.services.jcr.ext.app.SessionProviderService;
+import org.exoplatform.commons.api.notification.model.NotificationInfo;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.ecm.utils.permission.PermissionUtil;
+import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.commons.EventUIComponent;
 import org.exoplatform.webui.commons.EventUIComponent.EVENTTYPE;
@@ -47,12 +52,10 @@ import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
-import org.exoplatform.ecm.webui.component.explorer.UIDocumentInfo;
 import org.exoplatform.ecm.webui.component.explorer.UIJCRExplorer;
 import org.exoplatform.wcm.ext.component.document.service.IShareDocumentService;
-import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
 import org.exoplatform.ecm.webui.utils.Utils;
-
+import org.exoplatform.portal.webui.util.Util;
 
 /**
  * Created by The eXo Platform SAS
@@ -72,7 +75,15 @@ import org.exoplatform.ecm.webui.utils.Utils;
                  }
     )
 public class UIShareDocuments extends UIForm implements UIPopupComponent{
+
   private static final Log    LOG                 = ExoLogger.getLogger(UIShareDocuments.class);
+  private static final String SHARECONTENT_BUNDLE_LOCATION = "locale.ShareDocuments";
+  private static final String SHARE_OPTION_CANVEW          = "UIShareDocuments.label.option.read";
+  private static final String SHARE_OPTION_CANMODIFY       = "UIShareDocuments.label.option.modify";
+
+  private static final String SHARE_PERMISSION_VIEW        = PermissionType.READ;
+  private static final String SHARE_PERMISSION_MODIFY      = "modify";
+
   public static class RemoveSpaceActionListener extends EventListener<UIShareDocuments>{
 
     @Override
@@ -152,19 +163,36 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   public String comment = "";
   private NodeLocation node;
 
-  public UIShareDocuments(){
+  public UIShareDocuments(){ }
+
+  public void init(){
     try {
       addChild(UISpacesSwitcher.class, null, "SpaceSwitcher");
       getChild(UISpacesSwitcher.class).setShowPortalSpace(false);
       getChild(UISpacesSwitcher.class).setShowUserSpace(false);
 
-      EventUIComponent temp = new EventUIComponent("UIShareDocuments","SelectSpace",EVENTTYPE.EVENT);      
+      EventUIComponent temp = new EventUIComponent("UIShareDocuments","SelectSpace",EVENTTYPE.EVENT);
       getSpace().init(temp);
       ArrayList<SelectItemOption<String>> permOption = new ArrayList<SelectItemOption<String>>();
 
       addChild(new UIFormSelectBox("permissionDropDown", "permissionDropDown", permOption));
-      getChild(UIFormSelectBox.class).getOptions().add(new SelectItemOption<String>("Can modify", "modify"));
-      getChild(UIFormSelectBox.class).getOptions().add(new SelectItemOption<String>("Can view", "read"));
+
+      ResourceBundleService resourceBundleService = WCMCoreUtils.getService(ResourceBundleService.class);
+      ResourceBundle resourceBundle = resourceBundleService.getResourceBundle(SHARECONTENT_BUNDLE_LOCATION, Util.getPortalRequestContext().getLocale());
+      String canView = resourceBundle.getString(SHARE_OPTION_CANVEW);
+      String canModify = resourceBundle.getString(SHARE_OPTION_CANMODIFY);
+
+      List<SelectItemOption<String>> itemOptions = new ArrayList<SelectItemOption<String>>();
+
+      Node currentNode = this.getNode();
+      if(PermissionUtil.canSetProperty(currentNode)) {
+        itemOptions.add(new SelectItemOption<String>(canView, SHARE_PERMISSION_VIEW));
+        itemOptions.add(new SelectItemOption<String>(canModify, SHARE_PERMISSION_MODIFY));
+      }else if(PermissionUtil.canRead(currentNode)){
+        itemOptions.add(new SelectItemOption<String>(canView, SHARE_PERMISSION_VIEW));
+      }
+
+      getChild(UIFormSelectBox.class).setOptions(itemOptions);
       addChild(new UIFormTextAreaInput("textAreaInput", "textAreaInput", ""));
     } catch (Exception e) {
       if(LOG.isErrorEnabled())
@@ -207,7 +235,18 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   public UISpacesSwitcher getSpace(){
     return getChild(UISpacesSwitcher.class);
   }
-  public List<String> getSpaces(){return spaces;}
+  public List<String> getSpaces(){
+    List<String> lstSpaceDisplayName = new ArrayList<String>();
+    SpaceService spaceService= PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+
+    for(String space:spaces){
+      Space spaceObject = spaceService.getSpaceByGroupId(space);
+      if(space!=null){
+        lstSpaceDisplayName.add(spaceObject.getDisplayName());
+      }
+    }
+    return lstSpaceDisplayName;
+  }
   public String getComment(){
     if(this.comment == null) return "";
     return this.comment;

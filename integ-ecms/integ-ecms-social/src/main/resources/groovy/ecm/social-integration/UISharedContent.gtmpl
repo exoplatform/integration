@@ -128,7 +128,6 @@
   }
   def activityStatus = uicomponent.getActivityStatus();
   def viewLink = uicomponent.getViewLink();
-  def editLink = uicomponent.getEditLink();
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
   if (allComments) {
@@ -238,7 +237,7 @@
 						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 					<div class="author">
-						<a title="$ownerName" href="$ownerUri">$ownerName</a> <%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%>
+						<a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
 					</div>	
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
@@ -320,7 +319,6 @@
           <% }%>	
           <ul class="pull-left statusAction">
             <li><a href="$viewLink"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
-            <li><a href="$editLink"><i class="uiIconEdit uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.edit");%></a></li>
           </ul>
         </div><!--end actionBar-->
         <% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>       

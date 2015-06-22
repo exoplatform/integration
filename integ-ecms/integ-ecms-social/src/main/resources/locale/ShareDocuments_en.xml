@@ -1,7 +1,7 @@
 <bundle>
 	<ECMContextMenu>
 		<event>
-			<ShareDocuments>Share Document</ShareDocuments>
+			<ShareDocuments>Share</ShareDocuments>
 		</event>
 	</ECMContextMenu>
 	<UIPopupWindow>
@@ -14,12 +14,12 @@
 			<ShareButton>Share</ShareButton>
 			<CancelButton>Cancel</CancelButton>
 			<TextAreaInit>Add a comment about this file...</TextAreaInit>
-			<ShareWith>Share with</ShareWith>
+			<ShareWith>Share with:</ShareWith>
 			<Access>Access</Access>
-			<SpaceMember>Space Member</SpaceMember>
+			<SpaceMember>Space Members</SpaceMember>
 			<SelectASpace>Select a space</SelectASpace>
-			<SharedADocument>Shared a document</SharedADocument>
-            <NoSpace>Please choose at least 1 space(s) to share</NoSpace>
+			<SharedADocument>shared a document</SharedADocument>
+			<NoSpace>Please choose at least 1 space(s) to share</NoSpace>
 			<option>
 				<read>Can View</read>
 				<modify>Can Modify</modify>
@@ -29,7 +29,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share Documents</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

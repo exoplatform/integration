@@ -90,9 +90,8 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       }else{
         shared = rootSpace.getNode("Shared");
       }
-      Node link = linkManager.createLink(shared, node);
-      rootSpace.save();
-      //Update permission 
+      if(node.isNodeType(NodetypeConstant.EXO_SYMLINK)) node = linkManager.getTarget(node);
+      //Update permission
       String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
       if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
       if(canChangePermission(node)){
@@ -101,6 +100,8 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
         enode.setPermission("*:" + space,tempPerms.split(","));
         enode.save();
       }
+      Node link = linkManager.createLink(shared, node);
+      rootSpace.save();
       //Share activity
       try {
         ExoSocialActivity activity = null;
