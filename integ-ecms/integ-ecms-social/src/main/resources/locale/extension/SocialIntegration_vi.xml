@@ -8,7 +8,7 @@
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Mở tài liệu</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Xem lại</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Mở tài liệu</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
