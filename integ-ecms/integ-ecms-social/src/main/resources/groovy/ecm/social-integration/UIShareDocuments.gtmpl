@@ -20,7 +20,7 @@ rcontext.getJavascriptManager()
   </div>
   <div class="listMention">
   <%for(s in uiform.getSpaces()){%>
-  	<span class="uiMention"><%=s%><i contenteditable="true" class="uiIconClose uiIconLightGray" onclick="<%=uicomponent.event("RemoveSpace",s)%>">&times;</i></span>	
+  	<span class="uiMention"><%=s.getDisplayName()%><i contenteditable="true" class="uiIconClose uiIconLightGray" onclick="<%=uicomponent.event("RemoveSpace",s.getGroupId())%>">&times;</i></span>
   <%}%>
   </div>
   <div id="TextArea" class="addComment">

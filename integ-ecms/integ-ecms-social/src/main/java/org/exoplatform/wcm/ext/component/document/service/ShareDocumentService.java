@@ -16,11 +16,7 @@
  */
 package org.exoplatform.wcm.ext.component.document.service;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import org.exoplatform.container.PortalContainer;
+import org.exoplatform.ecm.webui.utils.PermissionUtil;
 import org.exoplatform.services.cms.BasePath;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.jcr.RepositoryService;
@@ -37,6 +33,10 @@ import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.picocontainer.Startable;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 
 /**
@@ -94,7 +94,7 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       //Update permission
       String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
       if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
-      if(canChangePermission(node)){
+      if(PermissionUtil.canChangePermission(node)){
         node.addMixin(MIX_PRIVILEGEABLE);
         ExtendedNode enode = (ExtendedNode) node;
         enode.setPermission("*:" + space,tempPerms.split(","));

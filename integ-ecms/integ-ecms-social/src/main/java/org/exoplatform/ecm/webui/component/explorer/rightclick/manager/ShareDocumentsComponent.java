@@ -16,18 +16,13 @@
  */
 package org.exoplatform.ecm.webui.component.explorer.rightclick.manager;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.jcr.Session;
-
 import org.exoplatform.ecm.webui.component.explorer.UIJCRExplorer;
+import org.exoplatform.ecm.webui.component.explorer.control.filter.CanAddNodeFilter;
+import org.exoplatform.ecm.webui.component.explorer.control.filter.CanRemoveNodeFilter;
+import org.exoplatform.ecm.webui.component.explorer.control.filter.CanSetPropertyFilter;
 import org.exoplatform.ecm.webui.component.explorer.control.filter.IsDocumentFilter;
-import org.exoplatform.ecm.webui.component.explorer.control.filter.IsNotFolderFilter;
 import org.exoplatform.ecm.webui.component.explorer.control.listener.UIWorkingAreaActionListener;
 import org.exoplatform.ecm.webui.component.explorer.popup.actions.UIShareDocuments;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -37,6 +32,9 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.webui.ext.manager.UIAbstractManager;
 import org.exoplatform.webui.ext.manager.UIAbstractManagerComponent;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by The eXo Platform SAS
@@ -75,7 +73,12 @@ public class ShareDocumentsComponent extends UIAbstractManagerComponent{
     }
   }
 
-  private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] {new IsDocumentFilter()});
+  private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] {
+          new IsDocumentFilter(),
+          new CanSetPropertyFilter(),
+          new CanAddNodeFilter(),
+          new CanRemoveNodeFilter()
+  });
 
   @UIExtensionFilters
   public List<UIExtensionFilter> getFilters() {

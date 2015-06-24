@@ -16,17 +16,11 @@
  */
 package org.exoplatform.ecm.webui.component.explorer.popup.actions;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.utils.permission.PermissionUtil;
+import org.exoplatform.ecm.webui.component.explorer.UIJCRExplorer;
+import org.exoplatform.ecm.webui.utils.Utils;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -35,6 +29,7 @@ import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.wcm.ext.component.document.service.IShareDocumentService;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.commons.EventUIComponent;
 import org.exoplatform.webui.commons.EventUIComponent.EVENTTYPE;
@@ -47,15 +42,17 @@ import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
+import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
-import org.exoplatform.ecm.webui.component.explorer.UIJCRExplorer;
-import org.exoplatform.wcm.ext.component.document.service.IShareDocumentService;
-import org.exoplatform.ecm.webui.utils.Utils;
-import org.exoplatform.portal.webui.util.Util;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by The eXo Platform SAS
@@ -235,17 +232,17 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   public UISpacesSwitcher getSpace(){
     return getChild(UISpacesSwitcher.class);
   }
-  public List<String> getSpaces(){
-    List<String> lstSpaceDisplayName = new ArrayList<String>();
+  public List<Space> getSpaces(){
+    List<Space> lstSpaces = new ArrayList<Space>();
     SpaceService spaceService= PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
 
     for(String space:spaces){
       Space spaceObject = spaceService.getSpaceByGroupId(space);
-      if(space!=null){
-        lstSpaceDisplayName.add(spaceObject.getDisplayName());
+      if(spaceObject!=null){
+        lstSpaces.add(spaceObject);
       }
     }
-    return lstSpaceDisplayName;
+    return lstSpaces;
   }
   public String getComment(){
     if(this.comment == null) return "";
