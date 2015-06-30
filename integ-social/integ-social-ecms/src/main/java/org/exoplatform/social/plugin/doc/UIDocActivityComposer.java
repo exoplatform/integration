@@ -17,6 +17,8 @@
 
 package org.exoplatform.social.plugin.doc;
 
+import static org.exoplatform.social.plugin.doc.UIDocActivityBuilder.ACTIVITY_TYPE;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -89,8 +91,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   private static final Log LOG = ExoLogger.getLogger(UIDocActivityComposer.class);
   public static final String REPOSITORY = "repository";
   public static final String WORKSPACE = "collaboration";
-  private static final String FILE_SPACES         = "files:spaces";
-  private static final String CONTENT_SPACES         = "contents:spaces";
+  private static final String FILE_SPACES = "files:spaces";
   private final static String POPUP_COMPOSER = "UIPopupComposer";
   private final String docActivityTitle = "<a href=\"${"+ UIDocActivity.DOCLINK +"}\">" + "${" +UIDocActivity.DOCNAME +"}</a>";
 
@@ -280,20 +281,11 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   private ExoSocialActivity saveActivity(Map<String, String> activityParams, ActivityManager activityManager,
                                          IdentityManager identityManager, Identity ownerIdentity,
                                          String remoteUser) throws ActivityStorageException, RepositoryException {
-    Node node = getDocNode(activityParams.get(UIDocActivity.REPOSITORY), activityParams.get(UIDocActivity.WORKSPACE),
-            activityParams.get(UIDocActivity.DOCPATH));
-    String activity_type = UIDocActivity.ACTIVITY_TYPE;
-    if (node.isNodeType(NodetypeConstant.EXO_SYMLINK)){
-      try {
-        node = Utils.getNodeSymLink(node);
-      } catch (Exception e) {
-        LOG.error("Unknown error when getting the real node from symlink", e);
-      }
-    }
+    Node node = getDocNode(activityParams.get(UIDocActivity.REPOSITORY), activityParams.get(UIDocActivity.WORKSPACE), 
+                           activityParams.get(UIDocActivity.DOCPATH));
+    String activity_type = ACTIVITY_TYPE;
     if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
       activity_type = FILE_SPACES;
-    } else if (node.isNodeType(NodetypeConstant.EXO_ACCESSIBLE_MEDIA)) {
-      activity_type = CONTENT_SPACES;
     }
       
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);

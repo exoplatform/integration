@@ -74,8 +74,6 @@ public class ContentUIActivity extends BaseUIActivity {
 
   private static final Log   LOG               = ExoLogger.getLogger(ContentUIActivity.class);
 
-  public static final String ACTIVITY_TYPE      = "CONTENT_ACTIVITY";
-
   public static final String ID                 = "id";
 
   public static final String CONTENT_LINK       = "contenLink";

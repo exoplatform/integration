@@ -83,7 +83,6 @@ public class UIDocActivity extends BaseUIActivity {
   private static final String IMAGE_PREFIX = "image/";
   private static final String DOCUMENT_POSTFIX = "/pdf";
   
-  public static final String ACTIVITY_TYPE = "DOC_ACTIVITY";
   public static final String DOCLINK = "DOCLINK";
   public static final String MESSAGE = "MESSAGE";
   public static final String REPOSITORY = "REPOSITORY";

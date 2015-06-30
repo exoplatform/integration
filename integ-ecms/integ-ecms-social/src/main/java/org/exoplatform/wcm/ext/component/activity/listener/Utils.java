@@ -78,8 +78,8 @@ public class Utils {
   private static final Log    LOG                 = ExoLogger.getLogger(Utils.class);
 
   /** The Constant Activity Type */
-  private static final String CONTENT_SPACES      = "contents:spaces";
-  private static final String FILE_SPACES         = "files:spaces";
+  public static final String CONTENT_SPACES        = "contents:spaces";
+  public static final String FILE_SPACES           = "files:spaces";
   public  static final String SHARE_FILE           = "sharefiles:spaces";
   public  static final String SHARE_CONTENT        = "sharecontents:spaces";
 
