@@ -17,7 +17,13 @@
 
 @Application
 @Portlet
+@Bindings({@Binding(SettingService.class)})
+
 package org.exoplatform.commons.quicksearch;
 
+import org.exoplatform.commons.api.settings.SettingService;
+
 import juzu.Application;
+import juzu.plugin.binding.Binding;
+import juzu.plugin.binding.Bindings;
 import juzu.plugin.portlet.Portlet;

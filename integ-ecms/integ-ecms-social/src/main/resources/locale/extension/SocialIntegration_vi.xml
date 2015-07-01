@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bundle>
+  <UIConfirmMessage>
+    <label>
+      <ReadOnly>Open Read-only</ReadOnly>
+    </label>
+  </UIConfirmMessage>
+
+  <UISocialPopupWindow>
+    <title>
+      <UIReadOnlyFileConfirmMessage>Mở tài liệu</UIReadOnlyFileConfirmMessage>
+    </title>
+  </UISocialPopupWindow>
   <SocialIntegration>
     <titles>
       <fileSize>Kích thước Tệp</fileSize>
@@ -38,7 +49,7 @@
       <attachmentAdded>Một số tệp đã được đính kèm.</attachmentAdded>
       <attachmentRemoved>Tệp vừa bị loại bỏ.</attachmentRemoved>
       <categoryAdded>Danh mục: {0} đã được thêm vào.</categoryAdded>
-      <categoryRemoved>Danh mục: {0} đã được thêm vào.</categoryRemoved>
+      <categoryRemoved>Danh mục: {0} đã bị xóa đi.</categoryRemoved>
       <tagAdded>Nhãn {0} vừa được thêm vào.</tagAdded>
       <tagsAdded>Một số Nhãn: {0} vừa được thêm vào.</tagsAdded>
       <tagRemoved>Nhãn: {0} vừa bị loại bỏ.</tagRemoved>
@@ -73,6 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Xem lại</DocViewer>
+      <UIReadOnlyFileConfirmMessage>Mở tài liệu</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -82,19 +94,26 @@
       </label>
     </dialog>
   </ElementSet>
+  <UIPreviewCommentArea>
+    <label>
+      <commentTextAreaPreview>Đăng bình luận...</commentTextAreaPreview>
+      <no-comment-yet>No comment yet</no-comment-yet>
+    </label>
+  </UIPreviewCommentArea>
+
   <OpenDocumentInOffice>
     <label>
-      <exo.remote-edit.word>Mở với Word</exo.remote-edit.word>
-      <exo.remote-edit.excel>Mở với Excel</exo.remote-edit.excel>
-      <exo.remote-edit.powerpoint>Mở với Powerpoint</exo.remote-edit.powerpoint>
-      <exo.remote-edit.desktop>Mở với Desktop</exo.remote-edit.desktop>
-      <exo.remote-edit.desktop-app>Mở với</exo.remote-edit.desktop-app>
+      <exo.remote-edit.word>Open In Word</exo.remote-edit.word>
+      <exo.remote-edit.excel>Open In Excel</exo.remote-edit.excel>
+      <exo.remote-edit.powerpoint>Open In Powerpoint</exo.remote-edit.powerpoint>
+      <exo.remote-edit.desktop>Open On Desktop</exo.remote-edit.desktop>
+      <exo.remote-edit.desktop-app>Open In</exo.remote-edit.desktop-app>
     </label>
   </OpenDocumentInOffice>
+
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Tệp tin này bị khóa bởi user {0}. Mở chỉ đọc?</lock-node-read-only>
+      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-
 </bundle>

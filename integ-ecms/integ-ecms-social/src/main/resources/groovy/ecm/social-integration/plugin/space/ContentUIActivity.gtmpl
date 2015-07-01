@@ -29,7 +29,7 @@
   import org.exoplatform.social.core.service.LinkProvider;
   import org.apache.commons.lang.StringUtils;
   import org.apache.commons.lang.StringEscapeUtils;
-  
+  import org.exoplatform.wcm.webui.reader.ContentReader;
   //ECMS import BEGIN
   import org.exoplatform.wcm.ext.component.activity.ContentPresentation;
   import org.exoplatform.services.jcr.util.Text;
@@ -65,7 +65,11 @@
   def preferenceWS;  
   def fileComponent;
   if (currentNode) {
-    activityContentTitle = uicomponent.getTitle(currentNode);
+    if (uicomponent.isSymlink()) {
+      activityContentTitle = uicomponent.getDocTitle();
+    } else {
+      activityContentTitle = uicomponent.getTitle(currentNode);
+    }
     docSummary = uicomponent.getSummary(currentNode);
     binarySrc = uicomponent.getWebdavURL();
     summary =  uicomponent.getSummary(currentNode);
@@ -289,6 +293,7 @@
                   else
                     publishInfo = publishInfo + " - " + _ctx.appRes("SocialIntegration.publicationStates." + state);
                 }
+              publishInfo = StringEscapeUtils.escapeHtml(publishInfo);
               %>
               <span class="versionFile">$publishInfo</span>
             </div>
@@ -413,6 +418,7 @@
               } else {
                 commentMessage = it.title;
               }
+              commentMessage = ContentReader.simpleEscapeHtml(commentMessage);
               commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
               commenterAvatarImgSrc = commentId.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
