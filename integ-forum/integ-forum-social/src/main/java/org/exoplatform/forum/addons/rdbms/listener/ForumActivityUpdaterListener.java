@@ -2,6 +2,7 @@ package org.exoplatform.forum.addons.rdbms.listener;
 
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
+import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.listener.Event;
@@ -12,6 +13,14 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 
 public class ForumActivityUpdaterListener extends Listener<ExoSocialActivity, String> {
   private static final Log LOG = ExoLogger.getLogger(ForumActivityUpdaterListener.class);
+
+  /**
+   * Constructor
+   * @param forumService 
+   * Do not remove forum service on constructor, it use for order Startable of migration.
+   */
+  public ForumActivityUpdaterListener(ForumService forumService) {
+  }
 
   @Override
   public void onEvent(Event<ExoSocialActivity, String> event) throws Exception {

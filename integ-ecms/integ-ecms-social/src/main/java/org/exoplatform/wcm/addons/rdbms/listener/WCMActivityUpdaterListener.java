@@ -11,6 +11,9 @@ import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 public class WCMActivityUpdaterListener extends Listener<ExoSocialActivity, String> {
   private static final Log LOG = ExoLogger.getLogger(WCMActivityUpdaterListener.class);
 
+  public WCMActivityUpdaterListener() {
+  }
+
   @Override
   public void onEvent(Event<ExoSocialActivity, String> event) throws Exception {
     ExoSocialActivity oldActivity = event.getSource();

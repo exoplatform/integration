@@ -1,5 +1,6 @@
 package org.exoplatform.calendar.addons.rdbms.listener;
 
+import org.exoplatform.calendar.service.CalendarService;
 import org.exoplatform.cs.ext.impl.CalendarSpaceActivityPublisher;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
@@ -10,6 +11,13 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 public class CalendarActivityUpdaterListener extends Listener<ExoSocialActivity, String> {
   private static final Log LOG = ExoLogger.getLogger(CalendarActivityUpdaterListener.class);
 
+  /**
+   * Constructor
+   * @param calendarService 
+   * Do not remove calendar service on constructor, it use for order Startable of migration.
+   */
+  public CalendarActivityUpdaterListener(CalendarService calendarService) {
+  }
   @Override
   public void onEvent(Event<ExoSocialActivity, String> event) throws Exception {
     ExoSocialActivity activity = event.getSource();

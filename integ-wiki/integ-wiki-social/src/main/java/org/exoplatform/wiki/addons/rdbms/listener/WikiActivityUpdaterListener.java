@@ -6,9 +6,18 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.wiki.ext.impl.WikiSpaceActivityPublisher;
+import org.exoplatform.wiki.service.WikiService;
 
 public class WikiActivityUpdaterListener extends Listener<ExoSocialActivity, String> {
   private static final Log LOG = ExoLogger.getLogger(WikiActivityUpdaterListener.class);
+
+  /**
+   * Constructor
+   * @param wikiService 
+   * Do not remove wiki service on constructor, it use for order Startable of migration.
+   */
+  public WikiActivityUpdaterListener(WikiService wikiService) {
+  }
 
   @Override
   public void onEvent(Event<ExoSocialActivity, String> event) throws Exception {
