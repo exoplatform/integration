@@ -84,7 +84,7 @@
     <component-plugin>
       <name>notification.plugins</name>
       <set-method>addChildPlugin</set-method>
-      <type>org.exoplatform.social.doc.notification.plugin.DocActivityChildPlugin</type>
+      <type>org.exoplatform.social.plugin.doc.notification.plugin.DocActivityChildPlugin</type>
       <description>Initial information for forum child notification plugin.</description>
       <init-params>
         <value-param>
