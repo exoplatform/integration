@@ -16,13 +16,8 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
 import org.exoplatform.services.cms.link.LinkManager;
-import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
@@ -31,6 +26,10 @@ import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivityBuilder;
+import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 /**
  * Created by The eXo Platform SAS
@@ -53,14 +52,12 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       workspaceName = activity.getTemplateParams().get(ShareDocumentService.WORKSPACE);
     }
     //get node data
-    RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
-    ManageableRepository manageRepo = null;
     Node contentNode = null;
     try {
-      manageRepo = repositoryService.getCurrentRepository();
+      ManageableRepository manageRepo = WCMCoreUtils.getRepository();
       if(workspaceName.equals("")) workspaceName = manageRepo.getConfiguration().getDefaultWorkspaceName();
-      SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
-      LinkManager linkManager = (LinkManager) PortalContainer.getInstance().getComponentInstanceOfType(LinkManager.class);
+      SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
+      LinkManager linkManager = PortalContainer.getInstance().getComponentInstanceOfType(LinkManager.class);
       contentNode = linkManager.getTarget((Node) sessionProvider.getSession(workspaceName, manageRepo).getItem(nodePath));
       fileActivity.docPath = contentNode.getPath();
       fileActivity.workspace = workspaceName;

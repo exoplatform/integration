@@ -72,7 +72,7 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
    * @see org.exoplatform.ecm.webui.component.explorer.popup.service.IShareDocumentService#publicDocumentToSpace(java.lang.String, javax.jcr.Node, java.lang.String, java.lang.String)
    */
   @Override
-  public String publicDocumentToSpace(String space, Node node, String comment,String perm) {
+  public String publicDocumentToSpace(String space, Node currentNode, String comment,String perm) {
     Node rootSpace = null;
     Node shared = null;
     try {
@@ -90,22 +90,31 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       }else{
         shared = rootSpace.getNode("Shared");
       }
-      if(node.isNodeType(NodetypeConstant.EXO_SYMLINK)) node = linkManager.getTarget(node);
+      if(currentNode.isNodeType(NodetypeConstant.EXO_SYMLINK)) currentNode = linkManager.getTarget(currentNode);
       //Update permission
       String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
       if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
-      if(PermissionUtil.canChangePermission(node)){
-        node.addMixin(MIX_PRIVILEGEABLE);
-        ExtendedNode enode = (ExtendedNode) node;
+      if(PermissionUtil.canChangePermission(currentNode)){
+        ExtendedNode node = (ExtendedNode) currentNode;
+        if(node.canAddMixin(MIX_PRIVILEGEABLE))node.addMixin(MIX_PRIVILEGEABLE);
+        node.setPermission("*:" + space, tempPerms.split(","));
+        node.save();
+      }else if(PermissionUtil.canRead(currentNode)){
+        SessionProvider systemSessionProvider = SessionProvider.createSystemProvider();
+        Session systemSession = systemSessionProvider.getSession(session.getWorkspace().getName(), repository);
+        Node _node= (Node)systemSession.getItem(currentNode.getPath());
+        ExtendedNode enode = (ExtendedNode) _node;
+        if(enode.canAddMixin(MIX_PRIVILEGEABLE))enode.addMixin(MIX_PRIVILEGEABLE);
         enode.setPermission("*:" + space,tempPerms.split(","));
         enode.save();
       }
-      Node link = linkManager.createLink(shared, node);
+      currentNode.getSession().save();
+      Node link = linkManager.createLink(shared, currentNode);
       rootSpace.save();
       //Share activity
       try {
         ExoSocialActivity activity = null;
-        if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)){
+        if(currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)){
           activity = org.exoplatform.wcm.ext.component.activity.listener.Utils.postFileActivity(link,"",false,false,comment);
           activity.setType(SHARE_FILE);
         }else{
@@ -114,7 +123,7 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
         }
 
         activity.getTemplateParams().put(NODE_PATH, link.getPath());        
-        activity.getTemplateParams().put(MIME_TYPE , getMimeType(node));
+        activity.getTemplateParams().put(MIME_TYPE , getMimeType(currentNode));
         activity.getTemplateParams().put(MESSAGE, comment);
         activity.getTemplateParams().put(WORKSPACE, link.getSession().getWorkspace().getName());
 
@@ -133,16 +142,6 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
         LOG.error(e.getMessage(), e);
     }
     return "";
-  }
-  private boolean canChangePermission(Node node) {
-    try {
-      ((ExtendedNode)node).checkPermission(PermissionType.CHANGE_PERMISSION);
-      return true;
-    }catch (RepositoryException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return false;
   }
 
   private String getMimeType(Node node) {

@@ -80,6 +80,15 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
 
   private static final String SHARE_PERMISSION_VIEW        = PermissionType.READ;
   private static final String SHARE_PERMISSION_MODIFY      = "modify";
+  private boolean permissionDropDown = false;
+
+  public boolean hasPermissionDropDown() {
+    return permissionDropDown;
+  }
+
+  public void setPermissionDropDown(boolean permissionDropDown) {
+    this.permissionDropDown = permissionDropDown;
+  }
 
   public static class RemoveSpaceActionListener extends EventListener<UIShareDocuments>{
 
@@ -138,9 +147,10 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
         List<String> spaces = event.getSource().spaces;
         Node node = event.getSource().getNode();
         String message = "";
-        String perm = "modify";
+        String perm = "read";
         if(event.getSource().getChild(UIFormTextAreaInput.class).getValue() != null) message = event.getSource().getChild(UIFormTextAreaInput.class).getValue();
-        if(event.getSource().getChild(UIFormSelectBox.class).getValue() != null) perm = event.getSource().getChild(UIFormSelectBox.class).getValue();
+        UIFormSelectBox formSelectBox = event.getSource().getChild(UIFormSelectBox.class);
+        if(formSelectBox != null && formSelectBox.getValue() != null) perm = event.getSource().getChild(UIFormSelectBox.class).getValue();
         for(String space : spaces){
           if(space.equals("")) continue;
           else service.publicDocumentToSpace(space,node,message,perm);
@@ -170,9 +180,6 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
 
       EventUIComponent temp = new EventUIComponent("UIShareDocuments","SelectSpace",EVENTTYPE.EVENT);
       getSpace().init(temp);
-      ArrayList<SelectItemOption<String>> permOption = new ArrayList<SelectItemOption<String>>();
-
-      addChild(new UIFormSelectBox("permissionDropDown", "permissionDropDown", permOption));
 
       ResourceBundleService resourceBundleService = WCMCoreUtils.getService(ResourceBundleService.class);
       ResourceBundle resourceBundle = resourceBundleService.getResourceBundle(SHARECONTENT_BUNDLE_LOCATION, Util.getPortalRequestContext().getLocale());
@@ -185,11 +192,14 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       if(PermissionUtil.canSetProperty(currentNode)) {
         itemOptions.add(new SelectItemOption<String>(canView, SHARE_PERMISSION_VIEW));
         itemOptions.add(new SelectItemOption<String>(canModify, SHARE_PERMISSION_MODIFY));
-      }else if(PermissionUtil.canRead(currentNode)){
-        itemOptions.add(new SelectItemOption<String>(canView, SHARE_PERMISSION_VIEW));
+        ArrayList<SelectItemOption<String>> permOption = new ArrayList<SelectItemOption<String>>();
+        addChild(new UIFormSelectBox("permissionDropDown", "permissionDropDown", permOption));
+        getChild(UIFormSelectBox.class).setOptions(itemOptions);
+        setPermissionDropDown(true);
+      }else{
+        setPermissionDropDown(false);
       }
 
-      getChild(UIFormSelectBox.class).setOptions(itemOptions);
       addChild(new UIFormTextAreaInput("textAreaInput", "textAreaInput", ""));
     } catch (Exception e) {
       if(LOG.isErrorEnabled())

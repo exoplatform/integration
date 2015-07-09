@@ -17,9 +17,6 @@
 package org.exoplatform.ecm.webui.component.explorer.rightclick.manager;
 
 import org.exoplatform.ecm.webui.component.explorer.UIJCRExplorer;
-import org.exoplatform.ecm.webui.component.explorer.control.filter.CanAddNodeFilter;
-import org.exoplatform.ecm.webui.component.explorer.control.filter.CanRemoveNodeFilter;
-import org.exoplatform.ecm.webui.component.explorer.control.filter.CanSetPropertyFilter;
 import org.exoplatform.ecm.webui.component.explorer.control.filter.IsDocumentFilter;
 import org.exoplatform.ecm.webui.component.explorer.control.listener.UIWorkingAreaActionListener;
 import org.exoplatform.ecm.webui.component.explorer.popup.actions.UIShareDocuments;
@@ -74,10 +71,10 @@ public class ShareDocumentsComponent extends UIAbstractManagerComponent{
   }
 
   private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] {
-          new IsDocumentFilter(),
-          new CanSetPropertyFilter(),
-          new CanAddNodeFilter(),
-          new CanRemoveNodeFilter()
+          new IsDocumentFilter()
+//          new CanSetPropertyFilter(),
+//          new CanAddNodeFilter(),
+//          new CanRemoveNodeFilter()
   });
 
   @UIExtensionFilters
