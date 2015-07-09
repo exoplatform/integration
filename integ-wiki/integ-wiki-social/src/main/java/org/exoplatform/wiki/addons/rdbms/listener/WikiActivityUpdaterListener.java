@@ -31,7 +31,7 @@ public class WikiActivityUpdaterListener extends Listener<ExoSocialActivity, Str
   @Override
   public void onEvent(Event<ExoSocialActivity, String> event) throws Exception {
     ExoSocialActivity activity = event.getSource();
-    if (WikiSpaceActivityPublisher.PAGE_ID_KEY.equals(activity.getType())) {
+    if (WikiSpaceActivityPublisher.WIKI_APP_ID.equals(activity.getType())) {
       String newActivityId = event.getData();
       if (!activity.isComment()) {
         LOG.info(String.format("Migration the wiki activity '%s' with new id:: %s", activity.getTitle(), newActivityId));
@@ -40,7 +40,7 @@ public class WikiActivityUpdaterListener extends Listener<ExoSocialActivity, Str
         String pageType = activity.getTemplateParams().get(WikiSpaceActivityPublisher.PAGE_TYPE_KEY);
         String pageOwner = activity.getTemplateParams().get(WikiSpaceActivityPublisher.PAGE_OWNER_KEY);
         
-        Page page = service.getPageById(pageType, pageOwner, pageId);
+        Page page = service.getPageByRootPermission(pageType, pageOwner, pageId);
         Node node = page.getJCRPageNode();
         if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
           try {
