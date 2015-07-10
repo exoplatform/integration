@@ -363,6 +363,9 @@ public class ForumActivityUtils {
     String categoryId = getActivityParamValue(activity, ForumActivityBuilder.CATE_ID_KEY);
     String forumId = getActivityParamValue(activity, ForumActivityBuilder.FORUM_ID_KEY);
     String topicId = getActivityParamValue(activity, ForumActivityBuilder.TOPIC_ID_KEY);
+    if(CommonUtils.isEmpty(topicId)) {
+      return null;
+    }
     try {
       return ForumActivityUtils.getForumService().getTopic(categoryId, forumId, topicId, "");
     } catch (Exception e) {
@@ -375,6 +378,9 @@ public class ForumActivityUtils {
     String forumId = getActivityParamValue(activity, ForumActivityBuilder.FORUM_ID_KEY);
     String topicId = getActivityParamValue(activity, ForumActivityBuilder.TOPIC_ID_KEY);
     String postId = getActivityParamValue(activity, ForumActivityBuilder.POST_ID_KEY);
+    if(CommonUtils.isEmpty(postId)) {
+      return null;
+    }
     try {
       return ForumActivityUtils.getForumService().getPost(categoryId, forumId, topicId, postId);
     } catch (Exception e) {

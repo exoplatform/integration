@@ -4,13 +4,14 @@ import static org.exoplatform.social.plugin.doc.UIDocActivityBuilder.ACTIVITY_TY
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.exoplatform.commons.utils.ActivityTypeUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.plugin.doc.UIDocActivity;
 
@@ -22,10 +23,11 @@ public class DocActivityUpdaterListener extends Listener<ExoSocialActivity, Stri
     ExoSocialActivity activity = event.getSource();
     if (ACTIVITY_TYPE.equals(activity.getType())) {
       String workspace = activity.getTemplateParams().get(UIDocActivity.WORKSPACE);
+      if(workspace == null) {
+        workspace = activity.getTemplateParams().get(UIDocActivity.WORKSPACE.toLowerCase());
+      }
       String docId = activity.getTemplateParams().get(UIDocActivity.ID);
-      String path = activity.getUrl();
-
-      Node docNode = getDocNode(workspace, path, docId);
+      Node docNode = getDocNode(workspace, activity.getUrl(), docId);
       if (docNode != null && docNode.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
         try {
           ActivityTypeUtils.attachActivityId(docNode, event.getData());
@@ -47,11 +49,18 @@ public class DocActivityUpdaterListener extends Listener<ExoSocialActivity, Stri
    * @return
    */
   private Node getDocNode(String workspace, String path, String nodeId) {
-    NodeLocation nodeLocation = new NodeLocation();
-    nodeLocation.setSystemSession(true);
-    nodeLocation.setUUID(nodeId);
-    nodeLocation.setPath(path);
-    //
-    return NodeLocation.getNodeByLocation(nodeLocation);
+    if (workspace == null || (nodeId == null && path == null)) {
+      return null;
+    }
+    try {
+      Session session = CommonsUtils.getSystemSessionProvider().getSession(workspace, CommonsUtils.getRepository());
+      try {
+        return session.getNodeByUUID(nodeId);
+      } catch (Exception e) {
+        return (Node) session.getItem(path);
+      }
+    } catch (RepositoryException e) {
+      return null;
+    }
   }
 }

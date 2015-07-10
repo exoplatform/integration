@@ -2,11 +2,10 @@ package org.exoplatform.wcm.addons.rdbms.listener;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.services.jcr.core.ManageableRepository;
-import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -65,31 +64,47 @@ public class WCMActivityUpdaterListener extends Listener<ExoSocialActivity, Stri
   }
 
   private void migrationDoc(ExoSocialActivity activity, String newId) throws RepositoryException {
+    String workspace = activity.getTemplateParams().get(UIDocActivity.WORKSPACE);
+    if(workspace == null) {
+      workspace = activity.getTemplateParams().get(UIDocActivity.WORKSPACE.toLowerCase());
+    }
     String docId = activity.getTemplateParams().get(UIDocActivity.ID);
-    Node docNode = getDocNode(docId);
-    ActivityTypeUtils.attachActivityId(docNode, newId);
-    docNode.getSession().save();
+    Node docNode = getDocNode(workspace, activity.getUrl(), docId);
+    if (docNode != null && docNode.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
+      LOG.info("Migration doc: " + docNode.getPath());
+      try {
+        ActivityTypeUtils.attachActivityId(docNode, newId);
+        docNode.getSession().save();
+      } catch (RepositoryException e) {
+        LOG.warn("Updates the file-spaces activity is unsuccessful!");
+        LOG.debug("Updates the file-spaces activity is unsuccessful!", e);
+      }
+    } else {
+      LOG.warn("Failed to migration the file-spaces activity width old id %s - new id %s. Because, missing document's path/Id on template-parameters");
+    }
   }
 
   /**
    * This method is target to get the Document node.
    * 
+   * @param workspace
+   * @param path
    * @param nodeId
    * @return
    */
-  private Node getDocNode(String nodeId) {
-    ManageableRepository manageRepo = CommonsUtils.getRepository();
-    SessionProvider sessionProvider = SessionProvider.createSystemProvider();
-    Node contentNode = null;
-    for (String ws : manageRepo.getWorkspaceNames()) {
-      try {
-        contentNode = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(nodeId);
-        break;
-      } catch (RepositoryException e) {
-        continue;
-      }
+  private Node getDocNode(String workspace, String path, String nodeId) {
+    if (workspace == null || (nodeId == null && path == null)) {
+      return null;
     }
-    //
-    return contentNode;
+    try {
+      Session session = CommonsUtils.getSystemSessionProvider().getSession(workspace, CommonsUtils.getRepository());
+      try {
+        return session.getNodeByUUID(nodeId);
+      } catch (Exception e) {
+        return (Node) session.getItem(path);
+      }
+    } catch (RepositoryException e) {
+      return null;
+    }
   }
 }
