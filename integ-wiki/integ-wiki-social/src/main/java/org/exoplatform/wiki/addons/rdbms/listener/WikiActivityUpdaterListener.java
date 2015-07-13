@@ -39,19 +39,24 @@ public class WikiActivityUpdaterListener extends Listener<ExoSocialActivity, Str
         if (pageId == null) return;
         String pageType = activity.getTemplateParams().get(WikiSpaceActivityPublisher.PAGE_TYPE_KEY);
         String pageOwner = activity.getTemplateParams().get(WikiSpaceActivityPublisher.PAGE_OWNER_KEY);
-        
+        //
         Page page = service.getPageByRootPermission(pageType, pageOwner, pageId);
-        Node node = page.getJCRPageNode();
-        if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
-          try {
-            node.setProperty(ActivityTypeUtils.EXO_ACTIVITY_ID, newActivityId);
-            node.save();
-          } catch (RepositoryException e) {
-            LOG.warn("Updates the wiki activity is unsuccessful!");
-            LOG.debug("Updates the wiki activity is unsuccessful!", e);
+        if (page != null) {
+          Node node = page.getJCRPageNode();
+          if (node != null && node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
+            try {
+              node.setProperty(ActivityTypeUtils.EXO_ACTIVITY_ID, newActivityId);
+              node.save();
+            } catch (RepositoryException e) {
+              LOG.warn("Updates the wiki activity is unsuccessful!");
+              LOG.debug("Updates the wiki activity is unsuccessful!", e);
+            }
+          } else {
+            LOG.warn("Updates the wiki activity is unsuccessful. Because, the can not get node from wiki page " + pageId);
           }
+        } else {
+          LOG.warn("Updates the wiki activity is unsuccessful. Because, the can not get the wiki page " + pageId);
         }
-        
       }
     }
   }

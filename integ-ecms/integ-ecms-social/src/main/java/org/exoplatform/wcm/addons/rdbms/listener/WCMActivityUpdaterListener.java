@@ -80,7 +80,7 @@ public class WCMActivityUpdaterListener extends Listener<ExoSocialActivity, Stri
         LOG.debug("Updates the file-spaces activity is unsuccessful!", e);
       }
     } else {
-      LOG.warn("Failed to migration the file-spaces activity width old id %s - new id %s. Because, missing document's path/Id on template-parameters");
+      LOG.warn(String.format("Failed to migration the file-spaces activity width old id %s - new id %s. Because, missing document's path/Id on template-parameters", activity.getId(), newId));
     }
   }
 

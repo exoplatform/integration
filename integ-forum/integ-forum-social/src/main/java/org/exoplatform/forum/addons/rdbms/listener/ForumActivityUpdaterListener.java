@@ -32,14 +32,14 @@ public class ForumActivityUpdaterListener extends Listener<ExoSocialActivity, St
         if (post != null) {
           ForumActivityUtils.takeCommentBack(post, newActivityId);
         } else {
-          LOG.warn("Failed to migration the forum post comment width old id %s - new id %s. Because, missing post's Id on template-parameters");
+          LOG.warn(String.format("Failed to migration the forum post comment width old id %s - new id %s. Because, missing post's Id on template-parameters", activity.getId(), event.getData()));
         }
       } else {
         Topic topic = ForumActivityUtils.getTopic(activity);
         if (topic != null) {
           ForumActivityUtils.takeActivityBack(topic, newActivityId);
         } else {
-          LOG.warn("Failed to migration the forum topic activity width old id %s - new id %s. Because, missing post's Id on template-parameters");
+          LOG.warn(String.format("Failed to migration the forum topic activity width old id %s - new id %s. Because, missing post's Id on template-parameters", activity.getId(), event.getData()));
         }
       }
     }
