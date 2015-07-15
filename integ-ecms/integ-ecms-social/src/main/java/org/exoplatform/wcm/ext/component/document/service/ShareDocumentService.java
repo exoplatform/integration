@@ -95,18 +95,13 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
       if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
       if(PermissionUtil.canChangePermission(currentNode)){
-        ExtendedNode node = (ExtendedNode) currentNode;
-        if(node.canAddMixin(MIX_PRIVILEGEABLE))node.addMixin(MIX_PRIVILEGEABLE);
-        node.setPermission("*:" + space, tempPerms.split(","));
-        node.save();
+        setPermission(currentNode, space, tempPerms.split(","));
+        setPermission(currentNode.getParent(), space, new String[]{PermissionType.READ});
       }else if(PermissionUtil.canRead(currentNode)){
         SessionProvider systemSessionProvider = SessionProvider.createSystemProvider();
         Session systemSession = systemSessionProvider.getSession(session.getWorkspace().getName(), repository);
         Node _node= (Node)systemSession.getItem(currentNode.getPath());
-        ExtendedNode enode = (ExtendedNode) _node;
-        if(enode.canAddMixin(MIX_PRIVILEGEABLE))enode.addMixin(MIX_PRIVILEGEABLE);
-        enode.setPermission("*:" + space,tempPerms.split(","));
-        enode.save();
+        setPermission(_node, space, tempPerms.split(","));
       }
       currentNode.getSession().save();
       Node link = linkManager.createLink(shared, currentNode);
@@ -159,6 +154,20 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
     return "";
   }
 
+  /**
+   * Grant view for parent folder when share a document
+   * We need grant assess right for parent in case editing the shared documents
+   * @param currentNode
+   * @param memberShip
+   * @param permissions
+   * @throws Exception
+   */
+  private void setPermission(Node currentNode, String memberShip, String[] permissions) throws Exception{
+    ExtendedNode node = (ExtendedNode) currentNode;
+    if(node.canAddMixin(MIX_PRIVILEGEABLE))node.addMixin(MIX_PRIVILEGEABLE);
+    node.setPermission("*:" + memberShip, permissions);
+    node.save();
+  }
   @Override
   public void start() {
     // TODO Auto-generated method stub
