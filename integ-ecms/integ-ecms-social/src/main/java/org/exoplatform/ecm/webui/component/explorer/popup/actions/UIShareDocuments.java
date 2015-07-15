@@ -101,6 +101,9 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       UIJCRExplorer uiExplorer = event.getSource().getAncestorOfType(UIJCRExplorer.class);
       UIPopupContainer objUIPopupContainer = uiExplorer.getChild(UIPopupContainer.class);
       event.getRequestContext().addUIComponentToUpdateByAjax(objUIPopupContainer);
+      event.getRequestContext().getJavascriptManager()
+              .require("SHARED/share-content", "shareContent")
+              .addScripts("eXo.ecm.ShareContent.checkSelectedSpace('"+uiform.spaces+"');");
     }
   }
 
@@ -129,11 +132,13 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       event.getSource().comment = event.getSource().getChild(UIFormTextAreaInput.class).getValue();
       String space = event.getRequestContext().getRequestParameter(UISpacesSwitcher.SPACE_ID_PARAMETER).toString();
       //space = space.split("/")[2];
-      if(!spaces.contains(space))
-        spaces.add(space);
+      if(!spaces.contains(space)) spaces.add(space);
       UIJCRExplorer uiExplorer = event.getSource().getAncestorOfType(UIJCRExplorer.class);
       UIPopupContainer objUIPopupContainer = uiExplorer.getChild(UIPopupContainer.class);
       event.getRequestContext().addUIComponentToUpdateByAjax(objUIPopupContainer);
+      event.getRequestContext().getJavascriptManager()
+              .require("SHARED/share-content", "shareContent")
+              .addScripts("eXo.ecm.ShareContent.checkSelectedSpace('"+spaces+"');");
     }
   }
 

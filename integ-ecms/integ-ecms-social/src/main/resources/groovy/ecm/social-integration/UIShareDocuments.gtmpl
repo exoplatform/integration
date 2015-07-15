@@ -36,6 +36,6 @@ rcontext.getJavascriptManager()
   </div>
 </div>
 <div class="uiActionBorder">
-	<button type="button" class="btn btn-primary" onclick="<%=uicomponent.event("Share")%>"><%=_ctx.appRes("UIShareDocuments.label.ShareButton")%></button>
+	<button type="button" class="btn btn-primary" disabled="disabled" onclick="<%=uicomponent.event("Share")%>"><%=_ctx.appRes("UIShareDocuments.label.ShareButton")%></button>
 	<button type="button" class="btn" onclick="<%=uicomponent.event("Cancel")%>"><%=_ctx.appRes("UIShareDocuments.label.CancelButton")%></button>
 </div>
