@@ -116,7 +116,7 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
           activity = org.exoplatform.wcm.ext.component.activity.listener.Utils.postActivity(link,"",false,false,comment);
           activity.setType(SHARE_CONTENT);
         }
-
+        link.save();
         activity.getTemplateParams().put(NODE_PATH, link.getPath());        
         activity.getTemplateParams().put(MIME_TYPE , getMimeType(currentNode));
         activity.getTemplateParams().put(MESSAGE, comment);
