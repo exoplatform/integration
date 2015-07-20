@@ -657,6 +657,7 @@ public class Utils {
     if(isSystemComment) updateNotifyMessages(activity, activityMsgBundleKey, systemComment);
     else activity.setTitle(title);
     activity.setTemplateParams(activityParams);
+    activity.setTitle(systemComment);
     return activity;
   }
   

@@ -84,6 +84,7 @@
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
   
   def activityStatus = uicomponent.getActivityStatus();
+  def activityTitle = uicomponent.getActivityTitle();
   def contentName = uicomponent.getContentName();
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
   def contentActivityUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");
@@ -276,8 +277,8 @@
 						<%} %>
 					</div>
 				</div><!--end heading-->
-				<% if (activityStatus != null) { %>
-				<div class="description">$activityStatus</div><!--end description-->
+				<% if (activityTitle != null) { %>
+				<div class="description">$activityTitle</div><!--end description-->
 				<% } %>
 				
 				<div class="uiBox roundedBottom introBox fileShare">	

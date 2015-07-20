@@ -186,6 +186,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       EventUIComponent temp = new EventUIComponent("UIShareDocuments","SelectSpace",EVENTTYPE.EVENT);
       getSpace().init(temp);
 
+      addChild(new UIFormTextAreaInput("textAreaInput", "textAreaInput", ""));
       ResourceBundleService resourceBundleService = WCMCoreUtils.getService(ResourceBundleService.class);
       ResourceBundle resourceBundle = resourceBundleService.getResourceBundle(SHARECONTENT_BUNDLE_LOCATION, Util.getPortalRequestContext().getLocale());
       String canView = resourceBundle.getString(SHARE_OPTION_CANVEW);
@@ -204,8 +205,6 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       }else{
         setPermissionDropDown(false);
       }
-
-      addChild(new UIFormTextAreaInput("textAreaInput", "textAreaInput", ""));
     } catch (Exception e) {
       if(LOG.isErrorEnabled())
         LOG.error(e.getMessage(), e);
