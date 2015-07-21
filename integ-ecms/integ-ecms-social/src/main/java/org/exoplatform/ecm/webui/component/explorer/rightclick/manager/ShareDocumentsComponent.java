@@ -72,9 +72,6 @@ public class ShareDocumentsComponent extends UIAbstractManagerComponent{
 
   private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] {
           new IsDocumentFilter()
-//          new CanSetPropertyFilter(),
-//          new CanAddNodeFilter(),
-//          new CanRemoveNodeFilter()
   });
 
   @UIExtensionFilters

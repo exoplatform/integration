@@ -19,8 +19,8 @@ package org.exoplatform.ecm.webui.component.explorer.popup.actions;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.utils.permission.PermissionUtil;
 import org.exoplatform.ecm.webui.component.explorer.UIJCRExplorer;
-import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.cms.impl.Utils;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -62,7 +62,7 @@ import java.util.ResourceBundle;
  */
 @ComponentConfig(
                  lifecycle = UIFormLifecycle.class,
-                 template =  "classpath:groovy/ecm/social-integration/UIShareDocuments.gtmpl",
+                 template =  "classpath:groovy/ecm/social-integration/share-document/UIShareDocuments.gtmpl",
                  events = {
                    @EventConfig(listeners = UIShareDocuments.ShareActionListener.class),
                    @EventConfig(listeners = UIShareDocuments.CancelActionListener.class),
@@ -98,9 +98,8 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       uiform.spaces.remove(event.getRequestContext().getRequestParameter(OBJECTID).toString());
       if (event.getSource().getChild(UIFormTextAreaInput.class).getValue() == null) uiform.comment = "";
       else uiform.comment = event.getSource().getChild(UIFormTextAreaInput.class).getValue();
-      UIJCRExplorer uiExplorer = event.getSource().getAncestorOfType(UIJCRExplorer.class);
-      UIPopupContainer objUIPopupContainer = uiExplorer.getChild(UIPopupContainer.class);
-      event.getRequestContext().addUIComponentToUpdateByAjax(objUIPopupContainer);
+      UIShareDocumentSpaceMention uiShareDocumentSpaceMention = event.getSource().findFirstComponentOfType(UIShareDocumentSpaceMention.class);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiShareDocumentSpaceMention);
       event.getRequestContext().getJavascriptManager()
               .require("SHARED/share-content", "shareContent")
               .addScripts("eXo.ecm.ShareContent.checkSelectedSpace('"+uiform.spaces+"');");
@@ -131,11 +130,9 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       List<String> spaces = event.getSource().spaces;
       event.getSource().comment = event.getSource().getChild(UIFormTextAreaInput.class).getValue();
       String space = event.getRequestContext().getRequestParameter(UISpacesSwitcher.SPACE_ID_PARAMETER).toString();
-      //space = space.split("/")[2];
       if(!spaces.contains(space)) spaces.add(space);
-      UIJCRExplorer uiExplorer = event.getSource().getAncestorOfType(UIJCRExplorer.class);
-      UIPopupContainer objUIPopupContainer = uiExplorer.getChild(UIPopupContainer.class);
-      event.getRequestContext().addUIComponentToUpdateByAjax(objUIPopupContainer);
+      UIShareDocumentSpaceMention uiShareDocumentSpaceMention = event.getSource().findFirstComponentOfType(UIShareDocumentSpaceMention.class);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiShareDocumentSpaceMention);
       event.getRequestContext().getJavascriptManager()
               .require("SHARED/share-content", "shareContent")
               .addScripts("eXo.ecm.ShareContent.checkSelectedSpace('"+spaces+"');");
@@ -179,10 +176,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
 
   public void init(){
     try {
-      addChild(UISpacesSwitcher.class, null, "SpaceSwitcher");
-      getChild(UISpacesSwitcher.class).setShowPortalSpace(false);
-      getChild(UISpacesSwitcher.class).setShowUserSpace(false);
-
+      addChild(createUIComponent(UIShareDocumentSpaceMention.class, null, null));
       EventUIComponent temp = new EventUIComponent("UIShareDocuments","SelectSpace",EVENTTYPE.EVENT);
       getSpace().init(temp);
 
@@ -244,7 +238,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   }
 
   public UISpacesSwitcher getSpace(){
-    return getChild(UISpacesSwitcher.class);
+    return findFirstComponentOfType(UISpacesSwitcher.class);
   }
   public List<Space> getSpaces(){
     List<Space> lstSpaces = new ArrayList<Space>();
