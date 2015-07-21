@@ -221,17 +221,38 @@ public class UnifiedSearchService implements ResourceContainer {
     
   @SuppressWarnings("unchecked")
   private SearchSetting getSearchSetting() {
+    SearchSetting newSearchSetting = defaultSearchSetting;
     try {
-      Long resultsPerPage = ((SettingValue<Long>)settingService.get(Context.USER, Scope.WINDOWS, "resultsPerPage")).getValue();
-      String searchTypes = ((SettingValue<String>) settingService.get(Context.USER, Scope.WINDOWS, "searchTypes")).getValue();      
-      Boolean searchCurrentSiteOnly = ((SettingValue<Boolean>) settingService.get(Context.USER, Scope.WINDOWS, "searchCurrentSiteOnly")).getValue();
-      Boolean hideSearchForm = ((SettingValue<Boolean>) settingService.get(Context.USER, Scope.WINDOWS, "hideSearchForm")).getValue();
-      Boolean hideFacetsFilter = ((SettingValue<Boolean>) settingService.get(Context.USER, Scope.WINDOWS, "hideFacetsFilter")).getValue();
-      
-      return new SearchSetting(resultsPerPage, Arrays.asList(searchTypes.split(",\\s*")), searchCurrentSiteOnly, hideSearchForm, hideFacetsFilter);
-    } catch (Exception e) {
-      return defaultSearchSetting;
+      Long resultsPerPage = ((SettingValue<Long>)settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_resultsPerPage")).getValue();
+      newSearchSetting.setResultsPerPage(resultsPerPage);
+    } catch(Exception e) {
+      LOG.info("Cannot get searchResult_resultsPerPage parameter for search settings. Use default one instead");
     }
+    try {
+      String searchTypes = ((SettingValue<String>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchTypes")).getValue();
+      newSearchSetting.setSearchTypes(Arrays.asList(searchTypes.split(",\\s*")));
+    } catch (Exception e) {
+      LOG.info("Cannot get searchResult_searchTypes parameter for search settings. Use default one instead");
+    }
+    try {
+      Boolean searchCurrentSiteOnly = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchCurrentSiteOnly")).getValue();
+      newSearchSetting.setSearchCurrentSiteOnly(searchCurrentSiteOnly);
+    } catch (Exception e) {
+      LOG.info("Cannot get searchResult_searchCurrentSiteOnly parameter for search settings. Use default one instead");
+    }
+    try {
+      Boolean hideSearchForm = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideSearchForm")).getValue();
+      newSearchSetting.setHideSearchForm(hideSearchForm);
+    } catch (Exception e) {
+      LOG.info("Cannot get searchResult_hideSearchForm parameter for search settings. Use default one instead");
+    }
+    try {
+      Boolean hideFacetsFilter = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideFacetsFilter")).getValue();
+      newSearchSetting.setHideFacetsFilter(hideFacetsFilter);
+    } catch (Exception e) {
+      LOG.info("Cannot get searchResult_hideFacetsFilter parameter for search settings. Use default one instead");
+    }
+    return newSearchSetting;
   }
 
   /**
@@ -258,11 +279,11 @@ public class UnifiedSearchService implements ResourceContainer {
   @POST
   @Path("/setting")
   public Response REST_setSearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @FormParam("hideSearchForm") boolean hideSearchForm, @FormParam("hideFacetsFilter") boolean hideFacetsFilter) {
-    settingService.set(Context.USER, Scope.WINDOWS, "resultsPerPage", new SettingValue<Long>(resultsPerPage));    
-    settingService.set(Context.USER, Scope.WINDOWS, "searchTypes", new SettingValue<String>(searchTypes));
-    settingService.set(Context.USER, Scope.WINDOWS, "searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
-    settingService.set(Context.USER, Scope.WINDOWS, "hideSearchForm", new SettingValue<Boolean>(hideSearchForm));
-    settingService.set(Context.USER, Scope.WINDOWS, "hideFacetsFilter", new SettingValue<Boolean>(hideFacetsFilter));
+    settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_resultsPerPage", new SettingValue<Long>(resultsPerPage));    
+    settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchTypes", new SettingValue<String>(searchTypes));
+    settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchCurrentSiteOnly", new SettingValue<Boolean>(searchCurrentSiteOnly));
+    settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideSearchForm", new SettingValue<Boolean>(hideSearchForm));
+    settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideFacetsFilter", new SettingValue<Boolean>(hideFacetsFilter));
     
     return Response.ok("ok", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   } 
@@ -270,15 +291,26 @@ public class UnifiedSearchService implements ResourceContainer {
 
   @SuppressWarnings("unchecked")
   private SearchSetting getQuickSearchSetting() {
+    SearchSetting newSearchSetting = defaultQuicksearchSetting;
     try {
       Long resultsPerPage = ((SettingValue<Long>)settingService.get(Context.GLOBAL, Scope.WINDOWS, "resultsPerPage")).getValue();
-      String searchTypes = ((SettingValue<String>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchTypes")).getValue();
-      Boolean searchCurrentSiteOnly = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchCurrentSiteOnly")).getValue();
-      
-      return new SearchSetting(resultsPerPage, Arrays.asList(searchTypes.split(",\\s*")), searchCurrentSiteOnly, true, true);
-    } catch (Exception e) {
-      return defaultQuicksearchSetting;
+      newSearchSetting.setResultsPerPage(resultsPerPage);
+    } catch(Exception e) {
+      LOG.info("Cannot get resultsPerPage parameter for quick search settings. Use default one instead");
     }
+    try {
+      String searchTypes = ((SettingValue<String>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchTypes")).getValue();
+      newSearchSetting.setSearchTypes(Arrays.asList(searchTypes.split(",\\s*")));
+    } catch (Exception e) {
+      LOG.info("Cannot get searchTypes parameter for quick search settings. Use default one instead");
+    }
+    try {
+      Boolean searchCurrentSiteOnly = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchCurrentSiteOnly")).getValue();
+      newSearchSetting.setSearchCurrentSiteOnly(searchCurrentSiteOnly);
+    } catch (Exception e) {
+      LOG.info("Cannot get searchCurrentSiteOnly parameter for quick search settings. Use default one instead");
+    }
+    return newSearchSetting;
   }
 
   /**

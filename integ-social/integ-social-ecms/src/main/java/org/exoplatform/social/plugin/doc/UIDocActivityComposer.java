@@ -26,11 +26,15 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.webui.selector.UISelectable;
+import org.exoplatform.ecm.webui.utils.Utils;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.social.core.BaseActivityProcessorPlugin;
@@ -82,9 +86,11 @@ import org.exoplatform.webui.form.UIFormStringInput;
   }
 )
 public class UIDocActivityComposer extends UIActivityComposer implements UISelectable {
+  private static final Log LOG = ExoLogger.getLogger(UIDocActivityComposer.class);
   public static final String REPOSITORY = "repository";
   public static final String WORKSPACE = "collaboration";
   private static final String FILE_SPACES         = "files:spaces";
+  private static final String CONTENT_SPACES         = "contents:spaces";
   private final static String POPUP_COMPOSER = "UIPopupComposer";
   private final String docActivityTitle = "<a href=\"${"+ UIDocActivity.DOCLINK +"}\">" + "${" +UIDocActivity.DOCNAME +"}</a>";
 
@@ -160,8 +166,15 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     } else {
       Map<String, String> activityParams = new LinkedHashMap<String, String>();
       Node node = getDocNode(REPOSITORY, WORKSPACE, documentPath);
-      
-      
+      activityParams.put(UIDocActivity.DOCUMENT_TITLE, Utils.getTitle(node));
+
+      boolean isSymlink = node.isNodeType(NodetypeConstant.EXO_SYMLINK);
+      if (isSymlink){
+        node = Utils.getNodeSymLink(node);
+      }
+
+
+      activityParams.put(UIDocActivity.IS_SYMLINK, String.valueOf(isSymlink));
       activityParams.put(UIDocActivity.DOCNAME, documentName);
       activityParams.put(UIDocActivity.DOCLINK, documentRefLink);
       activityParams.put(UIDocActivity.DOCPATH, documentPath);
@@ -170,7 +183,8 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
       activityParams.put(UIDocActivity.MESSAGE, postedMessage);      
       activityParams.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, UIDocActivity.MESSAGE);
       
-      if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
+      if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)
+              || node.isNodeType(NodetypeConstant.EXO_ACCESSIBLE_MEDIA)) {
         String activityOwnerId = UIDocActivity.getActivityOwnerId(node);
         DateFormat dateFormatter = null;
         dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
@@ -191,13 +205,12 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
           }
         }
         
-        activityParams.put(UIDocActivity.ID, node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "");       
+        activityParams.put(UIDocActivity.ID, node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "");
         activityParams.put(UIDocActivity.CONTENT_NAME, node.getName());
         activityParams.put(UIDocActivity.AUTHOR, activityOwnerId);
         activityParams.put(UIDocActivity.DATE_CREATED, strDateCreated);
         activityParams.put(UIDocActivity.LAST_MODIFIED, strLastModified);
         activityParams.put(UIDocActivity.CONTENT_LINK, UIDocActivity.getContentLink(node));
-        activityParams.put(UIDocActivity.ID, node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "");
         activityParams.put(UIDocActivity.MIME_TYPE, UIDocActivity.getMimeType(node));
         activityParams.put(UIDocActivity.IMAGE_PATH, illustrationImg);
       }
@@ -267,11 +280,20 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   private ExoSocialActivity saveActivity(Map<String, String> activityParams, ActivityManager activityManager,
                                          IdentityManager identityManager, Identity ownerIdentity,
                                          String remoteUser) throws ActivityStorageException, RepositoryException {
-    Node node = getDocNode(activityParams.get(UIDocActivity.REPOSITORY), activityParams.get(UIDocActivity.WORKSPACE), 
-                           activityParams.get(UIDocActivity.DOCPATH));
+    Node node = getDocNode(activityParams.get(UIDocActivity.REPOSITORY), activityParams.get(UIDocActivity.WORKSPACE),
+            activityParams.get(UIDocActivity.DOCPATH));
     String activity_type = UIDocActivity.ACTIVITY_TYPE;
+    if (node.isNodeType(NodetypeConstant.EXO_SYMLINK)){
+      try {
+        node = Utils.getNodeSymLink(node);
+      } catch (Exception e) {
+        LOG.error("Unknown error when getting the real node from symlink", e);
+      }
+    }
     if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
       activity_type = FILE_SPACES;
+    } else if (node.isNodeType(NodetypeConstant.EXO_ACCESSIBLE_MEDIA)) {
+      activity_type = CONTENT_SPACES;
     }
       
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);

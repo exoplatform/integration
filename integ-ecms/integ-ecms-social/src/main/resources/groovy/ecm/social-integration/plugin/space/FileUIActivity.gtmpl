@@ -198,7 +198,11 @@
 
 <%if (currentNode != null) {
 	  //ECMS declare variables - BEGIN
-	  activityContentTitle = uicomponent.getTitle(currentNode);
+      if (uicomponent.isSymlink()) {
+	    activityContentTitle = uicomponent.getDocTitle();
+      } else {
+        activityContentTitle = uicomponent.getTitle(currentNode);
+      }
 	  
 	  def uicontentpresentation = uicomponent.addChild(ContentPresentation.class, null, null);
 	  uicontentpresentation.setNode(currentNode);
@@ -226,7 +230,7 @@
 	  def size = uicomponent.getSize(currentNode);
 	  def fileSize = uicomponent.getFileSize(currentNode);
 	  def description = uicomponent.getSummary(currentNode); 
-      description = ContentReader.getXSSCompatibilityContent(description);
+      description = ContentReader.simpleEscapeHtml(description);
 
 	  def openInOfficeConnector = WCMCoreUtils.getService(OpenInOfficeConnector.class);
 	  def _documentInfos = openInOfficeConnector.getDocumentInfos(currentNode.getName());
@@ -271,6 +275,7 @@
 			<div id="ActivityContextBox${activity.id}">     
 				<div class="heading">
 					<span class="arrowLeft"></span>
+					<a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
 					<% if (activityDeletable) {%>
 						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
@@ -417,7 +422,7 @@
 				 <% }%>
 					 <ul class="pull-left statusAction">
 				 	<% if(uicomponent.canEditDocument(currentNode)){%>
-						<li><a href="<%=uicomponent.event("OpenFile")%>"><i class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_$activity.id $remoteEditClass" ></i>&nbsp;$remoteEditTitle</a></li>
+						<li style="display:none;" ><a href="<%=uicomponent.event("OpenFile")%>"><i class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_$activity.id $remoteEditClass" ></i>&nbsp;$remoteEditTitle</a></li>
 				 	<%}%>
 					<% if (uicomponent.isFileSupportPreview(contentNode)) { %>
 						<li><a href="$contentActivityUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
@@ -802,6 +807,7 @@
               </div>
               <p class="contentComment">$commentMessage</p>
             </div><!--end commentRight-->
+            <a id="Permalink${it.id}" class="uiIconLink uiIconLightGray" href="<%=uicomponent.getCommentPermalink(activity.id, it.id)%>"></a>
             <%if (uicomponent.isCommentDeletable(it.userId)) {
               String idDeleteComment = "DeleteCommentButton${it.id}";
             %>

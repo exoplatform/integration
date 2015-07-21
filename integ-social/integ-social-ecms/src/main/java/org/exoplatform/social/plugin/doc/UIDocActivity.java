@@ -104,6 +104,7 @@ public class UIDocActivity extends BaseUIActivity {
   public static final String DOCUMENT_TITLE     = "docTitle";  
   public static final String DOCUMENT_VERSION   = "docVersion";  
   public static final String DOCUMENT_SUMMARY   = "docSummary";
+  public static final String IS_SYMLINK         = "isSymlink";
   
   public String docLink;
   public String message;

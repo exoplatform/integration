@@ -30,6 +30,12 @@ import juzu.template.Template;
 import javax.inject.Inject;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletPreferences;
+
+import org.exoplatform.commons.api.settings.SettingService;
+import org.exoplatform.commons.api.settings.SettingValue;
+import org.exoplatform.commons.api.settings.data.Context;
+import org.exoplatform.commons.api.settings.data.Scope;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -54,34 +60,49 @@ public class Search {
   PortletPreferences portletPreferences;
   
   @Inject
+  SettingService settingService;
+
+  @Inject
   ResourceBundle bundle;    
 
-  static boolean firstInit = true;
-  
   @View
   public Response.Content index(RequestContext requestContext){
     Map<String, Object> parameters = new HashMap<String, Object>();        
     
     Search_.index().setProperty(JuzuPortlet.PORTLET_MODE, PortletMode.EDIT);
     PortletMode mode = requestContext.getProperty(JuzuPortlet.PORTLET_MODE);
-    parameters.put("firstInit", firstInit);
-    if (firstInit) firstInit = false;
+    
+    SettingValue<?> resultsPerPageSettingValue = settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_resultsPerPage");
+    if (resultsPerPageSettingValue == null) {
+      String resultsPerPage = portletPreferences.getValue("resultsPerPage", "10");
+      settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_resultsPerPage", new SettingValue<Long>(Long.parseLong(resultsPerPage)));
+    }
+    SettingValue<?> searchTypesSettingValue = settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchTypes");
+    if (searchTypesSettingValue == null) {
+      String searchTypes = portletPreferences.getValue("searchTypes", "all");
+      settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchTypes", new SettingValue<String>(searchTypes));
+    }
+
+    SettingValue<?> searchCurrentSiteOnlySettingValue = settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchCurrentSiteOnly");
+    if (searchCurrentSiteOnlySettingValue == null) {
+      String searchCurrentSiteOnly = portletPreferences.getValue("searchCurrentSiteOnly", "false");
+      settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchCurrentSiteOnly", new SettingValue<Boolean>(Boolean.parseBoolean(searchCurrentSiteOnly)));
+    }
+
+    SettingValue<?> hideSearchFormSettingValue = settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideSearchForm");
+    if (hideSearchFormSettingValue == null) {
+      String hideSearchForm = portletPreferences.getValue("hideSearchForm", "false");
+      settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideSearchForm", new SettingValue<Boolean>(Boolean.parseBoolean(hideSearchForm)));
+    }
+
+    SettingValue<?> hideFacetsFilterSettingValue = settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideFacetsFilter");
+    if (hideFacetsFilterSettingValue == null) {
+      String hideFacetsFilter = portletPreferences.getValue("hideFacetsFilter", "false");
+      settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideFacetsFilter", new SettingValue<Boolean>(Boolean.parseBoolean(hideFacetsFilter)));
+    }
     if (PortletMode.EDIT == mode){
       return edit.ok(parameters);
     } else {
-      
-      String resultsPerPage = portletPreferences.getValue("resultsPerPage", "10");
-      String searchTypes = portletPreferences.getValue("searchTypes", "all");
-      String searchCurrentSiteOnly = portletPreferences.getValue("searchCurrentSiteOnly", "false");
-      String hideSearchForm = portletPreferences.getValue("hideSearchForm", "false");
-      String hideFacetsFilter = portletPreferences.getValue("hideFacetsFilter", "false");    
-      
-      parameters.put("resultsPerPage", resultsPerPage);
-      parameters.put("searchTypes", searchTypes);
-      parameters.put("searchCurrentSiteOnly", searchCurrentSiteOnly);
-      parameters.put("hideSearchForm", hideSearchForm);
-      parameters.put("hideFacetsFilter", hideFacetsFilter);
-      
       return index.ok(parameters);
     }
   }  
