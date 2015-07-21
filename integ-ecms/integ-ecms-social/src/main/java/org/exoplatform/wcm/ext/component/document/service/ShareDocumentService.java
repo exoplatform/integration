@@ -16,7 +16,7 @@
  */
 package org.exoplatform.wcm.ext.component.document.service;
 
-import org.exoplatform.ecm.webui.utils.PermissionUtil;
+import org.exoplatform.ecm.utils.permission.PermissionUtil;
 import org.exoplatform.services.cms.BasePath;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.jcr.RepositoryService;
@@ -32,6 +32,7 @@ import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.picocontainer.Startable;
 
 import javax.jcr.Node;
@@ -47,8 +48,7 @@ import javax.jcr.Session;
  */
 public class ShareDocumentService implements IShareDocumentService, Startable{
   private static final Log    LOG                 = ExoLogger.getLogger(ShareDocumentService.class);
-  public static final String SHARE_FILE = "sharefiles:spaces";
-  public static final String SHARE_CONTENT = "sharecontents:spaces";
+
   public static final String MESSAGE            = "message";
   public static final String REPOSITORY         = "repository";
   public static final String WORKSPACE          = "WorkspaceName";
@@ -110,11 +110,9 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       try {
         ExoSocialActivity activity = null;
         if(currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)){
-          activity = org.exoplatform.wcm.ext.component.activity.listener.Utils.postFileActivity(link,"",false,false,comment);
-          activity.setType(SHARE_FILE);
+          activity = Utils.createShareActivity(link, "", Utils.SHARE_FILE, comment);
         }else{
-          activity = org.exoplatform.wcm.ext.component.activity.listener.Utils.postActivity(link,"",false,false,comment);
-          activity.setType(SHARE_CONTENT);
+          activity = Utils.createShareActivity(link,"", Utils.SHARE_CONTENT,comment);
         }
         link.save();
         activity.getTemplateParams().put(NODE_PATH, link.getPath());        

@@ -52,4 +52,9 @@ public class Utils {
     return result;
   }
 
+  public static ExoSocialActivity createShareActivity(Node node, String activityMsgBundleKey, String activityType, String comments) throws Exception{
+    ExoSocialActivity result = new ExoSocialActivityImpl();
+    result.setTemplateParams(new HashMap<String, String>());
+    return result;
+  }
 }

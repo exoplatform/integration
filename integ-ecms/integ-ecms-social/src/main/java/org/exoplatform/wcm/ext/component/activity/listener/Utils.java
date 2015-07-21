@@ -80,6 +80,8 @@ public class Utils {
   /** The Constant Activity Type */
   private static final String CONTENT_SPACES      = "contents:spaces";
   private static final String FILE_SPACES         = "files:spaces";
+  public  static final String SHARE_FILE           = "sharefiles:spaces";
+  public  static final String SHARE_CONTENT        = "sharecontents:spaces";
 
   /** the publication:currentState property name */
   private static final String CURRENT_STATE_PROP  = "publication:currentState";
@@ -88,6 +90,16 @@ public class Utils {
   private static String MIX_COMMENT_ID             = "exo:activityCommentID";
   private static int    MAX_SUMMARY_LINES_COUNT    = 4;
   private static int    MAX_SUMMARY_CHAR_COUNT     = 430;
+  private static String activityType;
+
+
+  public static String getActivityType() {
+    return activityType;
+  }
+
+  public static void setActivityType(String activityType) {
+    Utils.activityType = activityType;
+  }
 
   /**
    * Populate activity data with the data from Node
@@ -163,7 +175,18 @@ public class Utils {
   public static void postActivity(Node node, String activityMsgBundleKey) throws Exception {
     postActivity(node, activityMsgBundleKey, false, false, null);
   }
-  
+
+  public static ExoSocialActivity createShareActivity(Node node, String activityMsgBundleKey, String activityType, String comments) throws Exception{
+    setActivityType(activityType);
+    if(SHARE_FILE.equals(activityType)){
+      return postFileActivity(node,activityMsgBundleKey,false,false,comments);
+    }else if(SHARE_CONTENT.equals(activityType)){
+      return postActivity(node,activityMsgBundleKey,false,false,comments);
+    }else{
+      setActivityType(null);
+      return postFileActivity(node,activityMsgBundleKey,false,false,comments);
+    }
+  }
   /**
    * @Method postFileActivity postActivity(Node node, String activityMsgBundleKey)
    * see the postFileActivity(Node node, String activityMsgBundleKey, Boolean isSystemComment, String systemComment)
@@ -228,8 +251,10 @@ public class Utils {
       commentFlag = (activity != null);
     }
     if (activity==null) {
+      String _activityType = StringUtils.isEmpty(activityType)?activityType:CONTENT_SPACES;
       activity = createActivity(identityManager, activityOwnerId,
-                                node, activityMsgBundleKey, CONTENT_SPACES, isSystemComment, systemComment);
+                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment);
+      setActivityType(null);
     }
     
     if (exa!=null) {
@@ -368,8 +393,10 @@ public class Utils {
       }
     }
     if (activity==null) {
+      String _activityType = StringUtils.isEmpty(activityType)?activityType:FILE_SPACES;
       activity = createActivity(identityManager, activityOwnerId,
-                                node, activityMsgBundleKey, FILE_SPACES, isSystemComment, systemComment);
+                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment);
+      setActivityType(null);
     }
     
     if (exa!=null) {
