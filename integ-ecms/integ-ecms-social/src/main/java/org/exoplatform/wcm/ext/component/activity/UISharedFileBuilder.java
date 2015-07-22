@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.jcr.core.ManageableRepository;
@@ -55,7 +56,7 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
     Node contentNode = null;
     try {
       ManageableRepository manageRepo = WCMCoreUtils.getRepository();
-      if(workspaceName.equals("")) workspaceName = manageRepo.getConfiguration().getDefaultWorkspaceName();
+      if(StringUtils.isEmpty(workspaceName)) workspaceName = manageRepo.getConfiguration().getDefaultWorkspaceName();
       SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
       LinkManager linkManager = PortalContainer.getInstance().getComponentInstanceOfType(LinkManager.class);
       contentNode = linkManager.getTarget((Node) sessionProvider.getSession(workspaceName, manageRepo).getItem(nodePath));
