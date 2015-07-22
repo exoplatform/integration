@@ -251,7 +251,7 @@ public class Utils {
       commentFlag = (activity != null);
     }
     if (activity==null) {
-      String _activityType = StringUtils.isEmpty(activityType)?activityType:CONTENT_SPACES;
+      String _activityType = StringUtils.isNotEmpty(activityType)?activityType:CONTENT_SPACES;
       activity = createActivity(identityManager, activityOwnerId,
                                 node, activityMsgBundleKey, _activityType, isSystemComment, systemComment);
       setActivityType(null);
@@ -393,7 +393,7 @@ public class Utils {
       }
     }
     if (activity==null) {
-      String _activityType = StringUtils.isEmpty(activityType)?activityType:FILE_SPACES;
+      String _activityType = StringUtils.isNotEmpty(activityType)?activityType:FILE_SPACES;
       activity = createActivity(identityManager, activityOwnerId,
                                 node, activityMsgBundleKey, _activityType, isSystemComment, systemComment);
       setActivityType(null);
