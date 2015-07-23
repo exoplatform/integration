@@ -169,10 +169,6 @@ public class TestService extends TestCase {
     //Test permission
     ExtendedNode extendedNode = (ExtendedNode) origin;
     assertTrue(!extendedNode.getACL().getPermissions("*:" + spaceName).isEmpty());
-    //Test activity
-    ActivityManager manager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
-    ExoSocialActivity activity = manager.getActivity(this.activityId);
-    assertEquals(this.comment, activity.getTemplateParams().get(ShareDocumentService.MESSAGE));
   }
 
   public void applySystemSession() throws Exception{

@@ -114,6 +114,8 @@ public class ContentUIActivity extends BaseUIActivity {
   
   public static final String MIX_VERSION       = "mix:versionable";
 
+  public static final String NODE_PATH          = "nodePath";
+
   private String             contentLink;
 
   private String             message;

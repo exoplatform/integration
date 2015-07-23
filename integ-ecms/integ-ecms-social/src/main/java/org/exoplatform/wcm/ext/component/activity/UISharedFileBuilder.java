@@ -49,8 +49,8 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
     //set data into the UI component of activity
     if (activity.getTemplateParams() != null) {
       fileActivity.setUIActivityData(activity.getTemplateParams());
-      nodePath = activity.getTemplateParams().get(ShareDocumentService.NODE_PATH);
-      workspaceName = activity.getTemplateParams().get(ShareDocumentService.WORKSPACE);
+      nodePath = activity.getTemplateParams().get(ContentUIActivity.NODE_PATH);
+      workspaceName = activity.getTemplateParams().get(ContentUIActivity.WORKSPACE);
     }
     //get node data
     Node contentNode = null;

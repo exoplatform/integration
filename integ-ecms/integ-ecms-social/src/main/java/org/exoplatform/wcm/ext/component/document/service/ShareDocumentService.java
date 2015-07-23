@@ -49,11 +49,6 @@ import javax.jcr.Session;
 public class ShareDocumentService implements IShareDocumentService, Startable{
   private static final Log    LOG                 = ExoLogger.getLogger(ShareDocumentService.class);
 
-  public static final String MESSAGE            = "message";
-  public static final String REPOSITORY         = "repository";
-  public static final String WORKSPACE          = "WorkspaceName";
-  public static final String MIME_TYPE          = "mimeType";
-  public static final String NODE_PATH          = "NodePath";
   public static final String MIX_PRIVILEGEABLE          = "exo:privilegeable";
   private RepositoryService repoService;
   private SessionProviderService sessionProviderService;
@@ -115,13 +110,6 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
           activity = Utils.createShareActivity(link,"", Utils.SHARE_CONTENT,comment);
         }
         link.save();
-        activity.getTemplateParams().put(NODE_PATH, link.getPath());        
-        activity.getTemplateParams().put(MIME_TYPE , getMimeType(currentNode));
-        activity.getTemplateParams().put(MESSAGE, comment);
-        activity.getTemplateParams().put(WORKSPACE, link.getSession().getWorkspace().getName());
-
-        ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
-        activityManager.updateActivity(activity);
         return activity.getId();
       } catch (Exception e1) {
         if(LOG.isErrorEnabled())

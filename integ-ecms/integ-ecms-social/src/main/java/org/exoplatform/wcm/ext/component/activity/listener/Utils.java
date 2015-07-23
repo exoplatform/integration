@@ -119,6 +119,7 @@ public class Utils {
     /** The date formatter. */
     DateFormat dateFormatter = null;
     dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
+    LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
 
     // get activity data
     String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration()
@@ -155,7 +156,7 @@ public class Utils {
     activityParams.put(ContentUIActivity.REPOSITORY, repository);
     activityParams.put(ContentUIActivity.WORKSPACE, workspace);
     activityParams.put(ContentUIActivity.MESSAGE, activityMsgBundleKey);
-    activityParams.put(ContentUIActivity.MIME_TYPE, getMimeType(node));
+    activityParams.put(ContentUIActivity.MIME_TYPE, getMimeType(linkManager.isLink(node)?linkManager.getTarget(node):node));
     activityParams.put(ContentUIActivity.IMAGE_PATH, illustrationImg);
     activityParams.put(ContentUIActivity.IMAGE_PATH, illustrationImg);
     if (isSystemComment) {
@@ -165,6 +166,7 @@ public class Utils {
       activityParams.put(ContentUIActivity.IS_SYSTEM_COMMENT, String.valueOf(false));
       activityParams.put(ContentUIActivity.SYSTEM_COMMENT, "");
     }
+    activityParams.put(ContentUIActivity.NODE_PATH, node.getPath());
     return activityParams;
   }
 
