@@ -147,4 +147,43 @@
       </childNodeDefinition>
     </childNodeDefinitions>
   </nodeType>
+
+  <nodeType name="exo:hiddenable" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+    <propertyDefinitions>
+    </propertyDefinitions>
+  </nodeType>
+
+  <nodeType name="exo:trashFolder" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+  </nodeType>
+  <nodeType name="exo:pictureFolder" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+  </nodeType>
+  <nodeType name="exo:videoFolder" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+  </nodeType>
+  <nodeType name="exo:musicFolder" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+  </nodeType>
+
+  <nodeType name="exo:documentFolder" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+  </nodeType>
+
+  <nodeType name="exo:searchFolder" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+  </nodeType>
+
+  <nodeType name="exo:favoriteFolder" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+  </nodeType>
+
+  <nodeType name="exo:thumbnails" isMixin="false" hasOrderableChildNodes="false" primaryItemName="">
+    <supertypes>
+      <supertype>nt:hierarchyNode</supertype>
+      <supertype>nt:unstructured</supertype>
+    </supertypes>
+  </nodeType>
+
+  <nodeType name="exo:activityInfo" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+    <propertyDefinitions>
+      <propertyDefinition name="exo:activityId" requiredType="String" autoCreated="true" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints />
+      </propertyDefinition>
+    </propertyDefinitions>
+  </nodeType>
+
 </nodeTypes>

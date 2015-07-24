@@ -58,14 +58,6 @@
     <type>org.exoplatform.services.cms.link.impl.LinkManagerImpl</type>
   </component>
   <component>
-    <key>org.exoplatform.social.core.manager.ActivityManager</key>
-    <type>org.exoplatform.test.ActivityManagerImpl</type>
-  </component>
-  <component>
-    <key>org.exoplatform.social.core.space.spi.SpaceService</key>
-    <type>org.exoplatform.test.SpaceServiceImpl</type>
-  </component>
-  <component>
     <key>org.exoplatform.services.jcr.RepositoryService</key>
     <type>org.exoplatform.services.jcr.impl.RepositoryServiceImpl</type>
   </component>

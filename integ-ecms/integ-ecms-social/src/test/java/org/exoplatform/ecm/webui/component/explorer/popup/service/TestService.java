@@ -17,29 +17,33 @@
 
 package org.exoplatform.ecm.webui.component.explorer.popup.service;
 
-import junit.framework.TestCase;
-
-import org.exoplatform.container.StandaloneContainer;
+import org.exoplatform.component.test.AbstractKernelTest;
+import org.exoplatform.component.test.ConfigurationUnit;
+import org.exoplatform.component.test.ConfiguredBy;
+import org.exoplatform.component.test.ContainerScope;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.cms.link.LinkManager;
+import org.exoplatform.services.context.DocumentContext;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.access.PermissionType;
-import org.exoplatform.services.jcr.core.CredentialsImpl;
 import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.app.SessionProviderService;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
+import org.exoplatform.services.rest.impl.ProviderBinder;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-//import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.SpaceUtils;
+import org.exoplatform.social.core.space.impl.DefaultSpaceApplicationHandler;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.wcm.ext.component.document.service.IShareDocumentService;
-import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Session;
@@ -50,19 +54,28 @@ import javax.jcr.Session;
  * exo@exoplatform.com
  * Aug 7, 2014
  */
-public class TestService extends TestCase {
+@ConfiguredBy({
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/configuration.xml"),
+})
+public class TestService extends AbstractKernelTest {
   //private Log log = ExoLogger.getExoLogger(TestService.class);
 
   protected final String REPO_NAME = "repository";
   protected final String COLLABORATION_WS = "collaboration";
 
-  private static StandaloneContainer container;
+  protected static PortalContainer        container;
   private RepositoryService      repositoryService;
   protected ManageableRepository repository;
   protected SessionProvider sessionProvider;
-  protected CredentialsImpl credentials;
   protected Session                session;
   protected SessionProviderService sessionProviderService_;
+  protected ProviderBinder         providers;
+
+  private org.exoplatform.social.core.identity.model.Identity rootIdentity;
+
 
   private String perm = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
   private String comment = "Comment";
@@ -72,20 +85,7 @@ public class TestService extends TestCase {
   private NodeLocation nodeLocation;
   private String spaceId;
 
-  private LinkManager linkManager =(LinkManager) container.getComponentInstanceOfType(LinkManager.class);
-
-  
-
-  static {
-    initContainer();
-  }
-
-  /**
-   * Set current container
-   */
-  private void begin() {
-    RequestLifeCycle.begin(container);
-  }
+  private LinkManager linkManager;
 
   /**
    * Clear current container
@@ -101,21 +101,18 @@ public class TestService extends TestCase {
     SpaceService spaceService = (SpaceService) container.getComponentInstanceOfType(SpaceService.class);
     spaceService.deleteSpace(spaceId);
     RequestLifeCycle.end();
-    System.out.println("TearDown complete!");
   }
 
-  private static void initContainer() {
+  private void initContainer() {
+    container = PortalContainer.getInstance();
+    repositoryService = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
+    sessionProviderService_ = (SessionProviderService) container.getComponentInstanceOfType(SessionProviderService.class);
+    String loginConf = this.getClass().getResource("/conf/standalone/login.conf").toString();
+    System.setProperty("java.security.auth.login.config", loginConf);
     try {
-      String containerConf = Thread.currentThread()
-              .getContextClassLoader()
-              .getResource("conf/standalone/configuration.xml")
-              .toString();
-      StandaloneContainer.addConfigurationURL(containerConf);
-      String loginConf = Thread.currentThread().getContextClassLoader().getResource("conf/standalone/login.conf").toString();
-      System.setProperty("java.security.auth.login.config", loginConf);
-      container = StandaloneContainer.getInstance();
-
+      applySystemSession();
     } catch (Exception e) {
+      fail();
       throw new RuntimeException("Failed to initialize standalone container: " + e.getMessage(), e);
     }
   }
@@ -123,22 +120,22 @@ public class TestService extends TestCase {
   @Override
   protected void setUp() throws Exception {
     begin();
-    Identity systemIdentity = new Identity(IdentityConstants.SYSTEM);
-    ConversationState.setCurrent(new ConversationState(systemIdentity));
-    repositoryService = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
-    sessionProviderService_ = (SessionProviderService) container.getComponentInstanceOfType(SessionProviderService.class);
-    //linkManager = (LinkManager)container.getComponentInstanceOfType(LinkManager.class);
-    applySystemSession();
-    
-    //init Node to share
+    ConversationState conversionState = ConversationState.getCurrent();
+    if(conversionState == null) {
+      conversionState = new ConversationState(new Identity("root"));
+      ConversationState.setCurrent(conversionState);
+    }
+
+    initContainer();
+    IdentityManager identityManager = container.getComponentInstanceOfType(IdentityManager.class);
+    rootIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "root", false);
+    linkManager =(LinkManager) container.getComponentInstanceOfType(LinkManager.class);
+
     this.nodeLocation = NodeLocation.getNodeLocationByNode(this.session.getRootNode().addNode(nodePath));
     session.save();
-    //init space to share
     SpaceService spaceService = (SpaceService)container.getComponentInstanceOfType(SpaceService.class);
-    //container.getComponentInstances();
-    Space sp = new Space();
-    sp.setId(spaceName);
-    spaceId = spaceService.createSpace(sp, "").getId();
+    Space sp = getSpaceInstance(spaceService, "space1");
+    spaceId = sp.getId();
     //init space node
     Node group = null;
     if(!session.getRootNode().hasNode("Groups"))group = session.getRootNode().addNode("Groups");
@@ -149,18 +146,17 @@ public class TestService extends TestCase {
     Node space = spaces.addNode(spaceName.split("/")[2]);
     space.addNode("Documents");
     session.save();
-    
-    System.out.println("Setup complete!!!");
   }
 
   public void testShare() throws Exception {
   //share node
+    DocumentContext.getCurrent().getAttributes().put(DocumentContext.IS_SKIP_RAISE_ACT, false);
     IShareDocumentService temp = (IShareDocumentService) container.getComponentInstanceOfType(IShareDocumentService.class);
     activityId = temp.publicDocumentToSpace(spaceName, NodeLocation.getNodeByLocation(nodeLocation), comment, perm);
 
 
     //Test symbolic link
-    NodeIterator nodeIterator = session.getRootNode().getNode("Groups").getNode("spaces").getNode(this.spaceName.split("/")[2]).getNode("Documents").getNode("Shared").getNodes();
+    NodeIterator nodeIterator = session.getRootNode().getNode("Groups/spaces/space1/Documents/Shared").getNodes();
     assertEquals(1, nodeIterator.getSize());
     Node target = nodeIterator.nextNode();
     assertEquals("exo:symlink", target.getPrimaryNodeType().getName());
@@ -169,11 +165,15 @@ public class TestService extends TestCase {
     //Test permission
     ExtendedNode extendedNode = (ExtendedNode) origin;
     assertTrue(!extendedNode.getACL().getPermissions("*:" + spaceName).isEmpty());
+    //Test activity
+    ActivityManager manager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
+    ExoSocialActivity activity = manager.getActivity(this.activityId);
+    assertEquals(this.comment, activity.getTitle());
   }
 
   public void applySystemSession() throws Exception{
     System.setProperty("gatein.tenant.repository.name", REPO_NAME);
-    container = StandaloneContainer.getInstance();
+    container = PortalContainer.getInstance();
 
     repositoryService.setCurrentRepositoryName(REPO_NAME);
     repository = repositoryService.getCurrentRepository();
@@ -185,6 +185,7 @@ public class TestService extends TestCase {
     sessionProvider.setCurrentWorkspace(COLLABORATION_WS);
   }
 
+
   /**
    * Close current session
    */
@@ -194,5 +195,29 @@ public class TestService extends TestCase {
     }
   }
 
+  private Space getSpaceInstance(SpaceService spaceService, String spaceName)
+          throws Exception {
+    Space space = new Space();
+    space.setDisplayName(spaceName);
+    space.setPrettyName(space.getDisplayName());
+    space.setRegistration(Space.OPEN);
+    space.setDescription("add new space " + spaceName);
+    space.setType(DefaultSpaceApplicationHandler.NAME);
+    space.setVisibility(Space.OPEN);
+    space.setRegistration(Space.VALIDATION);
+    space.setPriority(Space.INTERMEDIATE_PRIORITY);
+    space.setGroupId(SpaceUtils.SPACE_GROUP + "/" + space.getPrettyName());
+    space.setUrl(space.getPrettyName());
+    String[] managers = new String[] { "root"};
+    String[] members = new String[] { "root" };
+    String[] invitedUsers = new String[] {};
+    String[] pendingUsers = new String[] {};
+    space.setInvitedUsers(invitedUsers);
+    space.setPendingUsers(pendingUsers);
+    space.setManagers(managers);
+    space.setMembers(members);
+    spaceService.saveSpace(space, true);
+    return space;
+  }
   
 }

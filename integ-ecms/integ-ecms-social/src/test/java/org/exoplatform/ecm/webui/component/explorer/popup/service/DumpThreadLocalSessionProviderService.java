@@ -16,17 +16,17 @@
  */
 package org.exoplatform.ecm.webui.component.explorer.popup.service;
 
+import javax.jcr.Session;
+
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.app.ThreadLocalSessionProviderService;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityConstants;
-
-import javax.jcr.Session;
-
 /**
  * Created by The eXo Platform SAS
+ * Author : Lai Trung Hieu
  *          hieult@exoplatform.com
  * Jun 6, 2012  
  */

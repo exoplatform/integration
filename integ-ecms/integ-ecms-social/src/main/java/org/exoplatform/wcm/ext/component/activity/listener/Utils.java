@@ -126,7 +126,12 @@ public class Utils {
                                                                                   .getName();
     String workspace = node.getSession().getWorkspace().getName();
     
-    String illustrationImg = Utils.getIllustrativeImage(node);
+    String illustrationImg;
+    try{
+      illustrationImg = Utils.getIllustrativeImage(node);
+    }catch(Exception ex){
+      illustrationImg="";
+    }
     String strDateCreated = "";
     if (node.hasProperty(NodetypeConstant.EXO_DATE_CREATED)) {
       Calendar dateCreated = node.getProperty(NodetypeConstant.EXO_DATE_CREATED).getDate();
@@ -156,7 +161,7 @@ public class Utils {
     activityParams.put(ContentUIActivity.REPOSITORY, repository);
     activityParams.put(ContentUIActivity.WORKSPACE, workspace);
     activityParams.put(ContentUIActivity.MESSAGE, activityMsgBundleKey);
-    activityParams.put(ContentUIActivity.MIME_TYPE, getMimeType(linkManager.isLink(node)?linkManager.getTarget(node):node));
+    activityParams.put(ContentUIActivity.MIME_TYPE, getMimeType(linkManager.isLink(node)?linkManager.getTarget(node, true):node));
     activityParams.put(ContentUIActivity.IMAGE_PATH, illustrationImg);
     activityParams.put(ContentUIActivity.IMAGE_PATH, illustrationImg);
     if (isSystemComment) {
