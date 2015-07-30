@@ -66,7 +66,7 @@ public class UISharedContentBuilder extends BaseUIActivityBuilder{
       contentActivity.docPath = contentNode.getPath();
       contentActivity.workspace = workspaceName;
       contentActivity.repository = manageRepo.toString();
-      contentActivity.setActivityTitle(activity.getTitle());
+      contentActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
     } catch (RepositoryException re) {
       if(LOG.isErrorEnabled())
         LOG.error("Can not get the repository. ", re);

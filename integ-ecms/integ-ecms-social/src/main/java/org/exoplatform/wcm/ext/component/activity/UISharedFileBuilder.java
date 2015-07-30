@@ -64,7 +64,7 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       fileActivity.docPath = contentNode.getPath();
       fileActivity.workspace = workspaceName;
       fileActivity.repository = manageRepo.toString();
-      fileActivity.setActivityTitle(activity.getTitle());
+      fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
     } catch (RepositoryException re) {
       if(LOG.isErrorEnabled())
         LOG.error("Can not get the repository. ", re);
