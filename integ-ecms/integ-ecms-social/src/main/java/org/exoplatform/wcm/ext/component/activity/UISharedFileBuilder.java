@@ -25,6 +25,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivityBuilder;
 import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
@@ -67,6 +68,8 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
     } catch (RepositoryException re) {
       if(LOG.isErrorEnabled())
         LOG.error("Can not get the repository. ", re);
+      ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
+      activityManager.deleteActivity(activity);
     }
     fileActivity.setContentNode(contentNode);
   }

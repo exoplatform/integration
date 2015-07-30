@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.jcr.RepositoryService;
@@ -69,6 +70,8 @@ public class UISharedContentBuilder extends BaseUIActivityBuilder{
     } catch (RepositoryException re) {
       if(LOG.isErrorEnabled())
         LOG.error("Can not get the repository. ", re);
+      ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
+      activityManager.deleteActivity(activity);
     }
     contentActivity.setContentNode(contentNode);
   }

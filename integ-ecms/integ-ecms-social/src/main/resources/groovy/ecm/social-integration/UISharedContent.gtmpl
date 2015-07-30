@@ -474,7 +474,5 @@
   </div> <!-- #boxContainer-->	  
   <% uiform.end() %>
 </div>
-<% } else { %> <!-- activity deleted -->
-<div class="activityStream deleted">$labelActivityHasBeenDeleted</div>
 <% }%>
 
