@@ -19,6 +19,7 @@ package org.exoplatform.wcm.ext.component.activity;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
 import org.exoplatform.services.cms.link.LinkManager;
@@ -57,11 +58,14 @@ public class UISharedContentBuilder extends BaseUIActivityBuilder{
     Node contentNode = null;
     try {
       manageRepo = repositoryService.getCurrentRepository();
-      if(workspaceName.equals("")) workspaceName = manageRepo.getConfiguration().getDefaultWorkspaceName();
+      if(StringUtils.isEmpty(workspaceName)) workspaceName = manageRepo.getConfiguration().getDefaultWorkspaceName();
       SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
-      LinkManager linkManager = (LinkManager) PortalContainer.getInstance().getComponentInstanceOfType(LinkManager.class);
+      LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
       contentNode = linkManager.getTarget((Node) sessionProvider.getSession(workspaceName, manageRepo).getItem(nodePath));
-
+      contentActivity.docPath = contentNode.getPath();
+      contentActivity.workspace = workspaceName;
+      contentActivity.repository = manageRepo.toString();
+      contentActivity.setActivityTitle(activity.getTitle());
     } catch (RepositoryException re) {
       if(LOG.isErrorEnabled())
         LOG.error("Can not get the repository. ", re);
