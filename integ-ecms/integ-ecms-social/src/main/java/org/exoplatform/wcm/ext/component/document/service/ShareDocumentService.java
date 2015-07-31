@@ -90,8 +90,8 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
       if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
       if(PermissionUtil.canChangePermission(currentNode)){
-        setPermission(currentNode, space, tempPerms.split(","));
-        if(!PermissionUtil.canRead(currentNode.getParent())) {
+        if(!currentNode.getPath().contains(space)) {
+          setPermission(currentNode, space, tempPerms.split(","));
           setPermission(currentNode.getParent(), space, new String[]{PermissionType.READ});
         }
       }else if(PermissionUtil.canRead(currentNode)){
