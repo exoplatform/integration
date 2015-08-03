@@ -92,7 +92,6 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       if(PermissionUtil.canChangePermission(currentNode)){
         if(!currentNode.getPath().contains(space)) {
           setPermission(currentNode, space, tempPerms.split(","));
-          setPermission(currentNode.getParent(), space, new String[]{PermissionType.READ});
         }
       }else if(PermissionUtil.canRead(currentNode)){
         SessionProvider systemSessionProvider = SessionProvider.createSystemProvider();
