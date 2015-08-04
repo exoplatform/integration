@@ -195,7 +195,7 @@
   </external-component-plugins>
 
 	<external-component-plugins>
-    <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+    <target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
     <component-plugin>
       <name>add.action</name>
       <set-method>registerUIExtensionPlugin</set-method>
