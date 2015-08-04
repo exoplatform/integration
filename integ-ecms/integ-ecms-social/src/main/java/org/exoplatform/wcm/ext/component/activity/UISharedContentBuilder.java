@@ -16,7 +16,9 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,11 +69,13 @@ public class UISharedContentBuilder extends BaseUIActivityBuilder{
       contentActivity.workspace = workspaceName;
       contentActivity.repository = manageRepo.toString();
       contentActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
+    } catch (PathNotFoundException pnfe){
+      LOG.error("Path not found. Activity will be deleted ", pnfe);
+      ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
+      activityManager.deleteActivity(activity);
     } catch (RepositoryException re) {
       if(LOG.isErrorEnabled())
         LOG.error("Can not get the repository. ", re);
-      ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
-      activityManager.deleteActivity(activity);
     }
     contentActivity.setContentNode(contentNode);
   }

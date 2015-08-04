@@ -30,7 +30,9 @@ import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivityBuilder;
 import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 /**
@@ -65,11 +67,13 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       fileActivity.workspace = workspaceName;
       fileActivity.repository = manageRepo.toString();
       fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
+    } catch (PathNotFoundException pnfe){
+      LOG.error("Path not found. Activity will be deleted ", pnfe);
+      ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
+      activityManager.deleteActivity(activity);
     } catch (RepositoryException re) {
       if(LOG.isErrorEnabled())
         LOG.error("Can not get the repository. ", re);
-      ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
-      activityManager.deleteActivity(activity);
     }
     fileActivity.setContentNode(contentNode);
   }
