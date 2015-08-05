@@ -83,11 +83,13 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
       }
     }//for
     if (propertyName.endsWith("jcr:data")) { //Special case for text content but store in jcr:content/jcr:data
+      String _resourceBundleKey="";
       if (StringUtils.isEmpty(newValue)) {
-        Utils.postActivity(currentNode, bundleMessageEmpty[CONTENT_BUNDLE_INDEX], needUpdate[CONTENT_BUNDLE_INDEX], true, "");
+        _resourceBundleKey = bundleMessageEmpty[CONTENT_BUNDLE_INDEX];
       }else {
-        Utils.postActivity(currentNode, bundleMessage[CONTENT_BUNDLE_INDEX], needUpdate[CONTENT_BUNDLE_INDEX], true, newValue);
+        _resourceBundleKey = bundleMessage[CONTENT_BUNDLE_INDEX];
       }
+      Utils.postActivity(currentNode, _resourceBundleKey, needUpdate[CONTENT_BUNDLE_INDEX], true, "");
     }
     if (propertyName.endsWith("dc:description")) { //Special case for text content but store in jcr:content/jcr:data
       try {
@@ -96,6 +98,7 @@ public class ContentUpdateActivityListener extends Listener<Node, String> {
       }catch (Exception ex) {
         return;
       }
+      newValue = Utils.getFirstSummaryLines(newValue); // get only some first line of dc:description
       if (StringUtils.isEmpty(newValue)) {
         Utils.postActivity(currentNode, "SocialIntegration.messages.emptySummary", true, true, "");
       }else {
