@@ -18,6 +18,7 @@ package org.exoplatform.wcm.ext.component.activity;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.services.cms.documents.TrashService;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
@@ -28,12 +29,9 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivityBuilder;
-import org.exoplatform.wcm.ext.component.document.service.ShareDocumentService;
 
-import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 /**
@@ -63,11 +61,17 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       if(StringUtils.isEmpty(workspaceName)) workspaceName = manageRepo.getConfiguration().getDefaultWorkspaceName();
       SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
       LinkManager linkManager = PortalContainer.getInstance().getComponentInstanceOfType(LinkManager.class);
-      contentNode = linkManager.getTarget((Node) sessionProvider.getSession(workspaceName, manageRepo).getNodeByUUID(nodeUUID));
-      fileActivity.docPath = contentNode.getPath();
-      fileActivity.workspace = workspaceName;
-      fileActivity.repository = manageRepo.toString();
-      fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
+      TrashService trashService = WCMCoreUtils.getService(TrashService.class);
+      Node currentNode = sessionProvider.getSession(workspaceName, manageRepo).getNodeByUUID(nodeUUID);
+      if(!trashService.isInTrash(currentNode)){
+        contentNode = linkManager.getTarget(currentNode);
+        fileActivity.docPath = contentNode.getPath();
+        fileActivity.workspace = workspaceName;
+        fileActivity.repository = manageRepo.toString();
+        fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
+      }else {
+        org.exoplatform.wcm.ext.component.activity.listener.Utils.deleteFileActivity(currentNode);
+      }
     } catch (ItemNotFoundException infe){
       LOG.error("Item not found. Activity will be deleted ", infe);
       ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
