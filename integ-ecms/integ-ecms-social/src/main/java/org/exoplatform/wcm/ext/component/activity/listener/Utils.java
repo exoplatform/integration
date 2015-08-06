@@ -121,6 +121,10 @@ public class Utils {
     dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
     LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
 
+    if(node.canAddMixin(NodetypeConstant.MIX_REFERENCEABLE)){
+      node.addMixin(NodetypeConstant.MIX_REFERENCEABLE);
+      node.save();
+    }
     // get activity data
     String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration()
                                                                                   .getName();
@@ -151,6 +155,7 @@ public class Utils {
 
     // populate data to map object
     Map<String, String> activityParams = new HashMap<String, String>();
+    activityParams.put(ContentUIActivity.NODE_UUID, node.getUUID());
     activityParams.put(ContentUIActivity.CONTENT_NAME, node.getName());
     activityParams.put(ContentUIActivity.AUTHOR, activityOwnerId);
     activityParams.put(ContentUIActivity.DATE_CREATED, strDateCreated);
@@ -674,7 +679,7 @@ public class Utils {
 	
     String title = node.hasProperty(NodetypeConstant.EXO_TITLE) ? node.getProperty(NodetypeConstant.EXO_TITLE)
                                                                       .getString()
-                                                               : org.exoplatform.ecm.webui.utils.Utils.getTitle(node);    
+                                                               : org.exoplatform.ecm.webui.utils.Utils.getTitle(node);
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     String userId = "";
     if(ConversationState.getCurrent() != null)

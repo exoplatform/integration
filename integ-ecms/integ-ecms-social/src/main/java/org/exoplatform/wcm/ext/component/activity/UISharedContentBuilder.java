@@ -17,6 +17,7 @@
 package org.exoplatform.wcm.ext.component.activity;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -47,12 +48,12 @@ public class UISharedContentBuilder extends BaseUIActivityBuilder{
   @Override
   protected void extendUIActivity(BaseUIActivity uiActivity, ExoSocialActivity activity) {
     SharedContentUIActivity contentActivity = (SharedContentUIActivity) uiActivity;
-    String nodePath = "";
+    String nodeUUID = "";
     String workspaceName = "";
     //set data into the UI component of activity
     if (activity.getTemplateParams() != null) {
       contentActivity.setUIActivityData(activity.getTemplateParams());
-      nodePath = activity.getTemplateParams().get(ContentUIActivity.NODE_PATH);
+      nodeUUID = activity.getTemplateParams().get(ContentUIActivity.NODE_UUID);
       workspaceName = activity.getTemplateParams().get(ContentUIActivity.WORKSPACE);
     }
     //get node data
@@ -64,13 +65,13 @@ public class UISharedContentBuilder extends BaseUIActivityBuilder{
       if(StringUtils.isEmpty(workspaceName)) workspaceName = manageRepo.getConfiguration().getDefaultWorkspaceName();
       SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
       LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
-      contentNode = linkManager.getTarget((Node) sessionProvider.getSession(workspaceName, manageRepo).getItem(nodePath));
+      contentNode = linkManager.getTarget((Node) sessionProvider.getSession(workspaceName, manageRepo).getNodeByUUID(nodeUUID));
       contentActivity.docPath = contentNode.getPath();
       contentActivity.workspace = workspaceName;
       contentActivity.repository = manageRepo.toString();
       contentActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
-    } catch (PathNotFoundException pnfe){
-      LOG.error("Path not found. Activity will be deleted ", pnfe);
+    } catch (ItemNotFoundException infe){
+      LOG.error("Item not found. Activity will be deleted ", infe);
       ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
       activityManager.deleteActivity(activity);
     } catch (RepositoryException re) {
