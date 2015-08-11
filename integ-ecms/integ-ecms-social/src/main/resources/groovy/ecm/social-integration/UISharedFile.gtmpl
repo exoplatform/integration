@@ -38,7 +38,8 @@
   import org.exoplatform.container.ExoContainerContext;
   import org.exoplatform.container.xml.PortalContainerInfo;
   import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
-
+	import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+	import org.exoplatform.wcm.connector.collaboration.OpenInOfficeConnector;
   //ECMS import END
 
   def pcontext = Util.getPortalRequestContext();
@@ -89,6 +90,7 @@
   def activityTitle = uicomponent.getActivityTitle();
   def contentName = uicomponent.getContentName();
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
+	def contentNode = uicomponent.getContentNode();
   def contentActivityUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");
   def mimeType = uicomponent.getMimeType();
   
@@ -219,6 +221,12 @@
 	  def fileSize = uicomponent.getFileSize(currentNode);
 	  def description = uicomponent.getSummary(currentNode); 
       description = ContentReader.getXSSCompatibilityContent(description);
+
+		def openInOfficeConnector = WCMCoreUtils.getService(OpenInOfficeConnector.class);
+		def _documentInfos = openInOfficeConnector.getDocumentInfos(currentNode.getName());
+
+		def remoteEditClass=_documentInfos[1];
+		def remoteEditTitle=_ctx.appRes(_documentInfos[0]);
   // END ECMS
  %>
 <script language="JavaScript">
@@ -401,11 +409,16 @@
 						</li>
 					  <% }%>											 
 					</ul>  
-				 <% }%>	
-					 <ul class="pull-left statusAction">					 
-						<li><a href="$contentActivityUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
-						<li><a href="$downloadLink"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
-					 </ul>
+				 <% }%>
+          <ul class="pull-left statusAction">
+            <% if(uicomponent.canEditDocument(currentNode)){%>
+            <li style="display:none;" ><a href="<%=uicomponent.event("OpenFile")%>"><i class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_$activity.id $remoteEditClass" ></i>&nbsp;$remoteEditTitle</a></li>
+            <%}%>
+            <% if (uicomponent.isFileSupportPreview(contentNode)) { %>
+            <li><a href="$contentActivityUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
+            <% }%>
+            <li><a href="$downloadLink"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
+          </ul>
 				</div><!--end actionBar-->
 				
 				
