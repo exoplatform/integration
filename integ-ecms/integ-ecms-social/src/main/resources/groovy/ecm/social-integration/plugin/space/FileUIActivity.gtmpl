@@ -55,11 +55,19 @@
   
   def rcontext = _ctx.getRequestContext();
   rcontext.getJavascriptManager().require("SHARED/jquery", "gj").addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
+
+  if(currentNode!=null) {
+    def currentNodePath = currentNode.getSession().getWorkspace().getName()+":"+currentNode.getPath();
+    rcontext.getJavascriptManager().require("SHARED/openDocumentInOffice", "od")
+    .addScripts("gj(document).ready(function(){od.OpenDocumentInOffice.updateLabel('"+currentNodePath+"', '"+activity.id+"'); }); ");
+  }
+
 %>
-<% if (activity != null && currentNode!=null) {
-	def currentNodePath = currentNode.getSession().getWorkspace().getName()+":"+currentNode.getPath();
-	rcontext.getJavascriptManager().require("SHARED/openDocumentInOffice", "od")
-	.addScripts("gj(document).ready(function(){od.OpenDocumentInOffice.updateLabel('"+currentNodePath+"', '"+activity.id+"'); }); ");
+
+
+
+<% if (activity != null) {
+
   def jsManager = pcontext.getJavascriptManager();  
   
   def labelComment = _ctx.appRes("UIActivity.label.Comment");

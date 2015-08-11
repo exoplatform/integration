@@ -627,8 +627,8 @@
 						<%} %>
 					</div>
 				</div><!--end heading-->
-                <% if (activityStatus != null) { %>
-                    <div class="description">$activityStatus</div><!--end description-->
+                <% if (activityTitle != null) { %>
+                    <div class="description">$activityTitle</div><!--end description-->
                 <% } %>
 				<div class="uiBox roundedBottom introBox fileShare">	
 					<div class="clearfix isPreviewable">
