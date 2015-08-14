@@ -590,7 +590,7 @@ public class FileUIActivity extends BaseUIActivity{
     @Override
     public void execute(Event<FileUIActivity> event) throws Exception {
       FileUIActivity fileUIActivity = event.getSource();
-      UIActivitiesContainer uiActivitiesContainer = fileUIActivity.getParent();
+      UIActivitiesContainer uiActivitiesContainer = fileUIActivity.getAncestorOfType(UIActivitiesContainer.class);
       PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
 
       UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,
@@ -633,7 +633,7 @@ public class FileUIActivity extends BaseUIActivity{
 
 
       FileUIActivity docActivity = event.getSource();
-      UIActivitiesContainer activitiesContainer = docActivity.getParent();
+      UIActivitiesContainer activitiesContainer = docActivity.getAncestorOfType(UIActivitiesContainer.class);
       PopupContainer popupContainer = activitiesContainer.getPopupContainer();
 
       org.exoplatform.ecm.webui.utils.Utils.openDocumentInDesktop(currentNode, popupContainer, event);

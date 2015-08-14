@@ -202,7 +202,7 @@ public class UIDocActivity extends BaseUIActivity {
         uiApplication.addMessage(new ApplicationMessage("UIDocActivity.msg.noPermission", null, ApplicationMessage.WARNING));
         return;
       }
-      final UIActivitiesContainer activitiesContainer = docActivity.getParent();
+      final UIActivitiesContainer activitiesContainer = docActivity.getAncestorOfType(UIActivitiesContainer.class);
       final PopupContainer popupContainer = activitiesContainer.getPopupContainer();
 
       if (docActivity.getChild(UIDocViewer.class) != null) {

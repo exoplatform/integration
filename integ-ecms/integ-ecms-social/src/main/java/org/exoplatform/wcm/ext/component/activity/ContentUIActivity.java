@@ -473,7 +473,7 @@ public class ContentUIActivity extends BaseUIActivity {
     @Override
     public void execute(Event<ContentUIActivity> event) throws Exception {
       ContentUIActivity contentUIActivity = event.getSource();
-      UIActivitiesContainer uiActivitiesContainer = contentUIActivity.getParent();
+      UIActivitiesContainer uiActivitiesContainer = contentUIActivity.getAncestorOfType(UIActivitiesContainer.class);
       PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
 
       UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,

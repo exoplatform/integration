@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.forum.common.CommonUtils;
@@ -43,7 +45,6 @@ import org.exoplatform.portal.pom.data.ComponentData;
 import org.exoplatform.portal.pom.data.ContainerData;
 import org.exoplatform.portal.pom.data.ModelData;
 import org.exoplatform.portal.webui.util.Util;
-import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.web.application.RequestContext;
@@ -54,8 +55,8 @@ public class BuildLinkUtils {
   public static final String SPACES_GROUP = SpaceUtils.SPACE_GROUP.substring(1);
 
   public static final String CATEGORY     = "category";
-  
-  private static final String FORUM_PORTLET_PUBLIC_KEY     = "FORUM_PORTLET_PUBLIC_KEY";
+
+  private static final Map<String, String> forumLinkData = new ConcurrentHashMap<String, String>();
 
   public enum PORTLET_INFO {
     FORUM("ForumPortlet", "Forum Portlet", "forum"),
@@ -142,8 +143,7 @@ public class BuildLinkUtils {
         link = buildSpaceLink(getGroupId(parentObjectId, portletInfo), objectType, objectId, portletInfo);
       } else {
         //caching the topic link
-        ConversationState state = ConversationState.getCurrent();
-        String forumLink = (String) state.getAttribute(FORUM_PORTLET_PUBLIC_KEY);
+        String forumLink = getPublicForumLink();
         
         if (PORTLET_INFO.FORUM.equals(portletInfo) && forumLink != null && forumLink.length() > 0) {
           return new StringBuffer(forumLink).append(buildLink_(objectType, objectId, portletInfo)).toString();
@@ -166,8 +166,8 @@ public class BuildLinkUtils {
           UserNode portletNode = getPortletNode(rootNode, portletInfo);
           if (portletNode != null) {
             forumLink = getNodeURL(portletNode);
-            if (PORTLET_INFO.FORUM.equals(portletInfo))
-              state.setAttribute(FORUM_PORTLET_PUBLIC_KEY, forumLink);
+            //
+            setPublicForumLink(forumLink);
             link = new StringBuffer(forumLink).append(buildLink_(objectType, objectId, portletInfo)).toString();
           }
         }
@@ -286,5 +286,15 @@ public class BuildLinkUtils {
     NavigationResource resource = new NavigationResource(SiteType.PORTAL, siteName, nodeURI);
 
     return nodeURL.setResource(resource).toString();
-  }  
+  }
+
+  private static String getPublicForumLink() {
+    String currentRepositoryName = CommonsUtils.getRepository().getConfiguration().getName();
+    return forumLinkData.get(currentRepositoryName);
+  }
+
+  private static void setPublicForumLink(String forumLink) {
+    String currentRepositoryName = CommonsUtils.getRepository().getConfiguration().getName();
+    forumLinkData.put(currentRepositoryName, forumLink);
+  }
 }
