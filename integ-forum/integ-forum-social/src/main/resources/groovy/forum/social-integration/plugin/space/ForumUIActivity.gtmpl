@@ -72,14 +72,15 @@
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
 
   def commentList = uicomponent.getComments();
-  def allComments = uicomponent.getAllComments();
-  if (allComments) {
-    labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
-    labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
+  def totalComments = uicomponent.getAllCommentSize();
+
+  if (totalComments > 0) {
+    labelShowAllComments = labelShowAllComments.replace("{0}", totalComments + "");
+    labelHideAllComments = labelHideAllComments.replace("{0}", totalComments + "");
 
   }
-  def totalComments = allComments.size();
-  def commentsHidden = allComments.size()-commentList.size();
+
+  def commentsHidden = totalComments - commentList.size();
   def displayedIdentityLikes = uicomponent.getDisplayedIdentityLikes();
   def identityLikesNum = 0;
   def totalLikesNum = uicomponent.getIdentityLikes().length;
@@ -98,7 +99,7 @@
       commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
       commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
       commentFormDisplayed: '$commentFormDisplayed',
-      allCommentSize: '${allComments.size()}',
+      allCommentSize: '${totalComments}',
       commentFormFocused: '${uicomponent.isCommentFormFocused()}'
     } """
   //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
