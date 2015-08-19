@@ -16,9 +16,7 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
@@ -28,6 +26,9 @@ import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivityBuilder;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
@@ -54,6 +55,15 @@ public class FileUIActivityBuilder extends BaseUIActivityBuilder {
       SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
       for (String ws : manageRepo.getWorkspaceNames()) {
         try {
+          if(StringUtils.isEmpty(fileActivity.getNodeUUID())) {
+            String contentLink = fileActivity.getContentLink();
+            String _ws = contentLink.split("/")[0];
+            String _repo = contentLink.split("/")[1];
+            String nodePath = contentLink.replace(_ws + "/" + _repo, "");
+            contentNode = (Node)sessionProvider.getSession(ws, manageRepo).getItem(nodePath);
+            fileActivity.setContentNode(contentNode);
+            return;
+          }
           contentNode = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(fileActivity.getNodeUUID());
           fileActivity.docPath = contentNode.getPath();
           fileActivity.workspace = ws;

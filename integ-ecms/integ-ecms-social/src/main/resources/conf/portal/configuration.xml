@@ -9,7 +9,10 @@
 	<component profiles="default,all,social">
 		<type>org.exoplatform.wcm.ext.component.identity.provider.DocumentIdentityProvider</type>
 	</component>
-		
+	<component>
+		<key>org.exoplatform.wcm.ext.component.document.service.IShareDocumentService</key>
+		<type>org.exoplatform.wcm.ext.component.document.service.ShareDocumentService</type>
+	</component>
 	<external-component-plugins>
 		<target-component> org.exoplatform.social.core.manager.IdentityManager</target-component>
 		<component-plugin profiles="all">
@@ -191,7 +194,7 @@
     </component-plugin>
   </external-component-plugins>
 
-  <external-component-plugins>
+	<external-component-plugins>
     <target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
     <component-plugin>
       <name>add.action</name>
@@ -242,4 +245,126 @@
       </init-params>
     </component-plugin>
   </external-component-plugins>
+	<external-component-plugins>
+	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+	  <component-plugin>
+	    <name>notification.plugins</name>
+	    <set-method>addChildPlugin</set-method>
+	    <type>org.exoplatform.wcm.notification.plugin.ContentActivityChildPlugin</type>
+	    <description>Initial information for content child notification plugin.</description>
+	    <init-params>
+	      <values-param>
+	        <name>parentIds</name>
+	        <description>The list parent plugin' id</description>
+	        <value>LikePlugin</value>
+	        <value>ActivityCommentPlugin</value>
+	      </values-param>
+	      <object-param>
+	        <name>template.ContentActivityChildPlugin</name>
+	        <description>The template of ContentActivityChildPlugin</description>
+	        <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
+	          <field name="pluginId">
+	            <string>contents:spaces</string>
+	          </field>
+	          <field name="templateConfig">
+	            <object type="org.exoplatform.commons.api.notification.plugin.config.TemplateConfig">
+	              <field name="bundlePath">
+	                <string>locale.extension.notification.ECMSNotification</string>
+	              </field>
+	              <field name="templatePath">
+	                <string>classpath:/groovy/ecm/social-integration/plugin/notification/ContentActivity.gtmpl</string>
+	              </field>
+	            </object>
+	          </field>
+	        </object>
+	      </object-param>
+	    </init-params>
+	  </component-plugin>
+	</external-component-plugins>
+	
+	<external-component-plugins>
+	  <target-component>org.exoplatform.commons.api.notification.service.setting.PluginContainer</target-component>
+	  <component-plugin>
+	    <name>notification.plugins</name>
+	    <set-method>addChildPlugin</set-method>
+	    <type>org.exoplatform.wcm.notification.plugin.FileActivityChildPlugin</type>
+	    <description>Initial information for file child notification plugin.</description>
+	    <init-params>
+	      <object-param>
+	        <name>template.FileActivityChildPlugin</name>
+	        <description>The template of FileActivityChildPlugin</description>
+	        <object type="org.exoplatform.commons.api.notification.plugin.config.PluginConfig">
+	          <field name="pluginId">
+	            <string>files:spaces</string>
+	          </field>
+	          <field name="templateConfig">
+	            <object type="org.exoplatform.commons.api.notification.plugin.config.TemplateConfig">
+	              <field name="bundlePath">
+	                <string>locale.extension.notification.ECMSNotification</string>
+	              </field>
+	              <field name="templatePath">
+	                <string>classpath:/groovy/ecm/social-integration/plugin/notification/FileActivity.gtmpl</string>
+	              </field>
+	            </object>
+	          </field>
+	        </object>
+	      </object-param>
+	    </init-params>
+	  </component-plugin>
+	</external-component-plugins>
+	<external-component-plugins>
+		<target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
+		<component-plugin profiles="all">
+			<name>add.action</name>
+			<set-method>registerUIExtensionPlugin</set-method>
+			<type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+			<init-params>
+				<object-param>
+					<name>Share File Activity</name>
+					<object type="org.exoplatform.social.webui.activity.UIActivityExtension">
+						<field name="type">
+							<string>org.exoplatform.social.webui.activity.BaseUIActivity</string>
+						</field>
+						<field name="name">
+							<string>sharefiles:spaces</string>
+						</field>
+						<field name="component">
+							<string>org.exoplatform.wcm.ext.component.activity.SharedFileUIActivity</string>
+						</field>
+						<field name="activityBuiderClass">
+							<string>org.exoplatform.wcm.ext.component.activity.UISharedFileBuilder</string>
+						</field>
+					</object>
+				</object-param>
+			</init-params>
+		</component-plugin>
+	</external-component-plugins>
+	<external-component-plugins>
+		<target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
+		<component-plugin profiles="all">
+			<name>add.action</name>
+			<set-method>registerUIExtensionPlugin</set-method>
+			<type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+			<init-params>
+				<object-param>
+					<name>Share Content Activity</name>
+					<object type="org.exoplatform.social.webui.activity.UIActivityExtension">
+						<field name="type">
+							<string>org.exoplatform.social.webui.activity.BaseUIActivity</string>
+						</field>
+						<field name="name">
+							<string>sharecontents:spaces</string>
+						</field>
+						<field name="component">
+							<string>org.exoplatform.wcm.ext.component.activity.SharedContentUIActivity</string>
+						</field>
+						<field name="activityBuiderClass">
+							<string>org.exoplatform.wcm.ext.component.activity.UISharedContentBuilder</string>
+						</field>
+					</object>
+				</object-param>
+			</init-params>
+		</component-plugin>
+	</external-component-plugins>
+
 </configuration>

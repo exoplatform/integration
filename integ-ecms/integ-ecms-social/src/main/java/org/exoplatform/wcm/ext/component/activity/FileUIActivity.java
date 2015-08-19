@@ -46,11 +46,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.ComponentConfigs;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupContainer;
-import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
-import org.exoplatform.webui.cssfile.CssClassIconFile;
-import org.exoplatform.webui.cssfile.CssClassManager;
-import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.ext.UIExtension;
@@ -137,7 +133,7 @@ public class FileUIActivity extends BaseUIActivity{
   public static final String IS_SYSTEM_COMMENT  = "isSystemComment";
   
   public static final String SYSTEM_COMMENT     = "systemComment";
-  
+
   private String             contentLink;
 
   private String             message;
@@ -172,10 +168,19 @@ public class FileUIActivity extends BaseUIActivity{
   public String              workspace;
 
   private boolean            isSymlink;
-  
+  private String activityTitle;
+
   public FileUIActivity() throws Exception {
     super();
     addChild(UIPopupContainer.class, null, "UIDocViewerPopupContainer");
+  }
+
+  public String getActivityTitle() {
+    return activityTitle;
+  }
+
+  public void setActivityTitle(String activityTitle) {
+    this.activityTitle = activityTitle;
   }
 
   public String getContentLink() {
