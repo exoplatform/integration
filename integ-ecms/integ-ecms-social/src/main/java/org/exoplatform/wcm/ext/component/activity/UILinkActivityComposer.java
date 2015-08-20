@@ -18,6 +18,7 @@ package org.exoplatform.wcm.ext.component.activity;
 
 import org.exoplatform.commons.embedder.ExoMedia;
 import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -38,6 +39,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIComponent;
+import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIFormStringInput;
@@ -255,13 +257,16 @@ public class UILinkActivityComposer extends UIActivityComposer {
   @Override
   public void onPostActivity(PostContext postContext, UIComponent source,
                              WebuiRequestContext requestContext, String postedMessage) throws Exception {
-    final UIComposer uiComposer = (UIComposer) source;
-    ActivityManager activityManager = uiComposer.getApplicationComponent(ActivityManager.class);
-    IdentityManager identityManager = uiComposer.getApplicationComponent(IdentityManager.class);
-    String remoteUser = requestContext.getRemoteUser();
+  }
+
+  @Override
+  protected ExoSocialActivity onPostActivity(UIComposer.PostContext postContext, String postedMessage) throws Exception {
+    ActivityManager activityManager = getApplicationComponent(ActivityManager.class);
+    IdentityManager identityManager = getApplicationComponent(IdentityManager.class);
+    //
+    String remoteUser = ConversationState.getCurrent().getIdentity().getUserId();
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);
 
-    UIApplication uiApplication = requestContext.getUIApplication();
     Map<String, String> templateParams = getTemplateParams();
     templateParams.put(COMMENT_PARAM, postedMessage);
     templateParams.put(org.exoplatform.social.core.BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, COMMENT_PARAM ); 
@@ -269,21 +274,16 @@ public class UILinkActivityComposer extends UIActivityComposer {
     if(templateParams.get(IMAGE_PARAM) == null){
       templateParams.put(IMAGE_PARAM, "");
     }
-    
     setTemplateParams(templateParams);
 
     if (templateParams.size() == 0) {
-      uiApplication.addMessage(new ApplicationMessage("UIComposer.msg.error.Empty_Message",
-                                                    null,
-                                                    ApplicationMessage.WARNING));
-      return;
+      getAncestorOfType(UIPortletApplication.class)
+        .addMessage(new ApplicationMessage("UIComposer.msg.error.Empty_Message", null, ApplicationMessage.WARNING));
+      return null;
     }
-    
-    String title = "${" + TITLE_PARAM + "}"; 
-    ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(),
-                                                           UILinkActivity.ACTIVITY_TYPE,
-                                                           title,
-                                                           null);
+
+    String title = "${" + TITLE_PARAM + "}";
+    ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(), UILinkActivity.ACTIVITY_TYPE, title, null);
     activity.setTemplateParams(templateParams);
     activity.setExternalId(UILinkActivity.ACTIVITY_TYPE);
     activity.setUrl(templateParams.get(LINK_PARAM).toString());
@@ -292,24 +292,22 @@ public class UILinkActivityComposer extends UIActivityComposer {
       UISpaceActivitiesDisplay uiDisplaySpaceActivities = (UISpaceActivitiesDisplay) getActivityDisplay();
       Space space = uiDisplaySpaceActivities.getSpace();
 
-      Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,
-                                                                   space.getPrettyName(),
-                                                                   false);
-      
+      Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
+
       activityManager.saveActivityNoReturn(spaceIdentity, activity);
 
     } else if (postContext == PostContext.USER) {
       UIUserActivitiesDisplay uiUserActivitiesDisplay = (UIUserActivitiesDisplay) getActivityDisplay();
       String ownerName = uiUserActivitiesDisplay.getOwnerName();
-      Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
-                                                                   ownerName, false);
-      
+      Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, ownerName, false);
+
       activityManager.saveActivityNoReturn(ownerIdentity, activity);
-      
+
       if ((uiUserActivitiesDisplay.getSelectedDisplayMode() == UIUserActivitiesDisplay.DisplayMode.CONNECTIONS)
           || (uiUserActivitiesDisplay.getSelectedDisplayMode() == UIUserActivitiesDisplay.DisplayMode.MY_SPACE)) {
         uiUserActivitiesDisplay.setSelectedDisplayMode(UIUserActivitiesDisplay.DisplayMode.MY_ACTIVITIES);
       }
     }
+    return activityManager.getActivity(activity.getId());
   }
 }
