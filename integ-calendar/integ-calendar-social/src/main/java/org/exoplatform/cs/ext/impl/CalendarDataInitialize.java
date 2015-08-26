@@ -19,6 +19,7 @@ package org.exoplatform.cs.ext.impl;
 import org.exoplatform.calendar.service.Calendar;
 import org.exoplatform.calendar.service.CalendarService;
 import org.exoplatform.calendar.service.Utils;
+import org.exoplatform.calendar.util.Constants;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
@@ -106,7 +107,7 @@ public class CalendarDataInitialize extends SpaceListenerPlugin {
         calendar.setName(space.getDisplayName());
         calendar.setEditPermission(new String[] { space.getGroupId() + SLASH_COLON + ANY });
         calendar.setCalendarOwner(groupId);
-        calendar.setCalendarColor(Calendar.COLORS[0]);
+        calendar.setCalendarColor(Constants.COLORS[0]);
         calService.savePublicCalendar(calendar, true);
       }
     } catch (Exception e) {
