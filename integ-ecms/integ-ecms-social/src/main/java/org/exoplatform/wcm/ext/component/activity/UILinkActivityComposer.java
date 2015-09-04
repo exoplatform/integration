@@ -201,6 +201,7 @@ public class UILinkActivityComposer extends UIActivityComposer {
       String url = requestContext.getRequestParameter(OBJECTID).trim();
 
       uiComposerLinkExtension.setLink(url, requestContext);
+      uiComposerLinkExtension.getActivityComposerManager().setCurrentActivityComposer(uiComposerLinkExtension);
       if (uiComposerLinkExtension.linkShare_ != null) {
         requestContext.addUIComponentToUpdateByAjax(uiComposerLinkExtension);
         event.getSource().setReadyForPostingActivity(true);
