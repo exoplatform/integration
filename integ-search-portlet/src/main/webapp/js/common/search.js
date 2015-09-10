@@ -46,6 +46,20 @@ window.initSearch = function initSearch() {
         <i class='uiIconApp64x64Task%{taskStatus}'></i> \
       </span> \
     ";
+    
+    var TASK_IN_TASKS_AVATAR_TEMPLATE = " \
+      <span class='avatar pull-left'> \
+        <i class='uiIcon40x40TickGray %{done}'></i> \
+      </span> \
+    ";
+    
+    var TASK_IN_TASKS_DETAIL_TEMPLATE = " \
+      <a href='#'> \
+        <i class='uiIconFolder taskProjectIconSearchDetail'></i> %{projectName} \
+      </a> \
+      <i class='uiIconColorPriority%{priority} taskPriorityIconSearchDetail'></i>\
+      <span>%{dueDate}</span>\
+    ";
 
     var RATING_TEMPLATE = " \
       <div class='uiVote pull-right'> \
@@ -198,7 +212,19 @@ window.initSearch = function initSearch() {
           var taskStatusClass = taskStatus === "needs-action" ? "NeedActions" : (taskStatus === "in-process" ? "Progress" : (taskStatus === "canceled" ? "Canceled" : "Done"));
           avatar = TASK_AVATAR_TEMPLATE.replace(/%{taskStatus}/g, taskStatusClass);
           break;
-
+        case "tasksInTasks":
+          var projectName = result.projectName ? result.projectName : '';
+          var priority = result.priority ? result.priority : '';
+          var dueDate = result.dueDate ? result.dueDate : '';
+          
+          var detail = TASK_IN_TASKS_DETAIL_TEMPLATE.replace(/%{projectName}/g, projectName);
+          detail = detail.replace(/%{priority}/g, priority);
+          detail = detail.replace(/%{dueDate}/g, dueDate);
+          result.detail = detail;
+          //
+          var doneClass = result.completed ? 'uiIcon40x40TickBlue' : '';
+          avatar = TASK_IN_TASKS_AVATAR_TEMPLATE.replace(/%{done}/g, doneClass);
+          break;
         case "file":
             var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64" + type}).join(" ");
             if (result.imageUrl == null || result.imageUrl == ""){

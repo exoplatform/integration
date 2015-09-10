@@ -271,7 +271,12 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
 
         case "task":
         	var cssClass = "uiIconPLFTask" + result.taskStatus.toProperCase() + " uiIconPLFLightGray";
-	    	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, cssClass);	
+	    	  line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, cssClass);	
+          break;
+          
+        case "tasksInTasks":
+          var cssClass = "uiIconTick" + (result.completed ? ' uiIconBlue' : '');
+          line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, cssClass);  
           break;
 
         case "file":
