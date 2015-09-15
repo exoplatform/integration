@@ -375,7 +375,9 @@ public class UnifiedSearchService implements ResourceContainer {
     SearchService searchService = (SearchService)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(SearchService.class);
     LinkedList<String> allSearchTypes = new LinkedList<String>();
     for(SearchServiceConnector connector:searchService.getConnectors()) {
-      allSearchTypes.add(connector.getSearchType());
+      if (connector.isEnable()) {
+        allSearchTypes.add(connector.getSearchType());        
+      }
     }
     return allSearchTypes;      
   }

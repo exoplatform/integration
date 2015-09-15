@@ -48,6 +48,7 @@
              <name>constructor.params</name>
              <property name="searchType" value="file"/>
              <property name="displayName" value="Files"/>
+             <property name="enable" value="${exo.unified-search.connector.file.enable:true}"/>
           </properties-param>
         </init-params>      
       </component-plugin>
@@ -63,6 +64,7 @@
              <name>constructor.params</name>
              <property name="searchType" value="document"/>
              <property name="displayName" value="Documents"/>
+             <property name="enable" value="${exo.unified-search.connector.document.enable:true}"/>
           </properties-param>
         </init-params>      
       </component-plugin>
@@ -78,6 +80,7 @@
              <name>constructor.params</name>
              <property name="searchType" value="wiki"/>
              <property name="displayName" value="Wiki"/>
+             <property name="enable" value="${exo.unified-search.connector.wiki.enable:true}"/>
           </properties-param>
         </init-params>      
       </component-plugin>             
@@ -93,6 +96,7 @@
              <name>constructor.params</name>
              <property name="searchType" value="page"/>
              <property name="displayName" value="Pages"/>
+             <property name="enable" value="${exo.unified-search.connector.page.enable:true}"/>
           </properties-param>
         </init-params>      
       </component-plugin>
@@ -109,6 +113,7 @@
              <name>constructor.params</name>
              <property name="searchType" value="post"/>
              <property name="displayName" value="Discussions"/>
+             <property name="enable" value="${exo.unified-search.connector.post.enable:true}"/>
           </properties-param>
         </init-params>      
       </component-plugin>         
@@ -124,6 +129,7 @@
             <name>constructor.params</name>
             <property name="searchType" value="people"/>
             <property name="displayName" value="People"/>
+            <property name="enable" value="${exo.unified-search.connector.people.enable:true}"/>
           </properties-param>
         </init-params>      
       </component-plugin>      
@@ -139,6 +145,7 @@
              <name>constructor.params</name>
              <property name="searchType" value="space"/>
              <property name="displayName" value="Spaces"/>
+             <property name="enable" value="${exo.unified-search.connector.space.enable:true}"/>
           </properties-param>
         </init-params>      
       </component-plugin>      
@@ -154,6 +161,7 @@
              <name>constructor.params</name>
              <property name="searchType" value="event"/>
              <property name="displayName" value="Events"/>
+             <property name="enable" value="${exo.unified-search.connector.event.enable:true}"/>
           </properties-param>
         </init-params>      
       </component-plugin>            
@@ -168,7 +176,8 @@
           <properties-param>
              <name>constructor.params</name>
              <property name="searchType" value="task"/>
-             <property name="displayName" value="Tasks"/>
+             <property name="displayName" value="Tasks in Calendar"/>
+             <property name="enable" value="${exo.unified-search.connector.task.enable:true}"/>
           </properties-param>
         </init-params>      
       </component-plugin>
