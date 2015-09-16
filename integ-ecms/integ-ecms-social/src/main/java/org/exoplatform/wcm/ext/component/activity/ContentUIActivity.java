@@ -114,6 +114,10 @@ public class ContentUIActivity extends BaseUIActivity {
   
   public static final String MIX_VERSION       = "mix:versionable";
 
+  public static final String NODE_PATH          = "nodePath";
+
+  public static final String NODE_UUID          = "nodeUUID";
+
   private String             contentLink;
 
   private String             message;
@@ -148,6 +152,16 @@ public class ContentUIActivity extends BaseUIActivity {
   public String              workspace;
 
   private boolean            isSymlink;
+
+  private String activityTitle;
+
+  public String getActivityTitle() {
+    return activityTitle;
+  }
+
+  public void setActivityTitle(String activityTitle) {
+    this.activityTitle = activityTitle;
+  }
 
   public ContentUIActivity() throws Exception {
     super();

@@ -1,0 +1,18 @@
+<%
+import org.exoplatform.webui.core.UIComponent ;
+import org.exoplatform.webui.form.UIForm;
+
+UIComponent uiParent = uicomponent.getParent() ;
+%>
+<div id="$uicomponent.id">
+  <div class="spaceSwitcherContainer clearfix">
+    <label class="pull-left"><%=_ctx.appRes("UIShareDocuments.label.ShareWith")%></label>
+    <% uiParent.getSpace().setCurrentSpaceName(_ctx.appRes("UIShareDocuments.label.SelectASpace")) %>
+    <% uiParent.renderField(uiParent.getSpace()) %>
+  </div>
+  <div class="listMention">
+    <%for(s in uiParent.getSpaces()){%>
+    <span class="uiMention"><%=s.getDisplayName()%><i contenteditable="true" class="uiIconClose uiIconLightGray" onclick="<%=uiParent.event("RemoveSpace",s.getGroupId())%>">&times;</i></span>
+    <%}%>
+  </div>
+</div>

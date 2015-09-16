@@ -29,7 +29,7 @@
   import org.exoplatform.social.core.service.LinkProvider;
   import org.apache.commons.lang.StringUtils;
   import org.apache.commons.lang.StringEscapeUtils;
-  import org.exoplatform.wcm.webui.reader.ContentReader;
+
   //ECMS import BEGIN
   import org.exoplatform.wcm.ext.component.activity.ContentPresentation;
   import org.exoplatform.services.jcr.util.Text;
@@ -46,7 +46,6 @@
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
   def streamOwner = activity.getStreamOwner();
   def currentNode = uicomponent.getContentNode();
-  
   String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 %>
 
@@ -67,11 +66,7 @@
   def preferenceWS;  
   def fileComponent;
   if (currentNode) {
-    if (uicomponent.isSymlink()) {
-      activityContentTitle = uicomponent.getDocTitle();
-    } else {
-      activityContentTitle = uicomponent.getTitle(currentNode);
-    }
+    activityContentTitle = uicomponent.getTitle(currentNode);
     docSummary = uicomponent.getSummary(currentNode);
     binarySrc = uicomponent.getWebdavURL();
     summary =  uicomponent.getSummary(currentNode);
@@ -117,11 +112,11 @@
   def labelYouAndOnePersonLikeThis=_ctx.appRes("UIActivity.label.You_And_One_Person_Like_This");
   def labelYouAndOthersLikeThis=_ctx.appRes("UIActivity.label.You_And_Others_Like_This");
   
-  def captionConfirmation=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.label.Confirmation"));
-  def labelConfirmbutton=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.label.Confirm_Delete_Activity-Button"));
+  def labelToDeleteThisActivity=_ctx.appRes("UIActivity.msg.Are_You_Sure_To_Delete_This_Activity");
+  def labelToDeleteThisComment=_ctx.appRes("UIActivity.msg.Are_You_Sure_To_Delete_This_Comment");
   def labelClosebutton=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.label.Cancel_Delete_Activity-Button"));
-  def labelToDeleteThisComment=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.msg.Are_You_Sure_To_Delete_This_Comment"));
-  def labelToDeleteThisActivity=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.msg.Are_You_Sure_To_Delete_This_Activity"));
+  def labelConfirmbutton=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.label.Confirm_Delete_Activity-Button"));
+  def captionConfirmation=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.label.Confirmation"));
 
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
@@ -136,7 +131,8 @@
   } else {
     docVersion = null;
   }
-  
+  def activityStatus = uicomponent.getActivityStatus();
+  def activityTitle = uicomponent.getActivityTitle();
   def viewLink = uicomponent.getViewLink();
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
@@ -246,11 +242,12 @@
 					<div class="actLink">
 					  <a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" rel="tooltip" data-placement="bottom" title="$viewActivityTip" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
 					<% if (activityDeletable) {%>
-						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+						  <a href="javascript:void(0)" data-caption="$captionConfirmation"
+                 data-confirm="$labelToDeleteThisActivity" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
-				    </div>
+					</div>
 					<div class="author">
-						<a title="$ownerName" href="$ownerUri">$ownerName</a>
+						<a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
 					</div>	
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
@@ -270,6 +267,9 @@
 						<%} %>
 					</div>
 				</div><!--end heading-->
+        <% if (activityTitle != null) { %>
+        <div class="description">$activityTitle</div><!--end description-->
+        <% } %>
         <div class="uiBox roundedBottom introBox contentShare">	
           <div class="clearfix">
             <div class="pull-left">
@@ -296,7 +296,6 @@
                   else
                     publishInfo = publishInfo + " - " + _ctx.appRes("SocialIntegration.publicationStates." + state);
                 }
-              publishInfo = StringEscapeUtils.escapeHtml(publishInfo);
               %>
               <span class="versionFile">$publishInfo</span>
             </div>
@@ -330,7 +329,7 @@
           <% }%>	
           <ul class="pull-left statusAction">
             <% if (uicomponent.isContentSupportPreview(currentNode)) { %>
-              <li><a href="$viewLink"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
+            <li><a href="$viewLink"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
             <% }%>
           </ul>
         </div><!--end actionBar-->
@@ -349,7 +348,7 @@
               personLikeAvatarImageSource = id.profile.avatarUrl;
               if (!personLikeAvatarImageSource) { personLikeAvatarImageSource = LinkProvider.PROFILE_DEFAULT_AVATAR_URL; }
               %>
-              <a class="avatarXSmall" title="$personLikeFullName" href="$personLikeProfileUri">
+              <a class="avatarXSmall" href="$personLikeProfileUri">
                 <img src="$personLikeAvatarImageSource" alt="$personLikeFullName" />
               </a>
              <% })%>
@@ -420,7 +419,6 @@
               } else {
                 commentMessage = it.title;
               }
-              commentMessage = ContentReader.simpleEscapeHtml(commentMessage);
               commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
               commenterAvatarImgSrc = commentId.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
@@ -432,7 +430,7 @@
                 <div id="CommentBlock${activity.id}${commentCounter}" class="commentItem">
               <% } %>
               <div class="commmentLeft">
-                <a class="avatarXSmall" href="$commenterProfileUri" rel="tooltip" data-placement="bottom" title="$commenterFullName" >
+                <a class="avatarXSmall" href="$commenterProfileUri" >
                   <img alt="$commenterFullName" src="$commenterAvatarImgSrc" />
                 </a>
             </div><!--end commentLeft-->     
@@ -448,7 +446,9 @@
             <%if (uicomponent.isCommentDeletable(it.userId)) {
               String idDeleteComment = "DeleteCommentButton${it.id}";
             %>
-              <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"  class="uiIconClose uiIconLightGray controllDelete"></a>
+              <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment"
+                 data-caption="$captionConfirmation"
+                 data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"  class="uiIconClose uiIconLightGray controllDelete"></a>
             <% } %>
             </div>
               </div><!--end commentItem-->
@@ -469,7 +469,7 @@
 					  <div class="commentItem commentFormBox" id="CommentFormBlock${activity.id}">
 					<% } %>
 					  <div class="commmentLeft">
-							<a class="avatarXSmall" rel="tooltip" data-placement="bottom" title="$currentCommenterName" href="$currentCommenterUri">
+							<a class="avatarXSmall" href="$currentCommenterUri">
 								<img src="$currentCommenterAvatar" alt="$currentCommenterName"/>
 							</a>
 						</div><!--end commentLeft--> 
@@ -487,7 +487,5 @@
   </div> <!-- #boxContainer-->	  
   <% uiform.end() %>
 </div>
-<% } else { %> <!-- activity deleted -->
-<div class="activityStream deleted">$labelActivityHasBeenDeleted</div>
 <% }%>
 

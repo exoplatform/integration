@@ -80,6 +80,8 @@ public class Utils {
   /** The Constant Activity Type */
   private static final String CONTENT_SPACES      = "contents:spaces";
   private static final String FILE_SPACES         = "files:spaces";
+  public  static final String SHARE_FILE           = "sharefiles:spaces";
+  public  static final String SHARE_CONTENT        = "sharecontents:spaces";
 
   /** the publication:currentState property name */
   private static final String CURRENT_STATE_PROP  = "publication:currentState";
@@ -88,6 +90,16 @@ public class Utils {
   private static String MIX_COMMENT_ID             = "exo:activityCommentID";
   private static int    MAX_SUMMARY_LINES_COUNT    = 4;
   private static int    MAX_SUMMARY_CHAR_COUNT     = 430;
+  private static String activityType;
+
+
+  public static String getActivityType() {
+    return activityType;
+  }
+
+  public static void setActivityType(String activityType) {
+    Utils.activityType = activityType;
+  }
 
   /**
    * Populate activity data with the data from Node
@@ -107,13 +119,23 @@ public class Utils {
     /** The date formatter. */
     DateFormat dateFormatter = null;
     dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
+    LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
 
+    if(node.canAddMixin(NodetypeConstant.MIX_REFERENCEABLE)){
+      node.addMixin(NodetypeConstant.MIX_REFERENCEABLE);
+      node.save();
+    }
     // get activity data
     String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration()
                                                                                   .getName();
     String workspace = node.getSession().getWorkspace().getName();
     
-    String illustrationImg = Utils.getIllustrativeImage(node);
+    String illustrationImg;
+    try{
+      illustrationImg = Utils.getIllustrativeImage(node);
+    }catch(Exception ex){
+      illustrationImg="";
+    }
     String strDateCreated = "";
     if (node.hasProperty(NodetypeConstant.EXO_DATE_CREATED)) {
       Calendar dateCreated = node.getProperty(NodetypeConstant.EXO_DATE_CREATED).getDate();
@@ -133,6 +155,7 @@ public class Utils {
 
     // populate data to map object
     Map<String, String> activityParams = new HashMap<String, String>();
+    activityParams.put(ContentUIActivity.NODE_UUID, node.getUUID());
     activityParams.put(ContentUIActivity.CONTENT_NAME, node.getName());
     activityParams.put(ContentUIActivity.AUTHOR, activityOwnerId);
     activityParams.put(ContentUIActivity.DATE_CREATED, strDateCreated);
@@ -143,7 +166,7 @@ public class Utils {
     activityParams.put(ContentUIActivity.REPOSITORY, repository);
     activityParams.put(ContentUIActivity.WORKSPACE, workspace);
     activityParams.put(ContentUIActivity.MESSAGE, activityMsgBundleKey);
-    activityParams.put(ContentUIActivity.MIME_TYPE, getMimeType(node));
+    activityParams.put(ContentUIActivity.MIME_TYPE, getMimeType(linkManager.isLink(node)?linkManager.getTarget(node, true):node));
     activityParams.put(ContentUIActivity.IMAGE_PATH, illustrationImg);
     activityParams.put(ContentUIActivity.IMAGE_PATH, illustrationImg);
     if (isSystemComment) {
@@ -153,6 +176,7 @@ public class Utils {
       activityParams.put(ContentUIActivity.IS_SYSTEM_COMMENT, String.valueOf(false));
       activityParams.put(ContentUIActivity.SYSTEM_COMMENT, "");
     }
+    activityParams.put(ContentUIActivity.NODE_PATH, node.getPath());
     return activityParams;
   }
 
@@ -163,7 +187,18 @@ public class Utils {
   public static void postActivity(Node node, String activityMsgBundleKey) throws Exception {
     postActivity(node, activityMsgBundleKey, false, false, null);
   }
-  
+
+  public static ExoSocialActivity createShareActivity(Node node, String activityMsgBundleKey, String activityType, String comments) throws Exception{
+    setActivityType(activityType);
+    if(SHARE_FILE.equals(activityType)){
+      return postFileActivity(node,activityMsgBundleKey,false,false,comments);
+    }else if(SHARE_CONTENT.equals(activityType)){
+      return postActivity(node,activityMsgBundleKey,false,false,comments);
+    }else{
+      setActivityType(null);
+      return postFileActivity(node,activityMsgBundleKey,false,false,comments);
+    }
+  }
   /**
    * @Method postFileActivity postActivity(Node node, String activityMsgBundleKey)
    * see the postFileActivity(Node node, String activityMsgBundleKey, Boolean isSystemComment, String systemComment)
@@ -228,8 +263,10 @@ public class Utils {
       commentFlag = (activity != null);
     }
     if (activity==null) {
+      String _activityType = StringUtils.isNotEmpty(activityType)?activityType:CONTENT_SPACES;
       activity = createActivity(identityManager, activityOwnerId,
-                                node, activityMsgBundleKey, CONTENT_SPACES, isSystemComment, systemComment);
+                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment);
+      setActivityType(null);
     }
     
     if (exa!=null) {
@@ -368,8 +405,10 @@ public class Utils {
       }
     }
     if (activity==null) {
+      String _activityType = StringUtils.isNotEmpty(activityType)?activityType:FILE_SPACES;
       activity = createActivity(identityManager, activityOwnerId,
-                                node, activityMsgBundleKey, FILE_SPACES, isSystemComment, systemComment);
+                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment);
+      setActivityType(null);
     }
     
     if (exa!=null) {
@@ -640,7 +679,7 @@ public class Utils {
 	
     String title = node.hasProperty(NodetypeConstant.EXO_TITLE) ? node.getProperty(NodetypeConstant.EXO_TITLE)
                                                                       .getString()
-                                                               : org.exoplatform.ecm.webui.utils.Utils.getTitle(node);    
+                                                               : org.exoplatform.ecm.webui.utils.Utils.getTitle(node);
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     String userId = "";
     if(ConversationState.getCurrent() != null)
@@ -657,6 +696,7 @@ public class Utils {
     if(isSystemComment) updateNotifyMessages(activity, activityMsgBundleKey, systemComment);
     else activity.setTitle(title);
     activity.setTemplateParams(activityParams);
+    activity.setTitle(systemComment);
     return activity;
   }
   
