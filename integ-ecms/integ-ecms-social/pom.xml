@@ -114,11 +114,6 @@
       <artifactId>exo.portal.component.resources</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.exoplatform.ecms</groupId>
-      <artifactId>ecms-core-webui-explorer</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <scope>provided</scope>
