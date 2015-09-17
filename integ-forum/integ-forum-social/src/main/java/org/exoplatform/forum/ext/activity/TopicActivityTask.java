@@ -136,7 +136,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
       activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(ctx.getTopic().getTopicName()));
-      activity.setBody(ForumActivityBuilder.getFourFirstLines(ctx.getTopic().getDescription()));
+      activity.setBody(ForumActivityBuilder.processContent(ctx.getTopic().getDescription(), 4));
       
       return activity;
     };
@@ -231,7 +231,7 @@ public abstract class TopicActivityTask implements ActivityTask<ForumActivityCon
     
     @Override
     protected ExoSocialActivity processActivity(ForumActivityContext ctx, ExoSocialActivity activity) {
-      activity.setBody(ForumActivityBuilder.getFourFirstLines(ctx.getTopic().getDescription()));
+      activity.setBody(ForumActivityBuilder.processContent(ctx.getTopic().getDescription(), 4));
       //processTitle(ctx, activity);
       return activity;
     };

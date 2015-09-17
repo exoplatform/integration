@@ -62,7 +62,6 @@ public class ForumActivityBuilder {
   public static final String TOPIC_VOTE_RATE_KEY    = "TopicVoteRate";
 
   private static final int NUMBER_CHARS    = 430;
-  private static final int NUMBER_OF_LINES    = 4;
   
   public static final String SPACE_GROUP_ID  = "SpaceGroupId";
   
@@ -72,7 +71,7 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivityComment(Post post, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String title = getFourFirstLines(post.getMessage());
+    String title = processContent(post.getMessage(), 3);
 
     //activity.setUserId(post.getOwner());
     activity.setTitle(title);
@@ -99,7 +98,7 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivityComment(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = getFourFirstLines(topic.getDescription());
+    String body = processContent(topic.getDescription(), 4);
     
     //activity.setUserId(topic.getOwner());
     String title = CommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName());
@@ -122,25 +121,20 @@ public class ForumActivityBuilder {
     return sb.toString();
   }
   
-  public static String getFourFirstLines(String str) {
-    return getNumberFirstLines(str.replaceAll("&nbsp;", ""), 4);
-  }
-  
   /**
-   * No more than 4 lines
+   * No more than nbOfLines lines
    * No more than 430 characters
    * If the content is larger than these limits, we add "..." at the end of the abstract.
    * @param content
-   * @param line
+   * @param nbOfLines
    * @return
    */
-  public static String getNumberFirstLines(String content, int line) {
+  public static String processContent(String content, int nbOfLines) {
+    content = content.replaceAll("&nbsp;", "");
     String[] tab = TransformHTML.getPlainText(content).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
-    
     //
-    int numberOfLine = Math.min(NUMBER_OF_LINES, tab.length);
+    int numberOfLine = Math.min(nbOfLines, tab.length);
     StringBuilder sb = new StringBuilder();
-    
     //
     for (int i=0; i<numberOfLine; i++) {
       sb.append(tab[i]);
@@ -150,9 +144,8 @@ public class ForumActivityBuilder {
       }
     }
     String str = StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(sb.toString(), null)).trim();
-    
     //
-    return trunc(str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("BR_", "<br/>"), NUMBER_CHARS, tab.length > NUMBER_OF_LINES);
+    return trunc(str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("BR_", "<br/>"), NUMBER_CHARS, tab.length > nbOfLines);
   }
   
   /**
@@ -189,7 +182,7 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivity(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String body = getFourFirstLines(topic.getDescription());
+    String body = processContent(topic.getDescription(), 4);
     
     
     //processing in execute of task.

@@ -147,7 +147,7 @@ public class ForumActivityUtils {
         comment = ForumActivityBuilder.createActivityComment(post, ForumActivityContext.makeContextForAddPost(post));
         comment.setUserId(getIdentity(post.getOwner()).getId());
       }
-      comment.setTitle(ForumActivityBuilder.getFourFirstLines(post.getMessage()));
+      comment.setTitle(ForumActivityBuilder.processContent(post.getMessage(), 3));
       am.saveComment(activity, comment);
       takeCommentBack(post, comment);
       count++;
