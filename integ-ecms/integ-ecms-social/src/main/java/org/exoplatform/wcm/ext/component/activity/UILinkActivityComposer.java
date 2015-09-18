@@ -154,11 +154,14 @@ public class UILinkActivityComposer extends UIActivityComposer {
     try {
       linkShare_ = LinkShare.getInstance(url);
     } catch (Exception e) {
+      clearLinkShare();
+      resetToDefault();
       displayErrorMessage(requestContext, MSG_ERROR_INVALID_LINK);
       return;
     }
     
     if (linkShare_ == null) {
+      resetToDefault();
       displayErrorMessage(requestContext, MSG_ERROR_INVALID_LINK);
       return;
     }
@@ -178,6 +181,12 @@ public class UILinkActivityComposer extends UIActivityComposer {
     templateParams.put(HTML_PARAM, mediaObject != null ? mediaObject.getHtml() : null);
     
     setLinkInfoDisplayed(true);
+  }
+
+  private void resetToDefault() {
+    setReadyForPostingActivity(false);
+    setDisplayed(false);
+    getActivityComposerManager().setDefaultActivityComposer();
   }
   
   /**
@@ -201,10 +210,13 @@ public class UILinkActivityComposer extends UIActivityComposer {
       String url = requestContext.getRequestParameter(OBJECTID).trim();
 
       uiComposerLinkExtension.setLink(url, requestContext);
-      uiComposerLinkExtension.getActivityComposerManager().setCurrentActivityComposer(uiComposerLinkExtension);
       if (uiComposerLinkExtension.linkShare_ != null) {
+        uiComposerLinkExtension.getActivityComposerManager().setCurrentActivityComposer(uiComposerLinkExtension);
         requestContext.addUIComponentToUpdateByAjax(uiComposerLinkExtension);
         event.getSource().setReadyForPostingActivity(true);
+      } else {
+        uiComposerLinkExtension.getActivityComposerManager().setDefaultActivityComposer();
+        requestContext.addUIComponentToUpdateByAjax(uiComposerLinkExtension);
       }
     }
   }
@@ -262,13 +274,19 @@ public class UILinkActivityComposer extends UIActivityComposer {
 
   @Override
   protected ExoSocialActivity onPostActivity(UIComposer.PostContext postContext, String postedMessage) throws Exception {
+    Map<String, String> templateParams = getTemplateParams();
+    if (templateParams == null) return null;
+    if (templateParams.size() == 0) {
+      getAncestorOfType(UIPortletApplication.class)
+        .addMessage(new ApplicationMessage("UIComposer.msg.error.Empty_Message", null, ApplicationMessage.WARNING));
+      return null;
+    }
     ActivityManager activityManager = getApplicationComponent(ActivityManager.class);
     IdentityManager identityManager = getApplicationComponent(IdentityManager.class);
     //
     String remoteUser = ConversationState.getCurrent().getIdentity().getUserId();
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);
 
-    Map<String, String> templateParams = getTemplateParams();
     templateParams.put(COMMENT_PARAM, postedMessage);
     templateParams.put(org.exoplatform.social.core.BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, COMMENT_PARAM ); 
     
@@ -276,12 +294,6 @@ public class UILinkActivityComposer extends UIActivityComposer {
       templateParams.put(IMAGE_PARAM, "");
     }
     setTemplateParams(templateParams);
-
-    if (templateParams.size() == 0) {
-      getAncestorOfType(UIPortletApplication.class)
-        .addMessage(new ApplicationMessage("UIComposer.msg.error.Empty_Message", null, ApplicationMessage.WARNING));
-      return null;
-    }
 
     String title = "${" + TITLE_PARAM + "}";
     ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(), UILinkActivity.ACTIVITY_TYPE, title, null);
@@ -309,6 +321,8 @@ public class UILinkActivityComposer extends UIActivityComposer {
         uiUserActivitiesDisplay.setSelectedDisplayMode(UIUserActivitiesDisplay.DisplayMode.MY_ACTIVITIES);
       }
     }
+    setTemplateParams(null);
+    clearLinkShare();
     return activityManager.getActivity(activity.getId());
   }
 }
