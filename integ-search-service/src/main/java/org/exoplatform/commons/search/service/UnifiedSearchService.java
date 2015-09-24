@@ -155,6 +155,7 @@ public class UnifiedSearchService implements ResourceContainer {
       if(sites.contains("all")) sites = userPortalConfigService.getAllPortalNames(); 
       
       List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
+      if (isAnonymous && null!=sTypes) types = this.getAnonymSearchTypes(types);
 
       int offset = Integer.parseInt(sOffset);
       int limit = null==sLimit||sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
@@ -221,19 +222,22 @@ public class UnifiedSearchService implements ResourceContainer {
 
   private SearchSetting getAnonymSearchSetting() {
     SearchSetting newSearchSetting = getSearchSetting();
-    if (newSearchSetting.getSearchTypes().contains("all")) {
-       newSearchSetting.setSearchTypes(Arrays.asList("page", "file", "document", "post", "wiki", "event", "task", "answer"));
-    } else {
-      ListIterator it = newSearchSetting.getSearchTypes().listIterator();
-      ArrayList<String> list = new ArrayList<>();
-      while (it.hasNext()) {
-        list.add(it.next().toString());
-    }
-    list.remove("people");
-    list.remove("space");
-    newSearchSetting.setSearchTypes(list);
-    }
+    newSearchSetting.setSearchTypes(getAnonymSearchTypes(newSearchSetting.getSearchTypes()));
     return newSearchSetting;
+  }
+
+  private List<String> getAnonymSearchTypes(List<String> inputSearchTypes) {
+    ArrayList<String> anonymSearchTypes;
+    if (inputSearchTypes.contains("all")) {
+      anonymSearchTypes = new ArrayList(this.getEnabledSearchTypes());
+    } else {
+      anonymSearchTypes = new ArrayList<>(inputSearchTypes);
+    }
+
+    anonymSearchTypes.remove("people");
+    anonymSearchTypes.remove("space");
+
+    return anonymSearchTypes;
   }
 
   @SuppressWarnings("unchecked")
