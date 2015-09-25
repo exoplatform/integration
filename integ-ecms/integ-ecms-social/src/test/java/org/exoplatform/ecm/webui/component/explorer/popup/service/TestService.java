@@ -44,6 +44,8 @@ import org.exoplatform.social.core.space.impl.DefaultSpaceApplicationHandler;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.wcm.ext.component.document.service.IShareDocumentService;
+import org.junit.Ignore;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Session;
@@ -60,6 +62,7 @@ import javax.jcr.Session;
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/configuration.xml"),
 })
+@Ignore
 public class TestService extends AbstractKernelTest {
   //private Log log = ExoLogger.getExoLogger(TestService.class);
 
