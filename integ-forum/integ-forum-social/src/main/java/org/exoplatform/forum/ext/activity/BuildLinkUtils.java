@@ -145,7 +145,7 @@ public class BuildLinkUtils {
         ConversationState state = ConversationState.getCurrent();
         String forumLink = (String) state.getAttribute(FORUM_PORTLET_PUBLIC_KEY);
         
-        if (forumLink != null && forumLink.length() > 0) {
+        if (PORTLET_INFO.FORUM.equals(portletInfo) && forumLink != null && forumLink.length() > 0) {
           return new StringBuffer(forumLink).append(buildLink_(objectType, objectId, portletInfo)).toString();
         }
         
@@ -166,7 +166,8 @@ public class BuildLinkUtils {
           UserNode portletNode = getPortletNode(rootNode, portletInfo);
           if (portletNode != null) {
             forumLink = getNodeURL(portletNode);
-            state.setAttribute(FORUM_PORTLET_PUBLIC_KEY, forumLink);
+            if (PORTLET_INFO.FORUM.equals(portletInfo))
+              state.setAttribute(FORUM_PORTLET_PUBLIC_KEY, forumLink);
             link = new StringBuffer(forumLink).append(buildLink_(objectType, objectId, portletInfo)).toString();
           }
         }
