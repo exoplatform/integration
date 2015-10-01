@@ -472,6 +472,8 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
         $(txtQuickSearchQuery_id).removeClass("showInputSearch");
         $("#ToolBarSearch .uiIconPLF24x24Search").removeClass('uiIconCloseSearchBox');
         $('#PlatformAdminToolbarContainer').removeClass('activeInputSearch');
+        $('#ToolBarSearch').find('input[type="text"]').removeClass('loadding');
+        $('body').removeClass('quickSearchDisplay');
         $(quickSearchResult_id).hide();        
       }
     });
