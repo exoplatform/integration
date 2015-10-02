@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.ws.rs.DefaultValue;
@@ -80,7 +82,6 @@ public class UnifiedSearchService implements ResourceContainer {
   }
   
   private static SearchSetting defaultSearchSetting = new SearchSetting(10, Arrays.asList("all"), false, false, false);
-  private static SearchSetting anonymousSearchSetting = new SearchSetting(10, Arrays.asList("page", "file", "document", "post"), true, false, true);
   private static SearchSetting defaultQuicksearchSetting = new SearchSetting(5, Arrays.asList("all"), true, true, true);
   
   private SearchService searchService;
@@ -148,15 +149,16 @@ public class UnifiedSearchService implements ResourceContainer {
   
       String userId = ConversationState.getCurrent().getIdentity().getUserId();
       boolean isAnonymous = null==userId || userId.isEmpty() || userId.equals("__anonim");
-      SearchSetting searchSetting = isAnonymous ? anonymousSearchSetting : getSearchSetting();
-      
-      List<String> sites = Arrays.asList(sSites.split(",\\s*"));      
+      SearchSetting searchSetting = isAnonymous ? getAnonymSearchSetting() : getSearchSetting();
+
+      List<String> sites = Arrays.asList(sSites.split(",\\s*"));
       if(sites.contains("all")) sites = userPortalConfigService.getAllPortalNames(); 
       
-      List<String> types = isAnonymous||null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
-      
+      List<String> types = null==sTypes ? searchSetting.getSearchTypes() : Arrays.asList(sTypes.split(",\\s*"));
+      if (isAnonymous && null!=sTypes) types = this.getAnonymSearchTypes(types);
+
       int offset = Integer.parseInt(sOffset);
-      int limit = isAnonymous||null==sLimit||sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
+      int limit = null==sLimit||sLimit.isEmpty() ? (int)searchSetting.getResultsPerPage() : Integer.parseInt(sLimit);
 
       Map<String, Collection<SearchResult>> results = searchService.search(context, query, sites, types, offset, limit, sort, order);
       
@@ -218,7 +220,26 @@ public class UnifiedSearchService implements ResourceContainer {
     }
   }
 
-    
+  private SearchSetting getAnonymSearchSetting() {
+    SearchSetting newSearchSetting = getSearchSetting();
+    newSearchSetting.setSearchTypes(getAnonymSearchTypes(newSearchSetting.getSearchTypes()));
+    return newSearchSetting;
+  }
+
+  private List<String> getAnonymSearchTypes(List<String> inputSearchTypes) {
+    ArrayList<String> anonymSearchTypes;
+    if (inputSearchTypes.contains("all")) {
+      anonymSearchTypes = new ArrayList(this.getEnabledSearchTypes());
+    } else {
+      anonymSearchTypes = new ArrayList<>(inputSearchTypes);
+    }
+
+    anonymSearchTypes.remove("people");
+    anonymSearchTypes.remove("space");
+
+    return anonymSearchTypes;
+  }
+
   @SuppressWarnings("unchecked")
   private SearchSetting getSearchSetting() {
     SearchSetting newSearchSetting = defaultSearchSetting;
@@ -266,7 +287,7 @@ public class UnifiedSearchService implements ResourceContainer {
   @Path("/setting")
   public Response REST_getSearchSetting() {
     String userId = ConversationState.getCurrent().getIdentity().getUserId();
-    return Response.ok(userId.equals("__anonim") ? anonymousSearchSetting : getSearchSetting(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+    return Response.ok(userId.equals("__anonim") ? getAnonymSearchSetting() : getSearchSetting(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   }
   
   /**
@@ -381,3 +402,4 @@ public class UnifiedSearchService implements ResourceContainer {
 
   
 }
+
