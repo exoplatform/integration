@@ -8,7 +8,7 @@
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Mở tài liệu</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -49,7 +49,7 @@
       <attachmentAdded>Một số tệp đã được đính kèm.</attachmentAdded>
       <attachmentRemoved>Tệp vừa bị loại bỏ.</attachmentRemoved>
       <categoryAdded>Danh mục: {0} đã được thêm vào.</categoryAdded>
-      <categoryRemoved>Danh mục: {0} đã bị xóa đi.</categoryRemoved>
+      <categoryRemoved>Danh mục: {0} đã được thêm vào.</categoryRemoved>
       <tagAdded>Nhãn {0} vừa được thêm vào.</tagAdded>
       <tagsAdded>Một số Nhãn: {0} vừa được thêm vào.</tagsAdded>
       <tagRemoved>Nhãn: {0} vừa bị loại bỏ.</tagRemoved>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Xem lại</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Mở tài liệu</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>

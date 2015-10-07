@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Otwórz tylko do odczytu</ReadOnly>
+      <ReadOnly>Open Read-only</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Otwórz dokument</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Podgląd</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Otwórz dokument</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -97,7 +97,7 @@
   <UIPreviewCommentArea>
     <label>
       <commentTextAreaPreview>Dodaj swój komentarz...</commentTextAreaPreview>
-      <no-comment-yet>Jeszcze nie skomentowano</no-comment-yet>
+      <no-comment-yet>No comment yet</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -113,7 +113,7 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Ten plik jest zablokowany przez użytkownika {0}. Otworzyć tylko do odczytu?</lock-node-read-only>
+      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
 </bundle>

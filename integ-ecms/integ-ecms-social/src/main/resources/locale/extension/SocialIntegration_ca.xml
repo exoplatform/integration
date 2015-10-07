@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Obre en sols lectura</ReadOnly>
+      <ReadOnly>Obrir sols lectura</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Obrir Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Obre el Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Vista prèvia</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Obrir Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Obre el Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -113,7 +113,7 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Aquest fitxer està bloquejat per l'usuari {0}. Obrir en sols lectura?</lock-node-read-only>
+      <lock-node-read-only>Aquest fitxer està bloquejat per l'usuari {0}. Obrir llegida només?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
 </bundle>
