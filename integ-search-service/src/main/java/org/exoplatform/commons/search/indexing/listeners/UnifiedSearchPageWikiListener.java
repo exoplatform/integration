@@ -7,6 +7,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.WikiException;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.service.PageUpdateType;
 import org.exoplatform.wiki.service.listener.PageWikiListener;
 
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class UnifiedSearchPageWikiListener extends PageWikiListener {
   }
 
   @Override
-  public void postUpdatePage(String wikiType, String wikiOwner, String pageId, Page page, String wikiUpdateType) throws WikiException {
+  public void postUpdatePage(String wikiType, String wikiOwner, String pageId, Page page, PageUpdateType wikiUpdateType) throws WikiException {
     if(indexingService != null) {
       Map<String, Object> content = new HashMap<String, Object>();
       content.put("page", page);

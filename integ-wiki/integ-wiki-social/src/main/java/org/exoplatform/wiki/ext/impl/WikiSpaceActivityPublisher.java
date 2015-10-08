@@ -2,7 +2,6 @@ package org.exoplatform.wiki.ext.impl;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.jcr.access.PermissionType;
@@ -26,16 +25,15 @@ import org.exoplatform.wiki.WikiException;
 import org.exoplatform.wiki.ext.impl.WikiUIActivity.CommentType;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.PageVersion;
-import org.exoplatform.wiki.mow.core.api.wiki.WikiNodeType;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.service.BreadcrumbData;
+import org.exoplatform.wiki.service.PageUpdateType;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.service.listener.PageWikiListener;
 import org.exoplatform.wiki.utils.Utils;
 import org.exoplatform.wiki.utils.WikiConstants;
 import org.xwiki.rendering.syntax.Syntax;
 
-import javax.jcr.Node;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,36 +91,27 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
                                              Page page,
                                              String spaceUrl,
                                              String spaceName,
-                                             String activityType) throws WikiException {
+                                             PageUpdateType activityType) throws WikiException {
     // Get activity
     ExoSocialActivity activity = null;
-    boolean isNewActivity = false;
+    boolean isNewActivity = true;
     ActivityManager activityManager = PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
-    // TODO need to link activity ID to Page
-    /*
-    if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
-      try {
-        String nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
-        activity = activityManager.getActivity(nodeActivityID);
-        isNewActivity = false;
-      } catch (Exception e) {
-          LOG.info("cannot get activity");
-      }
+    if (page.getActivityId() != null) {
+      activity = activityManager.getActivity(page.getActivityId());
+      isNewActivity = (activity == null);
     }
-    */
     
-    if (activity == null) {
+    if (isNewActivity) {
       if (page.isMinorEdit()) {
         return null;
       }
       activity = createNewActivity(ownerIdentity.getId());
-      isNewActivity = true;
     }
     activity.setTitle(page.getTitle());
     // Add UI params
     Map<String, String> templateParams = new HashMap<>();
     templateParams.put(PAGE_ID_KEY, pageId);
-    templateParams.put(ACTIVITY_TYPE_KEY, activityType);
+    templateParams.put(ACTIVITY_TYPE_KEY, activityType.toString());
     templateParams.put(PAGE_OWNER_KEY, wikiOwner);
     templateParams.put(PAGE_TYPE_KEY, wikiType);
     templateParams.put(PAGE_TITLE_KEY, page.getTitle());
@@ -148,7 +137,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     }
     templateParams.put(PAGE_EXCERPT, validateExcerpt(excerpt.toString()));
     templateParams.put(org.exoplatform.social.core.BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, PAGE_EXCERPT);
-    if (!ADD_PAGE_TYPE.equals(activityType)) {
+    if (!PageUpdateType.ADD_PAGE.equals(activityType)) {
       String verName = null;
       if(versions != null && versions.isEmpty()) {
         verName = versions.get(0).getName();
@@ -162,24 +151,24 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     if (isNewActivity) {
       activityManager.saveActivityNoReturn(ownerStream, activity);
     } else {
-      if (MOVE_PAGE_TYPE.equals(activityType)) {
+      if (PageUpdateType.MOVE_PAGE.equals(activityType)) {
         activity.setStreamOwner(ownerStream.getRemoteId());
       }
       activityManager.updateActivity(activity);
     }
     
     // Check to add comment to activity
-    if (!ADD_PAGE_TYPE.equals(activityType)) {
-      if (EDIT_PAGE_TITLE_TYPE.equals(activityType) && !page.isMinorEdit()) {
+    if (!PageUpdateType.ADD_PAGE.equals(activityType)) {
+      if (PageUpdateType.EDIT_PAGE_TITLE.equals(activityType) && !page.isMinorEdit()) {
         createAndSaveSystemComment(activity, ownerIdentity.getId(), "WikiUIActivity.msg.update-page-title", page.getTitle());
-      } else if (EDIT_PAGE_CONTENT_TYPE.equals(activityType) && !page.isMinorEdit()) {
+      } else if (PageUpdateType.EDIT_PAGE_CONTENT.equals(activityType) && !page.isMinorEdit()) {
         String comment = page.getComment();
         if (StringUtils.isEmpty(comment)) {
           createAndSaveSystemComment(activity, ownerIdentity.getId(), "WikiUIActivity.msg.update-page-content");
         } else {
           createAndSaveUserComment(activity, ownerIdentity.getId(), comment);
         }
-      } else if (EDIT_PAGE_CONTENT_AND_TITLE_TYPE.equals(activityType) && !page.isMinorEdit()) {
+      } else if (PageUpdateType.EDIT_PAGE_CONTENT_AND_TITLE.equals(activityType) && !page.isMinorEdit()) {
         String comment = page.getComment();
         if (StringUtils.isEmpty(comment)) {
           createAndSaveComment(activity,
@@ -200,8 +189,8 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
                                comment,
                                null);
         }
-      } else if (MOVE_PAGE_TYPE.equals(activityType)) {
-        WikiService wikiService = (WikiService) PortalContainer.getInstance().getComponentInstanceOfType(WikiService.class);
+      } else if (PageUpdateType.MOVE_PAGE.equals(activityType)) {
+        WikiService wikiService = PortalContainer.getInstance().getComponentInstanceOfType(WikiService.class);
         List<BreadcrumbData> breadcrumbDatas = wikiService.getBreadcumb(wikiType, wikiOwner, pageId);
         StringBuffer breadcrumText = new StringBuffer();
         breadcrumText.append((StringUtils.isEmpty(spaceName) ? wikiOwner : spaceName)).append(" > ");
@@ -284,8 +273,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
                                             String commentMsgKey2,
                                             String[] args2) {
    // Activity manager
-   ActivityManager activityM =
-       (ActivityManager) PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
+   ActivityManager activityM = PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
    ExoSocialActivity newComment = new ExoSocialActivityImpl();
    
    StringBuilder builder = new StringBuilder();
@@ -298,7 +286,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
    newComment.setUserId(userId);
    
    // Activity params
-   Map<String, String> activityParams = new HashMap<String, String>();
+   Map<String, String> activityParams = new HashMap<>();
    
    activityParams.put(WikiUIActivity.COMMENT_TYPE, commentType.name());
    switch(commentType) {
@@ -366,7 +354,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     return (pagePermissions.containsKey(groupMemberShip) && ArrayUtils.contains(pagePermissions.get(groupMemberShip), PermissionType.READ));
   }
   
-  private void saveActivity(String wikiType, String wikiOwner, String pageId, Page page, String activityType) throws WikiException {
+  private void saveActivity(String wikiType, String wikiOwner, String pageId, Page page, PageUpdateType activityType) throws WikiException {
     try {
       Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
     } catch (ClassNotFoundException e) {
@@ -420,14 +408,12 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
         return;
       }
       
-      // Attach activity id to jcr node
-      // TODO need to link activity ID to Page
-      /*
+      // Attach activity id to wiki page
       String activityId = activity.getId();
       if (!StringUtils.isEmpty(activityId)) {
-        ActivityTypeUtils.attachActivityId(node, activityId);
+        page.setActivityId(activityId);
+        wikiService.updatePage(page, null);
       }
-      */
     }
   }
 
@@ -437,23 +423,19 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
       // catch the case of the Wiki Home added as it's created by the system, not by users.
       return;
     }
-    saveActivity(wikiType, wikiOwner, pageId, page, PageWikiListener.ADD_PAGE_TYPE);
+    saveActivity(wikiType, wikiOwner, pageId, page, PageUpdateType.ADD_PAGE);
   }
 
   @Override
   public void postDeletePage(String wikiType, String wikiOwner, String pageId, Page page) throws WikiException {
-    // TODO need to link activity ID to Page
-    /*
     ActivityManager activityManager = PortalContainer.getInstance().getComponentInstanceOfType(ActivityManager.class);
-    if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
-      String nodeActivityID = node.getProperty(ActivityTypeUtils.EXO_ACTIVITY_ID).getString();
-      activityManager.deleteActivity(nodeActivityID);
+    if (page.getActivityId() != null && StringUtils.isNotEmpty(page.getActivityId())) {
+      activityManager.deleteActivity(page.getActivityId());
     }
-    */
   }
 
   @Override
-  public void postUpdatePage(String wikiType, String wikiOwner, String pageId, Page page, String wikiUpdateType) throws WikiException {
+  public void postUpdatePage(String wikiType, String wikiOwner, String pageId, Page page, PageUpdateType wikiUpdateType) throws WikiException {
     if(page != null) {
       saveActivity(wikiType, wikiOwner, pageId, page, wikiUpdateType);
     }
