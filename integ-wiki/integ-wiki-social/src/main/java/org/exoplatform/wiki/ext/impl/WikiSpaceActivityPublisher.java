@@ -119,8 +119,8 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     templateParams.put(URL_KEY, pageURL);
     int versionsTotal = 0;
     List<PageVersion> versions = wikiService.getVersionsOfPage(page);
-    if(versions != null && versions.isEmpty()) {
-      versionsTotal = versions.size() - 1;
+    if(versions != null && !versions.isEmpty()) {
+      versionsTotal = versions.size();
     }
     templateParams.put(WIKI_PAGE_VERSION, String.valueOf(versionsTotal));
     
@@ -139,8 +139,8 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     templateParams.put(org.exoplatform.social.core.BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, PAGE_EXCERPT);
     if (!PageUpdateType.ADD_PAGE.equals(activityType)) {
       String verName = null;
-      if(versions != null && versions.isEmpty()) {
-        verName = versions.get(0).getName();
+      if(versions != null && !versions.isEmpty()) {
+        verName = String.valueOf(versions.size() + 1);
       }
       templateParams.put(VIEW_CHANGE_URL_KEY, Utils.getURL(page.getUrl(), verName));
     }

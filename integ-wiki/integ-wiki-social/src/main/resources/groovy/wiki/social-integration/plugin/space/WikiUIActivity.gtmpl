@@ -29,6 +29,7 @@
   import org.exoplatform.wcm.ext.component.activity.UILinkUtil;
   import org.apache.commons.lang.StringUtils;
   import org.apache.commons.lang.StringEscapeUtils;
+  import org.exoplatform.wiki.service.PageUpdateType;
 
   def pcontext = Util.getPortalRequestContext();
   def jsManager = pcontext.getJavascriptManager().require("SHARED/uiForm");
@@ -221,7 +222,7 @@
                 </div><!--end heading-->
                 <div class="uiBox roundedBottom introBox wikiShare">
                   <div class="headingContainer clearfix">
-                  <% if(!(activityType.equals("add_page"))){
+                  <% if(!(activityType.equals(PageUpdateType.ADD_PAGE.toString()))){
                     versionLabel = _ctx.appRes("WikiUIActivity.label.version") + verName;
                    } %>
                     <div class="pull-right versionLabel">$versionLabel</div>
@@ -240,7 +241,7 @@
                                      def commentLink = "";
                                   %>
                          <!-- View Changes -->
-                         <% if ((versionNum > 1)||!(activityType.equals("add_page"))) { %>
+                         <% if ((versionNum > 1)||!(activityType.equals(PageUpdateType.ADD_PAGE.toString()))) { %>
                          <ul class="pull-left statusAction">
                            <li>
                              <a id="ViewChanges${activity.id}" href="<%=uicomponent.getViewChangeURL();%>" >
