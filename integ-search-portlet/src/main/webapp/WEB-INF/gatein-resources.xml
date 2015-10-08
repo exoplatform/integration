@@ -45,13 +45,6 @@
 				<as>$</as>
 			</depends>
             <depends>
-                <module>ecm-bootstrap</module>
-            </depends>
-
-            <depends>
-                <module>uiPopupWindow</module>
-            </depends>
-            <depends>
                 <module>wcm-utils</module>
             </depends>
 		</module>
