@@ -1,10 +1,8 @@
 package org.exoplatform.wiki.ext.impl;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.model.PortalConfig;
-import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
@@ -23,10 +21,10 @@ import org.exoplatform.social.core.storage.SpaceStorageException;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.wiki.WikiException;
 import org.exoplatform.wiki.ext.impl.WikiUIActivity.CommentType;
-import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.mow.api.PageVersion;
+import org.exoplatform.wiki.mow.api.*;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.service.BreadcrumbData;
+import org.exoplatform.wiki.service.IDType;
 import org.exoplatform.wiki.service.PageUpdateType;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.service.listener.PageWikiListener;
@@ -335,9 +333,22 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
   }
   
   private boolean isPublic(Page page) throws WikiException {
-    HashMap<String, String[]> permissions = page.getPermission();
+    List<PermissionEntry> permissions = page.getPermissions();
     // the page is public when it has permission: [any read]
-    return permissions != null && permissions.containsKey(IdentityConstants.ANY) && ArrayUtils.contains(permissions.get(IdentityConstants.ANY), PermissionType.READ);
+    boolean isPublic = false;
+    if(permissions != null) {
+      for(PermissionEntry permissionEntry : permissions) {
+        if(permissionEntry.getId().equals(IdentityConstants.ANY.toString())) {
+          for(Permission permission : permissionEntry.getPermissions()) {
+            if(PermissionType.VIEWPAGE.toString().equals(permission.getPermissionType())) {
+              isPublic = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    return isPublic;
   }
   
   /**
@@ -349,9 +360,22 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
    * @throws Exception
    */
   private boolean isPublicInSpace(Page page, Space space) throws WikiException {
-    HashMap<String, String[]> pagePermissions = page.getPermission();
+    List<PermissionEntry> pagePermissions = page.getPermissions();
     String groupMemberShip = MembershipEntry.ANY_TYPE + ":" + space.getGroupId();
-    return (pagePermissions.containsKey(groupMemberShip) && ArrayUtils.contains(pagePermissions.get(groupMemberShip), PermissionType.READ));
+    boolean isPublic = false;
+    if(pagePermissions != null) {
+      for(PermissionEntry permissionEntry : pagePermissions) {
+        if(permissionEntry.getIdType().equals(IDType.MEMBERSHIP) && permissionEntry.getId().equals(groupMemberShip)) {
+          for(Permission permission : permissionEntry.getPermissions()) {
+            if(PermissionType.VIEWPAGE.toString().equals(permission.getPermissionType())) {
+              isPublic = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    return isPublic;
   }
   
   private void saveActivity(String wikiType, String wikiOwner, String pageId, Page page, PageUpdateType activityType) throws WikiException {
