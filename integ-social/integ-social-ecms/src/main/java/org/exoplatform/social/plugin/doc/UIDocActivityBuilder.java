@@ -40,6 +40,8 @@ import org.json.JSONObject;
 public class UIDocActivityBuilder extends BaseUIActivityBuilder {
   private static final Log LOG = ExoLogger.getLogger(UIDocActivityBuilder.class);
 
+  public static final String ACTIVITY_TYPE = "DOC_ACTIVITY";
+
   @Override
   protected void extendUIActivity(BaseUIActivity uiActivity, ExoSocialActivity activity) {
     UIDocActivity docActivity = (UIDocActivity) uiActivity;

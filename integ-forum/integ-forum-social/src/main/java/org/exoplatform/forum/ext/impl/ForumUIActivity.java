@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.container.PortalContainer;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
@@ -144,9 +143,15 @@ public class ForumUIActivity extends BaseKSActivity {
   private Topic getTopic() {
     String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
     try {
-      return (Topic) ForumActivityUtils.getForumService().getObjectNameById(topicId, Utils.TOPIC);
+      String categoryId = getActivityParamValue(ForumActivityBuilder.CATE_ID_KEY);
+      String forumId = getActivityParamValue(ForumActivityBuilder.FORUM_ID_KEY);
+      return ForumActivityUtils.getForumService().getTopic(categoryId, forumId, topicId, "");
     } catch (Exception e) {
-      return null;
+      try {
+        return (Topic) ForumActivityUtils.getForumService().getObjectNameById(topicId, Utils.TOPIC);
+      } catch (Exception e2) {
+        return null;
+      }
     }
   }
   
@@ -176,12 +181,7 @@ public class ForumUIActivity extends BaseKSActivity {
   
   public Post createPost(String message, WebuiRequestContext requestContext) {
     try {
-      DataStorage dataStorage = (DataStorage) PortalContainer.getInstance().getComponentInstanceOfType(DataStorage.class);
-      String topicId = getActivityParamValue(ForumActivityBuilder.TOPIC_ID_KEY);
-      String categoryId = getActivityParamValue(ForumActivityBuilder.CATE_ID_KEY);
-      String forumId = getActivityParamValue(ForumActivityBuilder.FORUM_ID_KEY);
-      Topic topic = dataStorage.getTopic(categoryId, forumId, topicId, "");
-
+      Topic topic = getTopic();
       //
       Post post = new Post();
       post.setOwner(requestContext.getRemoteUser());
@@ -200,7 +200,7 @@ public class ForumUIActivity extends BaseKSActivity {
       message = message.replace("<p>", "").replace("</p>", "\n");
       post.setMessage(TransformHTML.enCodeHTMLContent(message));
 
-      dataStorage.savePost(categoryId, forumId, topicId, post, true, new MessageBuilder());
+      getApplicationComponent(DataStorage.class).savePost(topic.getCategoryId(), topic.getForumId(), topic.getId(), post, true, new MessageBuilder());
 
       //
       ExoSocialActivity activity = getActivity();

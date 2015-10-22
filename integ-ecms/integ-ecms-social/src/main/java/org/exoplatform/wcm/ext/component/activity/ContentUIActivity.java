@@ -74,8 +74,6 @@ public class ContentUIActivity extends BaseUIActivity {
 
   private static final Log   LOG               = ExoLogger.getLogger(ContentUIActivity.class);
 
-  public static final String ACTIVITY_TYPE      = "CONTENT_ACTIVITY";
-
   public static final String ID                 = "id";
 
   public static final String CONTENT_LINK       = "contenLink";
@@ -475,7 +473,7 @@ public class ContentUIActivity extends BaseUIActivity {
     @Override
     public void execute(Event<ContentUIActivity> event) throws Exception {
       ContentUIActivity contentUIActivity = event.getSource();
-      UIActivitiesContainer uiActivitiesContainer = contentUIActivity.getParent();
+      UIActivitiesContainer uiActivitiesContainer = contentUIActivity.getAncestorOfType(UIActivitiesContainer.class);
       PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
 
       UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,

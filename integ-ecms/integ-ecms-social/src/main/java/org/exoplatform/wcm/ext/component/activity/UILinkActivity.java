@@ -92,7 +92,7 @@ public class UILinkActivity extends BaseUIActivity {
     @Override
     public void execute(Event<UILinkActivity> event) throws Exception {
       UILinkActivity uiLinkActivity = event.getSource();
-      UIActivitiesContainer uiActivitiesContainer = uiLinkActivity.getParent();
+      UIActivitiesContainer uiActivitiesContainer = uiLinkActivity.getAncestorOfType(UIActivitiesContainer.class);
       PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
 
       UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,

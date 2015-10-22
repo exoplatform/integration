@@ -16,6 +16,23 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+import javax.portlet.PortletRequest;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ISO8601;
@@ -25,6 +42,8 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.PortalContainerInfo;
 import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.jcr.access.PermissionType;
+import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
@@ -52,24 +71,6 @@ import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.ext.UIExtension;
 import org.exoplatform.webui.ext.UIExtensionManager;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import javax.jcr.Node;
-import org.exoplatform.services.jcr.core.ExtendedNode;
-import org.exoplatform.services.jcr.access.PermissionType;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-import javax.portlet.PortletRequest;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
@@ -93,8 +94,6 @@ public class FileUIActivity extends BaseUIActivity{
   private static final String NEW_DATE_FORMAT = "hh:mm:ss MMM d, yyyy";
 
   private static final Log   LOG               = ExoLogger.getLogger(FileUIActivity.class);
-
-  public static final String ACTIVITY_TYPE      = "CONTENT_ACTIVITY";
 
   public static final String ID                 = "id";
 
@@ -591,7 +590,7 @@ public class FileUIActivity extends BaseUIActivity{
     @Override
     public void execute(Event<FileUIActivity> event) throws Exception {
       FileUIActivity fileUIActivity = event.getSource();
-      UIActivitiesContainer uiActivitiesContainer = fileUIActivity.getParent();
+      UIActivitiesContainer uiActivitiesContainer = fileUIActivity.getAncestorOfType(UIActivitiesContainer.class);
       PopupContainer uiPopupContainer = uiActivitiesContainer.getPopupContainer();
 
       UIDocumentPreview uiDocumentPreview = uiPopupContainer.createUIComponent(UIDocumentPreview.class, null,
@@ -634,7 +633,7 @@ public class FileUIActivity extends BaseUIActivity{
 
 
       FileUIActivity docActivity = event.getSource();
-      UIActivitiesContainer activitiesContainer = docActivity.getParent();
+      UIActivitiesContainer activitiesContainer = docActivity.getAncestorOfType(UIActivitiesContainer.class);
       PopupContainer popupContainer = activitiesContainer.getPopupContainer();
 
       org.exoplatform.ecm.webui.utils.Utils.openDocumentInDesktop(currentNode, popupContainer, event);

@@ -65,6 +65,8 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
 
   public static final String CALENDAR_APP_ID       = "cs-calendar:spaces";
 
+  public static final String ACTIVITY_COMMENT_TYPE = "CALENDAR_ACTIVITY";
+
   public static final String EVENT_ADDED           = "EventAdded".intern();
 
   public static final String EVENT_UPDATED         = "EventUpdated".intern();
@@ -280,7 +282,6 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     ExoSocialActivity activity = getActivityForEvent(originEvent);
     if(activity != null) {
       Map<String,String> params = new HashMap<String, String>();
-      WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
       params.put(STOP_REPEATING, String.valueOf(stopDate.getTime()));
       ExoSocialActivity comment = createComment(params, originEvent);
       activityManager.saveComment(activity,comment);
@@ -317,7 +318,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     ExoSocialActivity newComment = new ExoSocialActivityImpl();
     newComment.isComment(true);
     newComment.setUserId(userIdentity.getId());
-    newComment.setType("CALENDAR_ACTIVITY");
+    newComment.setType(ACTIVITY_COMMENT_TYPE);
     StringBuilder fields = new StringBuilder();
     Map<String, String> data = new LinkedHashMap<String, String>();
 

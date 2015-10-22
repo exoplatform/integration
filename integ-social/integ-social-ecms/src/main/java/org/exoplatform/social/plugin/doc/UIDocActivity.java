@@ -83,7 +83,6 @@ public class UIDocActivity extends BaseUIActivity {
   private static final String IMAGE_PREFIX = "image/";
   private static final String DOCUMENT_POSTFIX = "/pdf";
   
-  public static final String ACTIVITY_TYPE = "DOC_ACTIVITY";
   public static final String DOCLINK = "DOCLINK";
   public static final String MESSAGE = "MESSAGE";
   public static final String REPOSITORY = "REPOSITORY";
@@ -203,7 +202,7 @@ public class UIDocActivity extends BaseUIActivity {
         uiApplication.addMessage(new ApplicationMessage("UIDocActivity.msg.noPermission", null, ApplicationMessage.WARNING));
         return;
       }
-      final UIActivitiesContainer activitiesContainer = docActivity.getParent();
+      final UIActivitiesContainer activitiesContainer = docActivity.getAncestorOfType(UIActivitiesContainer.class);
       final PopupContainer popupContainer = activitiesContainer.getPopupContainer();
 
       if (docActivity.getChild(UIDocViewer.class) != null) {

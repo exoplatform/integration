@@ -84,7 +84,7 @@
     <component-plugin>
       <name>notification.plugins</name>
       <set-method>addChildPlugin</set-method>
-      <type>org.exoplatform.social.doc.notification.plugin.DocActivityChildPlugin</type>
+      <type>org.exoplatform.social.plugin.doc.notification.plugin.DocActivityChildPlugin</type>
       <description>Initial information for forum child notification plugin.</description>
       <init-params>
         <value-param>
@@ -106,5 +106,14 @@
       </init-params>
     </component-plugin>
   </external-component-plugins>
-  
+
+	<external-component-plugins>
+		<target-component>org.exoplatform.commons.api.event.EventManager</target-component>
+		<component-plugin>
+			<name>SOC_ACTIVITY_MIGRATION</name>
+			<set-method>addEventListener</set-method>
+			<type>org.exoplatform.social.addons.rdbms.listener.DocActivityUpdaterListener</type>
+		</component-plugin>
+	</external-component-plugins>
+
 </configuration>

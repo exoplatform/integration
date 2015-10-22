@@ -21,6 +21,7 @@ import java.util.Map;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.forum.common.CommonUtils;
+import org.exoplatform.forum.ext.impl.PollSpaceActivityPublisher;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.ForumService;
@@ -28,6 +29,8 @@ import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.service.impl.model.PostFilter;
+import org.exoplatform.poll.service.Poll;
+import org.exoplatform.poll.service.PollService;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -99,11 +102,19 @@ public class ForumActivityUtils {
   }
   
   public static void takeActivityBack(Topic topic, ExoSocialActivity activity) {
-    getForumService().saveActivityIdForOwnerPath(topic.getPath(), activity.getId());
+    takeActivityBack(topic, activity.getId());
+  }
+  
+  public static void takeActivityBack(Topic topic, String activityId) {
+    getForumService().saveActivityIdForOwnerPath(topic.getPath(), activityId);
   }
   
   public static void takeCommentBack(Post post, ExoSocialActivity comment) {
-    getForumService().saveActivityIdForOwnerPath(post.getPath(), comment.getId());
+    takeCommentBack(post, comment.getId());
+  }
+  
+  public static void takeCommentBack(Post post, String commentId) {
+    getForumService().saveActivityIdForOwnerPath(post.getPath(), commentId);
   }
   
   public static void updateTopicPostCount(ForumActivityContext ctx, boolean isAdded) throws Exception {
@@ -339,4 +350,53 @@ public class ForumActivityUtils {
     return got;
   }
   
+  public static String getActivityParamValue(ExoSocialActivity activity, String key) {
+    String value = null;
+    Map<String, String> params = activity.getTemplateParams();
+    if (params != null) {
+      value = params.get(key);
+    }
+    return value != null ? value : "";
+  }
+  
+  public static Topic getTopic(ExoSocialActivity activity) {
+    String categoryId = getActivityParamValue(activity, ForumActivityBuilder.CATE_ID_KEY);
+    String forumId = getActivityParamValue(activity, ForumActivityBuilder.FORUM_ID_KEY);
+    String topicId = getActivityParamValue(activity, ForumActivityBuilder.TOPIC_ID_KEY);
+    if(CommonUtils.isEmpty(topicId)) {
+      return null;
+    }
+    try {
+      return ForumActivityUtils.getForumService().getTopic(categoryId, forumId, topicId, "");
+    } catch (Exception e) {
+      return null;
+    }
+  }
+  
+  public static Post getPost(ExoSocialActivity activity) {
+    String categoryId = getActivityParamValue(activity, ForumActivityBuilder.CATE_ID_KEY);
+    String forumId = getActivityParamValue(activity, ForumActivityBuilder.FORUM_ID_KEY);
+    String topicId = getActivityParamValue(activity, ForumActivityBuilder.TOPIC_ID_KEY);
+    String postId = getActivityParamValue(activity, ForumActivityBuilder.POST_ID_KEY);
+    if(CommonUtils.isEmpty(postId)) {
+      return null;
+    }
+    try {
+      return ForumActivityUtils.getForumService().getPost(categoryId, forumId, topicId, postId);
+    } catch (Exception e) {
+      return null;
+    }
+  }
+  
+  public static Poll getPoll(ExoSocialActivity activity) {
+    String pollId = getActivityParamValue(activity, PollSpaceActivityPublisher.POLL_ID);
+    if (pollId.indexOf(Utils.TOPIC) == 0) {
+      pollId = pollId.replace(Utils.TOPIC, Utils.POLL);
+    }
+    try {
+      return CommonsUtils.getService(PollService.class).getPoll(pollId);
+    } catch (Exception e) {
+      return null;
+    }
+  }
 }

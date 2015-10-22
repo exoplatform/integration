@@ -17,6 +17,8 @@
 
 package org.exoplatform.social.plugin.doc;
 
+import static org.exoplatform.social.plugin.doc.UIDocActivityBuilder.ACTIVITY_TYPE;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,15 +28,13 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.webui.selector.UISelectable;
 import org.exoplatform.ecm.webui.utils.Utils;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.social.core.BaseActivityProcessorPlugin;
@@ -48,15 +48,12 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
-import org.exoplatform.social.core.storage.ActivityStorageException;
-import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
 import org.exoplatform.social.webui.composer.UIActivityComposer;
 import org.exoplatform.social.webui.composer.UIActivityComposerManager;
 import org.exoplatform.social.webui.composer.UIComposer;
 import org.exoplatform.social.webui.composer.UIComposer.PostContext;
 import org.exoplatform.social.webui.profile.UIUserActivitiesDisplay;
-import org.exoplatform.social.webui.space.UISpaceActivitiesDisplay;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -86,11 +83,9 @@ import org.exoplatform.webui.form.UIFormStringInput;
   }
 )
 public class UIDocActivityComposer extends UIActivityComposer implements UISelectable {
-  private static final Log LOG = ExoLogger.getLogger(UIDocActivityComposer.class);
   public static final String REPOSITORY = "repository";
   public static final String WORKSPACE = "collaboration";
-  private static final String FILE_SPACES         = "files:spaces";
-  private static final String CONTENT_SPACES         = "contents:spaces";
+  private static final String FILE_SPACES = "files:spaces";
   private final static String POPUP_COMPOSER = "UIPopupComposer";
   private final String docActivityTitle = "<a href=\"${"+ UIDocActivity.DOCLINK +"}\">" + "${" +UIDocActivity.DOCNAME +"}</a>";
 
@@ -155,14 +150,18 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   @Override
   protected void onSubmit(Event<UIActivityComposer> event) {
   }
-
+  
   @Override
   public void onPostActivity(PostContext postContext, UIComponent source,
                              WebuiRequestContext requestContext, String postedMessage) throws Exception {
+  }
+
+  @Override
+  public ExoSocialActivity onPostActivity(PostContext postContext, String postedMessage) throws Exception {
+    ExoSocialActivity activity = null;
     if(!isDocumentReady){
-      requestContext.getUIApplication().addMessage(new ApplicationMessage("UIComposer.msg.error.Must_select_file",
-                                                                           null,
-                                                                           ApplicationMessage.INFO));
+      getAncestorOfType(UIPortletApplication.class)
+        .addMessage(new ApplicationMessage("UIComposer.msg.error.Must_select_file", null, ApplicationMessage.INFO));
     } else {
       Map<String, String> activityParams = new LinkedHashMap<String, String>();
       Node node = getDocNode(REPOSITORY, WORKSPACE, documentPath);
@@ -172,7 +171,6 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
       if (isSymlink){
         node = Utils.getNodeSymLink(node);
       }
-
 
       activityParams.put(UIDocActivity.IS_SYMLINK, String.valueOf(isSymlink));
       activityParams.put(UIDocActivity.DOCNAME, documentName);
@@ -204,7 +202,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
             strLastModified = dateFormatter.format(lastModified.getTime());
           }
         }
-        
+
         activityParams.put(UIDocActivity.ID, node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "");
         activityParams.put(UIDocActivity.CONTENT_NAME, node.getName());
         activityParams.put(UIDocActivity.AUTHOR, activityOwnerId);
@@ -214,51 +212,31 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
         activityParams.put(UIDocActivity.MIME_TYPE, UIDocActivity.getMimeType(node));
         activityParams.put(UIDocActivity.IMAGE_PATH, illustrationImg);
       }
-      
-
+      //
       if(postContext == UIComposer.PostContext.SPACE){
-        postActivityToSpace(source, requestContext, activityParams);
+        activity = postActivityToSpace(activityParams);
       } else if (postContext == UIComposer.PostContext.USER){
-        postActivityToUser(source, requestContext, activityParams);
+        activity = postActivityToUser(activityParams);
       }
     }
     resetValues();
+    return activity;
   }
 
-  private void postActivityToUser(UIComponent source, WebuiRequestContext requestContext,
-                                  Map<String, String> activityParams) throws Exception {
-    UIUserActivitiesDisplay uiUserActivitiesDisplay = (UIUserActivitiesDisplay) getActivityDisplay();
-
-    final UIComposer uiComposer = (UIComposer) source;
-    ActivityManager activityManager = uiComposer.getApplicationComponent(ActivityManager.class);
-    IdentityManager identityManager = uiComposer.getApplicationComponent(IdentityManager.class);
-
-    String ownerName = uiUserActivitiesDisplay.getOwnerName();
+  private ExoSocialActivity postActivityToUser(Map<String, String> activityParams) throws Exception {
+    String ownerName = ((UIUserActivitiesDisplay) getActivityDisplay()).getOwnerName();
+    IdentityManager identityManager = getApplicationComponent(IdentityManager.class);
     Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, ownerName, true);
-
-    String remoteUser = requestContext.getRemoteUser();
-    saveActivity(activityParams, activityManager, identityManager, ownerIdentity, remoteUser);
-
+    //
+    return saveActivity(activityParams, identityManager, ownerIdentity);
   }
 
-  private void postActivityToSpace(UIComponent source, WebuiRequestContext requestContext,
-                                   Map<String, String> activityParams) throws Exception {
-    final UIComposer uiComposer = (UIComposer) source;
-    ActivityManager activityManager = uiComposer.getApplicationComponent(ActivityManager.class);
-    IdentityManager identityManager = uiComposer.getApplicationComponent(IdentityManager.class);
-
-    SpaceService spaceSrv = uiComposer.getApplicationComponent(SpaceService.class);
-    Space space = spaceSrv.getSpaceByUrl(SpaceUtils.getSpaceUrlByContext());
-
-    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,space.getPrettyName(),false);
-    String remoteUser = requestContext.getRemoteUser();
-    ExoSocialActivity activity = saveActivity(activityParams, activityManager, identityManager, spaceIdentity, remoteUser);
-
-    UISpaceActivitiesDisplay uiDisplaySpaceActivities = (UISpaceActivitiesDisplay) getActivityDisplay();
-    UIActivitiesContainer activitiesContainer = uiDisplaySpaceActivities.getActivitiesLoader().getActivitiesContainer();
-    activitiesContainer.addActivity(activity);
-    requestContext.addUIComponentToUpdateByAjax(activitiesContainer);
-    requestContext.addUIComponentToUpdateByAjax(uiComposer);
+  private ExoSocialActivity postActivityToSpace(Map<String, String> activityParams) throws Exception {
+    Space space = getApplicationComponent(SpaceService.class).getSpaceByUrl(SpaceUtils.getSpaceUrlByContext());
+    IdentityManager identityManager = getApplicationComponent(IdentityManager.class);
+    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(),false);
+    //
+    return saveActivity(activityParams, identityManager, spaceIdentity);
   }
 
   public void doSelect(String selectField, Object value) throws Exception {
@@ -272,30 +250,18 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     documentPath = documentPath.replace("//", "/");
     docIcon = CssClassUtils.getCSSClassByFileNameAndFileType(documentName, selectField, null);
     setReadyForPostingActivity(true);
-    UIActivityComposer activityComposer =  getActivityComposerManager().getCurrentActivityComposer();
+    UIActivityComposer activityComposer = getActivityComposerManager().getCurrentActivityComposer();
     activityComposer.setDisplayed(true);
   }  
-  
 
-  private ExoSocialActivity saveActivity(Map<String, String> activityParams, ActivityManager activityManager,
-                                         IdentityManager identityManager, Identity ownerIdentity,
-                                         String remoteUser) throws ActivityStorageException, RepositoryException {
-    Node node = getDocNode(activityParams.get(UIDocActivity.REPOSITORY), activityParams.get(UIDocActivity.WORKSPACE),
-            activityParams.get(UIDocActivity.DOCPATH));
-    String activity_type = UIDocActivity.ACTIVITY_TYPE;
-    if (node.isNodeType(NodetypeConstant.EXO_SYMLINK)){
-      try {
-        node = Utils.getNodeSymLink(node);
-      } catch (Exception e) {
-        LOG.error("Unknown error when getting the real node from symlink", e);
-      }
-    }
+  private ExoSocialActivity saveActivity(Map<String, String> activityParams, IdentityManager identityManager, Identity ownerIdentity) throws RepositoryException {
+    Node node = getDocNode(activityParams.get(UIDocActivity.REPOSITORY), activityParams.get(UIDocActivity.WORKSPACE), 
+                           activityParams.get(UIDocActivity.DOCPATH));
+    String activity_type = ACTIVITY_TYPE;
     if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
       activity_type = FILE_SPACES;
-    } else if (node.isNodeType(NodetypeConstant.EXO_ACCESSIBLE_MEDIA)) {
-      activity_type = CONTENT_SPACES;
     }
-      
+    String remoteUser = ConversationState.getCurrent().getIdentity().getUserId();
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);
     String title = activityParams.get(UIDocActivity.MESSAGE);
     if (title == null || title.length() == 0) {
@@ -303,6 +269,8 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     }
     ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(), activity_type, title, null);
     activity.setTemplateParams(activityParams);
+    //
+    ActivityManager activityManager = getApplicationComponent(ActivityManager.class);
     activityManager.saveActivityNoReturn(ownerIdentity, activity);
     
     String activityId = activity.getId();
@@ -310,7 +278,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
       ActivityTypeUtils.attachActivityId(node, activityId);
       node.save();
     }
-    
+    //
     return activityManager.getActivity(activity.getId());
   }
 
@@ -345,8 +313,8 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     @Override
     public void execute(Event<UIDocActivityComposer> event) throws Exception {
       final UIDocActivityComposer docActivityComposer = event.getSource();
-      final UIActivityComposer activityComposer = ((UIDocActivityComposer)event.getSource()).getActivityComposerManager().getCurrentActivityComposer();
-      final UIActivityComposerManager activityComposerManager = event.getSource().getActivityComposerManager();
+      final UIActivityComposerManager activityComposerManager = docActivityComposer.getActivityComposerManager();
+      final UIActivityComposer activityComposer = activityComposerManager.getCurrentActivityComposer();
       activityComposerManager.setDefaultActivityComposer();
       activityComposer.setDisplayed(false);
       // Reset values
