@@ -818,8 +818,8 @@ public class Utils {
     return getFirstSummaryLines(source, MAX_SUMMARY_LINES_COUNT);
   }
   
-  // Silly function to convert HTML content to plain text
-  public static String convertHTMLContent(String source){
+  
+  private static String convertActivityContent(String source){
     String result =  source;
     result = result.replaceAll("(?i)<head>.*</head>", "");
     result = result.replaceAll("(?i)<script.*>.*</script>", "");
@@ -829,8 +829,8 @@ public class Utils {
     result = result.replaceAll("</([a-zA-Z]+) *[^/]*?>", "");
     result = result.replaceAll("([\r\n\t])+", "");
     result = result.replaceAll("^(<br>)", "");
-    result = result.replaceAll("(<br>[ \r\t\n]+<br>)", "<br>");
-    result = result.replaceAll("(<br>)+", "<br>");
+    result = result.replaceAll("(<br>[ \r\t\n]+<br>)", "\n");
+    result = result.replaceAll("(<br>)+", "\n");
     return result;
   }
   
@@ -841,11 +841,11 @@ public class Utils {
    * @return first <code>linesCount<code> without HTML tag
    */
   public static String getFirstSummaryLines(String source, int linesCount) {
-    String result =  convertHTMLContent(source);
+    String result =  convertActivityContent(source);
     int i = 0;
     int index = -1;
     while (true) {
-      index = result.indexOf("<br>", index+1);
+      index = result.indexOf("\n", index+1);
       if (index<0) break;
       i++;
       if (i>=linesCount) break;
@@ -856,7 +856,7 @@ public class Utils {
       return result;
     }
     if (index>MAX_SUMMARY_CHAR_COUNT) index = MAX_SUMMARY_CHAR_COUNT-1;
-    result = result.substring(0, index) + "<br>...";
+    result = result.substring(0, index) + "\n...";
     return result;
   }
 
