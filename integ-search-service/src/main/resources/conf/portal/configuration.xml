@@ -168,7 +168,7 @@
           <properties-param>
              <name>constructor.params</name>
              <property name="searchType" value="task"/>
-             <property name="displayName" value="Tasks in Calendar"/>
+             <property name="displayName" value="Tasks"/>
           </properties-param>
         </init-params>      
       </component-plugin>
