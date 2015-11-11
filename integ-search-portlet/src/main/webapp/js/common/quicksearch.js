@@ -43,7 +43,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
     ";*///<div class='Excerpt Ellipsis'>%{excerpt}</div> \
 
     var QUICKSEARCH_RESULT_TEMPLATE= "\
-        <div class='quickSearchResult %{type}' tabindex='%{index}' id='quickSearchResult%{index}'> \
+        <div class='quickSearchResult %{type}' tabindex='%{index}' id='quickSearchResult%{index}' onkeydown='fireAEvent(event,this.id)'> \
         %{lineResult}\
       </div>";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \    
     
