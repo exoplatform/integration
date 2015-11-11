@@ -15,11 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.exoplatform.wcm.ext.component.activity.listener;
-import javax.jcr.Node;
-
+import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
+import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
+import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+
+import javax.jcr.Node;
+import java.util.List;
 
 public class TagActivityListener extends Listener<Node, String>{
   
@@ -45,5 +51,16 @@ public class TagActivityListener extends Listener<Node, String>{
       bundleMessage = ActivityCommonService.TAG_ADDED_ACTIVITY.equals(eventName)?TAG_ADDED_BUNDLE:TAG_REMOVED_BUNDLE;
     }
     Utils.postActivity(currentNode, bundleMessage, false, true, tagValue);
+    LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
+    List<Node> links = linkManager.getAllLinks(currentNode, NodetypeConstant.EXO_SYMLINK);
+
+    for(Node link: links){
+      if(link.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)){
+        ExoSocialActivity linkTagActivity = Utils.postActivity(link, bundleMessage, false, true, tagValue);
+        if (linkTagActivity!=null) {
+          ActivityTypeUtils.attachActivityId(link, linkTagActivity.getId());
+        }
+      }
+    }
   }
 }

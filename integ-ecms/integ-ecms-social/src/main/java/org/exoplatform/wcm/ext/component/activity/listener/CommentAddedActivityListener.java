@@ -15,12 +15,16 @@ package org.exoplatform.wcm.ext.component.activity.listener;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import javax.jcr.Node;
-
 import org.exoplatform.commons.utils.ActivityTypeUtils;
+import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
+import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+
+import javax.jcr.Node;
+import java.util.List;
 
 /**
  * Created by The eXo Platform SAS
@@ -44,6 +48,17 @@ public class CommentAddedActivityListener extends Listener<Node, Node> {
     }
     if (commentContent==null) return;
     ExoSocialActivity commentActivity = Utils.postActivity(currentNode, "{0}", false, true, commentContent);
+    LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
+    List<Node> links = linkManager.getAllLinks(currentNode, NodetypeConstant.EXO_SYMLINK);
+
+    for(Node link: links){
+      if(link.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)){
+        ExoSocialActivity linkCommentActivity = Utils.postActivity(link, "{0}", false, true, commentContent);
+        if (commentActivity!=null) {
+          ActivityTypeUtils.attachActivityId(link, linkCommentActivity.getId());
+        }
+      }
+    }
     if (commentActivity!=null) {    	
       ActivityTypeUtils.attachActivityId(commentNode, commentActivity.getId());
       commentNode.getSession().save();
