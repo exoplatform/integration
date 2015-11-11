@@ -164,7 +164,9 @@ public class UIDocActivity extends BaseUIActivity {
         return rootVersion_.getChildren().size();
       }
     } catch (Exception e) {
-        LOG.info("cannot version node");
+        if(LOG.isDebugEnabled()) {
+          LOG.debug("cannot version node", e);
+        }
     }
     return 0;
   }
@@ -254,7 +256,6 @@ public class UIDocActivity extends BaseUIActivity {
   /**
    * Gets the webdav url.
    * 
-   * @param node the node
    * @return the webdav url
    * @throws Exception the exception
    */
@@ -289,7 +290,6 @@ public class UIDocActivity extends BaseUIActivity {
   /**
    * Gets the summary.
    * 
-   * @param node the node
    * @return the summary of Node. Return empty string if catch an exception.
    */
   public String getSummary() {
@@ -363,7 +363,7 @@ public class UIDocActivity extends BaseUIActivity {
   /**
    * Generate the Thumbnail Image URI.
    * 
-   * @param node the node
+   * @param file the node
    * @return the Thumbnail uri with medium size
    * @throws Exception the exception
    */
@@ -398,7 +398,7 @@ public class UIDocActivity extends BaseUIActivity {
   /**
    * Generate the viewer link to site explorer by node
    * 
-   * @param Node the node
+   * @param node the node
    * @return String the viewer link
    * @throws RepositoryException
    */
