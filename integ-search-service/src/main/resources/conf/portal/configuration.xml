@@ -176,7 +176,7 @@
           <properties-param>
              <name>constructor.params</name>
              <property name="searchType" value="task"/>
-             <property name="displayName" value="Tasks in Calendar"/>
+             <property name="displayName" value="Tasks"/>
              <property name="enable" value="${exo.unified-search.connector.task.enable:true}"/>
           </properties-param>
         </init-params>      
