@@ -1,9 +1,5 @@
 package org.exoplatform.wiki.addons.rdbms.listener;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -22,7 +18,7 @@ public class WikiActivityUpdaterListener extends Listener<ExoSocialActivity, Str
    * the constructor to make sure the service already created before using.
    * 
    * @param wikiService 
-   * 
+   *
    */
   public WikiActivityUpdaterListener(WikiService wikiService) {
     this.service = wikiService;
@@ -42,20 +38,10 @@ public class WikiActivityUpdaterListener extends Listener<ExoSocialActivity, Str
         //
         Page page = service.getPageByRootPermission(pageType, pageOwner, pageId);
         if (page != null) {
-          Node node = page.getJCRPageNode();
-          if (node != null && node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
-            try {
-              node.setProperty(ActivityTypeUtils.EXO_ACTIVITY_ID, newActivityId);
-              node.save();
-            } catch (RepositoryException e) {
-              LOG.warn("Updates the wiki activity is unsuccessful!");
-              LOG.debug("Updates the wiki activity is unsuccessful!", e);
-            }
-          } else {
-            LOG.warn("Updates the wiki activity is unsuccessful. Because, the can not get node from wiki page " + pageId);
-          }
+          page.setActivityId(newActivityId);
+          service.updatePage(page, null);
         } else {
-          LOG.warn("Updates the wiki activity is unsuccessful. Because, the can not get the wiki page " + pageId);
+          LOG.warn("Cannot update the activity id of the page " + pageId + " because the page can not be retrieved");
         }
       }
     }
