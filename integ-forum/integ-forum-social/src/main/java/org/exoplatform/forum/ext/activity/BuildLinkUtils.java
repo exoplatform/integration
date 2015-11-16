@@ -143,7 +143,7 @@ public class BuildLinkUtils {
         link = buildSpaceLink(getGroupId(parentObjectId, portletInfo), objectType, objectId, portletInfo);
       } else {
         //caching the topic link
-        String forumLink = getPublicForumLink();
+        String forumLink = getPublicForumLink(getType(objectType));
         
         if (PORTLET_INFO.FORUM.equals(portletInfo) && forumLink != null && forumLink.length() > 0) {
           return new StringBuffer(forumLink).append(buildLink_(objectType, objectId, portletInfo)).toString();
@@ -167,7 +167,7 @@ public class BuildLinkUtils {
           if (portletNode != null) {
             forumLink = getNodeURL(portletNode);
             //
-            setPublicForumLink(forumLink);
+            setPublicForumLink(getType(objectType), forumLink);
             link = new StringBuffer(forumLink).append(buildLink_(objectType, objectId, portletInfo)).toString();
           }
         }
@@ -288,13 +288,13 @@ public class BuildLinkUtils {
     return nodeURL.setResource(resource).toString();
   }
 
-  private static String getPublicForumLink() {
+  private static String getPublicForumLink(String portletType) {
     String currentRepositoryName = CommonsUtils.getRepository().getConfiguration().getName();
-    return forumLinkData.get(currentRepositoryName);
+    return forumLinkData.get(portletType + "_" + currentRepositoryName);
   }
 
-  private static void setPublicForumLink(String forumLink) {
+  private static void setPublicForumLink(String portletType, String forumLink) {
     String currentRepositoryName = CommonsUtils.getRepository().getConfiguration().getName();
-    forumLinkData.put(currentRepositoryName, forumLink);
+    forumLinkData.put(portletType + "_" + currentRepositoryName, forumLink);
   }
 }
