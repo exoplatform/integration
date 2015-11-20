@@ -693,10 +693,14 @@ public class Utils {
     activity.setUserId(identity.getId());
     activity.setType(activityType);
     activity.setUrl(node.getPath());
-    if(isSystemComment) updateNotifyMessages(activity, activityMsgBundleKey, systemComment);
-    else activity.setTitle(title);
+    if(StringUtils.isNotEmpty(activityMsgBundleKey) && StringUtils.isNotEmpty(systemComment)) {
+      updateNotifyMessages(activity, activityMsgBundleKey, systemComment);
+    } else if(StringUtils.isNotEmpty(systemComment)){
+        activity.setTitle(systemComment);
+    } else {
+        activity.setTitle(title);
+    }
     activity.setTemplateParams(activityParams);
-    activity.setTitle(systemComment);
     return activity;
   }
   
