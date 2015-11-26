@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>4.3.x-RC-SNAPSHOT</version>
+    <version>4.3.0-RC1-1</version>
   </parent>
   <artifactId>integ-search-portlet</artifactId>
   <!-- we don't put war due to juzu packaging with assembly -->
