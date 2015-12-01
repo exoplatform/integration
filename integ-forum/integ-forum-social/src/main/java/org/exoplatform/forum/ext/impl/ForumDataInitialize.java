@@ -33,6 +33,7 @@ import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.impl.SpaceServiceImpl;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
+import org.jboss.util.Strings;
 
 /**
  * Created by The eXo Platform SAS
@@ -102,7 +103,7 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         forum.setOwner(space.getManagers()[0]);
         forum.setId(forumId);
         forum.setForumName(space.getDisplayName());
-        forum.setDescription(space.getDescription());
+        forum.setDescription(space.getDescription() == null ? Strings.EMPTY : space.getDescription());
         forum.setModerators(moderators);
         forum.setCreateTopicRole(roles);
         forum.setPoster(roles);
