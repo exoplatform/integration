@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <bundle>
 	<ECMContextMenu>
 		<event>
@@ -19,7 +20,7 @@
 			<SpaceMember>Space Members</SpaceMember>
 			<SelectASpace>Select a Space</SelectASpace>
 			<SharedADocument>shared a document</SharedADocument>
-			<NoSpace>Please choose at least 1 space(s) to share</NoSpace>
+<NoSpace>Please select at least one space to share</NoSpace>
 			<option>
 				<read>Can View</read>
 				<modify>Can Edit</modify>
