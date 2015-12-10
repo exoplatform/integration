@@ -649,7 +649,7 @@ public class FileUIActivity extends BaseUIActivity{
    */
   public boolean canEditDocument(Node data){
     try {
-      ((ExtendedNode)data.getParent()).checkPermission(PermissionType.ADD_NODE);
+      ((ExtendedNode)data).checkPermission(PermissionType.ADD_NODE);
       return true;
     } catch(Exception e) {
       return false;
