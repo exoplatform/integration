@@ -113,6 +113,11 @@
 						merged into one ResoruceBundle properties </description>
 					<value>locale.extension.SocialIntegration</value>
 				</values-param>
+				<values-param>
+					<name>portal.resource.names</name>
+					<description>Resources bundle of Share Document feature</description>
+					<value>locale.ShareDocuments</value>
+				</values-param>
 			</init-params>
 		</component-plugin>
 	</external-component-plugins>
