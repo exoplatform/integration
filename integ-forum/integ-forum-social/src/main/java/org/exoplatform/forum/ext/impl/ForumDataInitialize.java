@@ -23,7 +23,6 @@ import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.DataStorage;
 import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.Utils;
-import org.exoplatform.forum.service.impl.JCRDataStorage;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.Group;
@@ -73,7 +72,7 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
        */
       return;
     }
-      DataStorage fServie = CommonsUtils.getService(JCRDataStorage.class);
+      DataStorage storage = CommonsUtils.getService(DataStorage.class);
     Space space = event.getSpace();
     String parentGrId = "";
     try {
@@ -82,7 +81,7 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
       parentGrId = group.getParentId();
 
       String categorySpId = Utils.CATEGORY + parentGrId.replaceAll(CommonUtils.SLASH, CommonUtils.EMPTY_STR);
-      Category category = fServie.getCategory(categorySpId);
+      Category category = storage.getCategory(categorySpId);
       if (category == null) {
         category = new Category(categorySpId);
         category.setCategoryName(SpaceUtils.SPACE_GROUP.replace(CommonUtils.SLASH, CommonUtils.EMPTY_STR));
@@ -90,11 +89,11 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         category.setCategoryOrder(100l);
         category.setUserPrivate(new String[]{""});
         category.setDescription("All forums from spaces");
-        fServie.saveCategory(category, true);
+        storage.saveCategory(category, true);
       }
       String forumId = Utils.FORUM_SPACE_ID_PREFIX + group.getGroupName();
         String groupId = space.getGroupId();
-      if (fServie.getForum(categorySpId, forumId) == null) {
+      if (storage.getForum(categorySpId, forumId) == null) {
           String[] roles = new String[] { groupId };
 
         String[] moderators = new String[] { new StringBuilder(SpaceServiceImpl.MANAGER).append(CommonUtils.COLON)
@@ -108,8 +107,8 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         forum.setCreateTopicRole(roles);
         forum.setPoster(roles);
         forum.setViewer(roles);
-        fServie.saveForum(categorySpId, forum, true);
-          fServie.saveUserPrivateOfCategory(categorySpId, groupId);
+        storage.saveForum(categorySpId, forum, true);
+          storage.saveUserPrivateOfCategory(categorySpId, groupId);
       }
     } catch (Exception e) { //ForumService      
       if(LOG.isDebugEnabled()) {
