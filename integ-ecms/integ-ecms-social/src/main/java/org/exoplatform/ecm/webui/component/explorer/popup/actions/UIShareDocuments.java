@@ -74,7 +74,7 @@ import java.util.ResourceBundle;
 public class UIShareDocuments extends UIForm implements UIPopupComponent{
 
   private static final Log    LOG                 = ExoLogger.getLogger(UIShareDocuments.class);
-  private static final String SHARECONTENT_BUNDLE_LOCATION = "locale.ShareDocuments";
+  private static final String SHARECONTENT_BUNDLE_LOCATION = "locale.extension.SocialIntegration";
   private static final String SHARE_OPTION_CANVEW          = "UIShareDocuments.label.option.read";
   private static final String SHARE_OPTION_CANMODIFY       = "UIShareDocuments.label.option.modify";
 
