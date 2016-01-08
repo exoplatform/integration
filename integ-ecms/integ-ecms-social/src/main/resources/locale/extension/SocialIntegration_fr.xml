@@ -116,4 +116,38 @@
       <lock-node-read-only>Ce fichier est verrouillé par l'utilisateur {0}. Ouvrir en lecture seule?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Partager</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Partager</UIShareDocuments>
+<Share>Partager</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Partager</ShareButton>
+<CancelButton>Annuler</CancelButton>
+<TextAreaInit>Laissez un commentaire sur ce fichier...</TextAreaInit>
+<ShareWith>Partager avec:</ShareWith>
+<Access>Accès</Access>
+<SpaceMember>Membres</SpaceMember>
+<SelectASpace>Sélectionnez un espace</SelectASpace>
+<SharedADocument>a partagé un document</SharedADocument>
+<NoSpace>Veuillez sélectionner au moins un espace</NoSpace>
+<option>
+<read>Peut voir</read>
+<modify>Peut modifier</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Partager</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

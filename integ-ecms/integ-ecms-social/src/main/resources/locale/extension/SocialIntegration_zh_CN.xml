@@ -116,4 +116,38 @@
       <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>分享</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>分享</UIShareDocuments>
+<Share>分享</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>分享</ShareButton>
+<CancelButton>取消</CancelButton>
+<TextAreaInit>Add a comment about to this file...</TextAreaInit>
+<ShareWith>Share with:</ShareWith>
+<Access>访问权限设置</Access>
+<SpaceMember>空间成员</SpaceMember>
+<SelectASpace>Select a Space</SelectASpace>
+<SharedADocument>shared a document</SharedADocument>
+<NoSpace>Please select at least one space to share</NoSpace>
+<option>
+<read>Can View</read>
+<modify>Can Edit</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>分享</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

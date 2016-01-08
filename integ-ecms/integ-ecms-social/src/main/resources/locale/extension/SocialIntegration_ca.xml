@@ -116,4 +116,38 @@
       <lock-node-read-only>Aquest fitxer està bloquejat per l'usuari {0}. Obrir llegida només?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Compartir</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Compartir</UIShareDocuments>
+<Share>Compartir</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Compartir</ShareButton>
+<CancelButton>Cancel·la</CancelButton>
+<TextAreaInit>Afegeix un comentari sobre aquest fitxer...</TextAreaInit>
+<ShareWith>Compartir amb:</ShareWith>
+<Access>Accés</Access>
+<SpaceMember>Membres del Espai</SpaceMember>
+<SelectASpace>Selecciona un espai</SelectASpace>
+<SharedADocument>compartit un document</SharedADocument>
+<NoSpace>Si us plau, selecciona almenys un espai per compartir</NoSpace>
+<option>
+<read>Pot veure</read>
+<modify>Pot editar</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Compartir</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

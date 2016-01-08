@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>فتح للقراءة فقط</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>فتح الوثيقة</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>معاينة</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>فتح الوثيقة</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -97,7 +97,7 @@
   <UIPreviewCommentArea>
     <label>
       <commentTextAreaPreview>أضف تعليقك...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <no-comment-yet>لا تعليق حتى الآن</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -113,7 +113,41 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>هذا الملف مؤمن بواسطة المستخدم {0}. أترغب بفتحه بصيغة  القراءة فقط؟</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>شارك</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>شارك</UIShareDocuments>
+<Share>شارك</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>شارك</ShareButton>
+<CancelButton>الغاء</CancelButton>
+<TextAreaInit>إضافة تعليق بخصوص هذا الملف...</TextAreaInit>
+<ShareWith>مشاركة مع:</ShareWith>
+<Access>الوصول</Access>
+<SpaceMember>أعضاء الفضاء</SpaceMember>
+<SelectASpace>اختيار فضاء</SelectASpace>
+<SharedADocument>مشاركة وثيقة</SharedADocument>
+<NoSpace>الرجاء اختيارعلى الأقل فضاء واحد قصد المشاركة</NoSpace>
+<option>
+<read>يمكنه رؤية</read>
+<modify>يمكنه التغيير</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>شارك</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

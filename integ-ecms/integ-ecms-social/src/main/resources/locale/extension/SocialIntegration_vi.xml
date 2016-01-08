@@ -116,4 +116,38 @@
       <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Chia sẻ</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Chia sẻ</UIShareDocuments>
+<Share>Chia sẻ</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Chia sẻ</ShareButton>
+<CancelButton>Hủy bỏ</CancelButton>
+<TextAreaInit>Add a comment about to this file...</TextAreaInit>
+<ShareWith>Chia sẻ với:</ShareWith>
+<Access>Truy cập</Access>
+<SpaceMember>Thành viên Nhóm</SpaceMember>
+<SelectASpace>Select a Space</SelectASpace>
+<SharedADocument>chia sẻ một tài liệu</SharedADocument>
+<NoSpace>Please select at least one space to share</NoSpace>
+<option>
+<read>Can View</read>
+<modify>Can Edit</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Chia sẻ</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

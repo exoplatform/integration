@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>Schreibgeschützt öffnen</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Dokument öffnen</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Vorschau</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Dokument öffnen</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -97,7 +97,7 @@
   <UIPreviewCommentArea>
     <label>
       <commentTextAreaPreview>Ihren Kommentar hinzufügen...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <no-comment-yet>Noch kein Kommentar</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -113,7 +113,41 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>Diese Datei wird von Benutzer {0} gesperrt. Schreibgeschützt öffnen?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Teilen</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Teilen</UIShareDocuments>
+<Share>Teilen</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Teilen</ShareButton>
+<CancelButton>Abbrechen</CancelButton>
+<TextAreaInit>Fügen Sie einen Kommentar über diese Datei hinzu...</TextAreaInit>
+<ShareWith>Teilen mit:</ShareWith>
+<Access>Zugriff</Access>
+<SpaceMember>Raum-Mitglieder</SpaceMember>
+<SelectASpace>Wählen Sie einen Raum</SelectASpace>
+<SharedADocument>hat ein Dokument geteilt</SharedADocument>
+<NoSpace>Bitte wählen Sie mindestens einen Raum zum Teilen</NoSpace>
+<option>
+<read>Kann anzeigen</read>
+<modify>Kann bearbeiten</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Teilen</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

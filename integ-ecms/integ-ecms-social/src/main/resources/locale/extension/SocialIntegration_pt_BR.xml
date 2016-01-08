@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>Abrir como somente leitura</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Abrir documento</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Pré-visualizar</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Abrir documento</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -97,7 +97,7 @@
   <UIPreviewCommentArea>
     <label>
       <commentTextAreaPreview>Adicione seu comentário...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <no-comment-yet>Nenhum comentário ainda</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -113,7 +113,41 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>Este arquivo está bloqueado pelo usuário {0}. Deseja abri-lo no modo leitura?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Compartilhar</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Compartilhar</UIShareDocuments>
+<Share>Compartilhar</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Compartilhar</ShareButton>
+<CancelButton>Cancelar</CancelButton>
+<TextAreaInit>Adicione um comentário sobre este arquivo...</TextAreaInit>
+<ShareWith>Compartilhar com:</ShareWith>
+<Access>Acessar</Access>
+<SpaceMember>Membros do Espaço</SpaceMember>
+<SelectASpace>Selecione um espaço</SelectASpace>
+<SharedADocument>compartilhou um documento</SharedADocument>
+<NoSpace>Selecione pelo menos um espaço para compartilhar</NoSpace>
+<option>
+<read>Pode ver</read>
+<modify>Pode editar</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Compartilhar</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

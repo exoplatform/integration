@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>Otwórz tylko do odczytu</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Otwórz dokument</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Podgląd</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Otwórz dokument</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -97,7 +97,7 @@
   <UIPreviewCommentArea>
     <label>
       <commentTextAreaPreview>Dodaj swój komentarz...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <no-comment-yet>Jeszcze nie skomentowano</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -113,7 +113,41 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>Ten plik jest zablokowany przez użytkownika {0}. Otworzyć tylko do odczytu?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Udostępnij</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Udostępnij</UIShareDocuments>
+<Share>Udostępnij</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Udostępnij</ShareButton>
+<CancelButton>Anuluj</CancelButton>
+<TextAreaInit>Dodaj komentarz do tego pliku ...</TextAreaInit>
+<ShareWith>Udostępnij:</ShareWith>
+<Access>Dostęp</Access>
+<SpaceMember>Członek przestrzeni</SpaceMember>
+<SelectASpace>Wybierz obszar</SelectASpace>
+<SharedADocument>dokument udostępniony</SharedADocument>
+<NoSpace>Wybierz co najmniej jeden obszar do udostępniania</NoSpace>
+<option>
+<read>Możliwy podgląd</read>
+<modify>Możliwa edycja</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Udostępnij</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>
