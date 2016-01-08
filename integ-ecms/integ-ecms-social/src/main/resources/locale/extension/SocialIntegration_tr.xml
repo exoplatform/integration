@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>Salt Okunur Aç</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Belgeyi Aç</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Önizleme</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Belgeyi Aç</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -97,7 +97,7 @@
   <UIPreviewCommentArea>
     <label>
       <commentTextAreaPreview>Yorum ekle...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <no-comment-yet>Henüz yorum yok</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -113,7 +113,41 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>Bu dosya {0} kullanıcısı tarafından kilitlenmiştir. Salt okunur olarak açılsın mı?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Paylaş</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Paylaş</UIShareDocuments>
+<Share>Paylaş</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Paylaş</ShareButton>
+<CancelButton>İptal</CancelButton>
+<TextAreaInit>Bu dosya ile ilgili bir yorum ekle...</TextAreaInit>
+<ShareWith>Paylaş:</ShareWith>
+<Access>Giriş</Access>
+<SpaceMember>Alan Üyeleri</SpaceMember>
+<SelectASpace>Bir Alan Seç</SelectASpace>
+<SharedADocument>bir belge paylaş</SharedADocument>
+<NoSpace>Lütfen paylaşmak için en az bir alan seçiniz</NoSpace>
+<option>
+<read>Gösterebilir</read>
+<modify>Düzenleyebilir</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Paylaş</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

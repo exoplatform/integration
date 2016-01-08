@@ -116,4 +116,38 @@
       <lock-node-read-only>To datoteko je zaklenil uporabnik {0}. Odpri samo za branje?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Daj v skupno rabo</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Daj v skupno rabo</UIShareDocuments>
+<Share>Daj v skupno rabo</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Daj v skupno rabo</ShareButton>
+<CancelButton>Prekliči</CancelButton>
+<TextAreaInit>Dodaj komentar o tej datoteki ...</TextAreaInit>
+<ShareWith>Deli z:</ShareWith>
+<Access>Dostop</Access>
+<SpaceMember>Člani prostora</SpaceMember>
+<SelectASpace>Izberi prostor</SelectASpace>
+<SharedADocument>je dal(a) dokument v skupno rabo</SharedADocument>
+<NoSpace>Prosimo, izberite vsaj en prostor, ki ga želite dati v skupno rabo</NoSpace>
+<option>
+<read>Lahko si ogledate</read>
+<modify>Lahko urejate</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Daj v skupno rabo</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

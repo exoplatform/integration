@@ -116,4 +116,38 @@
       <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Del</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Del</UIShareDocuments>
+<Share>Del</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Del</ShareButton>
+<CancelButton>Avbryt</CancelButton>
+<TextAreaInit>Add a comment about to this file...</TextAreaInit>
+<ShareWith>Share with:</ShareWith>
+<Access>Access</Access>
+<SpaceMember>Fellesskapets medlemmer</SpaceMember>
+<SelectASpace>Select a Space</SelectASpace>
+<SharedADocument>shared a document</SharedADocument>
+<NoSpace>Please select at least one space to share</NoSpace>
+<option>
+<read>Can View</read>
+<modify>Can Edit</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Del</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

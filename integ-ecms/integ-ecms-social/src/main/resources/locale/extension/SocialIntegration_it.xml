@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>Apri in sola lettura</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Apri documento</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -84,7 +84,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Anteprima</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Apri documento</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -97,7 +97,7 @@
   <UIPreviewCommentArea>
     <label>
       <commentTextAreaPreview>Aggiungi il tuo commento...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <no-comment-yet>Nessun commento</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -113,7 +113,41 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>Questo file è bloccato dall'utente {0}. Apri in sola lettura?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Condividi</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Condividi</UIShareDocuments>
+<Share>Condividi</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Condividi</ShareButton>
+<CancelButton>Annulla</CancelButton>
+<TextAreaInit>Aggiungi un commento su questo file...</TextAreaInit>
+<ShareWith>Condividi con:</ShareWith>
+<Access>Accedi</Access>
+<SpaceMember>Membri dello spazio</SpaceMember>
+<SelectASpace>Seleziona uno spazio</SelectASpace>
+<SharedADocument>condiviso un documento</SharedADocument>
+<NoSpace>Seleziona almeno uno spazio da condividere</NoSpace>
+<option>
+<read>Possibile visualizzare</read>
+<modify>Possibile modificare</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Condividi</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>

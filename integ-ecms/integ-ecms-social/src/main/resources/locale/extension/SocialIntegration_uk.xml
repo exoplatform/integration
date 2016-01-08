@@ -116,4 +116,38 @@
       <lock-node-read-only>Цей файл заблоковано користувачем {0}. Відкрити лише для читання?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
+<ECMContextMenu>
+<event>
+<ShareDocuments>Поділитися</ShareDocuments>
+</event>
+</ECMContextMenu>
+<UIPopupWindow>
+<title>
+<UIShareDocuments>Поділитися</UIShareDocuments>
+<Share>Поділитися</Share>
+</title>
+</UIPopupWindow>
+<UIShareDocuments>
+<label>
+<ShareButton>Поділитися</ShareButton>
+<CancelButton>Скасувати</CancelButton>
+<TextAreaInit>Додати коментар про цей файл...</TextAreaInit>
+<ShareWith>Поділитися з:</ShareWith>
+<Access>Дозвіл на доступ</Access>
+<SpaceMember>Члени області</SpaceMember>
+<SelectASpace>Виберіть простір</SelectASpace>
+<SharedADocument>надав доступ до документа</SharedADocument>
+<NoSpace>Будь ласка, виберіть принаймні один простір, щоб поділитися</NoSpace>
+<option>
+<read>Можна переглянути</read>
+<modify>Можна редагувати</modify>
+</option>
+</label>
+</UIShareDocuments>
+
+<UIActionBar>
+<tooltip>
+<ShareDocuments>Поділитися</ShareDocuments>
+</tooltip>
+</UIActionBar>
 </bundle>
