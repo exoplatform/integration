@@ -254,7 +254,7 @@ public class WikiUIActivity extends BaseUIActivity {
    * Get system comment message.
    * 
    * @param activityParams
-   * @title activity Title
+   * @param title
    * @return
    */
   public String getSystemCommentMessage(Map<String, String> activityParams, String title) {

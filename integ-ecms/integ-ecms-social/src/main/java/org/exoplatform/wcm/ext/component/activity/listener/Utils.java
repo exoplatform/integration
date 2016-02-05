@@ -104,8 +104,9 @@ public class Utils {
   /**
    * Populate activity data with the data from Node
    * 
-   * @param Node the node
-   * @param String the message of the activity
+   * @param node the node
+   * @param activityOwnerId the owner id of the activity
+   * @param activityMsgBundleKey the message bundle key of the activity
    * @return Map the mapped data
    */
   public static Map<String, String> populateActivityData(Node node,
@@ -181,7 +182,6 @@ public class Utils {
   }
 
   /**
-   * @Method postActivity postActivity(Node node, String activityMsgBundleKey)
    * see the postActivity(Node node, String activityMsgBundleKey, Boolean isSystemComment, String systemComment)
    */
   public static void postActivity(Node node, String activityMsgBundleKey) throws Exception {
@@ -200,7 +200,6 @@ public class Utils {
     }
   }
   /**
-   * @Method postFileActivity postActivity(Node node, String activityMsgBundleKey)
    * see the postFileActivity(Node node, String activityMsgBundleKey, Boolean isSystemComment, String systemComment)
    */
   public static void postFileActivity(Node node, String activityMsgBundleKey) throws Exception {
@@ -646,7 +645,7 @@ public class Utils {
   /**
    * Generate the viewer link to site explorer by node
    * 
-   * @param Node the node
+   * @param node the node
    * @return String the viewer link
    * @throws RepositoryException
    */
@@ -660,8 +659,11 @@ public class Utils {
   /**
    * Create ExoSocialActivity
    * 
-   * @param IdentityManager the identity Manager
-   * @param String the remote user name
+   * @param identityManager the identity Manager
+   * @param activityOwnerId the remote user name
+   * @param node the node
+   * @param activityMsgBundleKey the message bundle key
+   * @param activityType the activity type
    * @return the ExoSocialActivity
    * @throws Exception the activity storage exception
    */
@@ -843,7 +845,7 @@ public class Utils {
    * 
    * @param source
    * @param linesCount
-   * @return first <code>linesCount<code> without HTML tag
+   * @return first {@code linesCount} without HTML tag
    */
   public static String getFirstSummaryLines(String source, int linesCount) {
     String result =  convertActivityContent(source);

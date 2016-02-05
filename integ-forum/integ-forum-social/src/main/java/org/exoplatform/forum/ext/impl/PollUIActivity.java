@@ -95,7 +95,7 @@ public class PollUIActivity extends BaseKSActivity {
   }
 
   /**
-   * @param nbTotalVotes the nbTotalVotes to set
+   * @param totalOfUsersVote the nbTotalVotes to set
    */
   public void setTotalUsersVotes(String totalOfUsersVote) {
     this.totalOfUsersVote = totalOfUsersVote;
@@ -122,7 +122,7 @@ public class PollUIActivity extends BaseKSActivity {
 
   /**
    * 
-   * @param nbVotes
+   * @param nbVoters
    * @return i18n label about the number of voters
    */
   private String getStringFromNumberOfVoters(int nbVoters) {

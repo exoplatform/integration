@@ -58,7 +58,6 @@ import java.util.ResourceBundle;
  *
  * @author    <a href="http://hoatle.net">hoatle</a>
  * @since     Apr 19, 2010
- * @copyright eXo Platform SAS
  */
 @ComponentConfig(
   template = "classpath:groovy/ecm/social-integration/plugin/link/UILinkActivityComposer.gtmpl",

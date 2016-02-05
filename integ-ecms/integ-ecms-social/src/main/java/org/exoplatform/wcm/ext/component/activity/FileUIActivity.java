@@ -645,7 +645,6 @@ public class FileUIActivity extends BaseUIActivity{
    * The file only can edit when user have modify permission on parent folder
    * @param data File node
    * @return true: can edit; false: cannot edit
-   * @throws Exception
    */
   public boolean canEditDocument(Node data){
     try {

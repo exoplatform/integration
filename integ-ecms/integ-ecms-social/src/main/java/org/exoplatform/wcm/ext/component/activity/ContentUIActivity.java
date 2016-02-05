@@ -459,7 +459,6 @@ public class ContentUIActivity extends BaseUIActivity {
    * </ul>
    * @param data Content node
    * @return true: support; false: not support
-   * @throws Exception
    */
   public boolean isContentSupportPreview(Node data) throws RepositoryException{
     if (data.isNodeType(org.exoplatform.ecm.webui.utils.Utils.EXO_WEBCONTENT)) {

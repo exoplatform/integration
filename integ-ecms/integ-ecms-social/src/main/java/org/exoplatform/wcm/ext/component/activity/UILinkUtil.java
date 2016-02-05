@@ -46,7 +46,7 @@ final public class UILinkUtil {
 
   /**
    * Simple escape HTML tags
-   * Example: Input: <a herf=\"abc.com\">test</a>
+   * Example: Input: {@literal <a herf=\"abc.com\">test</a>}
    *         Output: &lt;a herf=&#34;abc.com&#34;&gt;test&lt;/a&gt;
    * 
    * @param input The text input

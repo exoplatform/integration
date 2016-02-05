@@ -70,7 +70,6 @@ import org.exoplatform.webui.form.UIFormStringInput;
  * key by template value in activity's title.
  * @author    Zun
  * @since     Apr 19, 2010
- * @copyright eXo Platform SAS
  */
 @ComponentConfig(
   template = "classpath:groovy/social/plugin/doc/UIDocActivityComposer.gtmpl",
