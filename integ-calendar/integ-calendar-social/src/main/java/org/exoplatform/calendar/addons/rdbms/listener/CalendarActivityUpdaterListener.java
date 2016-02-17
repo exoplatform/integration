@@ -39,12 +39,23 @@ public class CalendarActivityUpdaterListener extends Listener<ExoSocialActivity,
       String eventId = activity.getTemplateParams().get(CalendarSpaceActivityPublisher.EVENT_ID_KEY);
       String calendarId = activity.getTemplateParams().get(CalendarSpaceActivityPublisher.CALENDAR_ID_KEY);
       //
-      Node calendarNode = getJCRDataStorage().getPublicCalendarHome().getNode(calendarId);
-      Node eventNode = calendarNode.getNode(eventId);
-      ActivityTypeUtils.attachActivityId(eventNode, event.getData());
-      //
-      eventNode.getSession().save();
-      LOG.info(String.format("Done migration the calendar activity with old id's %s and new id's %s", activity.getId(), event.getData()));
+      boolean done = false;
+      Node calendarHomeNode = getJCRDataStorage().getPublicCalendarHome();
+      if (calendarHomeNode.hasNode(calendarId)) {
+        Node calendarNode = calendarHomeNode.getNode(calendarId);
+        if (calendarHomeNode.hasNode(eventId)) {
+          Node eventNode = calendarNode.getNode(eventId);
+          ActivityTypeUtils.attachActivityId(eventNode, event.getData());
+          //
+          eventNode.getSession().save();
+          done = true;
+        }
+      }
+      if (done) {
+        LOG.info(String.format("Done migration the calendar activity with old id's %s and new id's %s", activity.getId(), event.getData()));
+      } else {
+        LOG.info(String.format("Can not migration the calendar activity with old id's %s and new id's %s, because event or calendar does not exist.", activity.getId(), event.getData()));
+      }
     }
   }
 }
