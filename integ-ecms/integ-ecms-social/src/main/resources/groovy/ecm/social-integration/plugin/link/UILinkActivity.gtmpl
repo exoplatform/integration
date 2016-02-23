@@ -236,7 +236,7 @@
 								<% if (embedHtml == null) { %>
 									 <p class="linkDescription">$linkDescription</p>
 								<% } %>     
-								<div class="linkSource">$labelSource : <a href="$linkSource" title="$linkTitle">$linkSource</a></div>
+								<div class="linkSource">$labelSource : <a href="$linkSource" target="_blank" title="$linkTitle">$linkSource</a></div>
 								<% if (embedHtml != null) { %>
 									 <div class="EmbedHtml">$embedHtml</div>
 								<% } %>
