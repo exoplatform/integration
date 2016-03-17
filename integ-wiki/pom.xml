@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>4.3.x-SNAPSHOT</version>
+    <version>4.3.1-M04</version>
   </parent>
   <artifactId>integ-wiki</artifactId>
   <packaging>pom</packaging>
