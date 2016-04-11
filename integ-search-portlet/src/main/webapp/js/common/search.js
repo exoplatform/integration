@@ -358,6 +358,13 @@ window.initSearch = function initSearch() {
         renderCachedResults();
       });
     }
+    function pushStateToHistory(current_results){
+         var query = $("#txtQuery").val();
+         var types = getUrlParam("types");
+         var searchPage = window.location.pathname;
+         var urlPath= searchPage + "?q="+query+"&types="+types;
+         window.history.pushState({"cached_results":current_results,"query":query},"", urlPath);
+     }
 
     function getFromServer(callback){
       var query = $("#txtQuery").val();
@@ -432,9 +439,22 @@ window.initSearch = function initSearch() {
         setWaitingStatus(false);
       });
     }
-
-    function renderCachedResults(append) {
-      var current = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);
+    
+    window.onpopstate = function(e){
+        if(e.state){
+           renderCachedResults(null, e.state.cached_results,e.state.query);
+        }
+    };
+    
+    function renderCachedResults(append,current_results,query) {
+      var current;
+      if(current_results){
+        current = current_results;
+        $("#txtQuery").val(query);
+      }else{
+        current = RESULT_CACHE.slice(CACHE_OFFSET, CACHE_OFFSET+LIMIT);
+        pushStateToHistory(current);
+      }    
       if(0==current.length) {
         if(append) {
           $("#showMore").hide();
