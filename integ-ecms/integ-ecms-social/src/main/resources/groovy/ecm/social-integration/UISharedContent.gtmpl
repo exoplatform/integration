@@ -169,7 +169,9 @@
       commentFormFocused: '${uicomponent.isCommentFormFocused()}'
     } """
   //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
-  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
+  jsManager.require("SHARED/jquery", "jq")
+          .require("SHARED/bts_tooltip").addScripts("jq('*[rel=\"tooltip\"]').tooltip();")
+          .require("SHARED/social-ui-activity", "activity").addScripts("activity.onLoad($params);");
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
   def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
@@ -314,13 +316,13 @@
               </li>
           <% if (uicomponent.isLiked()) { %>
               <li>
-                <a onclick="$unlikeActivityAction" id="UnLikeLink${activity.id}" href="javascript:void(0);">
+                <a onclick="$unlikeActivityAction" rel="tooltip" data-placement="bottom" title="<%=_ctx.appRes("UIActivity.msg.UnlikeActivity"); %>" id="UnLikeLink${activity.id}" href="javascript:void(0);">
                   <i class="uiIconThumbUp uiIconBlue"></i>&nbsp;$totalLikesNum
                 </a>
               </li>
           <% } else { %>
               <li>
-                <a onclick="$likeActivityAction" id="LikeLink${activity.id}" href="javascript:void(0);">
+                <a onclick="$likeActivityAction" rel="tooltip" data-placement="bottom" title="<%=_ctx.appRes("UIActivity.msg.LikeActivity"); %>" id="LikeLink${activity.id}" href="javascript:void(0);">
                   <i class="uiIconThumbUp uiIconLightGray"></i>&nbsp;$totalLikesNum
                 </a>
               </li>

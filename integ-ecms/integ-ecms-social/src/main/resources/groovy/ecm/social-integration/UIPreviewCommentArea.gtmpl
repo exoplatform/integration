@@ -21,7 +21,8 @@ rcontext.getJavascriptManager()
     .addScripts("eXo.ecm.DocumentPreview.bindCommentEvent();")
     .addScripts("eXo.ecm.DocumentPreview.setRefreshCommentsAction('" + refreshCommentsAction + "') ;")
     .addScripts("gj('.commentList', '#UIDocumentPreview').scrollTop(20000);")
-    .addScripts("gj(window).resize();gj('#commentTextAreaPreview').focus();");
+    .addScripts("gj(window).resize();gj('#commentTextAreaPreview').focus();")
+    .addScripts("gj('*[rel=\"tooltip\"]').tooltip();");
 
 def labelToDeleteThisComment=_ctx.appRes("UIActivity.msg.Are_You_Sure_To_Delete_This_Comment");
 
@@ -75,13 +76,13 @@ def isLiked = uicomponent.isLiked();
                 </li>
               <% if (uicomponent.isLiked()) { %>
                 <li>
-                    <a href="javascript:void(0);" onclick="$unlikeActivityAction">
+                    <a href="javascript:void(0);" onclick="$unlikeActivityAction" rel="tooltip" data-placement="bottom" title="<%=_ctx.appRes("UIActivity.msg.UnlikeActivity")%>">
                         <i class="uiIconThumbUp uiIconBlue"></i>&nbsp;$identityLikesNum
                     </a>
                 </li>
               <% } else  { %>
                 <li>
-                    <a href="javascript:void(0);" onclick="$likeActivityAction" >
+                    <a href="javascript:void(0);" onclick="$likeActivityAction" rel="tooltip" data-placement="bottom" title="<%=_ctx.appRes("UIActivity.msg.LikeActivity")%>">
                         <i class="uiIconThumbUp uiIconLightGray"></i>&nbsp;$identityLikesNum
                     </a>
                 </li>
