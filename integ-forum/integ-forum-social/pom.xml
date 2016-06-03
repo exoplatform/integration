@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ-forum</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>4.4.0-M01</version>
+    <version>4.4.x-SNAPSHOT</version>
   </parent>
   <artifactId>integ-forum-social</artifactId>
   <packaging>jar</packaging>
