@@ -164,24 +164,7 @@
              <property name="enable" value="${exo.unified-search.connector.event.enable:true}"/>
           </properties-param>
         </init-params>      
-      </component-plugin>            
-      
-      <!-- Calendar -->
-      <component-plugin profiles="all">
-        <name>TaskSearchConnector</name>
-        <set-method>addConnector</set-method>
-        <type>org.exoplatform.calendar.service.impl.TaskSearchConnector</type>
-        <description>eXo Calendar tasks</description>
-        <init-params>
-          <properties-param>
-             <name>constructor.params</name>
-             <property name="searchType" value="task"/>
-             <property name="displayName" value="Tasks"/>
-             <property name="enable" value="${exo.unified-search.connector.task.enable:true}"/>
-          </properties-param>
-        </init-params>      
       </component-plugin>
-            
     </component-plugins>
 
     <init-params>
