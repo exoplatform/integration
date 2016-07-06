@@ -45,6 +45,9 @@ public class DocumentServiceImpl implements DocumentService {
   private static final String EXO_TITLE_PROP = "exo:title";
   private static final String CURRENT_STATE_PROP = "publication:currentState";
   private static final String GROUPS_DRIVE_NAME = "Groups";
+  private static final String GROUPS_DRIVE_ROOT_NODE = "Groups";
+  private static final String PERSONAL_DRIVE_NAME = "Personal Documents";
+  private static final String PERSONAL_DRIVE_ROOT_NODE = "Users";
 
   private ManageDriveService manageDriveService;
 
@@ -99,7 +102,7 @@ public class DocumentServiceImpl implements DocumentService {
     String url;
     String[] splitedPath = path.split("/");
     if (splitedPath != null && splitedPath.length >= 4
-            && splitedPath[1].equals(GROUPS_DRIVE_NAME) && splitedPath[2].equals("spaces")) {
+            && splitedPath[1].equals(GROUPS_DRIVE_ROOT_NODE) && splitedPath[2].equals("spaces")) {
       // use the space documents application if the document is the space documents
       String spaceName = splitedPath[3];
       url = new StringBuilder(CommonsUtils.getCurrentDomain()).append("/")
@@ -112,6 +115,20 @@ public class DocumentServiceImpl implements DocumentService {
               .append(GROUPS_DRIVE_NAME)
               .append("/:spaces:")
               .append(spaceName)
+              .append(path)
+              .toString();
+    } else if (splitedPath != null && splitedPath.length >= 6
+            && splitedPath[1].equals(PERSONAL_DRIVE_ROOT_NODE)) {
+      // use the personal documents drive if the document is the personal documents
+      String userId = splitedPath[5];
+      url = new StringBuilder(CommonsUtils.getCurrentDomain()).append("/")
+              .append(PortalContainer.getCurrentPortalContainerName())
+              // TODO remove hardcoded reference to intranet site
+              .append("/intranet")
+              .append("/documents?path=")
+              .append(PERSONAL_DRIVE_NAME)
+              .append("/:")
+              .append(userId)
               .append(path)
               .toString();
     } else {
