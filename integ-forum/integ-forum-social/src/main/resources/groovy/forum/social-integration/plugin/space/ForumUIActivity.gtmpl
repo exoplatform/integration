@@ -202,10 +202,14 @@
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
 						<% if (spaceGroupId.length() > 0) {
 								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
-                def spaceSourceURI, spaceName;
+                def spaceSourceURI, spaceName, spaceImageSource;
                 if (spaceSource != null) {
                   spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
                   spaceName = spaceSource.displayName;
+									spaceImageSource = spaceSource.getAvatarUrl();
+									if (spaceImageSource == null) {
+										spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+									}
                 } else {
                   spaceSourceURI = LinkProvider.getActivityUriForSpace(streamOwner, streamOwner);
                   def spaceIdentity = Utils.getSpaceIdentity(streamOwner, false);
@@ -213,13 +217,14 @@
                     spaceName = spaceIdentity.profile.fullName;
                   } else {
                     spaceName = null;
-                  } 
+                  }
+									spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
                 }
 								
                 activityPostedTimeInSpace = uicomponent.getPostedTimeInSpaceString(_ctx, activity.postedTime);
                 if (spaceName != null){
 						%>
-						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><i class="uiIconSocGroup uiIconSocLightGray"></i>&nbsp;$spaceName</a>
+						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI"><img title="" alt="" src="$spaceImageSource" class="spaceIcon avatarMini" />&nbsp;$spaceName</a>
                 <%}
            } %>
 					</div>
