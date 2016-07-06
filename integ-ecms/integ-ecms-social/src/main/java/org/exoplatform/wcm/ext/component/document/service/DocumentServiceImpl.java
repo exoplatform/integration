@@ -21,6 +21,9 @@ import java.util.Calendar;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.services.cms.drives.ManageDriveService;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
@@ -41,6 +44,13 @@ public class DocumentServiceImpl implements DocumentService {
   private static final String EXO_OWNER_PROP = "exo:owner";
   private static final String EXO_TITLE_PROP = "exo:title";
   private static final String CURRENT_STATE_PROP = "publication:currentState";
+  private static final String GROUPS_DRIVE_NAME = "Groups";
+
+  private ManageDriveService manageDriveService;
+
+  public DocumentServiceImpl(ManageDriveService manageDriveService) {
+    this.manageDriveService = manageDriveService;
+  }
 
   @Override
   public Document findDocById(String documentId) throws RepositoryException {
@@ -72,5 +82,66 @@ public class DocumentServiceImpl implements DocumentService {
     Document doc = new Document(id, node.getName(), title, node.getPath(), 
                                 ws, state, author, lastEditor, lastModified, dateCreated);
     return doc;
+  }
+
+  /**
+   * Get link to open a document in the Documents application.
+   * This method will try to guess what is the best drive to use based on the node path.
+   * @param path path of the nt:file node to open
+   * @return Link to open the document
+   * @throws Exception
+   */
+  @Override
+  public String getLinkInDocumentsApp(String path) throws Exception {
+    if(path == null) {
+      return null;
+    }
+    String url;
+    String[] splitedPath = path.split("/");
+    if (splitedPath != null && splitedPath.length >= 4
+            && splitedPath[1].equals(GROUPS_DRIVE_NAME) && splitedPath[2].equals("spaces")) {
+      // use the space documents application if the document is the space documents
+      String spaceName = splitedPath[3];
+      url = new StringBuilder(CommonsUtils.getCurrentDomain()).append("/")
+              .append(PortalContainer.getCurrentPortalContainerName())
+              .append("/g/:spaces:")
+              .append(spaceName)
+              .append("/")
+              .append(spaceName)
+              .append("/documents?path=")
+              .append(GROUPS_DRIVE_NAME)
+              .append("/:spaces:")
+              .append(spaceName)
+              .append(path)
+              .toString();
+    } else {
+      // otherwise use the default drive
+      url = getLinkInDocumentsApp(path, manageDriveService.getDriveOfDefaultWorkspace());
+    }
+
+    return url;
+  }
+
+  /**
+   * Get link to open a document in the Documents application with the given drive
+   * @param path path of the nt:file node to open
+   * @param driveName driveName to use to open the nt:file node
+   * @return Link to open the document
+   * @throws Exception
+   */
+  @Override
+  public String getLinkInDocumentsApp(String path, String driveName) throws Exception {
+    if(path == null) {
+      return null;
+    }
+    String url = new StringBuilder(CommonsUtils.getCurrentDomain()).append("/")
+              .append(PortalContainer.getCurrentPortalContainerName())
+              // TODO remove hardcoded reference to intranet site
+              .append("/intranet")
+              .append("/documents?path=")
+              .append(driveName)
+              .append(path)
+              .toString();
+    return url;
   }
 }

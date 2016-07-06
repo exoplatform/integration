@@ -1,9 +1,11 @@
 package org.exoplatform.wcm.ext.component.activity;
 
 
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
+import org.exoplatform.wcm.ext.component.document.service.DocumentService;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
@@ -27,9 +29,13 @@ import java.util.Map;
 )
 public class UIDocumentPreview extends UIContainer {
 
+  private DocumentService documentService;
+
   private BaseUIActivity baseUIActivity;
 
   public UIDocumentPreview() throws Exception {
+    this.documentService = CommonsUtils.getService(DocumentService.class);
+
     this.addChild(UIDocViewer.class, null, "UIDocViewer");
     this.addChild(UIPreviewCommentArea.class, null, "UIPreviewCommentArea");
   }
@@ -46,6 +52,15 @@ public class UIDocumentPreview extends UIContainer {
   public Node getOriginalNode() throws Exception {
     UIDocViewer uiDocViewer = findFirstComponentOfType(UIDocViewer.class);
     return uiDocViewer.getOriginalNode();
+  }
+
+  /**
+   * Return the link of the document in the Documents application
+   * @path
+   * @return the link of the document in the Documents application
+   */
+  public String getLinkInDocumentsApp() throws Exception {
+    return documentService.getLinkInDocumentsApp(getOriginalNode().getPath());
   }
 
   private boolean isWebContent() throws Exception {

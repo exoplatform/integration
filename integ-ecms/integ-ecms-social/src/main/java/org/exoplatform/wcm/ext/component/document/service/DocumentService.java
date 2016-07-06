@@ -26,4 +26,8 @@ import org.exoplatform.wcm.ext.component.document.model.Document;
  */
 public interface DocumentService {
   public Document findDocById(String id) throws RepositoryException;
+
+  public String getLinkInDocumentsApp(String path) throws Exception;
+
+  public String getLinkInDocumentsApp(String path, String driveName) throws Exception;
 }
