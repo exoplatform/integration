@@ -344,7 +344,6 @@
 						</ul>
 						<% }%>
 					 <ul class="pull-left statusAction">
-						<li><a href="<%= uicomponent.event("ViewDocument")%>"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;$viewFileLabel</a></li> 
 						<li><a href="<%= uicomponent.event("DownloadDocument")%>"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;$downloadFileLabel</a></li>
 					 </ul>
 				</div><!--end actionBar-->		

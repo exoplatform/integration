@@ -434,9 +434,6 @@
 				 	<% if(uicomponent.canEditDocument(currentNode)){%>
 						<li style="display:none;" ><a href="<%=uicomponent.event("OpenFile")%>"><i class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_$activity.id $remoteEditClass" ></i>&nbsp;$remoteEditTitle</a></li>
 				 	<%}%>
-					<% if (uicomponent.isFileSupportPreview(contentNode)) { %>
-						<li><a href="$contentActivityUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
-					<% }%>
 						<li><a href="$downloadLink"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
 					 </ul>
 				</div><!--end actionBar-->
