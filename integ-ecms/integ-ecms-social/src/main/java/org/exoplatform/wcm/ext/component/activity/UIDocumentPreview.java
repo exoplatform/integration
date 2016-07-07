@@ -3,9 +3,9 @@ package org.exoplatform.wcm.ext.component.activity;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.ecm.webui.utils.Utils;
+import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
-import org.exoplatform.wcm.ext.component.document.service.DocumentService;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
