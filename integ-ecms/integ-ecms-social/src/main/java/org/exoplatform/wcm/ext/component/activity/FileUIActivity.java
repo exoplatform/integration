@@ -35,6 +35,7 @@ import javax.portlet.PortletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
@@ -42,6 +43,7 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.PortalContainerInfo;
 import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.log.ExoLogger;
@@ -169,8 +171,11 @@ public class FileUIActivity extends BaseUIActivity{
   private boolean            isSymlink;
   private String activityTitle;
 
+  private DocumentService documentService;
+
   public FileUIActivity() throws Exception {
     super();
+    documentService = CommonsUtils.getService(DocumentService.class);
     addChild(UIPopupContainer.class, null, "UIDocViewerPopupContainer");
   }
 
@@ -501,6 +506,21 @@ public class FileUIActivity extends BaseUIActivity{
 
   public String[] getSystemCommentTitle(Map<String, String> activityParams) {
     return org.exoplatform.wcm.ext.component.activity.listener.Utils.getSystemCommentTitle(activityParams);
+  }
+
+  public String getDocOpenUri() {
+    String uri = "";
+
+    if(nodeLocation != null) {
+      try {
+        uri = documentService.getLinkInDocumentsApp(nodeLocation.getPath());
+      } catch(Exception e) {
+        LOG.error("Cannot get document open URI of node " + nodeLocation.getPath() + " : " + e.getMessage(), e);
+        uri = "";
+      }
+    }
+
+    return uri;
   }
 
   public String getViewLink() {

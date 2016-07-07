@@ -78,6 +78,9 @@
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
 
+  def docPreviewUri = uicomponent.event("ViewDocument");
+  def docOpenUri = uicomponent.getDocOpenUri();
+
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
   if (allComments) {
@@ -263,7 +266,7 @@
              if(mimeType.startsWith("image")) {
           %>
           <div class="clearfix isPreviewable">
-            <a class="pull-left" href="javascript:void(0)" onclick="<%=uicomponent.event("ViewDocument")%>" rel="tooltip" data-placement="bottom" title="$dName">      
+            <a class="pull-left" href="javascript:void(0)" onclick="$docPreviewUri" rel="tooltip" data-placement="bottom" title="$dName">
               <img src="<%=uicomponent.docThumbnail%>" />
             </a>
           <%
@@ -276,7 +279,7 @@
 	               encodedPath = encodedPath.replaceAll ("%2F", "/");
 	               String docThumbnail = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
 	             %>
-	             <a href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>" rel="tooltip" data-placement="bottom" title="$title"><img src="$docThumbnail" class="pdfImageBorder"/></a>
+	             <a href="javascript:void(0)" onclick="$docPreviewUri" rel="tooltip" data-placement="bottom" title="$title"><img src="$docThumbnail" class="pdfImageBorder"/></a>
 	          </div>
 	        <%
 	          } else if(fileComponent != null) { 
@@ -291,7 +294,7 @@
           %>
             <div class="clearfix isPreviewable">
               <div id="MediaContent${activity.id}" class="fileTypeContent">
-                <a href="javascript:void(0)" onclick="<%=uicomponent.event("ViewDocument")%>" rel="tooltip" data-placement="bottom" title="<%=_ctx.appRes("UIActivityComposer.label.UIDocActivityComposer")%>">
+                <a href="javascript:void(0)" onclick="$docPreviewUri" rel="tooltip" data-placement="bottom" title="<%=_ctx.appRes("UIActivityComposer.label.UIDocActivityComposer")%>">
                 	<i class="$classIcon"></i>
                	</a>
               </div>
@@ -299,7 +302,7 @@
             }
           %>  
               <div class="text">
-                <a class="linkTitle" href="javascript:void(0)" onclick="<%= uicomponent.event("ViewDocument")%>">
+                <a class="linkTitle" href="$docPreviewUri">
                     <% if (title == null) { %>
                     $dName
                     <% } else { %>

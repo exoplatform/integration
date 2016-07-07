@@ -26,9 +26,11 @@ import javax.portlet.PortletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.jcr.model.VersionNode;
 import org.exoplatform.ecm.webui.utils.Utils;
+import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -112,7 +114,10 @@ public class UIDocActivity extends BaseUIActivity {
   public String repository;
   public String workspace;
 
+  private DocumentService documentService;
+
   public UIDocActivity() {
+    documentService = CommonsUtils.getService(DocumentService.class);
   }
 
   protected boolean isPreviewable() {
@@ -188,6 +193,21 @@ public class UIDocActivity extends BaseUIActivity {
       return true;
     }
     return false;
+  }
+
+  public String getDocOpenUri() {
+    String uri = "";
+
+    if(docPath != null) {
+      try {
+        uri = documentService.getLinkInDocumentsApp(docPath);
+      } catch(Exception e) {
+        LOG.error("Cannot get document open URI of node " + docPath + " : " + e.getMessage(), e);
+        uri = "";
+      }
+    }
+
+    return uri;
   }
 
   private boolean hasPermissionViewFile() {
