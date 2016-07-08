@@ -92,8 +92,8 @@
   def contentName = uicomponent.getContentName();
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
 	def contentNode = uicomponent.getContentNode();
-  def docPreviewUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");
-  def docOpenUri = uicomponent.getCurrentDocOpenUri();
+	def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc('" + currentNode.getPath() + "')})";
+	def docOpenUri = uicomponent.getCurrentDocOpenUri();
 	def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
 	def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
   def mimeType = uicomponent.getMimeType();
