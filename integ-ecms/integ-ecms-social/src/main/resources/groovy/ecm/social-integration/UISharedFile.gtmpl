@@ -92,10 +92,6 @@
   def contentName = uicomponent.getContentName();
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
 	def contentNode = uicomponent.getContentNode();
-	def docOpenUri = uicomponent.getCurrentDocOpenUri();
-	def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc('" + currentNode.getUUID() + "', '" + currentNode.getPath() + "', '', '" + docOpenUri + "')})";
-	def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
-	def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
   def mimeType = uicomponent.getMimeType();
   
   //
@@ -220,8 +216,12 @@
 	  def docTypeName = uicomponent.getDocTypeName();
 	  def docSummary = uicomponent.getDocSummary();
 	  def viewLink = uicomponent.getViewLink();
-	  def downloadLink = uicomponent.getDownloadLink();
-	  def size = uicomponent.getSize(currentNode);
+	  def docDownloadUrl = uicomponent.getDownloadLink();
+		def docOpenUri = uicomponent.getCurrentDocOpenUri();
+		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc('" + currentNode.getUUID() + "', '" + currentNode.getPath() + "', '', '" + docOpenUri + "')})";
+		def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
+		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
+		def size = uicomponent.getSize(currentNode);
 	  def fileSize = uicomponent.getFileSize(currentNode);
 	  def description = uicomponent.getSummary(currentNode); 
       description = ContentReader.getXSSCompatibilityContent(description);
@@ -427,7 +427,7 @@
             <% if(uicomponent.canEditDocument(currentNode)){%>
             <li style="display:none;" ><a href="<%=uicomponent.event("OpenFile")%>"><i class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_$activity.id $remoteEditClass" ></i>&nbsp;$remoteEditTitle</a></li>
             <%}%>
-            <li><a href="$downloadLink"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
+            <li><a href="$docDownloadUrl"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
           </ul>
 				</div><!--end actionBar-->
 				
