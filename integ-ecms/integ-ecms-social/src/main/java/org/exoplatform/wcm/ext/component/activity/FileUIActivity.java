@@ -18,11 +18,8 @@ package org.exoplatform.wcm.ext.component.activity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -44,6 +41,9 @@ import org.exoplatform.container.xml.PortalContainerInfo;
 import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.cms.documents.DocumentService;
+import org.exoplatform.services.cms.drives.DriveData;
+import org.exoplatform.services.cms.drives.ManageDriveService;
+import org.exoplatform.services.cms.drives.impl.ManageDriveServiceImpl;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.log.ExoLogger;
@@ -158,7 +158,9 @@ public class FileUIActivity extends BaseUIActivity{
   private Node               contentNode;
 
   private NodeLocation       nodeLocation;
-  
+
+  private DriveData          docDrive;
+
   private String             docTypeName;
   private String             docTitle;
   private String             docVersion;
@@ -508,14 +510,80 @@ public class FileUIActivity extends BaseUIActivity{
     return org.exoplatform.wcm.ext.component.activity.listener.Utils.getSystemCommentTitle(activityParams);
   }
 
+  public DriveData getDocDrive() {
+    if(nodeLocation != null && docDrive == null) {
+      try {
+        docDrive = documentService.getDriveOfNode(nodeLocation.getPath());
+      } catch(Exception e) {
+        LOG.error("Cannot get drive of node " + nodeLocation.getPath() + " : " + e.getMessage(), e);
+      }
+    }
+
+    return docDrive;
+  }
+
+  public String getDocFolderBreadCrumb() {
+    String path = null;
+
+    DriveData drive = getDocDrive();
+    if(drive != null) {
+      try {
+        String driveHomePath = drive.getResolvedHomePath();
+
+        String contentNodePath = getContentNode().getPath();
+
+        // handle specific case of symlink in Personal Folder drive
+        if(ManageDriveServiceImpl.PERSONAL_DRIVE_NAME.equals(drive.getName())) {
+          contentNodePath = contentNodePath.replace("/Public", "/Private/Public");
+        }
+
+        // remove the content node in the path
+        contentNodePath = contentNodePath.substring(0, contentNodePath.lastIndexOf("/"));
+
+        // extract the path starting from the drive home path
+        if(contentNodePath.startsWith(driveHomePath)) {
+          path = contentNodePath.substring(driveHomePath.length());
+          if(path.length() > 0) {
+            // we are not at the root level of the drive
+            // we remove the starting /
+            path = path.substring(1);
+            // we replace / by >
+            path = path.replaceAll("/", "&nbsp;&gt;&nbsp;");
+          }
+        }
+      } catch (RepositoryException re) {
+        LOG.error("Cannot retrieve path of doc " + nodeLocation.getPath() + " : " + re.getMessage(), re);
+      }
+    }
+
+    return path;
+  }
+
   public String getDocOpenUri() {
     String uri = "";
 
     if(nodeLocation != null) {
       try {
-        uri = documentService.getLinkInDocumentsApp(nodeLocation.getPath());
+        uri = documentService.getLinkInDocumentsApp(nodeLocation.getPath(), getDocDrive().getName());
       } catch(Exception e) {
         LOG.error("Cannot get document open URI of node " + nodeLocation.getPath() + " : " + e.getMessage(), e);
+        uri = "";
+      }
+    }
+
+    return uri;
+  }
+
+  public String getDocFolderOpenUri() {
+    String uri = "";
+
+    if(nodeLocation != null) {
+      String nodePath = nodeLocation.getPath();
+      String folderNodePath = nodePath.substring(0, nodePath.lastIndexOf("/"));
+      try {
+        uri = documentService.getLinkInDocumentsApp(folderNodePath, getDocDrive().getName());
+      } catch(Exception e) {
+        LOG.error("Cannot get document open URI of node " + folderNodePath + " : " + e.getMessage(), e);
         uri = "";
       }
     }

@@ -94,6 +94,8 @@
 	def contentNode = uicomponent.getContentNode();
   def docPreviewUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");
   def docOpenUri = uicomponent.getDocOpenUri();
+	def docFolderOpenUri = uicomponent.getDocFolderOpenUri();
+	def docFolderBreadCrumb = uicomponent.getDocFolderBreadCrumb();
   def mimeType = uicomponent.getMimeType();
   
   //
@@ -372,6 +374,9 @@
 							<%} else {%>
 							  <span>$activityStatus</span>
 							<%}%>
+								<div class="descriptionText">
+									<a href="$docFolderOpenUri">$docFolderBreadCrumb</a>
+								</div>
 							  <div class="descriptionText">$description</div>
 								<div class="inforFile">				        
 									<div class="versionFile">	
