@@ -564,7 +564,7 @@ public class FileUIActivity extends BaseUIActivity{
 
     if(nodeLocation != null) {
       try {
-        uri = documentService.getLinkInDocumentsApp(nodeLocation.getPath(), getDocDrive().getName());
+        uri = documentService.getLinkInDocumentsApp(nodeLocation.getPath(), getDocDrive());
       } catch(Exception e) {
         LOG.error("Cannot get document open URI of node " + nodeLocation.getPath() + " : " + e.getMessage(), e);
         uri = "";
@@ -581,7 +581,7 @@ public class FileUIActivity extends BaseUIActivity{
       String nodePath = nodeLocation.getPath();
       String folderNodePath = nodePath.substring(0, nodePath.lastIndexOf("/"));
       try {
-        uri = documentService.getLinkInDocumentsApp(folderNodePath, getDocDrive().getName());
+        uri = documentService.getLinkInDocumentsApp(folderNodePath, getDocDrive());
       } catch(Exception e) {
         LOG.error("Cannot get document open URI of node " + folderNodePath + " : " + e.getMessage(), e);
         uri = "";
