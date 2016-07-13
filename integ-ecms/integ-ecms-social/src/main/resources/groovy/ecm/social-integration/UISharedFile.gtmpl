@@ -374,25 +374,29 @@
 							<%} else {%>
 							  <span>$activityStatus</span>
 							<%}%>
-								<div class="descriptionText">
+								<div class="fileBreadCrumb">
 									<a href="$docFolderOpenUri">$docFolderBreadCrumb</a>
 								</div>
-							  <div class="descriptionText">$description</div>
-								<div class="inforFile">				        
-									<div class="versionFile">	
+								<div class="infoFile">
 									<%
-									def version = uicomponent.getVersion(currentNode);            
+									def version = uicomponent.getVersion(currentNode);
 									if (version > 0) {
 									%>
-									<%=_ctx.appRes("UIComposerDocumentExtension.label.Version"); %>&nbsp; $version -
+									<span class="versionFile badgeDefault badgePrimary">v$version</span>
 									<%} %>
-									<%
-									if(size.length() > 0) {
-									%>
-											<%=_ctx.appRes("SocialIntegration.titles.fileSize"); %>:&nbsp; $size
-									<%}%>
-									</div>
-							</div>				
+										<span>
+										<%=_ctx.appRes("SocialIntegration.messages.updatedOn")%>
+										<%=uicomponent.getDocUpdateDate(currentNode)%>
+										<%=_ctx.appRes("SocialIntegration.messages.updatedBy")%>
+										<%=uicomponent.getDocAuthor(currentNode)%>
+										<%
+										if(size.length() > 0) {
+										%>
+												- $size
+										<%}%>
+										</span>
+								</div>
+								<div class="descriptionText">$description</div>
 						</div><!--end text-->
 
 						

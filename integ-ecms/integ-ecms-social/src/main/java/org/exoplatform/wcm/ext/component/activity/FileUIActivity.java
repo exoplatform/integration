@@ -403,7 +403,31 @@ public class FileUIActivity extends BaseUIActivity{
     }
   	return imageHeight;
   }
-  
+
+  protected String getDocUpdateDate(Node node) {
+    String docUpdatedDate = "";
+    try {
+      if(contentNode != null && contentNode.hasProperty("exo:lastModifiedDate")) {
+        docUpdatedDate = contentNode.getProperty("exo:lastModifiedDate").getString();
+      }
+    } catch (RepositoryException e) {
+      LOG.error("Cannot get document updated date : " + e.getMessage(), e);
+    }
+    return docUpdatedDate;
+  }
+
+  protected String getDocAuthor(Node node) {
+    String docAuthor = "";
+    try {
+      if(contentNode != null && contentNode.hasProperty("exo:owner")) {
+        docAuthor = contentNode.getProperty("exo:owner").getString();
+      }
+    } catch (RepositoryException e) {
+      LOG.error("Cannot get document author : " + e.getMessage(), e);
+    }
+    return docAuthor;
+  }
+
   protected int getVersion(Node node) {
   	String currentVersion = null;
   	try {
@@ -548,7 +572,7 @@ public class FileUIActivity extends BaseUIActivity{
             // we remove the starting /
             path = path.substring(1);
             // we replace / by >
-            path = path.replaceAll("/", "&nbsp;&gt;&nbsp;");
+            path = path.replaceAll("/", "<i class=\"uiIconArrowRight\"></i>");
           }
         }
       } catch (RepositoryException re) {

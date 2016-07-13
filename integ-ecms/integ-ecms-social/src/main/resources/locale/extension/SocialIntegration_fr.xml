@@ -64,6 +64,8 @@
       <fileMoved>Le fichier a été déplacé: {0}</fileMoved>
       <revisionChanged>Le document a été restauré à la version: {0}</revisionChanged>
       <version>Version: {0}</version>
+      <updatedOn>Modifié le</updatedOn>
+      <updatedBy>par</updatedBy>
     </messages>
     <publicationStates>
       <archived>Archivé</archived>

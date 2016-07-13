@@ -64,6 +64,8 @@
       <fileMoved>File has been moved to: {0}</fileMoved>
       <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
       <version>Version: {0}</version>
+      <updatedOn>Updated on</updatedOn>
+      <updatedBy>by</updatedBy>
     </messages>
     <publicationStates>
       <archived>Archived</archived>
