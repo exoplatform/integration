@@ -56,7 +56,6 @@ public class UIDocumentPreview extends UIContainer {
 
   /**
    * Return the link of the document in the Documents application
-   * @path
    * @return the link of the document in the Documents application
    */
   public String getLinkInDocumentsApp() throws Exception {
