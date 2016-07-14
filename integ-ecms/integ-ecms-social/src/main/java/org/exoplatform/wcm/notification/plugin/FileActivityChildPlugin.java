@@ -52,6 +52,7 @@ import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.notification.LinkProviderUtils;
 import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.exoplatform.webui.cssfile.CssClassIconFile;
@@ -122,8 +123,16 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       
       // File uploaded to Content Explorer hasn't MESSAGE field
       String message = templateParams.get(MESSAGE) != null ? NotificationUtils.processLinkTitle(templateParams.get(MESSAGE)) : "";
-      
-      templateContext.put("ACTIVITY_URL", LinkProviderUtils.getRedirectUrl(ACTIVITY_URL, activity.getId()));
+      String nodePath = nodeLocation.getPath();
+      String[] splitedPath = nodePath.split("/");
+      String contentWorkspace = (workspace != null) ? workspace : templateParams.get("workspace");
+      if (splitedPath[1].equals("Groups") && splitedPath[2].equals("spaces")) {
+        templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + LinkProvider.getRedirectSpaceUri(getSpaceDocuments(splitedPath[3]) +
+                "?path=" + capitalizeFirstLetter(contentWorkspace) + nodePath + "&notification=true"));
+      } else {
+        templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + LinkProvider.getRedirectUri("documents" +
+                "?path=" + capitalizeFirstLetter(contentWorkspace) + nodePath + "&notification=true"));
+      }
       templateContext.put("ACTIVITY_TITLE", message);
       templateContext.put("DOCUMENT_TITLE", this.documentTitle);
       templateContext.put("SUMMARY", Utils.getSummary(currentNode));
@@ -157,12 +166,12 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
     }
   }
 
-  public String getActivityParamValue(String key) {
-    Map<String, String> params = activity.getTemplateParams();
-    if (params != null) {
-      return params.get(key) != null ? params.get(key) : "";
-    }
-    return "";
+  private String getSpaceDocuments(String space) {
+    return "g/:spaces:" + space + "/" +space + "/" + "documents";
+  }
+
+  private String capitalizeFirstLetter(String str) throws Exception {
+    return str.substring(0, 1).toUpperCase() + str.substring(1);
   }
 
   @Override
@@ -206,7 +215,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
     } catch (RepositoryException re) {
       LOG.error("Can not get the repository. ", re);
     }
-    
+
     this.nodeLocation = NodeLocation.getNodeLocationByNode(contentNode);
     
     //
