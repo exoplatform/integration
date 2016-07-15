@@ -95,6 +95,7 @@
   def docPreviewUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");
   def docOpenUri = uicomponent.getDocOpenUri();
 	def docFolderOpenUri = uicomponent.getDocFolderOpenUri();
+	def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
 	def docFolderBreadCrumb = uicomponent.getDocFolderBreadCrumb();
   def mimeType = uicomponent.getMimeType();
   
@@ -375,7 +376,7 @@
 							  <span>$activityStatus</span>
 							<%}%>
 								<div class="fileBreadCrumb">
-									<a href="$docFolderOpenUri">$docFolderBreadCrumb</a>
+									<a href="$docFolderOpenUri" title="$docFolderRelativePath" rel="tooltip" data-placement="bottom">$docFolderBreadCrumb</a>
 								</div>
 								<div class="infoFile">
 									<%

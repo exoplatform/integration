@@ -602,7 +602,7 @@ public class FileUIActivity extends BaseUIActivity{
     return docDrive;
   }
 
-  public String getDocFolderBreadCrumb() {
+  public String getDocFolderRelativePath() {
     String path = null;
 
     DriveData drive = getDocDrive();
@@ -617,23 +617,29 @@ public class FileUIActivity extends BaseUIActivity{
           contentNodePath = contentNodePath.replace("/Public", "/Private/Public");
         }
 
-        // remove the content node in the path
-        contentNodePath = contentNodePath.substring(0, contentNodePath.lastIndexOf("/"));
-
         // extract the path starting from the drive home path
         if(contentNodePath.startsWith(driveHomePath)) {
           path = contentNodePath.substring(driveHomePath.length());
-          if(path.length() > 0) {
-            // we are not at the root level of the drive
-            // we remove the starting /
-            path = path.substring(1);
-            // we replace / by >
-            path = path.replaceAll("/", "<i class=\"uiIconArrowRight\"></i>");
-          }
+
+          // remove the content node in the path
+          path = path.substring(0, path.lastIndexOf("/"));
         }
       } catch (RepositoryException re) {
         LOG.error("Cannot retrieve path of doc " + nodeLocation.getPath() + " : " + re.getMessage(), re);
       }
+    }
+
+    return path;
+  }
+
+  public String getDocFolderBreadCrumb() {
+    String path = getDocFolderRelativePath();
+
+    if(path != null && path.length() > 0) {
+      // remove the first /
+      path = path.substring(1);
+      // replace / by >
+      path = path.replaceAll("/", "<i class=\"uiIconArrowRight\"></i>");
     }
 
     return path;
