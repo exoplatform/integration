@@ -27,10 +27,7 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
+import javax.jcr.*;
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.io.FileUtils;
@@ -603,33 +600,57 @@ public class FileUIActivity extends BaseUIActivity{
   }
 
   public String getDocFolderRelativePath() {
-    String path = null;
+    StringBuilder path = new StringBuilder();
 
     DriveData drive = getDocDrive();
     if(drive != null) {
       try {
         String driveHomePath = drive.getResolvedHomePath();
 
-        String contentNodePath = getContentNode().getPath();
-
-        // handle specific case of symlink in Personal Folder drive
+        // if the drive is the Personal Documents drive, we must handle the special case of the Public symlink
+        String drivePublicFolderHomePath = null;
         if(ManageDriveServiceImpl.PERSONAL_DRIVE_NAME.equals(drive.getName())) {
-          contentNodePath = contentNodePath.replace("/Public", "/Private/Public");
+          drivePublicFolderHomePath = driveHomePath.replace("/Private", "/Public");
         }
 
-        // extract the path starting from the drive home path
-        if(contentNodePath.startsWith(driveHomePath)) {
-          path = contentNodePath.substring(driveHomePath.length());
+        // calculate the relative path to the drive by browsing up the content node path
+        List<String> relativePathElements = new ArrayList<>();
+        Node parentContentNode = getContentNode().getParent();
+        while(parentContentNode != null) {
+          String parentPath = parentContentNode.getPath();
+          // exit condition is check here instead of in the while condition to avoid
+          // retrieving the path several times and because there is some logic to handle
+          if(parentContentNode.getPath().equals("/") || parentPath.equals(driveHomePath)) {
+            // we are at the root of the workspace or at the root of the drive
+            break;
+          } else if(drivePublicFolderHomePath != null && parentPath.equals(drivePublicFolderHomePath)) {
+            // this is a special case : the root of the Public folder of the Personal Documents drive
+            // in this case we add the Public folder in the path
+            relativePathElements.add(0, "Public");
+            break;
+          }
 
-          // remove the content node in the path
-          path = path.substring(0, path.lastIndexOf("/"));
+          String folderName;
+          // title is used if it exists, otherwise the name is used
+          if(parentContentNode.hasProperty("exo:title")) {
+            folderName = parentContentNode.getProperty("exo:title").getString();
+          } else {
+            folderName = parentContentNode.getName();
+          }
+          relativePathElements.add(0, folderName);
+
+          parentContentNode = parentContentNode.getParent();
         }
+
+        // build the path from the path elements
+        relativePathElements.forEach(pathElement -> path.append("/").append(pathElement));
+
       } catch (RepositoryException re) {
         LOG.error("Cannot retrieve path of doc " + nodeLocation.getPath() + " : " + re.getMessage(), re);
       }
     }
 
-    return path;
+    return path.toString();
   }
 
   public String getDocFolderBreadCrumb() {
