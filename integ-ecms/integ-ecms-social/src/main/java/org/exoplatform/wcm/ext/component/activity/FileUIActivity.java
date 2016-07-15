@@ -48,6 +48,10 @@ import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
@@ -61,6 +65,7 @@ import org.exoplatform.social.plugin.doc.UIDocActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
+import org.exoplatform.web.CacheUserProfileFilter;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -329,11 +334,39 @@ public class FileUIActivity extends BaseUIActivity{
   public String getDocumentSummary(Map<String, String> activityParams) {
     return activityParams.get(FileUIActivity.DOCUMENT_SUMMARY);
   }
-  public String getUserFullName(String userId) {
-    ExoContainer container = ExoContainerContext.getCurrentContainer();
-    IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
 
-    return identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, true).getProfile().getFullName();
+  public String getUserFullName(String userId) {
+    if(StringUtils.isEmpty(userId)) {
+      return "";
+    }
+
+    // if the requested user is the connected user, get the fullname from the ConversationState
+    ConversationState currentUserState = ConversationState.getCurrent();
+    Identity currentUserIdentity = currentUserState.getIdentity();
+    if(currentUserIdentity != null) {
+      String currentUser = currentUserIdentity.getUserId();
+      if (currentUser != null && currentUser.equals(userId)) {
+        User user = (User) currentUserState.getAttribute(CacheUserProfileFilter.USER_PROFILE);
+        if(user != null) {
+          return user.getDisplayName();
+        }
+      }
+    }
+
+    // if the requested user if not the connected user, fetch it from the organization service
+    ExoContainer container = ExoContainerContext.getCurrentContainer();
+    OrganizationService organizationService = container.getComponentInstanceOfType(OrganizationService.class);
+
+    try {
+      User user = organizationService.getUserHandler().findUserByName(userId);
+      if(user != null) {
+        return user.getDisplayName();
+      }
+    } catch (Exception e) {
+      LOG.error("Cannot get information of user " + userId + " : " + e.getMessage(), e);
+    }
+
+    return "";
   }
   
   protected String getSize(Node node) {
@@ -420,7 +453,8 @@ public class FileUIActivity extends BaseUIActivity{
     String docAuthor = "";
     try {
       if(contentNode != null && contentNode.hasProperty("exo:owner")) {
-        docAuthor = contentNode.getProperty("exo:owner").getString();
+        String docAuthorUsername = contentNode.getProperty("exo:owner").getString();
+        docAuthor = getUserFullName(docAuthorUsername);
       }
     } catch (RepositoryException e) {
       LOG.error("Cannot get document author : " + e.getMessage(), e);
