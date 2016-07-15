@@ -18,6 +18,9 @@ package org.exoplatform.wcm.ext.component.activity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -177,6 +180,8 @@ public class FileUIActivity extends BaseUIActivity{
 
   private boolean            isSymlink;
   private String activityTitle;
+
+  private DateTimeFormatter dateTimeFormatter;
 
   private DocumentService documentService;
 
@@ -441,12 +446,29 @@ public class FileUIActivity extends BaseUIActivity{
     String docUpdatedDate = "";
     try {
       if(contentNode != null && contentNode.hasProperty("exo:lastModifiedDate")) {
-        docUpdatedDate = contentNode.getProperty("exo:lastModifiedDate").getString();
+        String rawDocUpdatedDate = contentNode.getProperty("exo:lastModifiedDate").getString();
+        LocalDateTime parsedDate = LocalDateTime.parse(rawDocUpdatedDate, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        docUpdatedDate = parsedDate.format(getDateTimeFormatter());
       }
     } catch (RepositoryException e) {
       LOG.error("Cannot get document updated date : " + e.getMessage(), e);
     }
     return docUpdatedDate;
+  }
+
+  /**
+   * Get a localized DateTimeFormatter
+   * @return A localized DateTimeFormatter
+   */
+  protected DateTimeFormatter getDateTimeFormatter() {
+    if(dateTimeFormatter == null) {
+      dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+      Locale locale = WebuiRequestContext.getCurrentInstance().getLocale();
+      if (locale != null) {
+        dateTimeFormatter = dateTimeFormatter.withLocale(locale);
+      }
+    }
+    return dateTimeFormatter;
   }
 
   protected String getDocAuthor(Node node) {
