@@ -610,7 +610,7 @@ public class FileUIActivity extends BaseUIActivity{
         // if the drive is the Personal Documents drive, we must handle the special case of the Public symlink
         String drivePublicFolderHomePath = null;
         if(ManageDriveServiceImpl.PERSONAL_DRIVE_NAME.equals(drive.getName())) {
-          drivePublicFolderHomePath = driveHomePath.replace("/Private", "/Public");
+          drivePublicFolderHomePath = driveHomePath.replace("/" + ManageDriveServiceImpl.PERSONAL_DRIVE_PRIVATE_FOLDER_NAME, "/" + ManageDriveServiceImpl.PERSONAL_DRIVE_PUBLIC_FOLDER_NAME);
         }
 
         // calculate the relative path to the drive by browsing up the content node path
@@ -626,7 +626,7 @@ public class FileUIActivity extends BaseUIActivity{
           } else if(drivePublicFolderHomePath != null && parentPath.equals(drivePublicFolderHomePath)) {
             // this is a special case : the root of the Public folder of the Personal Documents drive
             // in this case we add the Public folder in the path
-            relativePathElements.add(0, "Public");
+            relativePathElements.add(0, ManageDriveServiceImpl.PERSONAL_DRIVE_PUBLIC_FOLDER_NAME);
             break;
           }
 
