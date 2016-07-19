@@ -166,6 +166,8 @@ public class FileUIActivity extends BaseUIActivity{
 
   private DriveData          docDrive;
 
+  private Map<String, String> folderPathWithLinks;
+
   private String             docTypeName;
   private String             docTitle;
   private String             docVersion;
@@ -599,98 +601,101 @@ public class FileUIActivity extends BaseUIActivity{
     return docDrive;
   }
 
-  public String getDocFolderRelativePath() {
-    StringBuilder path = new StringBuilder();
+  public Map<String, String> getDocFolderRelativePathWithLinks() {
+    if(folderPathWithLinks == null) {
+      folderPathWithLinks = new LinkedHashMap<>();
+      Map<String, String> reversedFolderPathWithLinks = new LinkedHashMap<>();
 
-    DriveData drive = getDocDrive();
-    if(drive != null) {
-      try {
-        String driveHomePath = drive.getResolvedHomePath();
+      DriveData drive = getDocDrive();
+      if (drive != null) {
+        try {
+          String driveHomePath = drive.getResolvedHomePath();
 
-        // if the drive is the Personal Documents drive, we must handle the special case of the Public symlink
-        String drivePublicFolderHomePath = null;
-        if(ManageDriveServiceImpl.PERSONAL_DRIVE_NAME.equals(drive.getName())) {
-          drivePublicFolderHomePath = driveHomePath.replace("/" + ManageDriveServiceImpl.PERSONAL_DRIVE_PRIVATE_FOLDER_NAME, "/" + ManageDriveServiceImpl.PERSONAL_DRIVE_PUBLIC_FOLDER_NAME);
-        }
-
-        // calculate the relative path to the drive by browsing up the content node path
-        List<String> relativePathElements = new ArrayList<>();
-        Node parentContentNode = getContentNode().getParent();
-        while(parentContentNode != null) {
-          String parentPath = parentContentNode.getPath();
-          // exit condition is check here instead of in the while condition to avoid
-          // retrieving the path several times and because there is some logic to handle
-          if(parentContentNode.getPath().equals("/") || parentPath.equals(driveHomePath)) {
-            // we are at the root of the workspace or at the root of the drive
-            break;
-          } else if(drivePublicFolderHomePath != null && parentPath.equals(drivePublicFolderHomePath)) {
-            // this is a special case : the root of the Public folder of the Personal Documents drive
-            // in this case we add the Public folder in the path
-            relativePathElements.add(0, ManageDriveServiceImpl.PERSONAL_DRIVE_PUBLIC_FOLDER_NAME);
-            break;
+          // if the drive is the Personal Documents drive, we must handle the special case of the Public symlink
+          String drivePublicFolderHomePath = null;
+          if (ManageDriveServiceImpl.PERSONAL_DRIVE_NAME.equals(drive.getName())) {
+            drivePublicFolderHomePath = driveHomePath.replace("/" + ManageDriveServiceImpl.PERSONAL_DRIVE_PRIVATE_FOLDER_NAME, "/" + ManageDriveServiceImpl.PERSONAL_DRIVE_PUBLIC_FOLDER_NAME);
           }
 
-          String folderName;
-          // title is used if it exists, otherwise the name is used
-          if(parentContentNode.hasProperty("exo:title")) {
-            folderName = parentContentNode.getProperty("exo:title").getString();
-          } else {
-            folderName = parentContentNode.getName();
+          // calculate the relative path to the drive by browsing up the content node path
+          Node parentContentNode = getContentNode().getParent();
+          while (parentContentNode != null) {
+            String parentPath = parentContentNode.getPath();
+            // exit condition is check here instead of in the while condition to avoid
+            // retrieving the path several times and because there is some logic to handle
+            if (parentContentNode.getPath().equals("/") || parentPath.equals(driveHomePath)) {
+              // we are at the root of the workspace or at the root of the drive
+              break;
+            } else if (drivePublicFolderHomePath != null && parentPath.equals(drivePublicFolderHomePath)) {
+              // this is a special case : the root of the Public folder of the Personal Documents drive
+              // in this case we add the Public folder in the path
+              reversedFolderPathWithLinks.put(ManageDriveServiceImpl.PERSONAL_DRIVE_PUBLIC_FOLDER_NAME, getDocOpenUri(parentPath));
+              break;
+            }
+
+            String folderName;
+            // title is used if it exists, otherwise the name is used
+            if (parentContentNode.hasProperty("exo:title")) {
+              folderName = parentContentNode.getProperty("exo:title").getString();
+            } else {
+              folderName = parentContentNode.getName();
+            }
+            reversedFolderPathWithLinks.put(folderName, getDocOpenUri(parentPath));
+
+            parentContentNode = parentContentNode.getParent();
           }
-          relativePathElements.add(0, folderName);
-
-          parentContentNode = parentContentNode.getParent();
+        } catch (RepositoryException re) {
+          LOG.error("Cannot retrieve path of doc " + nodeLocation.getPath() + " : " + re.getMessage(), re);
         }
+      }
 
-        // build the path from the path elements
-        relativePathElements.forEach(pathElement -> path.append("/").append(pathElement));
-
-      } catch (RepositoryException re) {
-        LOG.error("Cannot retrieve path of doc " + nodeLocation.getPath() + " : " + re.getMessage(), re);
+      if(reversedFolderPathWithLinks.size() > 1) {
+        List<Map.Entry<String, String>> entries = new ArrayList<>(reversedFolderPathWithLinks.entrySet());
+        for(int i = entries.size()-1; i >= 0; i--) {
+          Map.Entry<String, String> entry = entries.get(i);
+          folderPathWithLinks.put(entry.getKey(), entry.getValue());
+        }
+      } else {
+        folderPathWithLinks = reversedFolderPathWithLinks;
       }
     }
 
-    return path.toString();
+    return folderPathWithLinks;
   }
 
-  public String getDocFolderBreadCrumb() {
-    String path = getDocFolderRelativePath();
+  public String getDocFolderRelativePath() {
+    StringBuilder folderRelativePath = new StringBuilder();
 
-    if(path != null && path.length() > 0) {
-      // remove the first /
-      path = path.substring(1);
-      // replace / by >
-      path = path.replaceAll("/", "<i class=\"uiIconArrowRight\"></i>");
+    for(String folderName : getDocFolderRelativePathWithLinks().keySet()) {
+      folderRelativePath.append(folderName).append("/");
     }
 
-    return path;
+    if(folderRelativePath.length() > 1) {
+      // remove the last /
+      folderRelativePath.deleteCharAt(folderRelativePath.length() - 1);
+    }
+
+    return folderRelativePath.toString();
   }
 
-  public String getDocOpenUri() {
+  public String getCurrentDocOpenUri() {
     String uri = "";
 
     if(nodeLocation != null) {
-      try {
-        uri = documentService.getLinkInDocumentsApp(nodeLocation.getPath(), getDocDrive());
-      } catch(Exception e) {
-        LOG.error("Cannot get document open URI of node " + nodeLocation.getPath() + " : " + e.getMessage(), e);
-        uri = "";
-      }
+      uri = getDocOpenUri(nodeLocation.getPath());
     }
 
     return uri;
   }
 
-  public String getDocFolderOpenUri() {
+  public String getDocOpenUri(String nodePath) {
     String uri = "";
 
-    if(nodeLocation != null) {
-      String nodePath = nodeLocation.getPath();
-      String folderNodePath = nodePath.substring(0, nodePath.lastIndexOf("/"));
+    if(nodePath != null) {
       try {
-        uri = documentService.getLinkInDocumentsApp(folderNodePath, getDocDrive());
+        uri = documentService.getLinkInDocumentsApp(nodePath, getDocDrive());
       } catch(Exception e) {
-        LOG.error("Cannot get document open URI of node " + folderNodePath + " : " + e.getMessage(), e);
+        LOG.error("Cannot get document open URI of node " + nodePath + " : " + e.getMessage(), e);
         uri = "";
       }
     }

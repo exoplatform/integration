@@ -93,10 +93,9 @@
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
 	def contentNode = uicomponent.getContentNode();
   def docPreviewUri = uicomponent.event("ViewDocument", uicomponent.getId(), "");
-  def docOpenUri = uicomponent.getDocOpenUri();
-	def docFolderOpenUri = uicomponent.getDocFolderOpenUri();
+  def docOpenUri = uicomponent.getCurrentDocOpenUri();
 	def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
-	def docFolderBreadCrumb = uicomponent.getDocFolderBreadCrumb();
+	def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
   def mimeType = uicomponent.getMimeType();
   
   //
@@ -373,8 +372,16 @@
 							<%} else {%>
 							  <span>$activityStatus</span>
 							<%}%>
-								<div class="fileBreadCrumb">
-									<a href="$docFolderOpenUri" title="$docFolderRelativePath" rel="tooltip" data-placement="bottom">$docFolderBreadCrumb</a>
+								<div class="fileBreadCrumb" title="$docFolderRelativePath" rel="tooltip" data-placement="bottom">
+									<%
+										def folderIndex = 0;
+										for (String folderName : docFolderBreadCrumb.keySet()) {
+											if(folderIndex++ > 0) {
+									%>
+										<i class="uiIconArrowRight"></i>
+									<% 	} %>
+										<a href="<%=docFolderBreadCrumb.get(folderName)%>">$folderName</a>
+									<% } %>
 								</div>
 								<div class="infoFile">
 									<%
