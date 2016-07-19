@@ -82,6 +82,7 @@
     <view>Voir</view>
     <edit>Modifier</edit>
     <download>Télécharger</download>
+    <preview>Prévisualiser</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>

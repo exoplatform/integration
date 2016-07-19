@@ -322,7 +322,7 @@
 				<%if (mimeType != null && mimeType.length() > 0 && fileSize > 0){%>
 						
 		        <%   if( (mimeType.startsWith("image") || mimeType.indexOf("icon") >=0)  && currentNode != null){%>
-		               <div id="MediaContent${activity.id}" class=" pull-left mediaContent ">
+		               <div id="MediaContent${activity.id}" class=" pull-left mediaContent " onclick="$docPreviewUri" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle">
 		           	     <%
 		           	       def imageWidth = uicomponent.getImageHeight(currentNode);
 		           	       def imageHeight = uicomponent.getImageHeight(currentNode);
@@ -343,24 +343,22 @@
 		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);
 		                        
 									   %>
-									   <a href="$docPreviewUri" style="cursor:pointer"  rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle">
-									   	<img src="$thumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" alt="$activityContentTitle" />
-									   </a>
-									   <a href="$docPreviewUri" style="display: none;" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle"><i class="<%=classIconName%>"></i></a>
+										 <span><img src="$thumbnailImage" retryCount="0" onerror="loadImageOnError(this);" alt="$activityContentTitle" /></span>
+									   <span style="display: none;"><i class="<%=classIconName%>"></i></span>
+										 <button class="btn btn-large btn-block doc-preview-thumbnail-footer" type="button"><%=_ctx.appRes("SocialIntegration.preview");%></button>
 									 </div>
 									 <%
 		            } else if(org.exoplatform.services.cms.impl.Utils.isSupportThumbnailView(mimeType)){%>
-		               <div id="MediaContent${activity.id}" class="pull-left mediaContent docTypeContent">
+		               <div id="MediaContent${activity.id}" class="pull-left mediaContent docTypeContent" onclick="$docPreviewUri" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle">
 		                 <%
 		                   def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;
 		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);               
 		                 %>
-		                 <a href="$docPreviewUri" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle">
-		                 	<img src="$pdfThumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" class="pdfImageBorder"/>
-		                 </a>
-		                 <a href="$docPreviewUri" style="display: none;" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle"><i class="<%=classIconName%>"></i></a>
+		                 <span><img src="$pdfThumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" class="pdfImageBorder"/></span>
+		                 <span style="display: none;"><i class="<%=classIconName%>"></i></span>
+										 <button class="btn btn-large btn-block doc-preview-thumbnail-footer" type="button"><%=_ctx.appRes("SocialIntegration.preview");%></button>
 		               </div><%
 		            } else if(fileComponent != null) { %>
 					 <div id="MediaContent${activity.id}" class=" pull-left PlayerContianer">
