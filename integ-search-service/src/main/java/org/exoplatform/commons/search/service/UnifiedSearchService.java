@@ -161,15 +161,23 @@ public class UnifiedSearchService implements ResourceContainer {
       // get the base URI - http://<host>:<port>
       String baseUri = uriInfo.getBaseUri().toString(); // http://<host>:<port>/rest      
       baseUri = baseUri.substring(0,baseUri.lastIndexOf((new URL(baseUri)).getPath()));
-      String resultUrl, imageUrl;      
+      String resultUrl, previewUrl, imageUrl;
       
       // use absolute path for URLs in search results
       for(Collection<SearchResult> connectorResults:results.values()){
         for(SearchResult result:connectorResults){
           resultUrl = result.getUrl();
+          previewUrl = result.getPreviewUrl();
           imageUrl =  result.getImageUrl();
-          if(null!=resultUrl && resultUrl.startsWith("/")) result.setUrl(baseUri + resultUrl);
-          if(null!=imageUrl && imageUrl.startsWith("/")) result.setImageUrl(baseUri + imageUrl);          
+          if(null != resultUrl && resultUrl.startsWith("/")) {
+            result.setUrl(baseUri + resultUrl);
+          }
+          if(null != previewUrl && previewUrl.startsWith("/")) {
+            result.setPreviewUrl(baseUri + previewUrl);
+          }
+          if(null != imageUrl && imageUrl.startsWith("/")) {
+            result.setImageUrl(baseUri + imageUrl);
+          }
         }        
       }
       

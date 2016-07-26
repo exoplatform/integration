@@ -11,59 +11,59 @@ window.initSearch = function initSearch() {
     var formLoading;
 
     var SEARCH_RESULT_TEMPLATE = " \
-      <div class='resultBox clearfix %{type}'> \
+      <div class=\"resultBox clearfix %{type}\"> \
         %{avatar} \
-        <div class='content'> \
-          <h6><a href='%{url}'>%{title}</a>%{rating}</h6> \
-          <p class='excerpt'>%{excerpt}</p> \
-          <div class='detail'>%{detail}</div> \
+        <div class=\"content\"> \
+          <h6><a href=\"%{url}\">%{title}</a>%{rating}</h6> \
+          <p class=\"excerpt\">%{excerpt}</p> \
+          <div class=\"detail\">%{detail}</div> \
         </div> \
       </div> \
     ";
     var IMAGE_AVATAR_TEMPLATE = " \
-      <span class='avatar pull-left %{userThumbnail}'> \
-        <img src='%{imageSrc}' onerror='onImgError(this, \"%{errorClasses}\")'> \
+      <span class=\"avatar pull-left %{userThumbnail}\"> \
+        <img src=\"%{imageSrc}\" onerror=\"onImgError(this, '%{errorClasses}')\"> \
       </span> \
     ";
     
     var CSS_AVATAR_TEMPLATE = " \
-      <span class='avatar pull-left'> \
-        <i class='%{cssClass}'></i> \
+      <span class=\"avatar pull-left\"> \
+        <i class=\"%{cssClass}\"'></i> \
       </span> \
     ";
 
     var EVENT_AVATAR_TEMPLATE = " \
-      <div class='avatar pull-left'> \
-        <div class='calendarBox'> \
-          <div class='heading'> %{month} </div> \
-          <div class='content' style='margin-left: 0px;'> %{date} </div> \
+      <div class=\"avatar pull-left\"> \
+        <div class=\"calendarBox\"> \
+          <div class=\"heading\"> %{month} </div> \
+          <div class=\"content\" style=\"margin-left: 0px;\"> %{date} </div> \
         </div> \
       </div> \
     ";
 
     var TASK_AVATAR_TEMPLATE = " \
-      <span class='avatar pull-left'> \
-        <i class='uiIconApp64x64Task%{taskStatus}'></i> \
+      <span class=\"avatar pull-left\"> \
+        <i class=\"uiIconApp64x64Task%{taskStatus}\"></i> \
       </span> \
     ";
     
     var TASK_IN_TASKS_AVATAR_TEMPLATE = " \
-      <span class='avatar pull-left'> \
-        <i class='uiIcon40x40TickGray %{done}'></i> \
+      <span class=\"avatar pull-left\"> \
+        <i class=\"uiIcon40x40TickGray %{done}\"></i> \
       </span> \
     ";
     
     var TASK_IN_TASKS_DETAIL_TEMPLATE = " \
-      <a href='#'> \
-        <i class='uiIconFolder taskProjectIconSearchDetail'></i> %{projectName} \
+      <a href=\"#\"> \
+        <i class=\"uiIconFolder taskProjectIconSearchDetail\"></i> %{projectName} \
       </a> \
-      <i class='uiIconColorPriority%{priority} taskPriorityIconSearchDetail'></i>\
+      <i class=\"uiIconColorPriority%{priority} taskPriorityIconSearchDetail\"></i>\
       <span>%{dueDate}</span>\
     ";
 
     var RATING_TEMPLATE = " \
-      <div class='uiVote pull-right'> \
-        <div class='avgRatingImages clearfix'> \
+      <div class=\"uiVote pull-right\"> \
+        <div class=\"avgRatingImages clearfix\"> \
           %{rating} \
         </div> \
       </div> \
@@ -234,7 +234,11 @@ window.initSearch = function initSearch() {
             }else{
                 avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl).replace(/%{errorClasses}/g, cssClasses).replace(/%{userThumbnail}/g, "");
             }
-            avatar = "<a href='"+result.url+"'>" + avatar + "</a>";            
+            var previewUrl = result.previewUrl;
+            if(previewUrl == null) {
+              previewUrl = result.url;
+            }
+            avatar = "<a href=\""+previewUrl+"\">" + avatar + "</a>";
             break;        	        	
         case "document":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64Template" + type}).join(" ");
