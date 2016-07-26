@@ -228,7 +228,7 @@
 	  def docSummary = uicomponent.getDocSummary();
 		def docDownloadUrl = uicomponent.getDownloadLink();
 		def docOpenUri = uicomponent.getCurrentDocOpenUri();
-		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({docId:'" + currentNode.getUUID() + "', docPath:'" + currentNode.getPath() + "', downloadUrl:'', openUrl:'" + docOpenUri + "', author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + ownerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {postTime:'" + activityPostedTime + "', status: '" + activityStatus + "', likes: " + identityLikesNum + "}})})";
+		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({docId:'" + currentNode.getUUID() + "', docPath:'" + currentNode.getPath() + "', downloadUrl:'', openUrl:'" + docOpenUri + "', author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + ownerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + activityPostedTime + "', status: '" + activityStatus + "', likes: " + identityLikesNum + "}})})";
 		def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
 		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
 	  def size = uicomponent.getSize(currentNode);
