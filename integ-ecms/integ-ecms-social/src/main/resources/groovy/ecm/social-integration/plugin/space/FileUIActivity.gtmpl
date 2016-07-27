@@ -244,25 +244,6 @@
 
   // END ECMS
  %>
-<script language="JavaScript">
-
-  function loadImageOnError(objImage) {
-    var tryCount = objImage.getAttribute("retryCount");
-    if (tryCount ==null) return;
-    tryCount = parseInt(tryCount);
-    if (tryCount>15) return;
-    tryCount++;
-    if (eXo.ecm.WCMUtils != null && objImage != null) {
-      if (objImage.parentNode != null && objImage.parentNode != null)
-        eXo.ecm.WCMUtils.loadImageForFileActivityCallback(objImage.parentNode);
-    }else {
-      objImage.setAttribute("retryCount", tryCount);
-      setTimeout(function(){loadImageOnError(objImage)},300);
-    }
-  }
-  
- 
-</script>
 
 <div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 	<% uiform.begin() %>
@@ -342,8 +323,8 @@
 		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);
 		                        
 									   %>
-										 <span><img src="$thumbnailImage" retryCount="0" onerror="loadImageOnError(this);" alt="$activityContentTitle" /></span>
-									   <span style="display: none;"><i class="<%=classIconName%>"></i></span>
+										 <span><img src="$thumbnailImage" onerror="var self = this; require(['SHARED/wcm-utils'], function(wcmutil) { wcmutil.WCMUtils.loadFallbackImage(self); });" alt="$activityContentTitle" /></span>
+									   <span class="fallbackImage" style="display: none;"><i class="<%=classIconName%>"></i></span>
 										 <button class="btn btn-large btn-block doc-preview-thumbnail-footer" type="button"><%=_ctx.appRes("SocialIntegration.preview");%></button>
 									 </div>
 									 <%
@@ -355,8 +336,8 @@
 		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;
 		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);               
 		                 %>
-		                 <span><img src="$pdfThumbnailImage" retryCount="0"  onerror="loadImageOnError(this);" class="pdfImageBorder"/></span>
-		                 <span style="display: none;"><i class="<%=classIconName%>"></i></span>
+		                 <span><img src="$pdfThumbnailImage" onerror="var self = this; require(['SHARED/wcm-utils'], function(wcmutil) { wcmutil.WCMUtils.loadFallbackImage(self); });" class="pdfImageBorder"/></span>
+		                 <span class="fallbackImage" style="display: none;"><i class="<%=classIconName%>"></i></span>
 										 <button class="btn btn-large btn-block doc-preview-thumbnail-footer" type="button"><%=_ctx.appRes("SocialIntegration.preview");%></button>
 		               </div><%
 		            } else if(fileComponent != null) { %>
