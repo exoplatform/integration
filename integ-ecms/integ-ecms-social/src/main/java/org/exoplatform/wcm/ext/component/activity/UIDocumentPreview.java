@@ -6,6 +6,7 @@ import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
+import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
@@ -129,8 +130,12 @@ public class UIDocumentPreview extends UIContainer {
       uiPopupWindow.setShow(false);
       uiPopupWindow.setUIComponent(null);
       UIPopupContainer popupContainer = uiPopupWindow.getAncestorOfType(UIPopupContainer.class);
-      event.getRequestContext().addUIComponentToUpdateByAjax(uiDocumentPreview.getBaseUIActivity());
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+      WebuiRequestContext requestContext = event.getRequestContext();
+      if(uiDocumentPreview.getBaseUIActivity() != null
+              && requestContext.getUIApplication().findComponentById(uiDocumentPreview.getBaseUIActivity().getId()) != null) {
+        requestContext.addUIComponentToUpdateByAjax(uiDocumentPreview.getBaseUIActivity());
+      }
+      requestContext.addUIComponentToUpdateByAjax(popupContainer);
     }
   }
 }
