@@ -81,11 +81,11 @@
                   def openLink = uicomponent.getLinkInDocumentsApp();
                  %>
                     <div class="previewBtn">
-                        <div class="downloadBtn">
-                            <a href="$downloadLink"><i class="uiIconDownload uiIconWhite"></i>&nbsp;<%=_ctx.appRes("File.view.label.download")%></a>
-                        </div>
                         <div class="openBtn">
                             <a href="$openLink"><i class="uiIconGotoFolder uiIconWhite"></i>&nbsp;<%=_ctx.appRes("File.view.label.open-in-documents")%></a>
+                        </div>
+                        <div class="downloadBtn">
+                            <a href="$downloadLink"><i class="uiIconDownload uiIconWhite"></i>&nbsp;<%=_ctx.appRes("File.view.label.download")%></a>
                         </div>
                     </div>
                 <%
