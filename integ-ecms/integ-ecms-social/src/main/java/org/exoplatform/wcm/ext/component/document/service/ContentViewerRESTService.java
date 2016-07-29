@@ -42,6 +42,7 @@ import org.exoplatform.ecm.resolver.JCRResourceResolver;
 import org.exoplatform.groovyscript.text.BindingContext;
 import org.exoplatform.portal.application.PortalApplication;
 import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.portal.webui.workspace.UIPortalApplication;
 import org.exoplatform.resolver.ResourceResolver;
@@ -120,7 +121,9 @@ public class ContentViewerRESTService implements ResourceContainer {
       PortalApplication application = webAppController.getApplication(PortalApplication.PORTAL_APPLICATION_ID);
       PortalRequestContext requestContext = new PortalRequestContext(application, controllerContext, org.exoplatform.portal.mop.SiteType.PORTAL.toString(), "", "", null);
       WebuiRequestContext.setCurrentInstance(requestContext);
-      requestContext.setUIApplication(new UIPortalApplication());
+      UIPortalApplication uiApplication = new UIPortalApplication();
+      uiApplication.setCurrentSite(new UIPortal());
+      requestContext.setUIApplication(uiApplication);
       requestContext.setWriter(writer);
 
       uiDocViewer.processRender(requestContext);
