@@ -82,7 +82,9 @@
                  %>
                     <div class="previewBtn">
                         <div class="openBtn">
-                            <a href="$openLink"><i class="uiIconGotoFolder uiIconWhite"></i>&nbsp;<%=_ctx.appRes("File.view.label.open-in-documents")%></a>
+                            <a href="$openLink" rel="tooltip" data-placement="top" title="<%=_ctx.appRes("File.view.label.open-in-documents-tooltip"); %>">
+                              <i class="uiIconGotoFolder uiIconWhite"></i>&nbsp;<%=_ctx.appRes("File.view.label.open-in-documents")%>
+                            </a>
                         </div>
                         <div class="downloadBtn">
                             <a href="$downloadLink"><i class="uiIconDownload uiIconWhite"></i>&nbsp;<%=_ctx.appRes("File.view.label.download")%></a>
