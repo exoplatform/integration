@@ -353,10 +353,11 @@
 							<%} else {%>
 							  <span>$activityStatus</span>
 							<%}%>
-								<div class="fileBreadCrumb" title="$docFolderRelativePath" rel="tooltip" data-placement="bottom">
+								<div class="fileBreadCrumb">
 									<div class="fixedBreadCrumb"></div>
 									<div class="fileBreadCrumbContent">
 										<span>
+											<div class="fileBreadCrumbWrapper" title="$docFolderRelativePath" rel="tooltip" data-placement="bottom">
 									<%
 										def folderIndex = 0;
 										for (String folderName : docFolderBreadCrumb.keySet()) {
@@ -366,6 +367,7 @@
 									<% 	} %>
 										<a href="<%=docFolderBreadCrumb.get(folderName)%>">$folderName</a>
 									<% } %>
+											</div>
 										</span>
 									</div>
 								</div>
