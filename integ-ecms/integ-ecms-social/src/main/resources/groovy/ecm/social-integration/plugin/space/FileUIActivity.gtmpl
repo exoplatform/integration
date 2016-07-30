@@ -228,7 +228,7 @@
 	  def docSummary = uicomponent.getDocSummary();
 		def docDownloadUrl = uicomponent.getDownloadLink();
 		def docOpenUri = uicomponent.getCurrentDocOpenUri();
-		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({docId:'" + currentNode.getUUID() + "', docPath:'" + currentNode.getPath() + "', docTitle:'" + currentNode.getName() + "', downloadUrl:'', openUrl:'" + docOpenUri + "', author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + ownerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + activityPostedTime + "', status: '" + activityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + "}})})";
+		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({docId:'" + currentNode.getUUID() + "', docPath:'" + currentNode.getPath() + "', docTitle:'" + currentNode.getName() + "', downloadUrl:'', openUrl:'" + docOpenUri + "', author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + ownerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + activityPostedTime + "'," + (activityStatus != null ? " status: '" + activityStatus + "'," : "") + " liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + "}})})";
 		def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
 		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
 	  def size = uicomponent.getSize(currentNode);
