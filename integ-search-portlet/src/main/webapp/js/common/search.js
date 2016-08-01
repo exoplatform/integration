@@ -243,6 +243,11 @@ window.initSearch = function initSearch() {
         case "document":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64Template" + type}).join(" ");
           avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+          var previewUrl = result.previewUrl;
+          if(previewUrl == null) {
+            previewUrl = result.url;
+          }
+          avatar = "<a href=\""+previewUrl+"\">" + avatar + "</a>";
           break;
 
         case "page":

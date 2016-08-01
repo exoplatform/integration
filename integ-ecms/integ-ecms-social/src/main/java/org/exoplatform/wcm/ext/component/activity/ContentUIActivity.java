@@ -17,11 +17,14 @@
 package org.exoplatform.wcm.ext.component.activity;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.cms.documents.DocumentService;
+import org.exoplatform.services.cms.drives.DriveData;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
@@ -139,6 +142,8 @@ public class ContentUIActivity extends BaseUIActivity {
   private Node               contentNode;
 
   private NodeLocation       nodeLocation;
+
+  private DriveData          docDrive;
   
   private String             docTypeName;
   private String             docTitle;
@@ -153,6 +158,8 @@ public class ContentUIActivity extends BaseUIActivity {
 
   private String activityTitle;
 
+  private DocumentService documentService;
+
   public String getActivityTitle() {
     return activityTitle;
   }
@@ -163,6 +170,7 @@ public class ContentUIActivity extends BaseUIActivity {
 
   public ContentUIActivity() throws Exception {
     super();
+    documentService = CommonsUtils.getService(DocumentService.class);
   }
 
   public String getContentLink() {
@@ -416,19 +424,42 @@ public class ContentUIActivity extends BaseUIActivity {
   public String[] getSystemCommentTitle(Map<String, String> activityParams) {
     return Utils.getSystemCommentTitle(activityParams);
   }
-  public String getViewLink() {
-    String viewLink = StringUtils.EMPTY;
-    Node data = getContentNode();
-    try {
-      if (isContentSupportPreview(data)) {
-        viewLink = this.event("ViewDocument", this.getId(), StringUtils.EMPTY);
-      } else {
-        viewLink = org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), false, false);
+
+  public DriveData getDocDrive() {
+    if(nodeLocation != null && docDrive == null) {
+      try {
+        docDrive = documentService.getDriveOfNode(nodeLocation.getPath());
+      } catch(Exception e) {
+        LOG.error("Cannot get drive of node " + nodeLocation.getPath() + " : " + e.getMessage(), e);
       }
-      return viewLink;
-    } catch (Exception e) {
-      return viewLink;
     }
+
+    return docDrive;
+  }
+
+  public String getCurrentDocOpenUri() {
+    String uri = "";
+
+    if(nodeLocation != null) {
+      uri = getDocOpenUri(nodeLocation.getPath());
+    }
+
+    return uri;
+  }
+
+  public String getDocOpenUri(String nodePath) {
+    String uri = "";
+
+    if(nodePath != null) {
+      try {
+        uri = documentService.getLinkInDocumentsApp(nodePath, getDocDrive());
+      } catch(Exception e) {
+        LOG.error("Cannot get document open URI of node " + nodePath + " : " + e.getMessage(), e);
+        uri = "";
+      }
+    }
+
+    return uri;
   }
 
   public String getEditLink() {
@@ -466,6 +497,10 @@ public class ContentUIActivity extends BaseUIActivity {
     } else {
       return false;
     }
+  }
+
+  public String getActivityStatus(){
+    return this.getMessage();
   }
   
   public static class ViewDocumentActionListener extends EventListener<ContentUIActivity> {

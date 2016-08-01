@@ -136,15 +136,33 @@
   } else {
     docVersion = null;
   }
-  
-  def viewLink = uicomponent.getViewLink();
+
+  def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
+  def activityStatus = uicomponent.getActivityStatus();
+
+  activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
+
+  def ownerIdentity = uicomponent.ownerIdentity;
+  if (uicomponent.isUserActivity()) {
+    ownerUri = LinkProvider.getUserProfileUri(ownerIdentity.getRemoteId());
+    ownerAvatar = ownerIdentity.profile.avatarUrl;
+    ownerName = ownerIdentity.profile.fullName;
+    if (!ownerAvatar) ownerAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
+  } else {
+    Space space = Utils.getSpaceService().getSpaceByPrettyName(ownerIdentity.remoteId);
+    ownerUri = Utils.getSpaceHomeURL(space);
+    ownerAvatar = space.avatarUrl;
+    ownerName = space.displayName;
+    if (!ownerAvatar) ownerAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+  }
+
   def commentList = uicomponent.getComments();
   def allComments = uicomponent.getAllComments();
   if (allComments) {
     labelShowAllComments = labelShowAllComments.replace("{0}", allComments.size() + "");
     labelHideAllComments = labelHideAllComments.replace("{0}", allComments.size() + "");
   }
-  
+
   def totalComments = allComments.size();
   def commentsHidden = allComments.size()-commentList.size();
   def displayedIdentityLikes = uicomponent.getDisplayedIdentityLikes();
@@ -159,6 +177,10 @@
   if (displayedIdentityLikes != null) {
     identityLikesNum = displayedIdentityLikes.length;
   }
+
+  def docOpenUri = uicomponent.getCurrentDocOpenUri();
+  def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'', openUrl:'" + docOpenUri + "', isWebContent: true}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + ownerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + activityPostedTime + "'," + (activityStatus != null ? " status: '" + activityStatus + "'," : "") + " liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + "}})})";
+
   def commentListStatus = uicomponent.getCommentListStatus();
   def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
   def likesDisplayed = uicomponent.isAllLoaded();
@@ -177,7 +199,7 @@
            .require("SHARED/jquery", "gj").addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
-  def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
+
   def listPeopleLikeBlockClass = "", listPeopleBGClass = "";
 
   if (!likesDisplayed) {
@@ -211,22 +233,6 @@
   if (!labelLikes) {
    //hides diplayPeopleBG
    listPeopleBGClass = "displayNone";
-  }
-
-  activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
-
-  def ownerIdentity = uicomponent.ownerIdentity;
-  if (uicomponent.isUserActivity()) {
-    ownerUri = LinkProvider.getUserProfileUri(ownerIdentity.getRemoteId());
-    ownerAvatar = ownerIdentity.profile.avatarUrl;
-    ownerName = ownerIdentity.profile.fullName;
-    if (!ownerAvatar) ownerAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
-  } else {
-    Space space = Utils.getSpaceService().getSpaceByPrettyName(ownerIdentity.remoteId);
-    ownerUri = Utils.getSpaceHomeURL(space);
-    ownerAvatar = space.avatarUrl;
-    ownerName = space.displayName;
-    if (!ownerAvatar) ownerAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
   }
 %>
 <div class="activityStream uiContentActivity" id="activityContainer${activity.id}">
@@ -278,12 +284,12 @@
 				</div><!--end heading-->
         <div class="uiBox roundedBottom introBox contentShare">	
           <div class="clearfix">
-            <div class="pull-left">
+            <div class="pull-left" onclick="$docPreviewUri">
               <i class="uiIcon64x64Template<%=uicomponent.getDocIconClass();%>"></i>
             </div>
             <div class="text">
               <%if (currentNode) {%>
-                <a class="linkTitle" title="$activityContentTitle" href="$viewLink"> $activityContentTitle </a>
+                <a class="linkTitle" title="$activityContentTitle" href="$docOpenUri"> $activityContentTitle </a>
               <%} else {%>
                 <span>$docTitle</span>
               <%}%>
@@ -336,7 +342,7 @@
           <% }%>	
           <ul class="pull-left statusAction">
             <% if (uicomponent.isContentSupportPreview(currentNode)) { %>
-              <li><a href="$viewLink"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
+              <li><a href="$docPreviewUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
             <% }%>
           </ul>
         </div><!--end actionBar-->
