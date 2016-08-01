@@ -20,6 +20,7 @@ window.initSearch = function initSearch() {
         </div> \
       </div> \
     ";
+
     var IMAGE_AVATAR_TEMPLATE = " \
       <span class=\"avatar pull-left %{userThumbnail}\"> \
         <img src=\"%{imageSrc}\" onerror=\"onImgError(this, '%{errorClasses}')\"> \
@@ -29,6 +30,20 @@ window.initSearch = function initSearch() {
     var CSS_AVATAR_TEMPLATE = " \
       <span class=\"avatar pull-left\"> \
         <i class=\"%{cssClass}\"'></i> \
+      </span> \
+    ";
+
+    var DOC_IMAGE_AVATAR_TEMPLATE = " \
+      <span class=\"avatar pull-left %{userThumbnail}\"> \
+        <img src=\"%{imageSrc}\" onerror=\"onImgError(this, '%{errorClasses}')\"> \
+        <button class=\"btn btn-large btn-block doc-preview-thumbnail-footer\" type=\"button\">Preview</button> \
+      </span> \
+    ";
+
+    var DOC_CSS_AVATAR_TEMPLATE = " \
+      <span class=\"avatar pull-left\"> \
+        <i class=\"%{cssClass}\"'></i> \
+        <button class=\"btn btn-large btn-block doc-preview-thumbnail-footer\" type=\"button\">Preview</button> \
       </span> \
     ";
 
@@ -230,19 +245,19 @@ window.initSearch = function initSearch() {
         case "file":
             var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64" + type}).join(" ");
             if (result.imageUrl == null || result.imageUrl == ""){
-            	avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+            	avatar = DOC_CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
             }else{
-                avatar = IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl).replace(/%{errorClasses}/g, cssClasses).replace(/%{userThumbnail}/g, "");
+                avatar = DOC_IMAGE_AVATAR_TEMPLATE.replace(/%{imageSrc}/g, result.imageUrl).replace(/%{errorClasses}/g, cssClasses).replace(/%{userThumbnail}/g, "");
             }
             var previewUrl = result.previewUrl;
             if(previewUrl == null) {
               previewUrl = result.url;
             }
             avatar = "<a href=\""+previewUrl+"\">" + avatar + "</a>";
-            break;        	        	
+            break;
         case "document":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64Template" + type}).join(" ");
-          avatar = CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+          avatar = DOC_CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
           var previewUrl = result.previewUrl;
           if(previewUrl == null) {
             previewUrl = result.url;
