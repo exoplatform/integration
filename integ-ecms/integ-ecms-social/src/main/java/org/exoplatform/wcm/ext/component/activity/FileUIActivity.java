@@ -18,23 +18,21 @@ package org.exoplatform.wcm.ext.component.activity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
+import javax.jcr.*;
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
@@ -42,10 +40,18 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.PortalContainerInfo;
 import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.cms.documents.DocumentService;
+import org.exoplatform.services.cms.drives.DriveData;
+import org.exoplatform.services.cms.drives.ManageDriveService;
+import org.exoplatform.services.cms.drives.impl.ManageDriveServiceImpl;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
@@ -59,6 +65,7 @@ import org.exoplatform.social.plugin.doc.UIDocActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
+import org.exoplatform.web.CacheUserProfileFilter;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -156,7 +163,11 @@ public class FileUIActivity extends BaseUIActivity{
   private Node               contentNode;
 
   private NodeLocation       nodeLocation;
-  
+
+  private DriveData          docDrive;
+
+  private Map<String, String> folderPathWithLinks;
+
   private String             docTypeName;
   private String             docTitle;
   private String             docVersion;
@@ -169,8 +180,13 @@ public class FileUIActivity extends BaseUIActivity{
   private boolean            isSymlink;
   private String activityTitle;
 
+  private DateTimeFormatter dateTimeFormatter;
+
+  private DocumentService documentService;
+
   public FileUIActivity() throws Exception {
     super();
+    documentService = CommonsUtils.getService(DocumentService.class);
     addChild(UIPopupContainer.class, null, "UIDocViewerPopupContainer");
   }
 
@@ -322,11 +338,39 @@ public class FileUIActivity extends BaseUIActivity{
   public String getDocumentSummary(Map<String, String> activityParams) {
     return activityParams.get(FileUIActivity.DOCUMENT_SUMMARY);
   }
-  public String getUserFullName(String userId) {
-    ExoContainer container = ExoContainerContext.getCurrentContainer();
-    IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
 
-    return identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, true).getProfile().getFullName();
+  public String getUserFullName(String userId) {
+    if(StringUtils.isEmpty(userId)) {
+      return "";
+    }
+
+    // if the requested user is the connected user, get the fullname from the ConversationState
+    ConversationState currentUserState = ConversationState.getCurrent();
+    Identity currentUserIdentity = currentUserState.getIdentity();
+    if(currentUserIdentity != null) {
+      String currentUser = currentUserIdentity.getUserId();
+      if (currentUser != null && currentUser.equals(userId)) {
+        User user = (User) currentUserState.getAttribute(CacheUserProfileFilter.USER_PROFILE);
+        if(user != null) {
+          return user.getDisplayName();
+        }
+      }
+    }
+
+    // if the requested user if not the connected user, fetch it from the organization service
+    ExoContainer container = ExoContainerContext.getCurrentContainer();
+    OrganizationService organizationService = container.getComponentInstanceOfType(OrganizationService.class);
+
+    try {
+      User user = organizationService.getUserHandler().findUserByName(userId);
+      if(user != null) {
+        return user.getDisplayName();
+      }
+    } catch (Exception e) {
+      LOG.error("Cannot get information of user " + userId + " : " + e.getMessage(), e);
+    }
+
+    return "";
   }
   
   protected String getSize(Node node) {
@@ -396,7 +440,49 @@ public class FileUIActivity extends BaseUIActivity{
     }
   	return imageHeight;
   }
-  
+
+  protected String getDocUpdateDate(Node node) {
+    String docUpdatedDate = "";
+    try {
+      if(contentNode != null && contentNode.hasProperty("exo:lastModifiedDate")) {
+        String rawDocUpdatedDate = contentNode.getProperty("exo:lastModifiedDate").getString();
+        LocalDateTime parsedDate = LocalDateTime.parse(rawDocUpdatedDate, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        docUpdatedDate = parsedDate.format(getDateTimeFormatter());
+      }
+    } catch (RepositoryException e) {
+      LOG.error("Cannot get document updated date : " + e.getMessage(), e);
+    }
+    return docUpdatedDate;
+  }
+
+  /**
+   * Get a localized DateTimeFormatter
+   * @return A localized DateTimeFormatter
+   */
+  protected DateTimeFormatter getDateTimeFormatter() {
+    if(dateTimeFormatter == null) {
+      dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+      Locale locale = WebuiRequestContext.getCurrentInstance().getLocale();
+      if (locale != null) {
+        dateTimeFormatter = dateTimeFormatter.withLocale(locale);
+      }
+    }
+    return dateTimeFormatter;
+  }
+
+  protected String getDocAuthor(Node node) {
+    String docAuthor = "";
+    try {
+      if(contentNode != null && contentNode.hasProperty("exo:owner")) {
+        String docAuthorUsername = contentNode.getProperty("exo:owner").getString();
+        docAuthor = getUserFullName(docAuthorUsername);
+      }
+    } catch (RepositoryException e) {
+      LOG.error("Cannot get document author : " + e.getMessage(), e);
+    }
+    return docAuthor;
+  }
+
   protected int getVersion(Node node) {
   	String currentVersion = null;
   	try {
@@ -501,6 +587,120 @@ public class FileUIActivity extends BaseUIActivity{
 
   public String[] getSystemCommentTitle(Map<String, String> activityParams) {
     return org.exoplatform.wcm.ext.component.activity.listener.Utils.getSystemCommentTitle(activityParams);
+  }
+
+  public DriveData getDocDrive() {
+    if(nodeLocation != null && docDrive == null) {
+      try {
+        docDrive = documentService.getDriveOfNode(nodeLocation.getPath());
+      } catch(Exception e) {
+        LOG.error("Cannot get drive of node " + nodeLocation.getPath() + " : " + e.getMessage(), e);
+      }
+    }
+
+    return docDrive;
+  }
+
+  public Map<String, String> getDocFolderRelativePathWithLinks() {
+    if(folderPathWithLinks == null) {
+      folderPathWithLinks = new LinkedHashMap<>();
+      Map<String, String> reversedFolderPathWithLinks = new LinkedHashMap<>();
+
+      DriveData drive = getDocDrive();
+      if (drive != null) {
+        try {
+          String driveHomePath = drive.getResolvedHomePath();
+
+          // if the drive is the Personal Documents drive, we must handle the special case of the Public symlink
+          String drivePublicFolderHomePath = null;
+          if (ManageDriveServiceImpl.PERSONAL_DRIVE_NAME.equals(drive.getName())) {
+            drivePublicFolderHomePath = driveHomePath.replace("/" + ManageDriveServiceImpl.PERSONAL_DRIVE_PRIVATE_FOLDER_NAME, "/" + ManageDriveServiceImpl.PERSONAL_DRIVE_PUBLIC_FOLDER_NAME);
+          }
+
+          // calculate the relative path to the drive by browsing up the content node path
+          Node parentContentNode = getContentNode().getParent();
+          while (parentContentNode != null) {
+            String parentPath = parentContentNode.getPath();
+            // exit condition is check here instead of in the while condition to avoid
+            // retrieving the path several times and because there is some logic to handle
+            if (parentContentNode.getPath().equals("/") || parentPath.equals(driveHomePath)) {
+              // we are at the root of the workspace or at the root of the drive
+              break;
+            } else if (drivePublicFolderHomePath != null && parentPath.equals(drivePublicFolderHomePath)) {
+              // this is a special case : the root of the Public folder of the Personal Documents drive
+              // in this case we add the Public folder in the path
+              reversedFolderPathWithLinks.put(ManageDriveServiceImpl.PERSONAL_DRIVE_PUBLIC_FOLDER_NAME, getDocOpenUri(parentPath));
+              break;
+            }
+
+            String folderName;
+            // title is used if it exists, otherwise the name is used
+            if (parentContentNode.hasProperty("exo:title")) {
+              folderName = parentContentNode.getProperty("exo:title").getString();
+            } else {
+              folderName = parentContentNode.getName();
+            }
+            reversedFolderPathWithLinks.put(folderName, getDocOpenUri(parentPath));
+
+            parentContentNode = parentContentNode.getParent();
+          }
+        } catch (RepositoryException re) {
+          LOG.error("Cannot retrieve path of doc " + nodeLocation.getPath() + " : " + re.getMessage(), re);
+        }
+      }
+
+      if(reversedFolderPathWithLinks.size() > 1) {
+        List<Map.Entry<String, String>> entries = new ArrayList<>(reversedFolderPathWithLinks.entrySet());
+        for(int i = entries.size()-1; i >= 0; i--) {
+          Map.Entry<String, String> entry = entries.get(i);
+          folderPathWithLinks.put(entry.getKey(), entry.getValue());
+        }
+      } else {
+        folderPathWithLinks = reversedFolderPathWithLinks;
+      }
+    }
+
+    return folderPathWithLinks;
+  }
+
+  public String getDocFolderRelativePath() {
+    StringBuilder folderRelativePath = new StringBuilder();
+
+    for(String folderName : getDocFolderRelativePathWithLinks().keySet()) {
+      folderRelativePath.append(folderName).append("/");
+    }
+
+    if(folderRelativePath.length() > 1) {
+      // remove the last /
+      folderRelativePath.deleteCharAt(folderRelativePath.length() - 1);
+    }
+
+    return folderRelativePath.toString();
+  }
+
+  public String getCurrentDocOpenUri() {
+    String uri = "";
+
+    if(nodeLocation != null) {
+      uri = getDocOpenUri(nodeLocation.getPath());
+    }
+
+    return uri;
+  }
+
+  public String getDocOpenUri(String nodePath) {
+    String uri = "";
+
+    if(nodePath != null) {
+      try {
+        uri = documentService.getLinkInDocumentsApp(nodePath, getDocDrive());
+      } catch(Exception e) {
+        LOG.error("Cannot get document open URI of node " + nodePath + " : " + e.getMessage(), e);
+        uri = "";
+      }
+    }
+
+    return uri;
   }
 
   public String getViewLink() {

@@ -77,13 +77,20 @@
                     </div>
                 <%}%>
                 <%
-                if (uicomponent.isMediaFile(contentNode)) {
                   def downloadLink = org.exoplatform.ecm.webui.utils.Utils.getDownloadRestServiceLink(contentNode);
+                  def openLink = uicomponent.getLinkInDocumentsApp();
                  %>
-                     <div class="downloadBtn">
-                        <a href="$downloadLink"><i class="uiIconDownload uiIconWhite"></i>&nbsp;<%=_ctx.appRes("File.view.label.download")%></a>
+                    <div class="previewBtn">
+                        <div class="openBtn">
+                            <a href="$openLink" rel="tooltip" data-placement="top" title="<%=_ctx.appRes("File.view.label.open-in-documents-tooltip"); %>">
+                              <i class="uiIconGotoFolder uiIconWhite"></i>&nbsp;<%=_ctx.appRes("File.view.label.open-in-documents")%>
+                            </a>
+                        </div>
+                        <div class="downloadBtn">
+                            <a href="$downloadLink"><i class="uiIconDownload uiIconWhite"></i>&nbsp;<%=_ctx.appRes("File.view.label.download")%></a>
+                        </div>
                     </div>
-                <%}
+                <%
               }
             %>
         </div>

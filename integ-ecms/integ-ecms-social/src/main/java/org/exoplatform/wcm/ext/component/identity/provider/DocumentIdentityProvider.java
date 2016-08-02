@@ -18,14 +18,14 @@ package org.exoplatform.wcm.ext.component.identity.provider;
 
 import javax.jcr.RepositoryException;
 
+import org.exoplatform.services.cms.documents.DocumentService;
+import org.exoplatform.services.cms.documents.model.Document;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.identity.IdentityProvider;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.model.Profile;
-import org.exoplatform.wcm.ext.component.document.model.Document;
-import org.exoplatform.wcm.ext.component.document.service.DocumentService;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
@@ -36,7 +36,7 @@ public class DocumentIdentityProvider extends IdentityProvider<Document> {
   private static final Log LOG = ExoLogger.getLogger(DocumentIdentityProvider.class);
   public static final String NAME       = "document";
 
-  private DocumentService    docService = WCMCoreUtils.getService(DocumentService.class);
+  private DocumentService docService = WCMCoreUtils.getService(DocumentService.class);
 
   @Override
   public Identity createIdentity(Document doc) {

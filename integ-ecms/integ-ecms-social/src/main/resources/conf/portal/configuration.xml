@@ -3,10 +3,6 @@
 	xsi:schemaLocation="http://www.exoplaform.org/xml/ns/kernel_1_1.xsd http://www.exoplaform.org/xml/ns/kernel_1_1.xsd"
 	xmlns="http://www.exoplaform.org/xml/ns/kernel_1_1.xsd">
 	<component profiles="default,all,social">
-		<key>org.exoplatform.wcm.ext.component.document.service.DocumentService</key>
-		<type>org.exoplatform.wcm.ext.component.document.service.DocumentServiceImpl</type>
-	</component>
-	<component profiles="default,all,social">
 		<type>org.exoplatform.wcm.ext.component.identity.provider.DocumentIdentityProvider</type>
 	</component>
 	<component>
@@ -29,7 +25,7 @@
 		</component-plugin>
 	</external-component-plugins>
 	<external-component-plugins>
-		<target-component>org.exoplatform.wcm.ext.component.document.service.DocumentService</target-component>
+		<target-component>org.exoplatform.services.cms.documents.DocumentService</target-component>
 	</external-component-plugins>
 	
 	
