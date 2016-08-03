@@ -21,8 +21,10 @@ import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.commons.api.notification.plugin.AbstractNotificationChildPlugin;
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.template.TemplateUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
+import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 
 public class PollActivityChildPlugin extends AbstractNotificationChildPlugin {
@@ -30,8 +32,11 @@ public class PollActivityChildPlugin extends AbstractNotificationChildPlugin {
   public static final String ID = "ks-poll:spaces";
   private ExoSocialActivity activity = null;
 
-  public PollActivityChildPlugin(InitParams initParams) {
+  private ForumService forumService;
+
+  public PollActivityChildPlugin(InitParams initParams, ForumService forumService) {
     super(initParams);
+    this.forumService = forumService;
   }
 
   @Override
@@ -48,6 +53,8 @@ public class PollActivityChildPlugin extends AbstractNotificationChildPlugin {
         activity = ForumActivityUtils.getActivityManager().getParentActivity(activity);
       }
       templateContext.put("ACTIVITY", activity.getTitle());
+      templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() +
+              forumService.getTopicByPath(activity.getTemplateParams().get("PollLink"), false).getLink());
       //
       String content = TemplateUtils.processGroovy(templateContext);
       return content;

@@ -54,6 +54,7 @@ public class CalendarActivityChildPlugin extends AbstractNotificationChildPlugin
         activity = activityM.getParentActivity(activity);  
       }
       templateContext.put("ACTIVITY", activity.getTitle());
+      templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + activity.getTemplateParams().get("EventLink"));
       //
 //      String eventType = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_TYPE_KEY);
 //      String eventId = getActivityParamValue(CalendarSpaceActivityPublisher.EVENT_ID_KEY);
