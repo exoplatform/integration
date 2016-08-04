@@ -653,7 +653,7 @@ public class Utils {
    */
   public static String getContentLink(Node node) throws Exception {
     DocumentService documentService = CommonsUtils.getService(DocumentService.class);
-    return documentService.getLinkInDocumentsApp(node.getPath());
+    return documentService.getShortLinkInDocumentsApp(node.getSession().getWorkspace().getName(), ((NodeImpl)node).getInternalIdentifier());
   }
 
   /**
