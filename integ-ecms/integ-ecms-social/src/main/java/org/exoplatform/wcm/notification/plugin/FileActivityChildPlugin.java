@@ -41,6 +41,7 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.PortalContainerInfo;
+import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
@@ -91,7 +92,6 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
   private String             baseURI;
   private String             docName;
 
-
   public FileActivityChildPlugin(InitParams initParams) {
     super(initParams);
   }
@@ -123,16 +123,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       
       // File uploaded to Content Explorer hasn't MESSAGE field
       String message = templateParams.get(MESSAGE) != null ? NotificationUtils.processLinkTitle(templateParams.get(MESSAGE)) : "";
-      String nodePath = nodeLocation.getPath();
-      String[] splitedPath = nodePath.split("/");
-      String contentWorkspace = (workspace != null) ? workspace : templateParams.get("workspace");
-      if (splitedPath[1].equals("Groups") && splitedPath[2].equals("spaces")) {
-        templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + LinkProvider.getRedirectSpaceUri(getSpaceDocuments(splitedPath[3]) +
-                "?path=" + capitalizeFirstLetter(contentWorkspace) + nodePath + "&notification=true"));
-      } else {
-        templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + LinkProvider.getRedirectUri("documents" +
-                "?path=" + capitalizeFirstLetter(contentWorkspace) + nodePath + "&notification=true"));
-      }
+      templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + activity.getTemplateParams().get("contenLink"));
       templateContext.put("ACTIVITY_TITLE", message);
       templateContext.put("DOCUMENT_TITLE", this.documentTitle);
       templateContext.put("SUMMARY", Utils.getSummary(currentNode));

@@ -422,11 +422,9 @@ public class UIDocActivity extends BaseUIActivity {
    * @return String the viewer link
    * @throws RepositoryException
    */
-  public static String getContentLink(Node node) throws RepositoryException {
-    String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration()
-                                                                                  .getName();
-    String workspace = node.getSession().getWorkspace().getName();
-    return repository + '/' + workspace + node.getPath();
+  public static String getContentLink(Node node) throws Exception {
+    DocumentService documentService = CommonsUtils.getService(DocumentService.class);
+    return documentService.getLinkInDocumentsApp(node.getPath());
   }
   
   /**

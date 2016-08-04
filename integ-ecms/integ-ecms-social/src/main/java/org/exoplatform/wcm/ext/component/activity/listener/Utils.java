@@ -18,11 +18,13 @@ package org.exoplatform.wcm.ext.component.activity.listener;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ActivityTypeUtils;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.cms.BasePath;
+import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.cms.templates.TemplateService;
@@ -649,11 +651,9 @@ public class Utils {
    * @return String the viewer link
    * @throws RepositoryException
    */
-  public static String getContentLink(Node node) throws RepositoryException {
-    String repository = ((ManageableRepository) node.getSession().getRepository()).getConfiguration()
-                                                                                  .getName();
-    String workspace = node.getSession().getWorkspace().getName();
-    return repository + '/' + workspace + node.getPath();
+  public static String getContentLink(Node node) throws Exception {
+    DocumentService documentService = CommonsUtils.getService(DocumentService.class);
+    return documentService.getLinkInDocumentsApp(node.getPath());
   }
 
   /**

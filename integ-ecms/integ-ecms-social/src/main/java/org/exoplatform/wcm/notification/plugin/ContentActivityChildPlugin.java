@@ -27,6 +27,7 @@ import org.exoplatform.commons.notification.template.TemplateUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 
@@ -55,15 +56,7 @@ public class ContentActivityChildPlugin extends AbstractNotificationChildPlugin 
         activity = activityM.getParentActivity(activity);
       }
       templateContext.put("ACTIVITY", activity.getTitle());
-      Map<String, String> templateParams = activity.getTemplateParams();
-      String workspace = templateParams.get("workspace");
-      String nodePath = templateParams.get("nodePath");
-      String[] splitedPath = nodePath.split("/");
-      if (splitedPath[1].equals("Groups") && splitedPath[2].equals("spaces")) {
-        templateContext.put("ACTIVITY_URL", getContentSpacePath(workspace, nodePath));
-      } else {
-        templateContext.put("ACTIVITY_URL", getContentPath(workspace, nodePath));
-      }
+      templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + activity.getTemplateParams().get("contenLink"));
 
       //
 
