@@ -154,7 +154,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
         UIFormSelectBox formSelectBox = event.getSource().getChild(UIFormSelectBox.class);
         if(formSelectBox != null && formSelectBox.getValue() != null) perm = event.getSource().getChild(UIFormSelectBox.class).getValue();
         for(String space : spaces){
-          if(space.equals("")) continue;
+          if(space == null || space.equals("")) continue;
           else service.publicDocumentToSpace(space,node,message,perm);
         }
         event.getSource().getAncestorOfType(UIJCRExplorer.class).cancelAction() ;
