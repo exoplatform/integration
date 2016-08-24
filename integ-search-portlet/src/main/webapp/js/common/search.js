@@ -9,14 +9,16 @@ window.initSearch = function initSearch() {
     var SERVER_OFFSET = 0;
     var LIMIT, RESULT_CACHE, CACHE_OFFSET, NUM_RESULTS_RENDERED;
     var formLoading;
+    var searchCount = 0;
 
     var SEARCH_RESULT_TEMPLATE = " \
       <div class=\"resultBox clearfix %{type}\"> \
         %{avatar} \
         <div class=\"content\"> \
           <h6><a href=\"%{url}\">%{title}</a>%{rating}</h6> \
+          %{space} \
+          <div class=\"detail\" style='margin:10px'>%{detail}</div> \
           <p class=\"excerpt\">%{excerpt}</p> \
-          <div class=\"detail\">%{detail}</div> \
         </div> \
       </div> \
     ";
@@ -206,12 +208,28 @@ window.initSearch = function initSearch() {
       });
       return selectedSites.join(",");
     }
+    
+    function getSpaceName(nodePath) {
+      var groupPrefix = "/Groups/spaces/";
+      if (!nodePath.startsWith(groupPrefix)) {
+        return false;
+      }
+      var path = nodePath.substring(groupPrefix.length);
+      return path.substring(0, path.indexOf("/"));
+    }
+    
+    function getFolderName(nodePath) {
+      var i = nodePath.lastIndexOf("/");
+      return nodePath.substring(i + 1); 
+    }
 
     function renderSearchResult(result) {
       var query = $("#txtQuery").val();
       var terms = query.split(/\s+/g);
       var avatar = "";
       var rating = "";
+      var count = searchCount ++;
+      var space = "<div id='space_place_holder_" + count +"'/>";
 
       switch(result.type) {
         case "event":
@@ -254,6 +272,7 @@ window.initSearch = function initSearch() {
               previewUrl = result.url;
             }
             avatar = "<a href=\""+previewUrl+"\">" + avatar + "</a>";
+            
             break;
         case "document":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64Template" + type}).join(" ");
@@ -305,9 +324,49 @@ window.initSearch = function initSearch() {
         replace(/%{excerpt}/g, (result.excerpt||"").escapeHtml().highlight(terms)).
         replace(/%{detail}/g, (result.detail||"").highlight(terms)).
         replace(/%{avatar}/g, avatar).
-        replace(/%{rating}/g, rating);
+        replace(/%{rating}/g, rating).
+        replace(/%{space}/g, space);
 
       $("#result").append(html);
+      if (result.type == "file") {
+          var spaceName = getSpaceName(result.nodePath);
+          if (spaceName) {
+            $.ajax({
+              dataType: "json",
+              url: "/" + eXo.env.portal.rest + "/private/" + eXo.env.portal.containerName + "/social/spaces/spaceInfo/?spaceName=" + spaceName
+            }).done(function(data) {
+              var sName = data.displayName;
+              var imgSrc = data.imageSource;
+              var sUri = data.url;
+              spaceHtml =  "<div>" +
+                             "<a class='spaceName' rel='tooltip' data-placement='bottom' title='" + sName + "' href='" + sUri + "' style='color:black'>" +
+                               "<img title='' alt='' src='" + imgSrc + "' class='spaceIcon avatarMini' /><strong>&nbsp;" + sName + "</strong>" +
+                             "</a>" +
+                             "<div id='file_path_place_holder" + count + "' style='display:inline'></div>" + 
+                           "</div>";
+              $("#space_place_holder_" + count).html(spaceHtml);
+              $.ajax({
+                dataType: "json",
+                url: "/" + eXo.env.portal.rest + "/document/docOpenUri?nodePath=" + result.nodePath  
+              }).done(function(data) {
+                  var nodePathsHtml = "";
+                  var keys = [];
+                  $.each(data, function(key, value) {
+                    keys.push(key);
+                  });
+                  keys.sort();
+                  for (var i = 1; i < keys.length - 1; i++) {
+                      var key = keys[i];
+                      var value = data[key];
+                      nodePathsHtml += "<icon class='uiIconArrowRight' style='margin:5px'></icon>" +
+                      "<a href='" + value + "' style='color:black'><strong>" + getFolderName(key) + "</strong></a>";
+                  }
+                  //console.log(nodePathsHtml);
+                  $("#file_path_place_holder" + count).html(nodePathsHtml);
+              });
+            });
+          }
+      }
     }
 
     function clearResultPage(){
