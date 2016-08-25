@@ -363,7 +363,11 @@ window.initSearch = function initSearch() {
                   }
                   //console.log(nodePathsHtml);
                   $("#file_path_place_holder" + count).html(nodePathsHtml);
+              }).fail(function () {
+                  console.log("Can not get document open uri!");
               });
+            }).fail(function () {
+              console.log("Can not get space info!");
             });
           }
       }
