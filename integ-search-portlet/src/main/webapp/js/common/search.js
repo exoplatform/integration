@@ -43,9 +43,9 @@ window.initSearch = function initSearch() {
     ";
 
     var DOC_CSS_AVATAR_TEMPLATE = " \
-      <span class=\"avatar pull-left\"> \
-        <i class=\"%{cssClass}\"'></i> \
-        <button class=\"btn btn-large btn-block doc-preview-thumbnail-footer\" type=\"button\">Preview</button> \
+      <span class=\"avatar pull-left\" style='position:relative'> \
+        <i class=\"%{cssClass} main\" style='position:relative'></i> \
+        <div class='preview'><i class='uiIconWhite uiIconSearch' style='color:white'></i></div> \
       </span> \
     ";
 
