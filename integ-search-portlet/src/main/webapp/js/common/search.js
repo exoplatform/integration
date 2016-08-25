@@ -36,10 +36,10 @@ window.initSearch = function initSearch() {
     ";
 
     var DOC_IMAGE_AVATAR_TEMPLATE = " \
-      <span class=\"avatar pull-left %{userThumbnail}\"> \
-        <img src=\"%{imageSrc}\" onerror=\"onImgError(this, '%{errorClasses}')\"> \
-        <button class=\"btn btn-large btn-block doc-preview-thumbnail-footer\" type=\"button\">Preview</button> \
-      </span> \
+      <div class=\"avatar pull-left %{userThumbnail}\" style='position:relative'> \
+        <img class='main' src=\"%{imageSrc}\" onerror=\"onImgError(this, '%{errorClasses}')\" style='position:relative'> \
+        <div class='preview'><i class='uiIconWhite uiIconSearch' style='color:white'></i></div> \
+      </div> \
     ";
 
     var DOC_CSS_AVATAR_TEMPLATE = " \
