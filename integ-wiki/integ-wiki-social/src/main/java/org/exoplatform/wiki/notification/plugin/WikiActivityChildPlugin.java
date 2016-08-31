@@ -54,6 +54,7 @@ public class WikiActivityChildPlugin extends AbstractNotificationChildPlugin {
         activity = activityM.getParentActivity(activity);
       }
       templateContext.put("ACTIVITY", activity.getTitle());
+      templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + activity.getTemplateParams().get("page_url"));
 
       //
       String content = TemplateUtils.processGroovy(templateContext);

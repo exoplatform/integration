@@ -25,7 +25,9 @@ import org.exoplatform.commons.api.notification.plugin.AbstractNotificationChild
 import org.exoplatform.commons.api.notification.service.template.TemplateContext;
 import org.exoplatform.commons.notification.template.TemplateUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 
@@ -54,6 +56,8 @@ public class ContentActivityChildPlugin extends AbstractNotificationChildPlugin 
         activity = activityM.getParentActivity(activity);
       }
       templateContext.put("ACTIVITY", activity.getTitle());
+      templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + activity.getTemplateParams().get("contenLink"));
+
       //
 
       //
@@ -80,5 +84,20 @@ public class ContentActivityChildPlugin extends AbstractNotificationChildPlugin 
   @Override
   public boolean isValid(NotificationContext ctx) {
     return false;
+  }
+
+  private String getContentPath(String workspace, String nodepath) throws Exception {
+    return CommonsUtils.getCurrentDomain() + "/" + PortalContainer.getCurrentPortalContainerName() + "/documents?path="
+            + capitalizeFirstLetter(workspace) + nodepath + "&notification=true";
+  }
+
+  private String getContentSpacePath(String workspace, String nodepath) throws Exception {
+    String space = nodepath.split("/")[3];
+    return CommonsUtils.getCurrentDomain() + "/" + PortalContainer.getCurrentPortalContainerName() + "/g/:spaces:"
+            + space + "/" +space + "/documents?path=" + capitalizeFirstLetter(workspace) + nodepath + "&notification=true";
+  }
+
+  private String capitalizeFirstLetter(String str) throws Exception {
+    return str.substring(0, 1).toUpperCase() + str.substring(1);
   }
 }
