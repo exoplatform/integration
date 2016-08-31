@@ -218,11 +218,6 @@ window.initSearch = function initSearch() {
       return path.substring(0, path.indexOf("/"));
     }
     
-    function getFolderName(nodePath) {
-      var i = nodePath.lastIndexOf("/");
-      return nodePath.substring(i + 1); 
-    }
-
     function renderSearchResult(result) {
       var query = $("#txtQuery").val();
       var terms = query.split(/\s+/g);
@@ -359,7 +354,7 @@ window.initSearch = function initSearch() {
                       var key = keys[i];
                       var value = data[key];
                       nodePathsHtml += "<icon class='uiIconArrowRight' style='margin:5px'></icon>" +
-                      "<a href='" + value + "' style='color:black'><strong>" + getFolderName(key) + "</strong></a>";
+                      "<a href='" + value[1] + "' style='color:black'><strong>" + value[0] + "</strong></a>";
                   }
                   //console.log(nodePathsHtml);
                   $("#file_path_place_holder" + count).html(nodePathsHtml);
