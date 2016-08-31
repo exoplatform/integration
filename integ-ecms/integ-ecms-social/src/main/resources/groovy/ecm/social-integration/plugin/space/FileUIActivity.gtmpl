@@ -179,7 +179,8 @@
    listPeopleBGClass = "displayNone";
   }
 
-  activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
+  activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime); 
+  def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'");
 
   def ownerIdentity = uicomponent.ownerIdentity;
   if (uicomponent.isUserActivity()) {
@@ -229,7 +230,7 @@
 		def docDownloadUrl = uicomponent.getDownloadLink();
 		def docOpenUri = uicomponent.getCurrentDocOpenUri();
 		def fileType = org.exoplatform.services.cms.impl.Utils.getFileType(currentNode);
-		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({doc: {id:'" + currentNode.getUUID() + "', fileType: '" + fileType +"', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + ownerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + activityPostedTime + "'," + (activityStatus != null ? " status: '" + activityStatus + "'," : "") + " liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + "}})})";
+		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({doc: {id:'" + currentNode.getUUID() + "', fileType: '" + fileType +"', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + ownerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "'," + (activityStatus != null ? " status: '" + activityStatus + "'," : "") + " liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + "}})})";
 		def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
 		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
 	  def size = uicomponent.getSize(currentNode);
