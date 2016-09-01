@@ -45,7 +45,8 @@ public class PollSpaceActivityPublisher extends PollEventListener{
   public static final String POLL_APP_ID            = "ks-poll:spaces";
   public static final String POLL_COMMENT_APP_ID    = "poll:spaces";
   private static final Log   LOG                    = ExoLogger.getExoLogger(PollSpaceActivityPublisher.class);
-  public static final String POLL_PARENT          = "PollLink";
+  public static final String POLL_PARENT            = "PollLink";
+  public static final String POLL_LINK              = "Link";
   public static final String UPDATE_POLL_TITLE_ID   = "update_poll";
   public static final String SPACE_GROUP_ID         = "SpaceGroupId";
   
@@ -123,6 +124,7 @@ public class PollSpaceActivityPublisher extends PollEventListener{
         }
         templateParams.put(POLL_PARENT, poll.getParentPath());
         templateParams.put(POLL_ID, poll.getId());
+        templateParams.put(POLL_LINK, poll.getLink());
         newActivity.setTemplateParams(templateParams);
         getManager().saveActivityNoReturn(pollOwnerIdentity, newActivity);
         
