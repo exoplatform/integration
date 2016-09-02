@@ -18,15 +18,16 @@ package org.exoplatform.wcm.notification.plugin;
 
 import org.exoplatform.container.xml.InitParams;
 
+
 public class ShareFileActivityChildPlugin extends FileActivityChildPlugin {
-  public static final String ID                           = "sharefiles:spaces";
+    public static final String ID                           = "sharefiles:spaces";
 
-  public ShareFileActivityChildPlugin(InitParams initParams) {
-    super(initParams);
-  }
+    public ShareFileActivityChildPlugin(InitParams initParams) {
+        super(initParams);
+    }
 
-  @Override
-  public String getId() {
-    return ID;
-  }
+    @Override
+    public String getId() {
+        return ID;
+    }
 }

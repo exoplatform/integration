@@ -35,9 +35,9 @@ public class ContentMovedActivityListener extends Listener<Node, String>{
     Node currentNode = event.getSource();
     String target = event.getData();
     if(!currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE))
-      Utils.postActivity(currentNode, CONTENT_MOVED_BUNDLE, false, true, target);
+      Utils.postActivity(currentNode, CONTENT_MOVED_BUNDLE, false, true, target, "");
     else 
-    	Utils.postFileActivity(currentNode, FILE_MOVED_BUNDLE, false, true, target);
+    	Utils.postFileActivity(currentNode, FILE_MOVED_BUNDLE, false, true, target, "");
   }
 
 }

@@ -16,6 +16,8 @@
  */
 package org.exoplatform.wcm.ext.component.document.service;
 
+import org.exoplatform.container.ExoContainer;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.ecm.utils.permission.PermissionUtil;
 import org.exoplatform.services.cms.BasePath;
 import org.exoplatform.services.cms.link.LinkManager;
@@ -30,12 +32,17 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+import org.exoplatform.social.common.service.SocialServiceContext;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.storage.cache.SocialStorageCacheService;
 import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.picocontainer.Startable;
 
+import javax.jcr.LoginException;
+import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -64,10 +71,10 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
   }
 
   /* (non-Javadoc)
-   * @see org.exoplatform.ecm.webui.component.explorer.popup.service.IShareDocumentService#publicDocumentToSpace(java.lang.String, javax.jcr.Node, java.lang.String, java.lang.String)
+   * @see org.exoplatform.ecm.webui.component.explorer.popup.service.IShareDocumentService#publishDocumentToSpace(java.lang.String, javax.jcr.Node, java.lang.String, java.lang.String)
    */
   @Override
-  public String publicDocumentToSpace(String space, Node currentNode, String comment,String perm) {
+  public String publishDocumentToSpace(String space, Node currentNode, String comment,String perm) {
     Node rootSpace = null;
     Node shared = null;
     try {
@@ -91,13 +98,13 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
       if(PermissionUtil.canChangePermission(currentNode)){
         if(!currentNode.getPath().contains(space)) {
-          setPermission(currentNode, space, tempPerms.split(","));
+          setSpacePermission(currentNode, space, tempPerms.split(","));
         }
       }else if(PermissionUtil.canRead(currentNode)){
         SessionProvider systemSessionProvider = SessionProvider.createSystemProvider();
         Session systemSession = systemSessionProvider.getSession(session.getWorkspace().getName(), repository);
         Node _node= (Node)systemSession.getItem(currentNode.getPath());
-        setPermission(_node, space, tempPerms.split(","));
+        setSpacePermission(_node, space, tempPerms.split(","));
       }
       currentNode.getSession().save();
       Node link = linkManager.createLink(shared, currentNode);
@@ -106,9 +113,9 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       try {
         ExoSocialActivity activity = null;
         if(currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)){
-          activity = Utils.createShareActivity(link, "", Utils.SHARE_FILE, comment);
+          activity = Utils.createShareActivity(link, "", Utils.SHARE_FILE, comment, perm);
         }else{
-          activity = Utils.createShareActivity(link,"", Utils.SHARE_CONTENT,comment);
+          activity = Utils.createShareActivity(link,"", Utils.SHARE_CONTENT,comment, perm);
         }
         link.save();
         return activity.getId();
@@ -124,6 +131,144 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
         LOG.error(e.getMessage(), e);
     }
     return "";
+  }
+
+  /* (non-Javadoc)
+   * @see org.exoplatform.ecm.webui.component.explorer.popup.service.IShareDocumentService#publishDocumentToUser(java.lang.String, javax.jcr.Node, java.lang.String, java.lang.String)
+   */
+  @Override
+  public void publishDocumentToUser(String user, Node currentNode, String comment,String perm) {
+    Node rootUser = null;
+    Node shared = null;
+    try {
+      SessionProvider sessionProvider = sessionProviderService.getSystemSessionProvider(null);
+      ManageableRepository repository = repoService.getCurrentRepository();
+      Session session = sessionProvider.getSession(repository.getConfiguration().getDefaultWorkspaceName(), repository);
+      //add symlink to destination user
+      NodeHierarchyCreator nodeCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
+      nodeCreator.getJcrPath(BasePath.CMS_USERS_PATH);
+
+      rootUser = (Node) session.getItem(nodeCreator.getJcrPath(BasePath.CMS_USERS_PATH) + getPrivatePath(user));
+      rootUser = rootUser.getNode("Documents");
+      if(!rootUser.hasNode("Shared")){
+        shared = rootUser.addNode("Shared");
+      }else{
+        shared = rootUser.getNode("Shared");
+      }
+      if(currentNode.isNodeType(NodetypeConstant.EXO_SYMLINK)) currentNode = linkManager.getTarget(currentNode);
+      //Update permission
+      String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
+      if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
+      if(PermissionUtil.canChangePermission(currentNode)){
+        if(!currentNode.getPath().contains(user)) {
+          setUserPermission(currentNode, user, tempPerms.split(","));
+        }
+      }else if(PermissionUtil.canRead(currentNode)){
+        SessionProvider systemSessionProvider = SessionProvider.createSystemProvider();
+        Session systemSession = systemSessionProvider.getSession(session.getWorkspace().getName(), repository);
+        Node _node= (Node)systemSession.getItem(currentNode.getPath());
+        setUserPermission(_node, user, tempPerms.split(","));
+      }
+      currentNode.getSession().save();
+      Node link = linkManager.createLink(shared, currentNode);
+      rootUser.save();
+    } catch (RepositoryException e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
+    } catch (Exception e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
+    }
+  }
+
+  /* (non-Javadoc)
+   * @see org.exoplatform.ecm.webui.component.explorer.popup.service.IShareDocumentService#unpublishDocumentToUser(java.lang.String, javax.jcr.ExtendedNode)
+   */
+  @Override
+  public void unpublishDocumentToUser(String user, ExtendedNode node) {
+    Node rootUser = null;
+    Node sharedNode = null;
+    try {
+      SessionProvider sessionProvider = sessionProviderService.getSystemSessionProvider(null);
+      ManageableRepository repository = repoService.getCurrentRepository();
+      Session session = sessionProvider.getSession(repository.getConfiguration().getDefaultWorkspaceName(), repository);
+      //remove symlink from destination user
+      NodeHierarchyCreator nodeCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
+
+      rootUser = (Node) session.getItem(nodeCreator.getJcrPath(BasePath.CMS_USERS_PATH) + getPrivatePath(user));
+      rootUser = rootUser.getNode("Documents");
+      sharedNode = rootUser.getNode("Shared");
+      sharedNode.getNode(node.getName()).remove();
+
+      removeUserPermission(node, user);
+
+      node.getSession().save();
+      rootUser.save();
+
+      }  catch (RepositoryException e) {
+      if (LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
+    } catch (Exception e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
+    }
+  }
+
+  /* (non-Javadoc)
+   * @see org.exoplatform.ecm.webui.component.explorer.popup.service.IShareDocumentService#unpublishDocumentToSpace(java.lang.String, javax.jcr.ExtendedNode)
+   */
+  @Override
+  public void unpublishDocumentToSpace(String space, ExtendedNode node) {
+    Node rootSpace = null;
+    Node sharedNode = null;
+    try {
+      SessionProvider sessionProvider = sessionProviderService.getSystemSessionProvider(null);
+      ManageableRepository repository = repoService.getCurrentRepository();
+      Session session = sessionProvider.getSession(repository.getConfiguration().getDefaultWorkspaceName(), repository);
+      //remove symlink to destination space
+      NodeHierarchyCreator nodeCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
+
+      rootSpace = (Node) session.getItem(nodeCreator.getJcrPath(BasePath.CMS_GROUPS_PATH) + space);
+      rootSpace = rootSpace.getNode("Documents");
+      sharedNode = rootSpace.getNode("Shared");
+      sharedNode.getNode(node.getName()).remove();
+
+      removeSpacePermission(node, space);
+
+      node.getSession().save();
+      rootSpace.save();
+
+    } catch (RepositoryException e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
+    } catch (Exception e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
+    }
+  }
+
+  private void removeSpacePermission(ExtendedNode node, String space) {
+    try {
+      node.removePermission("*:" + space);
+      node.save();
+    } catch (RepositoryException e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
+    }
+  }
+
+  private void removeUserPermission(ExtendedNode node, String user) {
+    try {
+      node.removePermission(user);
+      node.save();
+    } catch (RepositoryException e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
+    }
+  }
+
+  private String getPrivatePath(String user) {
+    return "/" + user.substring(0, 1) + "___/" + user.substring(0, 2) + "___/" + user.substring(0, 3) + "___/" + user + "/Private";
   }
 
   private String getMimeType(Node node) {
@@ -149,12 +294,28 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
    * @param permissions
    * @throws Exception
    */
-  private void setPermission(Node currentNode, String memberShip, String[] permissions) throws Exception{
+  private void setSpacePermission(Node currentNode, String memberShip, String[] permissions) throws Exception{
     ExtendedNode node = (ExtendedNode) currentNode;
     if(node.canAddMixin(MIX_PRIVILEGEABLE))node.addMixin(MIX_PRIVILEGEABLE);
     node.setPermission("*:" + memberShip, permissions);
     node.save();
   }
+
+  /**
+   * Grant view for parent folder when share a document
+   * We need grant assess right for parent in case editing the shared documents
+   * @param currentNode
+   * @param username
+   * @param permissions
+   * @throws Exception
+   */
+  private void setUserPermission(Node currentNode, String username, String[] permissions) throws Exception{
+    ExtendedNode node = (ExtendedNode) currentNode;
+    if(node.canAddMixin(MIX_PRIVILEGEABLE))node.addMixin(MIX_PRIVILEGEABLE);
+    node.setPermission(username, permissions);
+    node.save();
+  }
+
   @Override
   public void start() {
     // TODO Auto-generated method stub

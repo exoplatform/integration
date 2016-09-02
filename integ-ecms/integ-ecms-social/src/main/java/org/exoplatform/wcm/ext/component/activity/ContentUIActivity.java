@@ -119,6 +119,12 @@ public class ContentUIActivity extends BaseUIActivity {
 
   public static final String NODE_UUID          = "nodeUUID";
 
+  public static final String PERMISSION          = "permission";
+
+  public static final String COMMENT          = "comment";
+
+  public static final String THUMBNAIL          = "thumbnail";
+
   private String             contentLink;
 
   private String             message;

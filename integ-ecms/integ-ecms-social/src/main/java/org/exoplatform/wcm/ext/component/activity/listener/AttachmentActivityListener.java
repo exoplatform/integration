@@ -37,6 +37,6 @@ public class AttachmentActivityListener extends Listener<Node, Node> {
     String eventName = event.getEventName(); //Consider the attachment is added or removed
     String messageBundle = eventName.equals(ActivityCommonService.ATTACH_ADDED_ACTIVITY)?ATTACH_ADDED_BUNDLE:ATTACH_REMOVED_BUNDLE;
     Node currentNode = event.getSource();
-    Utils.postActivity(currentNode, messageBundle, false, true, "");
+    Utils.postActivity(currentNode, messageBundle, false, true, "", "");
   }
 }

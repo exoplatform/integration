@@ -54,7 +54,7 @@ public class FileRemovePropertyActivityListener extends Listener<Node, String> {
     for (int i=0; i< consideredFieldCount; i++) {
       if (propertyName.equals(removedField[i])) {
       	resourceBundle = bundleMessage[i];      	      	
-      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, "");
+      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, "", "");
         break;
       }
     }

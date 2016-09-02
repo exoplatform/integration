@@ -163,24 +163,24 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     				if(itemsRemoved.length() > 0 && itemsAdded.length() > 0){ 
     					resourceBundle = (removedCount > 1) ?
     							"SocialIntegration.messages.removeMultiCreator" : "SocialIntegration.messages.removeCreator";
-    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsRemoved);
+    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsRemoved, "");
     					
     					resourceBundle = (lstNew.size() > 1) ?
     							"SocialIntegration.messages.multiCreator" : "SocialIntegration.messages.singleCreator";
-    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
+    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue, "");
     	        break;
     				}      				  
     				else if(itemsRemoved.length() > 0) {
     					resourceBundle = (removedCount > 1) ?
     							"SocialIntegration.messages.removeMultiCreator" : "SocialIntegration.messages.removeCreator";
     					newValue = itemsRemoved;
-    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
+    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue, "");
     	        break;
     				}
     				else if(itemsAdded.length() > 0) {
     					resourceBundle = (commentValue.split(",").length > 1) ?
     							"SocialIntegration.messages.multiCreator" : "SocialIntegration.messages.singleCreator";
-    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
+    					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue, "");
     	        break;
     				}     			
       		}
@@ -217,29 +217,29 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       				if(itemsRemoved.length() > 0 && itemsAdded.length() > 0){  					
       					resourceBundle = (removedCount > 1) ?
       							"SocialIntegration.messages.removeMultiSource" : "SocialIntegration.messages.removeSource";
-      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsRemoved);
+      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsRemoved, "");
       					
       					resourceBundle = (addedCount > 1) ?
       							"SocialIntegration.messages.addMultiSource" : "SocialIntegration.messages.addSource";
-      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsAdded);
+      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, itemsAdded, "");
       	        break;
       				}      				  
       				else if(itemsRemoved.length() > 0) {
       					resourceBundle = (removedCount > 1) ?
       							"SocialIntegration.messages.removeMultiSource" : "SocialIntegration.messages.removeSource";
       					newValue = itemsRemoved;
-      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
+      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue, "");
       	        break;
       				}
       				else if(itemsAdded.length() > 0) {
       					resourceBundle = (addedCount > 1) ?
       							"SocialIntegration.messages.addMultiSource" : "SocialIntegration.messages.addSource";
       					newValue = itemsAdded;
-      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue);
+      					Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, newValue, "");
       	        break;
       				}      			
       		}
-      		Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
+      		Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue, "");
 	        break;
       	} else if(!propertyName.equals(NodetypeConstant.EXO_LANGUAGE)){ //Remove the property
       		resourceBundle = bundleRemoveMessage[i];      		
@@ -254,7 +254,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
       		if(propertyName.equals(NodetypeConstant.DC_SOURCE) || propertyName.equals(NodetypeConstant.DC_CREATOR)) {
       			commentValue = oldValue.replaceAll(ActivityCommonService.METADATA_VALUE_SEPERATOR, ", ");
       		}      		
-      		Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
+      		Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue, "");
           break;
       	} else break;
       	        
@@ -274,7 +274,7 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     	resourceBundle = portletRequestContext.getApplicationResourceBundle().getString(resourceBundle);
     	resourceBundle = resourceBundle.replace("{0}", dcProperty);
     	resourceBundle = resourceBundle.replace("{1}", commentValue);
-    	Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue);
+    	Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue, "");
     }
   }
 }

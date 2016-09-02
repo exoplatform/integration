@@ -1,0 +1,44 @@
+<%
+import org.exoplatform.ecm.webui.component.explorer.popup.actions.UIShareDocuments;
+import org.exoplatform.ecm.webui.component.explorer.popup.actions.UIWhoHasAccess;
+
+String SHARECONTENT_BUNDLE_LOCATION = _ctx.appRes("locale.extension.SocialIntegration");
+String SHARE_OPTION_CANVEW          = _ctx.appRes("UIShareDocuments.label.option.read");
+String SHARE_OPTION_CANMODIFY       = _ctx.appRes("UIShareDocuments.label.option.modify");
+String SHARE_PERMISSION_VIEW        = "read";
+String SHARE_PERMISSION_MODIFY      = "modify";
+
+String name = uicomponent.getName();
+
+UIWhoHasAccess uiWhoHasAccess = uicomponent.getParent();
+
+
+%>
+
+<div id="AccessEntry">
+    <% String fullName = uiWhoHasAccess.isSpace(name) ? null : uiWhoHasAccess.getFullName(name); %>
+    <% String displayed = uiWhoHasAccess.isSpace(name) ? uicomponent.getPrettySpaceName(name) : uiWhoHasAccess.getUserName(name); %>
+    <% String avatar = uiWhoHasAccess.getAvatar(name); %>
+    <div class="avatarXSmall pull-left">
+        <img src="$avatar" alt="$displayed"/>
+    </div>
+    <div id="entry" >
+        <% if (fullName != null) { %>
+            <a href="<%=uiWhoHasAccess.getProfileUrl(name)%>" ><label>$fullName ($displayed)</label></a>
+        <% } else {%>
+            <a href="<%=uicomponent.getSpaceUrl(name)%>" ><label>$displayed</label></a>
+        <% } %>
+    </div>
+    <% if (uicomponent.getPermission().equals(SHARE_PERMISSION_MODIFY)) { %>
+        <select class="selectbox pull-right input-medium" onchange="<%=uicomponent.event("ChangeEntry")%>">
+            <a><i class="uiIconEdit uiIconLightGray"></i><option selected="selected" value="modify">$SHARE_OPTION_CANMODIFY</option></a>
+            <a><i class="uiIconWatch uiIconLightGray"></i><option value="read">$SHARE_OPTION_CANVEW</option></a>
+        </select>
+    <% } else { %>
+        <select class="selectbox pull-right input-medium" onchange="<%=uicomponent.event("ChangeEntry")%>">
+            <a><i class="uiIconWatch uiIconLightGray"></i><option selected="selected" value="read">$SHARE_OPTION_CANVEW</option></a>
+            <a><i class="uiIconEdit uiIconLightGray"></i><option value="modify">$SHARE_OPTION_CANMODIFY</option></a>
+        </select>
+    <% } %>
+    <div class="deleteEntry pull-right"><a class="actionIcon" onclick="<%=uicomponent.event("RemoveEntry")%>"><i class="uiIconDelete uiIconLightGray"></i></a></div>
+</div>

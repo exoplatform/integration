@@ -40,8 +40,8 @@ public class ContentCreateActivityListener extends Listener<Object, Node> {
   public void onEvent(Event<Object, Node> event) throws Exception {
     Node currentNode = event.getData();    
     if(!currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE))
-      Utils.postActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY, true, false, "");
+      Utils.postActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY, true, false, "", "");
     else
-    	Utils.postFileActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY, true, false, "");
+    	Utils.postFileActivity(currentNode, RESOURCE_BUNDLE_KEY_CREATED_BY, true, false, "", "");
   }
 }

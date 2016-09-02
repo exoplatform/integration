@@ -16,6 +16,8 @@
  */
 package org.exoplatform.wcm.ext.component.document.service;
 
+import org.exoplatform.services.jcr.core.ExtendedNode;
+
 import javax.jcr.Node;
 
 /**
@@ -38,7 +40,40 @@ public interface IShareDocumentService {
    * @param  perm permission of destination space's member on origin node
    * @return      return false if have issue
    */
-  public String publicDocumentToSpace(String space, Node node, String comment, String perm);
-  //public abstract Node getNodeByPath(String repoName,String nodePath);
+  public String publishDocumentToSpace(String space, Node node, String comment, String perm);
 
+  /**
+   * Share a document to a user
+   * <p>
+   * There is a symbolic link of origin document will be created
+   * at Private/Documents/Shared folder of destination user.
+   *
+   * @param  user  destination user to share file with
+   * @param  node file will be shared
+   * @param  comment message attach with share activity
+   * @param  perm permission of destination space's member on origin node
+   */
+  public void publishDocumentToUser(String user, Node node, String comment, String perm);
+
+  /**
+   * Unshare a document to a user
+   * <p>
+   * The symbolic link of origin document will be removed
+   * from Private/Documents/Shared folder of destination user.
+   *
+   * @param  username  destination user to share file with
+   * @param  node file will be shared
+   */
+  void unpublishDocumentToUser(String username, ExtendedNode node);
+
+  /**
+   * Unshare a document to a space
+   * <p>
+   * The symbolic link of origin document will be removed
+   * from Documents/Shared folder of destination space.
+   *
+   * @param  space  destination user to share file with
+   * @param  node file will be shared
+   */
+  void unpublishDocumentToSpace(String space, ExtendedNode node);
 }
