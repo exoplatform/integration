@@ -224,7 +224,12 @@ window.initSearch = function initSearch() {
       var avatar = "";
       var rating = "";
       var count = searchCount ++;
-      var space = "<div id='space_place_holder_" + count +"'/>";
+      var space ="<div id='space_search_result_breadcrumb_container_" + count +"' style='white-space:nowrap'>" +
+                      "<div id='space_ellipsis_" + count +"' style='float:left;display:none'>...</div>" +
+                      "<div id='space_place_holder_container_" + count +"' style='white-space: nowrap;overflow:hidden;'>" +
+                          "<div id='space_place_holder_" + count +"' style='float:left;padding-right:20px'/>" +
+                      "</div>" +
+                  "</div>";
 
       switch(result.type) {
         case "event":
@@ -337,7 +342,7 @@ window.initSearch = function initSearch() {
                              "<a class='spaceName' rel='tooltip' data-placement='bottom' title='" + sName + "' href='" + sUri + "' style='color:black'>" +
                                "<img title='' alt='' src='" + imgSrc + "' class='spaceIcon avatarMini' /><strong>&nbsp;" + sName + "</strong>" +
                              "</a>" +
-                             "<div id='file_path_place_holder" + count + "' style='display:inline'></div>" + 
+                             "<span id='file_path_place_holder" + count + "'></span>" + 
                            "</div>";
               $("#space_place_holder_" + count).html(spaceHtml);
               $.ajax({
@@ -358,6 +363,18 @@ window.initSearch = function initSearch() {
                   }
                   //console.log(nodePathsHtml);
                   $("#file_path_place_holder" + count).html(nodePathsHtml);
+                  console.log(count);
+                  var spaceEllipsis = $("#space_ellipsis_" + count);
+                  var breadcrumbContainer = $("#space_search_result_breadcrumb_container_" + count);
+                  var placeHolderContainer = $("#space_place_holder_container_" + count);
+                  var placeHolder = $("#space_place_holder_" + count);
+                  
+                  if (placeHolder.width() > placeHolderContainer.width()) {
+                      placeHolder.removeAttr("style");
+                      placeHolder.addClass("pull-right");
+                      placeHolder.attr('style', 'padding-right:20px');
+                      spaceEllipsis.show();
+                  }
               }).fail(function () {
                   console.log("Can not get document open uri!");
               });
