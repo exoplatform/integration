@@ -178,9 +178,9 @@ link
     %>
   </div>
 <% } else { %>
-    <div id="LinkExtensionContainer" class="uiComposerLink clearfix" style="display:<%=((uicomponent.isDisplayed)?"block":"none")%>">
-      <button id="AttachButton" class="btn pull-right" >$labelAttach</button>
+    <div id="LinkExtensionContainer" class="uiComposerLink uiGrayLightBox clearfix">
       <div class="inputLink"><% uicomponent.renderChild(UIFormStringInput.class); %></div>
+      <div class="buttonLink"><button id="AttachButton" class="btn" >$labelAttach</button></div>
     </div>
 <% } %>
 </div>
