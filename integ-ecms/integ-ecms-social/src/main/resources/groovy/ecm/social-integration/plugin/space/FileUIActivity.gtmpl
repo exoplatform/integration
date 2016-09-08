@@ -99,10 +99,6 @@
   def contentName = uicomponent.getContentName();
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
   def contentNode = uicomponent.getContentNode();
-  def docPreviewUri = uicomponent.getViewLink();
-	def docOpenUri = uicomponent.getCurrentDocOpenUri();
-	def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
-	def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
   def mimeType = uicomponent.getMimeType();
   
   //
@@ -143,7 +139,7 @@
     } """
   //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
   jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");  
-  jsManager.require("SHARED/wcm-utils", "wcmutil");      
+  jsManager.require("SHARED/wcm-utils", "wcmutil");
   
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
@@ -183,7 +179,8 @@
    listPeopleBGClass = "displayNone";
   }
 
-  activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
+  activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime); 
+  def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'");
 
   def ownerIdentity = uicomponent.ownerIdentity;
   if (uicomponent.isUserActivity()) {
@@ -230,7 +227,12 @@
 	  //ECMS declare variables - END
 	  def docTypeName = uicomponent.getDocTypeName();
 	  def docSummary = uicomponent.getDocSummary();
-	  def downloadLink = uicomponent.getDownloadLink();
+		def docDownloadUrl = uicomponent.getDownloadLink();
+		def docOpenUri = uicomponent.getCurrentDocOpenUri();
+		def fileType = org.exoplatform.services.cms.impl.Utils.getFileType(currentNode);
+		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({doc: {id:'" + currentNode.getUUID() + "', fileType: '" + fileType +"', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + ownerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "'," + (activityStatus != null ? " status: '" + activityStatus + "'," : "") + " liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + "}})})";
+		def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
+		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
 	  def size = uicomponent.getSize(currentNode);
 	  def fileSize = uicomponent.getFileSize(currentNode);
 	  def description = uicomponent.getSummary(currentNode); 
@@ -438,7 +440,7 @@
 				 	<% if(uicomponent.canEditDocument(currentNode)){%>
 						<li style="display:none;" ><a href="<%=uicomponent.event("OpenFile")%>"><i class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_$activity.id $remoteEditClass" ></i>&nbsp;$remoteEditTitle</a></li>
 				 	<%}%>
-						<li><a href="$downloadLink"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
+						<li><a href="$docDownloadUrl"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
 					 </ul>
 				</div><!--end actionBar-->
 				

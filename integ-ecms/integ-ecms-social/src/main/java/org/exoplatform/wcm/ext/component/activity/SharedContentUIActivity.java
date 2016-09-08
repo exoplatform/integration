@@ -81,7 +81,4 @@ public class SharedContentUIActivity extends ContentUIActivity {
   public SharedContentUIActivity() throws Exception {
     super();
   }
-  public String getActivityStatus(){
-    return this.getMessage();
-  }
 }

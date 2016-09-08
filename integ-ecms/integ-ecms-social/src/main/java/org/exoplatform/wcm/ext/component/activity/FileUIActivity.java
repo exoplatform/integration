@@ -703,20 +703,6 @@ public class FileUIActivity extends BaseUIActivity{
     return uri;
   }
 
-  public String getViewLink() {
-    try {
-      Node data = getContentNode();
-      if (isFileSupportPreview(data)) {
-        return this.event("ViewDocument", this.getId(), "");
-      } else {
-        return org.exoplatform.wcm.webui.Utils.getEditLink(data, false, false);
-      }
-    } catch (Exception e) {
-      LOG.error(e.getMessage(), e);
-      return StringUtils.EMPTY;
-    }
-  }
-
   public String getEditLink() {
     try {
       return org.exoplatform.wcm.webui.Utils.getEditLink(getContentNode(), true, false);

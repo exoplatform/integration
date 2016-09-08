@@ -43,23 +43,23 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
     ";*///<div class='Excerpt Ellipsis'>%{excerpt}</div> \
 
     var QUICKSEARCH_RESULT_TEMPLATE= "\
-        <div class='quickSearchResult %{type}' tabindex='%{index}' id='quickSearchResult%{index}' onkeydown='fireAEvent(event,this.id)'> \
+        <div class=\"quickSearchResult %{type}\" tabindex=\"%{index}\" id=\"quickSearchResult%{index}\" onkeydown=\"fireAEvent(event,this.id)\"> \
         %{lineResult}\
       </div>";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \    
     
     var LINE_RESULT_TEMPLATE = "\
-        <a href='%{url}'> \
-     	<i class='%{cssClass}'></i> %{title}\
+        <a href=\"%{url}\"> \
+     	<i class=\"%{cssClass}\"></i> %{title}\
      	</a>";
     
     var OTHER_RESULT_TEMPLATE  = "\
-		<a href='%{url}' class='avatarTiny'><img src='%{imageSrc}'/>%{title}</a>\
+		<a href=\"%{url}\" class=\"avatarTiny\"><img src=\"%{imageSrc}\"/>%{title}</a>\
 		";
         
     var QUICKSEARCH_TABLE_TEMPLATE=" \
-          <table class='uiGrid table table-striped  rounded-corners'> \
-            <col width='30%'> \
-            <col width='70%'> \
+          <table class=\"uiGrid table table-striped  rounded-corners\"> \
+            <col width=\"30%\"> \
+            <col width=\"70%\"> \
             %{resultRows} \
             %{messageRow} \
           </table> \
@@ -78,50 +78,50 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
 
     var QUICKSEARCH_SEE_ALL=" \
         <tr> \
-          <td colspan='2' class='message'> \
-            <a id='seeAll-" + portletId + "' class='' href='#'>"+seeAllMsg+"</a> \
+          <td colspan=\"2\" class=\"message\"> \
+            <a id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+seeAllMsg+"</a> \
           </td> \
         </tr> \
         ";
 
     var QUICKSEARCH_NO_RESULT=" \
         <tr> \
-          <td colspan='2' class='noResult'> \
-            <span id='seeAll-" + portletId + "' class='' href='#'>"+noResultMsg+" <strong>%{query}<strong></span> \
+          <td colspan=\"2\" class=\"noResult\"> \
+            <span id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+noResultMsg+" <strong>%{query}<strong></span> \
           </td> \
         </tr> \
         ";
 
     var IMAGE_AVATAR_TEMPLATE = " \
-      <span class='avatar pull-left'> \
-        <img src='%{imageSrc}'> \
+      <span class=\"avatar pull-left\"> \
+        <img src=\"%{imageSrc}\"> \
       </span> \
     ";
 
     var CSS_AVATAR_TEMPLATE = " \
-      <span class='avatar pull-left'> \
-        <i class='%{cssClass}'></i> \
+      <span class=\"avatar pull-left\"> \
+        <i class=\"%{cssClass}\"></i> \
       </span> \
     ";
 
     var EVENT_AVATAR_TEMPLATE = " \
-      <div class='calendarBox calendarBox-mini'> \
-        <div class='heading'> %{month} </div> \
-        <div class='content' style='margin-left: 0px;'> %{date} </div> \
+      <div class=\"calendarBox calendarBox-mini\"> \
+        <div class=\"heading\"> %{month} </div> \
+        <div class=\"content\" style=\"margin-left: 0px;\"> %{date} </div> \
       </div> \
     ";
 
     var TASK_AVATAR_TEMPLATE = " \
-      <i class='uiIconStatus-20-%{taskStatus}'></i> \
+      <i class=\"uiIconStatus-20-%{taskStatus}\"></i> \
     ";  
     
     var QUICKSEARCH_WAITING_TEMPLATE=" \
-        <table class='uiGrid table  table-hover table-striped  rounded-corners'> \
-          <col width='30%'> \
-          <col width='70%'> \
+        <table class=\"uiGrid table  table-hover table-striped  rounded-corners\"> \
+          <col width=\"30%\"> \
+          <col width=\"70%\"> \
 	        <tr> \
-	          <td colspan='2' class='noResult'> \
-	            <span id='seeAll-" + portletId + "' class='' href='#'>"+searching+" </span> \
+	          <td colspan=\"2\" class=\"noResult\"> \
+	            <span id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+searching+" </span> \
 	          </td> \
 	        </tr> \
         </table> \
@@ -281,9 +281,12 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
           break;
 
         case "file":
-	    	var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon16x16" + type}).join(" ");
-	    	line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
-	    	break;
+          var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon16x16" + type}).join(" ");
+          line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
+          if(result.previewUrl != null) {
+            result.url = result.previewUrl;
+          }
+          break;
         case "document":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon16x16Template" + type}).join(" ");
     	  line = LINE_RESULT_TEMPLATE.replace(/%{cssClass}/g, cssClasses);

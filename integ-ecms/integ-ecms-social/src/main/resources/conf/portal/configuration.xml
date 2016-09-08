@@ -9,6 +9,9 @@
 		<key>org.exoplatform.wcm.ext.component.document.service.IShareDocumentService</key>
 		<type>org.exoplatform.wcm.ext.component.document.service.ShareDocumentService</type>
 	</component>
+	<component>
+		<type>org.exoplatform.wcm.ext.component.document.service.ContentViewerRESTService</type>
+	</component>
 	<external-component-plugins>
 		<target-component> org.exoplatform.social.core.manager.IdentityManager</target-component>
 		<component-plugin profiles="all">
