@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.exoplatform.integration</groupId>
   <artifactId>integ</artifactId>
-  <version>4.4.x-SNAPSHOT</version>
+  <version>4.4.0-M14</version>
   <packaging>pom</packaging>
   <name>eXo Integration</name>
   <modules>
@@ -25,7 +25,7 @@
   <scm>
     <connection>scm:git:git://github.com/exoplatform/integration.git</connection>
     <developerConnection>scm:git:git@github.com:exoplatform/integration.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>4.4.0-M14</tag>
     <url>http://fisheye.exoplatform.org/browse/integration</url>
   </scm>
   <properties>
