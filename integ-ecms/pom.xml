@@ -8,7 +8,7 @@
   </parent>
   <artifactId>integ-ecms</artifactId>
   <packaging>pom</packaging>
-  <name>eXo Integration - Content</name>
+  <name>eXo PLF:: Integration - Content</name>
   <modules>
     <module>integ-ecms-social</module>
   </modules>

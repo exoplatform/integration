@@ -9,7 +9,7 @@
   <artifactId>integ-search-portlet</artifactId>
   <!-- we don't put war due to juzu packaging with assembly -->
   <packaging>jar</packaging>
-  <name>eXo Integration - Search - Portlet</name>
+  <name>eXo PLF:: Integration - Search - Portlet</name>
   <description>Integration search portlet</description>
   <dependencies>
     <dependency>

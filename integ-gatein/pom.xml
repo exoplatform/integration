@@ -8,7 +8,7 @@
   </parent>
   <artifactId>integ-gatein</artifactId>
   <packaging>pom</packaging>
-  <name>eXo Integration - GateIn</name>
+  <name>eXo PLF:: Integration - GateIn</name>
   <modules>
     <!-- MODULES -->
   </modules>

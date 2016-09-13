@@ -8,7 +8,7 @@
   </parent>
   <artifactId>integ-forum-social</artifactId>
   <packaging>jar</packaging>
-  <name>eXo Social - Forum Activities</name>
+  <name>eXo PLF:: Social - Forum Activities</name>
   <description>Forum with Social activity</description>
   <dependencies>
     <dependency>

@@ -8,7 +8,7 @@
   </parent>
   <artifactId>integ-calendar</artifactId>
   <packaging>pom</packaging>
-  <name>eXo Integration - Calendar</name>
+  <name>eXo PLF:: Integration - Calendar</name>
   <modules>
     <module>integ-calendar-social</module>
   </modules>

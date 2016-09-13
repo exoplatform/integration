@@ -8,7 +8,7 @@
   </parent>
   <artifactId>integ-calendar-social</artifactId>
   <packaging>jar</packaging>
-  <name>eXo Social - Calendar Activities</name>
+  <name>eXo PLF:: Social - Calendar Activities</name>
   <description>Calendar with Social activity</description>
   <dependencies>
     <dependency>

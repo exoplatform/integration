@@ -8,7 +8,7 @@
   </parent>
   <artifactId>integ-social-ecms</artifactId>
   <packaging>jar</packaging>
-  <name>eXo Social - Document composer</name>
+  <name>eXo PLF:: Social - Document composer</name>
   <description>Select document to public on activity</description>
   <dependencies>
     <dependency>

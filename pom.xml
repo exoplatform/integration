@@ -11,7 +11,7 @@
   <artifactId>integ</artifactId>
   <version>4.4.x-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>eXo Integration</name>
+  <name>eXo PLF:: Integration</name>
   <modules>
     <module>integ-gatein</module>
     <module>integ-ecms</module>

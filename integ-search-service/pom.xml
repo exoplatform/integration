@@ -8,7 +8,7 @@
   </parent>
   <artifactId>integ-search-service</artifactId>
   <packaging>jar</packaging>
-  <name>eXo Integration - Search - Service</name>
+  <name>eXo PLF:: Integration - Search - Service</name>
   <dependencies>
     <dependency>
       <groupId>org.gatein.portal</groupId>

@@ -8,7 +8,7 @@
   </parent>
   <artifactId>integ-wiki</artifactId>
   <packaging>pom</packaging>
-  <name>eXo Integration - Wiki</name>
+  <name>eXo PLF:: Integration - Wiki</name>
   <modules>
     <module>integ-wiki-social</module>
   </modules>
