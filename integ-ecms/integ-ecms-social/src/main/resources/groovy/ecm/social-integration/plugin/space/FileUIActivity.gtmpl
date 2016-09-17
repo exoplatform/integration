@@ -271,10 +271,7 @@
 						<%}%>
 					</div>
 					<div class="author">
-						<a title="$ownerName" href="$ownerUri">$ownerName</a>         
-					</div>	
-					<div class="dataInfor">
-						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
+						<a title="$ownerName" href="$ownerUri">$ownerName</a>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
 								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
                 def spaceSourceURI, spaceName, spaceImageSource;
@@ -291,10 +288,12 @@
 									spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
                 }
 						%>
-						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI">
-							<img title="" alt="" src="$spaceImageSource" class="spaceIcon avatarMini" />&nbsp;$spaceName
+						<a class="spaceName" href="$spaceSourceURI"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
 						</a>
 						<%} %>
+					</div>
+					<div class="dataInfor">
+						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
 					</div>
 				</div><!--end heading-->
 				<% if (activityStatus != null) { %>
@@ -648,10 +647,7 @@
 						<%}%>
 					</div>
 					<div class="author">
-						<a title="$ownerName" href="$ownerUri">$ownerName</a>         
-					</div>	
-					<div class="dataInfor">
-						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
+						<a title="$ownerName" href="$ownerUri">$ownerName</a>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
 								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
                 def spaceSourceURI, spaceName, spaceImageSource;
@@ -668,10 +664,12 @@
 									spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
                 }
 						%>
-						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI">
-							<img title="" alt="" src="$spaceImageSource" class="spaceIcon avatarMini" />&nbsp;$spaceName
+						<a class="spaceName" href="$spaceSourceURI"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
 						</a>
 						<%} %>
+					</div>
+					<div class="dataInfor">
+						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
 					</div>
 				</div><!--end heading-->
                 <% if (activityStatus != null) { %>
