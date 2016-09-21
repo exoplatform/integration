@@ -21,10 +21,13 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
@@ -89,7 +92,19 @@ public class UIWhoHasAccessEntry extends UIContainer {
     public void execute(Event<UIWhoHasAccessEntry> event) throws Exception {
       UIWhoHasAccessEntry uiform = event.getSource();
       UIWhoHasAccess uiWhoHasAccess = uiform.getParent();
-      uiWhoHasAccess.removeEntry(uiform.getId());
+      UIShareDocuments uiShareDocuments = uiWhoHasAccess.getParent();
+      String user = ConversationState.getCurrent().getIdentity().getUserId();
+      if (uiShareDocuments.isOwner(user) || uiShareDocuments.canEdit(user)) {
+        uiWhoHasAccess.removeEntry(uiform.getId());
+      } else {
+        UIApplication uiApp = uiShareDocuments.getAncestorOfType(UIApplication.class);
+        uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermission", null,
+            ApplicationMessage.WARNING));
+      }
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiShareDocuments);
+      event.getRequestContext().getJavascriptManager()
+          .require("SHARED/share-content", "shareContent")
+          .addScripts("eXo.ecm.ShareContent.checkRemovedEntry();");
     }
   }
 

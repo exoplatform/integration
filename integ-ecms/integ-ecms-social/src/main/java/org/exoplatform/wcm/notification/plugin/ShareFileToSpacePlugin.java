@@ -20,12 +20,10 @@ import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
 import org.exoplatform.commons.api.notification.plugin.BaseNotificationPlugin;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
-import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -55,6 +53,7 @@ public class ShareFileToSpacePlugin extends BaseNotificationPlugin {
   public static ArgumentLiteral<String> NODEID = new ArgumentLiteral<String>(String.class, "nodeId");;
   public static ArgumentLiteral<String> RECEIVER = new ArgumentLiteral<String>(String.class, "receiver");;
   public static ArgumentLiteral<String> PERM = new ArgumentLiteral<String>(String.class, "perm");;
+  public static ArgumentLiteral<String> URL = new ArgumentLiteral<String>(String.class, "url");
   public static ArgumentLiteral<String> MESSAGE = new ArgumentLiteral<String>(String.class, "message");;
   public static ArgumentLiteral<String> ICON = new ArgumentLiteral<String>(String.class, "icon");;
   public static ArgumentLiteral<String> MIMETYPE = new ArgumentLiteral<String>(String.class, "mimeType");;
@@ -84,7 +83,7 @@ public class ShareFileToSpacePlugin extends BaseNotificationPlugin {
           .setFrom(sender)
           .to(list)
           .with(NODE_ID, ctx.value(NODEID))
-          .with(DOCUMENT_URL, getUrl(node))
+          .with(DOCUMENT_URL, ctx.value(URL))
           .with(SPACE_URL, space.getUrl())
           .with(DOCUMENT_NAME, node.getName())
           .with(SPACE_NAME, space.getDisplayName())
@@ -101,11 +100,6 @@ public class ShareFileToSpacePlugin extends BaseNotificationPlugin {
         .to(receiver)
         .with(COMMENT, ctx.value(MESSAGE))
         .key(getId()).end();
-  }
-
-  private String getUrl(Node node) throws Exception {
-    return CommonsUtils.getCurrentDomain() + LinkProvider.getRedirectUri("documents?path="
-        + capitalizeFirstLetter(node.getSession().getWorkspace().getName()) + node.getPath());
   }
 
   public static String capitalizeFirstLetter(String word) {

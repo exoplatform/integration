@@ -13,7 +13,7 @@ String owner = uicomponent.getAncestorOfType(UIShareDocuments.class).getOwner();
                 <img src="<%=uicomponent.getAvatar(owner)%>" alt="<%=uicomponent.getUserName(owner)%>"/>
             </div>
             <div id="entry">
-                <a href="<%=uicomponent.getProfileUrl(owner)%>" ><label><%=uicomponent.getFullName(owner)%> (<%=uicomponent.getUserName(owner)%>)</label></a>
+                <a href="<%=uicomponent.getProfileUrl(owner)%>" ><%=uicomponent.getUserName(owner)%> (<%=uicomponent.getFullName(owner)%>)</a>
             </div>
             <div class="accessMember pull-right input-medium clearfix">
                 <label><%=_ctx.appRes("UIShareDocuments.label.owner")%></label>

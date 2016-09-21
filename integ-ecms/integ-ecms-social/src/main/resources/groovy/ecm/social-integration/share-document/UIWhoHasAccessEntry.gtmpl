@@ -31,23 +31,31 @@ String displayed = null;
     </div>
     <div id="entry" >
         <% if (fullName != null) { %>
-            <a href="<%=uiWhoHasAccess.getProfileUrl(name)%>" ><label>$fullName ($displayed)</label></a>
+            <a href="<%=uiWhoHasAccess.getProfileUrl(name)%>" >$fullName ($displayed)</a>
         <% } else if (uiWhoHasAccess.isSpace(name)) { %>
-            <a href="<%=uicomponent.getSpaceUrl(name)%>" ><label>$displayed</label></a>
+            <a href="<%=uicomponent.getSpaceUrl(name)%>" >$displayed</a>
         <% } else { %>
-            <label>$displayed</label>
+            $displayed
         <% } %>
     </div>
     <% if (uicomponent.getPermission().equals(SHARE_PERMISSION_MODIFY)) { %>
-        <select class="selectbox pull-right input-medium" onchange="<%=uicomponent.event("ChangeEntry")%>">
-            <a><i class="uiIconEdit uiIconLightGray"></i><option selected="selected" value="modify">$SHARE_OPTION_CANMODIFY</option></a>
-            <a><i class="uiIconWatch uiIconLightGray"></i><option value="read">$SHARE_OPTION_CANVEW</option></a>
-        </select>
+        <div class="btn-toolbar pull-right" style="margin: 0;">
+            <div class="dropdown">
+                <div data-toggle="dropdown" class="uiActionWithLabel"><a><i class="uiIconEdit"></i><a class="responsivePerm"> $SHARE_OPTION_CANMODIFY</a></a> <i class="uiIconMiniArrowDown uiIconLightGray"></i></span></div>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="<%=uicomponent.event("ChangeEntry")%>"><i class="uiIconWatch"></i> $SHARE_OPTION_CANVEW</a></li>
+                    </ul>
+            </div><!-- dropdown -->
+        </div>
     <% } else { %>
-        <select class="selectbox pull-right input-medium" onchange="<%=uicomponent.event("ChangeEntry")%>">
-            <a><i class="uiIconWatch uiIconLightGray"></i><option selected="selected" value="read">$SHARE_OPTION_CANVEW</option></a>
-            <a><i class="uiIconEdit uiIconLightGray"></i><option value="modify">$SHARE_OPTION_CANMODIFY</option></a>
-        </select>
+        <div class="btn-toolbar pull-right" style="margin: 0;">
+            <div class="dropdown">
+                <div data-toggle="dropdown" class="uiActionWithLabel"><a><i class="uiIconWatch"></i><a class="responsivePerm"> $SHARE_OPTION_CANVEW</a></a> <i class="uiIconMiniArrowDown uiIconLightGray"></i></span></div>
+                <ul class="dropdown-menu">
+                    <li><a onclick="<%=uicomponent.event("ChangeEntry")%>"><i class="uiIconEdit"></i> $SHARE_OPTION_CANMODIFY</a></li>
+                </ul>
+            </div><!-- dropdown -->
+        </div>
     <% } %>
     <div class="deleteEntry pull-right"><a class="actionIcon" onclick="<%=uicomponent.event("RemoveEntry")%>"><i class="uiIconDelete uiIconLightGray"></i></a></div>
 </div>

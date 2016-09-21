@@ -135,20 +135,24 @@
       <ShareButton>Appliquer</ShareButton>
       <CancelButton>Annuler</CancelButton>
       <TextAreaInit>Laissez un commentaire sur ce fichier...</TextAreaInit>
-      <ShareWith>Partager avec:</ShareWith>
+      <ShareWith>Partager avec</ShareWith>
       <Access>Accès</Access>
       <SpaceMember>Membres</SpaceMember>
       <SelectASpace>Sélectionnez un espace</SelectASpace>
       <SharedADocument>a partagé un document</SharedADocument>
-      <WhoHasAccess>Qui a accès ?</WhoHasAccess>
+      <WhoHasAccess>Qui a accès</WhoHasAccess>
       <NoSpace>Veuillez sélectionner au moins un espace ou un utilisateur valide</NoSpace>
       <NoPermission>Vous n'avez pas les permissions de partager ce document</NoPermission>
+      <InvalidEntry>Cette permission n'est pas modifiable</InvalidEntry>
       <InvalidOwner>Vous ne pouvez pas changer les permissions du propriétaire</InvalidOwner>
       <Invalid>Espace ou utilisateur introuvable: {0}</Invalid>
       <option>
         <read>Peut voir</read>
         <modify>Peut modifier</modify>
       </option>
+      <invite>
+        <placeholder>ajouter ...</placeholder>
+      </invite>
       <owner>propriétaire</owner>
     </label>
   </UIShareDocuments>

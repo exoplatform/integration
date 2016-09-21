@@ -7,29 +7,52 @@ requireJs.addScripts("eXo.ecm.ShareContent.init();");
 String addAction = uicomponent.event("Add") + "; return false;";
 String restUrl = uicomponent.getRestURL();
 //String value = uicomponent.getValue();
-String placeholder = "add ...";
+String placeholder = _ctx.appRes("UIShareDocuments.label.invite.placeholder");
+
+String SHARECONTENT_BUNDLE_LOCATION = _ctx.appRes("locale.extension.SocialIntegration");
+String SHARE_OPTION_CANVEW          = _ctx.appRes("UIShareDocuments.label.option.read");
+String SHARE_OPTION_CANMODIFY       = _ctx.appRes("UIShareDocuments.label.option.modify");
+String SHARE_PERMISSION_VIEW        = "read";
+String SHARE_PERMISSION_MODIFY      = "modify";
 
 %>
 <%uiform.begin();%>
 
-<div class="UIForm uiShareDocuments resizable">
+<div id="UIShareDocument" class="UIForm uiShareDocuments resizable">
 <div class="pd-15-0">
 <div class="attachedFile">
 <i class="<%=uiform.getIconURL()%>"></i> <b class="fileName"><%=uiform.getDocumentName()%></b>
 </div>
+<a id="share-with"><strong><%=_ctx.appRes("UIShareDocuments.label.ShareWith")%></strong></a>
     <div class="addInvite">
 		<div class="uiUserInvitation">
           <div class="uiGrayLightBox">
             <div class="mention-input">
               <% uiform.renderField("user"); %>
             </div>
+            <div class="addEntry btn pull-right"><a class="actionIcon" onclick="$addAction"><i class="uiIconAddUser"></i></a></div>
             <div class="sharePermission pull-right">
-            <% if(uicomponent.hasPermissionDropDown()) { %>
-                <% uiform.renderField("permDropDown") %>
+            <% if(uicomponent.getPermission().equals(SHARE_PERMISSION_VIEW)) { %>
+                <div class="btn-toolbar" style="margin: 0;">
+                    <div class="btn-group">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><a><i class="uiIconWatch"></i> $SHARE_OPTION_CANVEW</a> <i class="uiIconMiniArrowDown uiIconLightGray"></i></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a onclick="<%=uicomponent.event("ChangePermission")%>"><i class="uiIconEdit"></i> $SHARE_OPTION_CANMODIFY</a></li>
+                        </ul>
+                    </div><!-- /btn-group -->
+                </div>
+            <% } else { %>
+                <div class="btn-toolbar" style="margin: 0;">
+                    <div class="btn-group">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><a><i class="uiIconEdit"></i> $SHARE_OPTION_CANMODIFY</a> <i class="uiIconMiniArrowDown uiIconLightGray"></i></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a onclick="<%=uicomponent.event("ChangePermission")%>"><i class="uiIconWatch"></i> $SHARE_OPTION_CANVEW</a></li>
+                        </ul>
+                    </div><!-- /btn-group -->
+                </div>
             <% } %>
             </div>
-            <div class="addEntry pull-right"><a class="actionIcon" onclick="$addAction"><i class="uiIconAddUser uiIconLightGray"></i></a></div>
-          </div>
+        </div>
           <%
           requireJs.require("SHARED/userInvitation", "invite");
           requireJs.addScripts("invite.build('user', '$restUrl', '$placeholder');");

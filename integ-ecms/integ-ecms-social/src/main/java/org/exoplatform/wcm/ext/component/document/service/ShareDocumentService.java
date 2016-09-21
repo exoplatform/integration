@@ -16,8 +16,6 @@
  */
 package org.exoplatform.wcm.ext.component.document.service;
 
-import org.exoplatform.container.ExoContainer;
-import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.ecm.utils.permission.PermissionUtil;
 import org.exoplatform.services.cms.BasePath;
 import org.exoplatform.services.cms.link.LinkManager;
@@ -32,17 +30,11 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
-import org.exoplatform.social.common.service.SocialServiceContext;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-import org.exoplatform.social.core.manager.ActivityManager;
-import org.exoplatform.social.core.storage.cache.SocialStorageCacheService;
 import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.picocontainer.Startable;
 
-import javax.jcr.LoginException;
-import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -97,9 +89,7 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
       if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
       if(PermissionUtil.canChangePermission(currentNode)){
-        if(!currentNode.getPath().contains(space)) {
-          setSpacePermission(currentNode, space, tempPerms.split(","));
-        }
+        setSpacePermission(currentNode, space, tempPerms.split(","));
       }else if(PermissionUtil.canRead(currentNode)){
         SessionProvider systemSessionProvider = SessionProvider.createSystemProvider();
         Session systemSession = systemSessionProvider.getSession(session.getWorkspace().getName(), repository);
@@ -160,9 +150,7 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
       if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
       if(PermissionUtil.canChangePermission(currentNode)){
-        if(!currentNode.getPath().contains(user)) {
-          setUserPermission(currentNode, user, tempPerms.split(","));
-        }
+        setUserPermission(currentNode, user, tempPerms.split(","));
       }else if(PermissionUtil.canRead(currentNode)){
         SessionProvider systemSessionProvider = SessionProvider.createSystemProvider();
         Session systemSession = systemSessionProvider.getSession(session.getWorkspace().getName(), repository);
