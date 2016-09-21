@@ -45,101 +45,115 @@ import org.exoplatform.webui.core.UIContainer;
 )
 public class UIWhoHasAccess extends UIContainer {
 
-    private static final Log    LOG                 = ExoLogger.getLogger(UIWhoHasAccess.class);
-    private static final String SPACE_PREFIX1 = "space::";
-    private static final String SPACE_PREFIX2 = "*:/spaces/";
+  private static final Log    LOG                 = ExoLogger.getLogger(UIWhoHasAccess.class);
+  private static final String SPACE_PREFIX1 = "space::";
+  private static final String SPACE_PREFIX2 = "*:/spaces/";
+  private static final String GROUP_PREFIX = "*:/";
 
-    public void close() {
-        for(UIComponent uicomp : getChildren()) {
-            removeChild(UIWhoHasAccessEntry.class);
-        }
+  public void close() {
+    for(UIComponent uicomp : getChildren()) {
+      removeChild(UIWhoHasAccessEntry.class);
     }
+  }
 
-    public UIWhoHasAccess()  {
-    }
-    public void init() {
-        try {
-            UIShareDocuments uishareDocuments = getAncestorOfType(UIShareDocuments.class);
-            for (String id : uishareDocuments.getAllPermissions().keySet()) {
-                if (getChildById(id) == null) addChild(UIWhoHasAccessEntry.class, null, id);
-                UIWhoHasAccessEntry uiWhoHasAccessEntry = getChildById(id);
-                uiWhoHasAccessEntry.init(id, uishareDocuments.getPermission(id));
-            }
+  public UIWhoHasAccess()  {
+  }
+  public void init() {
+    try {
+      UIShareDocuments uishareDocuments = getAncestorOfType(UIShareDocuments.class);
+      for (String id : uishareDocuments.getAllPermissions().keySet()) {
+        if (getChildById(id) == null) addChild(UIWhoHasAccessEntry.class, null, id);
+        UIWhoHasAccessEntry uiWhoHasAccessEntry = getChildById(id);
+        uiWhoHasAccessEntry.init(id, uishareDocuments.getPermission(id));
+      }
 
-        } catch (Exception e) {
-            if (LOG.isErrorEnabled())
-                LOG.error(e.getMessage(), e);
-        }
+    } catch (Exception e) {
+      if (LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
     }
+  }
 
-    public void update(String name, String permission) {
-        try {
-            if (getChildById(name) == null) addChild(UIWhoHasAccessEntry.class, null, name);
-            UIWhoHasAccessEntry uiWhoHasAccessEntry = getChildById(name);
-            uiWhoHasAccessEntry.init(name, permission);
-        } catch (Exception e) {
-            if(LOG.isErrorEnabled())
-                LOG.error(e.getMessage(), e);
-        }
+  public void update(String name, String permission) {
+    try {
+      if (getChildById(name) == null) addChild(UIWhoHasAccessEntry.class, null, name);
+      UIWhoHasAccessEntry uiWhoHasAccessEntry = getChildById(name);
+      uiWhoHasAccessEntry.init(name, permission);
+    } catch (Exception e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
     }
+  }
 
-    public void removeEntry(String id) {
-        try {
-            removeChildById(id);
-            UIShareDocuments uiShareDocuments = getParent();
-            uiShareDocuments.removePermission(id);
-        } catch (Exception e) {
-            if(LOG.isErrorEnabled())
-                LOG.error(e.getMessage(), e);
-        }
+  public void removeEntry(String id) {
+    try {
+      removeChildById(id);
+      UIShareDocuments uiShareDocuments = getParent();
+      uiShareDocuments.removePermission(id);
+    } catch (Exception e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
     }
+  }
 
-    public void updateEntry(String id, String permission) {
-        try {
-            UIShareDocuments uiShareDocuments = getParent();
-            uiShareDocuments.updatePermission(id, permission);
-        } catch (Exception e) {
-            if(LOG.isErrorEnabled())
-                LOG.error(e.getMessage(), e);
-        }
+  public void updateEntry(String id, String permission) {
+    try {
+      UIShareDocuments uiShareDocuments = getParent();
+      uiShareDocuments.updatePermission(id, permission);
+    } catch (Exception e) {
+      if(LOG.isErrorEnabled())
+        LOG.error(e.getMessage(), e);
     }
-    public String getAvatar(String name) {
-        if (!isSpace(name)) {
-            Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, name, true);
-            Profile profile = identity.getProfile();
-            return profile.getAvatarUrl() != null ? profile.getAvatarUrl() : LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
-        } else {
-            SpaceService spaceService = getApplicationComponent(SpaceService.class);
-            Space space;
-            if (name.startsWith(SPACE_PREFIX1)) space = spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX1.length()));
-            else space = spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX2.length()));
-            return space.getAvatarUrl() != null ? space.getAvatarUrl() : LinkProvider.SPACE_DEFAULT_AVATAR_URL;
-        }
+  }
+  public String getAvatar(String name) {
+    try {
+      if (!isSpace(name)) {
+        Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, name, true);
+        Profile profile = identity.getProfile();
+        return profile.getAvatarUrl() != null ? profile.getAvatarUrl() : LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
+      } else {
+        SpaceService spaceService = getApplicationComponent(SpaceService.class);
+        Space space;
+        if (name.startsWith(SPACE_PREFIX1))
+          space = spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX1.length()));
+        else space = spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX2.length()));
+        return space.getAvatarUrl() != null ? space.getAvatarUrl() : LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+      }
+    } catch (Exception e) {
+      return LinkProvider.SPACE_DEFAULT_AVATAR_URL;
     }
+  }
 
-    public String getProfileUrl(String name) {
-        return CommonsUtils.getCurrentDomain() + LinkProvider.getProfileUri(name);
-    }
+  public String getProfileUrl(String name) {
+    return CommonsUtils.getCurrentDomain() + LinkProvider.getProfileUri(name);
+  }
 
-    private boolean isSpace(String name) {
-        return (name.startsWith(SPACE_PREFIX1) || name.startsWith(SPACE_PREFIX2));
-    }
+  private boolean isSpace(String name) {
+    return (name.startsWith(SPACE_PREFIX1) || name.startsWith(SPACE_PREFIX2));
+  }
 
-    public String getFullName(String name) {
-        try {
-            return getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(name).getDisplayName();
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-        }
-        return "";
-    }
+  private boolean isGroup(String name) {
+    return (name.startsWith(GROUP_PREFIX) && !name.startsWith(SPACE_PREFIX2));
+  }
 
-    public String getUserName(String name) {
-        try {
-            return getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(name).getUserName();
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-        }
-        return "";
+  public String getFullName(String name) {
+    try {
+      return getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(name).getDisplayName();
+    } catch (Exception e) {
+      LOG.error(e.getMessage(), e);
     }
+    return "";
+  }
+
+  public String getPrettyGroupName(String name) {
+    return name.split(":")[1];
+  }
+
+  public String getUserName(String name) {
+    try {
+      return getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(name).getUserName();
+    } catch (Exception e) {
+      LOG.error(e.getMessage(), e);
+    }
+    return "";
+  }
 }

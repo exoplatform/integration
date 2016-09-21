@@ -12,12 +12,19 @@ String name = uicomponent.getName();
 
 UIWhoHasAccess uiWhoHasAccess = uicomponent.getParent();
 
+String displayed = null;
 
 %>
 
 <div id="AccessEntry">
-    <% String fullName = uiWhoHasAccess.isSpace(name) ? null : uiWhoHasAccess.getFullName(name); %>
-    <% String displayed = uiWhoHasAccess.isSpace(name) ? uicomponent.getPrettySpaceName(name) : uiWhoHasAccess.getUserName(name); %>
+    <% String fullName = (uiWhoHasAccess.isSpace(name) || uiWhoHasAccess.isGroup(name)) ? null : uiWhoHasAccess.getFullName(name); %>
+    <% if (uiWhoHasAccess.isGroup(name)) {
+        displayed = uiWhoHasAccess.getPrettyGroupName(name);
+    } else if (uiWhoHasAccess.isSpace(name)) {
+        displayed = uicomponent.getPrettySpaceName(name);
+    } else {
+        displayed = uiWhoHasAccess.getUserName(name);
+    } %>
     <% String avatar = uiWhoHasAccess.getAvatar(name); %>
     <div class="avatarXSmall pull-left">
         <img src="$avatar" alt="$displayed"/>
@@ -25,8 +32,10 @@ UIWhoHasAccess uiWhoHasAccess = uicomponent.getParent();
     <div id="entry" >
         <% if (fullName != null) { %>
             <a href="<%=uiWhoHasAccess.getProfileUrl(name)%>" ><label>$fullName ($displayed)</label></a>
-        <% } else {%>
+        <% } else if (uiWhoHasAccess.isSpace(name)) { %>
             <a href="<%=uicomponent.getSpaceUrl(name)%>" ><label>$displayed</label></a>
+        <% } else { %>
+            <label>$displayed</label>
         <% } %>
     </div>
     <% if (uicomponent.getPermission().equals(SHARE_PERMISSION_MODIFY)) { %>
