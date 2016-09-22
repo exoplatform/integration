@@ -203,8 +203,9 @@
                     <div class="author">
                         <a  href="$ownerUri">$ownerName</a>
                         <% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-                                Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
-                                def spaceSourceURI, spaceName, spaceImageSource;
+								def spaceSourceURI, spaceName, spaceImageSource, spaceID;
+								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
+								spaceID = spaceSource.getId();
                                 if (spaceSource != null) {
                                   spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
                                   spaceName = spaceSource.displayName;
@@ -218,7 +219,7 @@
                                   spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
                                 }
                         %>
-						<a class="spaceName" href="$spaceSourceURI"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
+						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
                         </a>
                         <%} %>
                     </div>

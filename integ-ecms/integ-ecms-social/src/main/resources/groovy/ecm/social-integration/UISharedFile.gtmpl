@@ -262,11 +262,12 @@
 					<div class="author">
 						<a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
+								def spaceSourceURI, spaceName, spaceImageSource, spaceID;
 								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
-                def spaceSourceURI, spaceName, spaceImageSource;
-                if (spaceSource != null) {
-                  spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
-                  spaceName = spaceSource.displayName;
+								spaceID = spaceSource.getId();
+                                if (spaceSource != null) {
+                  					spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+                  					spaceName = spaceSource.displayName;
 									spaceImageSource = spaceSource.getAvatarUrl();
 									if (spaceImageSource == null) {
 										spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
@@ -277,7 +278,7 @@
 									spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
                 }
 						%>
-						<a class="spaceName" href="$spaceSourceURI"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
+						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
 						<%} %>
 					</div>
 					<div class="dataInfor">
@@ -641,11 +642,12 @@
 					<div class="author">
             <a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
+								def spaceSourceURI, spaceName, spaceImageSource, spaceID;
 								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
-                def spaceSourceURI, spaceName, spaceImageSource;
-                if (spaceSource != null) {
-                  spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
-                  spaceName = spaceSource.displayName;
+								spaceID = spaceSource.getId();
+                				if (spaceSource != null) {
+                  					spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+                  					spaceName = spaceSource.displayName;
 									spaceImageSource = spaceSource.getAvatarUrl();
 									if (spaceImageSource == null) {
 										spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
@@ -656,7 +658,7 @@
 									spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
                 }
 						%>
-						<a class="spaceName" href="$spaceSourceURI"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
+						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
 						<%} %>
                    </div>
 					<div class="dataInfor">
