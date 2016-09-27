@@ -264,7 +264,7 @@
 							<string>org.exoplatform.wcm.ext.component.activity.UILinkActivityComposer</string>
 						</field>
 						<field name="rank">
-							<int>1</int>
+							<int>2</int>
 						</field>
 					</object>
 				</object-param>
