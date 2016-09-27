@@ -130,25 +130,9 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       templateContext.put("SIZE", getSize(currentNode));
       templateContext.put("VERSION", getVersion(currentNode));
       templateContext.put("IS_VIDEO", this.mimeType.startsWith("video"));
-
       String thumbnailUrl = null;
-      String docLink = templateParams.get(DOCLINK);
-      String author = templateParams.get(AUTHOR);
-      String receiver = notification.getTo();
-      if (docLink != null && docLink.contains(author + PRIVATE_FOLDER_PATH) && !(StringUtils.equals(author, receiver))) {
-        templateContext.put("DEFAULT_THUMBNAIL_URL", getDefaultThumbnail());
-      } else {
-        thumbnailUrl = getThumbnailUrl(currentNode);
-        if (thumbnailUrl == null) {
-          templateContext.put("DEFAULT_THUMBNAIL_URL", getDefaultThumbnail());
-        }
-      }
-
+      templateContext.put("DEFAULT_THUMBNAIL_URL", getDefaultThumbnail());
       templateContext.put("THUMBNAIL_URL", thumbnailUrl);
-
-      //
-
-      //
       String content = TemplateUtils.processGroovy(templateContext);
       return content;
     } catch (Exception e) {
@@ -228,12 +212,12 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       ExoContainer container = ExoContainerContext.getCurrentContainer();
       PortalContainerInfo containerInfo = (PortalContainerInfo) container.getComponentInstanceOfType(PortalContainerInfo.class);
       String portalName = containerInfo.getContainerName();
-      
+
       String restContextName = org.exoplatform.ecm.webui.utils.Utils.getRestContextName(portalName);
       String preferenceWS = currentNode.getSession().getWorkspace().getName();
       String encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
       encodedPath = encodedPath.replaceAll ("%2F", "/");
-      
+
       if (this.mimeType.startsWith("image")) {
         int imageWidth = getImageWidth(currentNode);
         int imageHeight = getImageHeight(currentNode);
@@ -247,7 +231,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
           imageWidth = 300;
           imageHeight= 300;
         }
-        
+
         return this.baseURI + "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/" + imageWidth + "x" + imageHeight + "/" +
           this.repository + "/" + preferenceWS + encodedPath;
       }
@@ -259,7 +243,7 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       } else {
         return null;
       }
-      
+
     }
     catch (Exception e) {
       LOG.debug("Cannot get thumbnail url");
