@@ -256,7 +256,7 @@
 					<% if (activityDeletable) {%>
 						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-close="$labelClosebutton"
                  data-caption="$captionConfirmation"
-								 data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconEcmsDelete uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+								 data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 				    </div>
 					<div class="author">
@@ -299,7 +299,7 @@
        					<% if (activityDeletable) {%>
        						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-close="$labelClosebutton"
                         data-caption="$captionConfirmation"
-       								 data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconEcmsDelete uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+       								 data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
        						<%}%>
        				    </div>
 					</div>
@@ -655,7 +655,7 @@
 					<% if (activityDeletable) {%>
 						  <a href="javascript:void(0)" data-close="$labelClosebutton"
                  data-caption="$captionConfirmation" data-ok="$labelConfirmbutton"
-								  data-confirm="$labelToDeleteThisActivity" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconEcmsDelete uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+								  data-confirm="$labelToDeleteThisActivity" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 					</div>
 					<div class="author">
@@ -698,7 +698,7 @@
        					<% if (activityDeletable) {%>
        						  <a href="javascript:void(0)" data-close="$labelClosebutton"
                         data-caption="$captionConfirmation" data-ok="$labelConfirmbutton"
-       								  data-confirm="$labelToDeleteThisActivity" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconEcmsDelete uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+       								  data-confirm="$labelToDeleteThisActivity" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
        						<%}%>
        					</div>
 					</div>

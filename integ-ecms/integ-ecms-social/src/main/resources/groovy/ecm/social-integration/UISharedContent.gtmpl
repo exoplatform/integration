@@ -254,7 +254,7 @@
 					  <a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" rel="tooltip" data-placement="bottom" title="$viewActivityTip" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
 					<% if (activityDeletable) {%>
 						  <a href="javascript:void(0)" data-caption="$captionConfirmation"
-                 data-confirm="$labelToDeleteThisActivity" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconEcmsDelete uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+                 data-confirm="$labelToDeleteThisActivity" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 					</div>
 					<div class="author">
@@ -295,7 +295,7 @@
      					  <a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" rel="tooltip" data-placement="bottom" title="$viewActivityTip" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
      					<% if (activityDeletable) {%>
      						  <a href="javascript:void(0)" data-caption="$captionConfirmation"
-                      data-confirm="$labelToDeleteThisActivity" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconEcmsDelete uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+                      data-confirm="$labelToDeleteThisActivity" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
      						<%}%>
      					</div>
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
