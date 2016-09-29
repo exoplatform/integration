@@ -151,7 +151,7 @@
 				<modify>Can Edit</modify>
 			</option>
             <invite>
-                <placeholder>add ...</placeholder>
+                <placeholder>Enter users or spaces names...</placeholder>
             </invite>
             <owner>owner</owner>
 		</label>

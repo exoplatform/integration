@@ -143,9 +143,6 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
 
     @Override
     public void execute(Event<UIShareDocuments> event) throws Exception {
-      event.getRequestContext().getJavascriptManager()
-          .require("SHARED/share-content", "shareContent")
-          .addScripts("eXo.ecm.ShareContent.cancelAction();");
       event.getSource().getAncestorOfType(UIJCRExplorer.class).cancelAction() ;
     }
   }
@@ -343,9 +340,6 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
               ApplicationMessage.WARNING));
         }
       }
-      event.getRequestContext().getJavascriptManager()
-          .require("SHARED/share-content", "shareContent")
-          .addScripts("eXo.ecm.ShareContent.beginAction();");
     }
   }
 

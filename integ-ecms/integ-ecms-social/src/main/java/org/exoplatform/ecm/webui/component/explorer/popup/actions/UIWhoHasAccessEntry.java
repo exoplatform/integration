@@ -102,9 +102,6 @@ public class UIWhoHasAccessEntry extends UIContainer {
             ApplicationMessage.WARNING));
       }
       event.getRequestContext().addUIComponentToUpdateByAjax(uiShareDocuments);
-      event.getRequestContext().getJavascriptManager()
-          .require("SHARED/share-content", "shareContent")
-          .addScripts("eXo.ecm.ShareContent.checkRemovedEntry();");
     }
   }
 

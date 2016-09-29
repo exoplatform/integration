@@ -151,7 +151,7 @@
         <modify>Peut modifier</modify>
       </option>
       <invite>
-        <placeholder>ajouter ...</placeholder>
+        <placeholder>Entrez les noms d\'utilisateurs ou espaces...</placeholder>
       </invite>
       <owner>propriétaire</owner>
     </label>
