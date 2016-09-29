@@ -199,16 +199,18 @@
 			<div id="ActivityContextBox${activity.id}">     
 				<div class="heading">
 					<span class="arrowLeft"></span>
-					<div class="actLink">
+					<div class="actLink  hidden-phone hidden-tablet">
 					  <a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" rel="tooltip" data-placement="bottom" title="$viewActivityTip" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
 					<% if (activityDeletable) {%>
-					  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+					  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconEcmsDelete uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 					<%}%>
 					</div>
 					<div class="author">
-						<a title="$ownerName" href="$ownerUri">
-						$ownerName
-						</a>
+					<div class="hidden-desktop circleSpaceAvatar">
+    				    <a href="$ownerUri">
+                          <img alt="$ownerName" src="$ownerAvatar"/>
+                        </a>
+                    </div>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
 							def spaceSourceURI, spaceName, spaceImageSource, spaceID;
 							Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
@@ -226,11 +228,28 @@
 									spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
                 }
 						%>
+     					<div class="ownerName">
+     						<a title="$ownerName" href="$ownerUri">
+     						$ownerName
+     						</a>
+     					</div>
 						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
-						<%} %>
+						<%} else { %>
+						<div class="owner">
+    						<a title="$ownerName" href="$ownerUri">
+    						$ownerName
+    						</a>
+    					</div>
+						<%}%>
 					</div>
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
+						<div class=" actionLink hidden-desktop visible-tablet visible-phone">
+    					  <a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" rel="tooltip" data-placement="bottom" title="$viewActivityTip" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
+    					<% if (activityDeletable) {%>
+    					  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconEcmsDelete uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+    					<%}%>
+    					</div>
 					</div>
 				</div><!--end heading-->
 				<div class="uiBox roundedBottom introBox calendarShare">
