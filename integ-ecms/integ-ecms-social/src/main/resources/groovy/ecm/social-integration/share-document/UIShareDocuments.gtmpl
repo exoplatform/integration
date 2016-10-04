@@ -29,8 +29,7 @@ String SHARE_PERMISSION_MODIFY      = "modify";
           <div class="mention-input">
             <% uiform.renderField("user"); %>
           </div>
-          <div class="addEntry btn pull-right"><a class="actionIcon" onclick="$addAction"><i class="uiIconAddUser uiIconBlue"></i></a></div>
-          <div class="sharePermission pull-right">
+          <div class="sharePermission pull-left">
           <% if(uicomponent.getPermission().equals(SHARE_PERMISSION_VIEW)) { %>
               <div class="btn-toolbar" style="margin: 0;">
                   <div class="btn-group">
@@ -51,6 +50,7 @@ String SHARE_PERMISSION_MODIFY      = "modify";
               </div>
           <% } %>
           </div>
+          <div class="addEntry btn pull-right"><a class="actionIcon" onclick="$addAction"><i class="uiIconAddUser uiIconBlue"></i></a></div>
       </div>
         <%
         requireJs.require("SHARED/userInvitation", "invite");
