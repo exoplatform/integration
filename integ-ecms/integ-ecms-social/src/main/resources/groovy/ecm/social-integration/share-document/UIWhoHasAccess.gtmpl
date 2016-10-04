@@ -7,26 +7,24 @@ String owner = uicomponent.getAncestorOfType(UIShareDocuments.class).getOwner();
 
 %>
 <div id="who">
-    <div class="uiGrayLightBox">
-        <div class="accessSpaceMember clearfix" id="owner" >
-            <div class="avatarXSmall pull-left">
-                <img src="<%=uicomponent.getAvatar(owner)%>" alt="<%=uicomponent.getUserName(owner)%>"/>
-            </div>
-            <div id="entry">
-                <a href="<%=uicomponent.getProfileUrl(owner)%>" ><%=uicomponent.getUserName(owner)%> (<%=uicomponent.getFullName(owner)%>)</a>
-            </div>
-            <div class="accessMember pull-right input-medium clearfix">
-                <label><%=_ctx.appRes("UIShareDocuments.label.owner")%></label>
-            </div>
+    <div class="accessSpaceMember clearfix" id="owner" >
+        <div class="avatarXSmall pull-left">
+            <img src="<%=uicomponent.getAvatar(owner)%>" alt="<%=uicomponent.getUserName(owner)%>"/>
         </div>
-        <ul>
-            <% for (child in uicomponent.getChildren()) { %>
-                <li>
-                    <div class="accessSpaceMember clearfix" id="whoHasAccess" >
-                        <% uicomponent.renderChild(child); %>
-                    </div>
-                </li>
-            <% } %>
-        </ul>
+        <div id="entry">
+            <a href="<%=uicomponent.getProfileUrl(owner)%>" ><%=uicomponent.getUserName(owner)%> (<%=uicomponent.getFullName(owner)%>)</a>
+        </div>
+        <div class="accessMember pull-right input-medium clearfix">
+            <label><%=_ctx.appRes("UIShareDocuments.label.owner")%></label>
+        </div>
     </div>
+    <ul>
+        <% for (child in uicomponent.getChildren()) { %>
+            <li>
+                <div class="accessSpaceMember clearfix" id="whoHasAccess" >
+                    <% uicomponent.renderChild(child); %>
+                </div>
+            </li>
+        <% } %>
+    </ul>
 </div>
