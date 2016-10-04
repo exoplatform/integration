@@ -195,7 +195,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
               } else {
                 String groupId = name.substring("*:".length());
                 service.unpublishDocumentToSpace(groupId, (ExtendedNode) node);
-                service.publishDocumentToSpace(groupId, node, message, permissions.get(name));
+                String activityId = service.publishDocumentToSpace(groupId, node, message, permissions.get(name));
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToSpacePlugin.NODE, node)
                     .append(ShareFileToSpacePlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToSpacePlugin.NODEID, node.getUUID())
@@ -204,6 +204,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                     .append(ShareFileToSpacePlugin.PERM, permissions.get(name))
                     .append(ShareFileToSpacePlugin.ICON, uiform.getDefaultThumbnail(node))
                     .append(ShareFileToSpacePlugin.MIMETYPE, uiform.getMimeType(node))
+                    .append(ShareFileToSpacePlugin.ACTIVITY_ID, activityId)
                     .append(ShareFileToSpacePlugin.MESSAGE, message);
                 ctx.getNotificationExecutor().with(ctx.makeCommand(PluginKey.key(ShareFileToSpacePlugin.ID))).execute(ctx);
               }
@@ -228,7 +229,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
               String activityId = "";
               if (entry.startsWith(SPACE_PREFIX2)) {
                 String groupId = spaceService.getSpaceByPrettyName(entry.substring(SPACE_PREFIX2.length())).getGroupId();
-                service.publishDocumentToSpace(groupId, node, message, perm);
+                activityId = service.publishDocumentToSpace(groupId, node, message, perm);
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToSpacePlugin.NODE, node)
                     .append(ShareFileToSpacePlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToSpacePlugin.NODEID, node.getUUID())
@@ -237,6 +238,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                     .append(ShareFileToSpacePlugin.PERM, perm)
                     .append(ShareFileToSpacePlugin.ICON, uiform.getDefaultThumbnail(node))
                     .append(ShareFileToSpacePlugin.MIMETYPE, uiform.getMimeType(node))
+                    .append(ShareFileToSpacePlugin.ACTIVITY_ID, activityId)
                     .append(ShareFileToSpacePlugin.MESSAGE, message);
                 ctx.getNotificationExecutor().with(ctx.makeCommand(PluginKey.key(ShareFileToSpacePlugin.ID))).execute(ctx);
               } else {

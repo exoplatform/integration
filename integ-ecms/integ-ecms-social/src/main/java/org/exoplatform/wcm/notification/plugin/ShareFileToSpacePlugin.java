@@ -26,6 +26,7 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.notification.LinkProviderUtils;
 
 import javax.jcr.Node;
 import java.util.Arrays;
@@ -45,6 +46,8 @@ public class ShareFileToSpacePlugin extends BaseNotificationPlugin {
   public final static String DOCUMENT_ICON = "documentIcon" ;
   public final static String COMMENT = "comment" ;
   public final static String PERMISSION = "permission" ;
+  public static final String REPLY = "reply";
+  public static final String FULL_DISUSSION = "fullDiscussion";
   public static final String TYPE = "type";
   public static final String NODE_ID = "nodeId";
 
@@ -56,6 +59,7 @@ public class ShareFileToSpacePlugin extends BaseNotificationPlugin {
   public static ArgumentLiteral<String> URL = new ArgumentLiteral<String>(String.class, "url");
   public static ArgumentLiteral<String> MESSAGE = new ArgumentLiteral<String>(String.class, "message");;
   public static ArgumentLiteral<String> ICON = new ArgumentLiteral<String>(String.class, "icon");;
+  public static ArgumentLiteral<String> ACTIVITY_ID = new ArgumentLiteral<String>(String.class, "activityId");;
   public static ArgumentLiteral<String> MIMETYPE = new ArgumentLiteral<String>(String.class, "mimeType");;
 
   public ShareFileToSpacePlugin(InitParams initParams) {
@@ -73,6 +77,7 @@ public class ShareFileToSpacePlugin extends BaseNotificationPlugin {
     String receiver = ctx.value(RECEIVER);
     String sender = ctx.value(SENDER);
     Node node = ctx.value(NODE);
+    String activityId = ctx.value(ACTIVITY_ID);
 
     Space space = WCMCoreUtils.getService(SpaceService.class).getSpaceByGroupId(receiver);
     List<String> list = new LinkedList<String>(Arrays.asList(space.getMembers()));
@@ -91,6 +96,8 @@ public class ShareFileToSpacePlugin extends BaseNotificationPlugin {
           .with(PERMISSION, ctx.value(PERM))
           .with(COMMENT, ctx.value(MESSAGE))
           .with(TYPE, ctx.value(MIMETYPE))
+          .with(REPLY, getReplyLink(activityId))
+          .with(FULL_DISUSSION, getDiscussionLink(activityId))
           .key(getId()).end();
     }  catch (Exception e) {
       LOG.error(e.getMessage(), e);
@@ -100,6 +107,14 @@ public class ShareFileToSpacePlugin extends BaseNotificationPlugin {
         .to(receiver)
         .with(COMMENT, ctx.value(MESSAGE))
         .key(getId()).end();
+  }
+
+  private String getDiscussionLink(String activityId) {
+    return LinkProviderUtils.getRedirectUrl("view_full_activity", activityId);
+  }
+
+  private String getReplyLink(String activityId) {
+    return LinkProviderUtils.getRedirectUrl("reply_activity", activityId);
   }
 
   public static String capitalizeFirstLetter(String word) {

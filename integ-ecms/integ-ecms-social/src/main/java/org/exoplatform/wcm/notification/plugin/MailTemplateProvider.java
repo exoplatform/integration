@@ -180,6 +180,8 @@ public class MailTemplateProvider extends TemplateProvider {
       templateContext.put("SPACE", notification.getValueOwnerParameter(ShareFileToSpacePlugin.SPACE_NAME));
       templateContext.put("SPACE_URL", notification.getValueOwnerParameter(ShareFileToSpacePlugin.SPACE_URL));
       templateContext.put("TYPE", notification.getValueOwnerParameter(ShareFileToSpacePlugin.TYPE));
+      templateContext.put("REPLY_ACTION_URL", notification.getValueOwnerParameter(ShareFileToSpacePlugin.REPLY));
+      templateContext.put("VIEW_FULL_DISCUSSION_ACTION_URL", notification.getValueOwnerParameter(ShareFileToSpacePlugin.FULL_DISUSSION));
 
       templateContext.put("THUMBNAIL_URL", notification.getValueOwnerParameter(ShareFileToSpacePlugin.DOCUMENT_ICON));
       templateContext.put("FOOTER_LINK", LinkProviderUtils.getRedirectUrl("notification_settings", receiver.getRemoteId()));
