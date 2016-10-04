@@ -29,23 +29,23 @@ String SHARE_PERMISSION_MODIFY      = "modify";
           <div class="mention-input">
             <% uiform.renderField("user"); %>
           </div>
-          <div class="addEntry btn pull-right"><a class="actionIcon" onclick="$addAction"><i class="uiIconAddUser"></i></a></div>
+          <div class="addEntry btn pull-right"><a class="actionIcon" onclick="$addAction"><i class="uiIconAddUser uiIconBlue"></i></a></div>
           <div class="sharePermission pull-right">
           <% if(uicomponent.getPermission().equals(SHARE_PERMISSION_VIEW)) { %>
               <div class="btn-toolbar" style="margin: 0;">
                   <div class="btn-group">
-                      <button class="btn dropdown-toggle" data-toggle="dropdown"><a><i class="uiIconWatch"></i> $SHARE_OPTION_CANVEW</a> <i class="uiIconMiniArrowDown uiIconLightGray"></i></span></button>
+                      <button class="btn dropdown-toggle" data-toggle="dropdown"><a><i class="uiIconWatch uiIconBlue"></i> $SHARE_OPTION_CANVEW</a> <i class="uiIconMiniArrowDown uiIconBlue"></i></span></button>
                       <ul class="dropdown-menu">
-                          <li><a onclick="<%=uicomponent.event("ChangePermission")%>"><i class="uiIconEdit"></i> $SHARE_OPTION_CANMODIFY</a></li>
+                          <li><a onclick="<%=uicomponent.event("ChangePermission")%>"><i class="uiIconEdit uiIconBlue"></i> $SHARE_OPTION_CANMODIFY</a></li>
                       </ul>
                   </div><!-- /btn-group -->
               </div>
           <% } else { %>
               <div class="btn-toolbar" style="margin: 0;">
                   <div class="btn-group">
-                      <button class="btn dropdown-toggle" data-toggle="dropdown"><a><i class="uiIconEdit"></i> $SHARE_OPTION_CANMODIFY</a> <i class="uiIconMiniArrowDown uiIconLightGray"></i></span></button>
+                      <button class="btn dropdown-toggle" data-toggle="dropdown"><a><i class="uiIconEdit uiIconBlue"></i> $SHARE_OPTION_CANMODIFY</a> <i class="uiIconMiniArrowDown uiIconBlue"></i></span></button>
                       <ul class="dropdown-menu">
-                          <li><a onclick="<%=uicomponent.event("ChangePermission")%>"><i class="uiIconWatch"></i> $SHARE_OPTION_CANVEW</a></li>
+                          <li><a onclick="<%=uicomponent.event("ChangePermission")%>"><i class="uiIconWatch uiIconBlue"></i> $SHARE_OPTION_CANVEW</a></li>
                       </ul>
                   </div><!-- /btn-group -->
               </div>

@@ -134,7 +134,7 @@
     <label>
       <ShareButton>Appliquer</ShareButton>
       <CancelButton>Annuler</CancelButton>
-      <TextAreaInit>Laissez un commentaire sur ce fichier...</TextAreaInit>
+      <TextAreaInit>Envoyer un message pour le partage...</TextAreaInit>
       <ShareWith>Partager avec</ShareWith>
       <Access>Accès</Access>
       <SpaceMember>Membres</SpaceMember>
@@ -153,7 +153,7 @@
       <invite>
         <placeholder>Entrez les noms d\'utilisateurs ou espaces...</placeholder>
       </invite>
-      <owner>propriétaire</owner>
+      <owner>Propriétaire</owner>
     </label>
   </UIShareDocuments>
 
