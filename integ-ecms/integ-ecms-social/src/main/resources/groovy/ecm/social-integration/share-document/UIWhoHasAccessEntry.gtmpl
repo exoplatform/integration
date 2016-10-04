@@ -22,16 +22,14 @@ String displayed = null;
         displayed = uiWhoHasAccess.getPrettyGroupName(name);
     } else if (uiWhoHasAccess.isSpace(name)) {
         displayed = uicomponent.getPrettySpaceName(name);
-    } else {
-        displayed = uiWhoHasAccess.getUserName(name);
-    } %>
+    }  %>
     <% String avatar = uiWhoHasAccess.getAvatar(name); %>
     <div class="avatarXSmall pull-left">
         <img src="$avatar" alt="$displayed"/>
     </div>
     <div id="entry" >
         <% if (fullName != null) { %>
-            <a href="<%=uiWhoHasAccess.getProfileUrl(name)%>" >$fullName ($displayed)</a>
+            <a href="<%=uiWhoHasAccess.getProfileUrl(name)%>" >$fullName</a>
         <% } else if (uiWhoHasAccess.isSpace(name)) { %>
             <a href="<%=uicomponent.getSpaceUrl(name)%>" >$displayed</a>
         <% } else { %>

@@ -147,13 +147,4 @@ public class UIWhoHasAccess extends UIContainer {
   public String getPrettyGroupName(String name) {
     return name.split(":")[1];
   }
-
-  public String getUserName(String name) {
-    try {
-      return getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(name).getUserName();
-    } catch (Exception e) {
-      LOG.error(e.getMessage(), e);
-    }
-    return "";
-  }
 }
