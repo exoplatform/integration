@@ -94,7 +94,7 @@ public class UIWhoHasAccessEntry extends UIContainer {
       UIWhoHasAccess uiWhoHasAccess = uiform.getParent();
       UIShareDocuments uiShareDocuments = uiWhoHasAccess.getParent();
       String user = ConversationState.getCurrent().getIdentity().getUserId();
-      if (uiShareDocuments.isOwner(user) || uiShareDocuments.canEdit(user)) {
+      if (uiShareDocuments.isOwner(user) || uiShareDocuments.getNode().getACL().getPermissions(user).contains("remove")) {
         uiWhoHasAccess.removeEntry(uiform.getId());
       } else {
         UIApplication uiApp = uiShareDocuments.getAncestorOfType(UIApplication.class);

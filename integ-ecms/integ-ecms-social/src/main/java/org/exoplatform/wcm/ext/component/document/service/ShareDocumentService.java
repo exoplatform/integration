@@ -87,7 +87,7 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       if(currentNode.isNodeType(NodetypeConstant.EXO_SYMLINK)) currentNode = linkManager.getTarget(currentNode);
       //Update permission
       String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
-      if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
+      if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY+","+PermissionType.REMOVE;
       if(PermissionUtil.canChangePermission(currentNode)){
         setSpacePermission(currentNode, space, tempPerms.split(","));
       }else if(PermissionUtil.canRead(currentNode)){
@@ -148,7 +148,7 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       if(currentNode.isNodeType(NodetypeConstant.EXO_SYMLINK)) currentNode = linkManager.getTarget(currentNode);
       //Update permission
       String tempPerms = perm.toString();//Avoid ref back to UIFormSelectBox options
-      if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
+      if(!tempPerms.equals(PermissionType.READ)) tempPerms = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY+","+PermissionType.REMOVE;
       if(PermissionUtil.canChangePermission(currentNode)){
         setUserPermission(currentNode, user, tempPerms.split(","));
       }else if(PermissionUtil.canRead(currentNode)){
