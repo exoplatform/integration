@@ -41,7 +41,7 @@ String displayed = null;
             <div class="dropdown">
                 <div data-toggle="dropdown" class="uiActionWithLabel"><a><i class="uiIconEdit uiIconBlue"></i><a class="responsivePerm"> $SHARE_OPTION_CANMODIFY</a></a> <i class="uiIconMiniArrowDown uiIconBlue"></i></span></div>
                     <ul class="dropdown-menu">
-                        <li><a onclick="<%=uicomponent.event("ChangeEntry")%>"><i class="uiIconWatch"></i> $SHARE_OPTION_CANVEW</a></li>
+                        <li><a onclick="<%=uicomponent.event("ChangeEntry")%>"><i class="uiIconWatch uiIconBlue"></i> $SHARE_OPTION_CANVEW</a></li>
                     </ul>
             </div><!-- dropdown -->
         </div>
