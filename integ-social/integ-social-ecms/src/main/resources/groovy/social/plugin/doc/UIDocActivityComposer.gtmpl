@@ -41,7 +41,7 @@
     } else {
       %>
 	  
-        <div class="uiActivityFileAttachment" style="display:none">
+        <div class="uiActivityFileAttachment">
           <a class="browseFile" href="<%= uicomponent.event("SelectDocument")%>">$selectFileLabel</a>
         </div>
 		
