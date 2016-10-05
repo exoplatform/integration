@@ -50,7 +50,8 @@ String SHARE_PERMISSION_MODIFY      = "modify";
               </div>
           <% } %>
           </div>
-          <div class="addEntry btn pull-right"><a class="actionIcon" onclick="$addAction"><i class="uiIconAddUser uiIconBlue"></i></a></div>
+          <div class="addEntry btn pull-right"><a class="actionIcon"><i class="uiIconAddUser uiIconBlue"></i></a></div>
+          <button type="button" class="pull-right" id="addActionBtn" onclick="$addAction"></button>
       </div>
         <%
         requireJs.require("SHARED/userInvitation", "invite");
