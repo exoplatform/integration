@@ -36,8 +36,9 @@ String displayed = null;
             $displayed
         <% } %>
     </div>
+    <div class="deleteEntry pull-right"><a class="actionIcon" onclick="<%=uicomponent.event("RemoveEntry")%>"><i class="uiIconDelete uiIconLightGray"></i></a></div>
     <% if (uicomponent.getPermission().equals(SHARE_PERMISSION_MODIFY)) { %>
-        <div class="btn-toolbar pull-right" style="margin: 0;">
+        <div class="btn-toolbar pull-right" id="selectPermission" style="margin: 0;">
             <div class="dropdown">
                 <div data-toggle="dropdown" class="uiActionWithLabel"><a><i class="uiIconEdit uiIconBlue"></i><a class="responsivePerm"> $SHARE_OPTION_CANMODIFY</a></a> <i class="uiIconMiniArrowDown uiIconBlue"></i></span></div>
                     <ul class="dropdown-menu">
@@ -46,7 +47,7 @@ String displayed = null;
             </div><!-- dropdown -->
         </div>
     <% } else { %>
-        <div class="btn-toolbar pull-right" style="margin: 0;">
+        <div class="btn-toolbar pull-right" id="selectPermission" style="margin: 0;">
             <div class="dropdown">
                 <div data-toggle="dropdown" class="uiActionWithLabel"><a><i class="uiIconWatch uiIconBlue"></i><a class="responsivePerm"> $SHARE_OPTION_CANVEW</a></a> <i class="uiIconMiniArrowDown uiIconBlue"></i></span></div>
                 <ul class="dropdown-menu">
@@ -55,5 +56,4 @@ String displayed = null;
             </div><!-- dropdown -->
         </div>
     <% } %>
-    <div class="deleteEntry pull-right"><a class="actionIcon" onclick="<%=uicomponent.event("RemoveEntry")%>"><i class="uiIconDelete uiIconLightGray"></i></a></div>
 </div>

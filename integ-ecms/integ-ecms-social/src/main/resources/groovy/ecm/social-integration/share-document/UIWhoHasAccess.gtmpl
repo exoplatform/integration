@@ -6,8 +6,8 @@ import org.exoplatform.ecm.webui.component.explorer.popup.actions.UIShareDocumen
 String owner = uicomponent.getAncestorOfType(UIShareDocuments.class).getOwner();
 
 %>
-<div id="who">
 <a id="add"><strong><%=_ctx.appRes("UIShareDocuments.label.WhoHasAccess")%></strong></a>
+<div id="who">
 <div class="accessSpaceMember clearfix" id="owner" >
         <div class="avatarXSmall pull-left">
             <img src="<%=uicomponent.getAvatar(owner)%>" alt="<%=uicomponent.getFullName(owner)%>"/>

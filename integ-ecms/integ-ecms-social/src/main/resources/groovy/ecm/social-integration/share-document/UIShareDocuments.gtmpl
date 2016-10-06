@@ -31,7 +31,7 @@ String SHARE_PERMISSION_MODIFY      = "modify";
           </div>
           <div class="sharePermission pull-left">
           <% if(uicomponent.getPermission().equals(SHARE_PERMISSION_VIEW)) { %>
-              <div class="btn-toolbar" style="margin: 0;">
+              <div class="btn-toolbar" id="selectPermission" style="margin: 0;">
                   <div class="btn-group">
                       <button class="btn dropdown-toggle" data-toggle="dropdown"><a><i class="uiIconWatch uiIconBlue"></i> $SHARE_OPTION_CANVEW</a> <i class="uiIconMiniArrowDown uiIconBlue"></i></span></button>
                       <ul class="dropdown-menu">
@@ -40,7 +40,7 @@ String SHARE_PERMISSION_MODIFY      = "modify";
                   </div><!-- /btn-group -->
               </div>
           <% } else { %>
-              <div class="btn-toolbar" style="margin: 0;">
+              <div class="btn-toolbar" id="selectPermission" style="margin: 0;">
                   <div class="btn-group">
                       <button class="btn dropdown-toggle" data-toggle="dropdown"><a><i class="uiIconEdit uiIconBlue"></i> $SHARE_OPTION_CANMODIFY</a> <i class="uiIconMiniArrowDown uiIconBlue"></i></span></button>
                       <ul class="dropdown-menu">
@@ -50,9 +50,10 @@ String SHARE_PERMISSION_MODIFY      = "modify";
               </div>
           <% } %>
           </div>
-          <div class="addEntry btn pull-right"><a class="actionIcon"><i class="uiIconAddUser uiIconBlue"></i></a></div>
-          <button type="button" class="pull-right" id="addActionBtn" onclick="$addAction"></button>
-      </div>
+          <button type="button" class="btn pull-right" id="addActionBtn" onclick="$addAction">
+            <i class="uiIconAddUser uiIconBlue"></i>
+          </button>
+        </div>
         <%
         requireJs.require("SHARED/userInvitation", "invite");
         requireJs.addScripts("invite.build('user', '$restUrl', '$placeholder');");
