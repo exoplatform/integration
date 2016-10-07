@@ -143,6 +143,8 @@
       <WhoHasAccess>Qui a accès</WhoHasAccess>
       <NoSpace>Veuillez sélectionner au moins un espace ou un utilisateur valide</NoSpace>
       <NoPermission>Vous n'avez pas les permissions de partager ce document</NoPermission>
+      <InvalidDeletion>Vous ne pouvez pas supprimer votre propre permission</InvalidDeletion>
+      <NoPermissionDelete>Vous ne pouvez pas supprimer cette permission</NoPermissionDelete>
       <InvalidEntry>Cette permission n'est pas modifiable</InvalidEntry>
       <InvalidOwner>Vous ne pouvez pas changer les permissions du propriétaire</InvalidOwner>
       <Invalid>Espace ou utilisateur introuvable: {0}</Invalid>

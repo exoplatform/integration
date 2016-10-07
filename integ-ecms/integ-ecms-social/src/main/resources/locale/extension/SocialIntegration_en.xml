@@ -143,6 +143,8 @@
 			<WhoHasAccess>Who has access</WhoHasAccess>
 			<NoSpace>Please select at least one valid space or user</NoSpace>
 			<NoPermission>You do not have the permission to share this document</NoPermission>
+            <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
+            <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
             <InvalidEntry>This permission can not be edited</InvalidEntry>
             <InvalidOwner>You can not change owner permissions</InvalidOwner>
             <Invalid>Space or user not found: {0}</Invalid>

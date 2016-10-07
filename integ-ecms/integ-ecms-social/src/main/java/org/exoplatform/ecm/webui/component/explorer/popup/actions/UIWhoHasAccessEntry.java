@@ -95,10 +95,16 @@ public class UIWhoHasAccessEntry extends UIContainer {
       UIShareDocuments uiShareDocuments = uiWhoHasAccess.getParent();
       String user = ConversationState.getCurrent().getIdentity().getUserId();
       if (uiShareDocuments.isOwner(user) || uiShareDocuments.getNode().getACL().getPermissions(user).contains("remove")) {
-        uiWhoHasAccess.removeEntry(uiform.getId());
+        if  (!user.equals(uiform.getId())) {
+          uiWhoHasAccess.removeEntry(uiform.getId());
+        } else {
+          UIApplication uiApp = uiShareDocuments.getAncestorOfType(UIApplication.class);
+          uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.InvalidDeletion", null,
+              ApplicationMessage.WARNING));
+        }
       } else {
         UIApplication uiApp = uiShareDocuments.getAncestorOfType(UIApplication.class);
-        uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermission", null,
+        uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermissionDelete", null,
             ApplicationMessage.WARNING));
       }
       event.getRequestContext().addUIComponentToUpdateByAjax(uiShareDocuments);
