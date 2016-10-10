@@ -147,7 +147,7 @@
       <NoPermissionDelete>Vous ne pouvez pas supprimer cette permission</NoPermissionDelete>
       <InvalidEntry>Cette permission n'est pas modifiable</InvalidEntry>
       <InvalidOwner>Vous ne pouvez pas changer les permissions du propriétaire</InvalidOwner>
-      <Invalid>Espace ou utilisateur introuvable: {0}</Invalid>
+      <Invalid>Désolé, '{0}' ne correspond pas à un espace ou un utilisateur</Invalid>
       <option>
         <read>Peut voir</read>
         <modify>Peut modifier</modify>

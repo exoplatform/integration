@@ -147,7 +147,7 @@
             <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
             <InvalidEntry>This permission can not be edited</InvalidEntry>
             <InvalidOwner>You can not change owner permissions</InvalidOwner>
-            <Invalid>Space or user not found: {0}</Invalid>
+            <Invalid>Sorry, could not recognise '{0}' as a valid user or space</Invalid>
 			<option>
 				<read>Can view</read>
 				<modify>Can edit</modify>

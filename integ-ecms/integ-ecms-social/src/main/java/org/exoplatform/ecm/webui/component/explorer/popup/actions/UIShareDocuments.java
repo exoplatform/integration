@@ -328,7 +328,8 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
           if (notFound.size() > 0) {
             UIShareDocuments uicomp = event.getSource() ;
             UIApplication uiApp = uicomp.getAncestorOfType(UIApplication.class);
-            uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.Invalid", new String[]{notFound.toString()},
+            uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.Invalid", new String[]{notFound.toString()
+                .replace("[","").replace("]","")},
                 ApplicationMessage.WARNING)) ;
           }
           event.getRequestContext().addUIComponentToUpdateByAjax(uicomponent);
