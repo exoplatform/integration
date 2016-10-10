@@ -342,8 +342,8 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
       final UIDocActivityComposer docActivityComposer = event.getSource();
       final UIActivityComposerManager activityComposerManager = docActivityComposer.getActivityComposerManager();
       final UIActivityComposer activityComposer = activityComposerManager.getCurrentActivityComposer();
-      activityComposerManager.setDefaultActivityComposer();
-      activityComposer.setDisplayed(false);
+//      activityComposerManager.setDefaultActivityComposer();
+//      activityComposer.setDisplayed(false);
       // Reset values
       docActivityComposer.resetValues();
     }
