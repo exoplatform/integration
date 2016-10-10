@@ -28,6 +28,11 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.exoplatform.services.organization.UserHandler;
+
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.wcm.utils.WCMCoreUtils;
+import org.exoplatform.webui.cssfile.CssClassManager;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.commons.utils.ISO8601;
@@ -94,6 +99,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   private boolean isDocumentReady;
   private String currentUser;
   private String docIcon = "";
+  private String docInfo = "";
   
   /**
    * constructor
@@ -119,6 +125,10 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 
   public String getDocumentIcon() {
     return docIcon;
+  }
+  
+  public String getDocInfo() {
+    return docInfo;
   }
 
   /**
@@ -247,11 +257,29 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     isDocumentReady = true;
     documentRefLink = documentRefLink.replace("//", "/");
     documentPath = documentPath.replace("//", "/");
-    docIcon = CssClassUtils.getCSSClassByFileNameAndFileType(documentName, selectField, null);
+    docIcon = CssClassUtils.getCSSClassByFileNameAndFileType(documentName, selectField, CssClassManager.ICON_SIZE.ICON_64);
+    
+    Node docNode = getDocNode(REPOSITORY, WORKSPACE, documentPath);
+    Calendar date = org.exoplatform.services.cms.impl.Utils.getDate(docNode);
+    docInfo =  getFullName(docNode) +
+               org.exoplatform.services.cms.impl.Utils.fileSize(docNode) + 
+               formatDate(date);
     setReadyForPostingActivity(true);
     UIActivityComposer activityComposer = getActivityComposerManager().getCurrentActivityComposer();
     activityComposer.setDisplayed(true);
   }  
+  
+  private String getFullName(Node docNode) throws Exception {
+      String ownerId = org.exoplatform.services.cms.impl.Utils.getOwner(docNode);
+      OrganizationService organizationService = getApplicationComponent(OrganizationService.class);
+      UserHandler userHandler = organizationService.getUserHandler();
+      return userHandler.findUserByName(ownerId).getDisplayName();
+  }
+  
+  private String formatDate(Calendar date) {
+      DateFormat format = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.FULL, SimpleDateFormat.SHORT);
+      return " - " + format.format(date.getTime());
+  }
 
   private ExoSocialActivity saveActivity(Map<String, String> activityParams, IdentityManager identityManager, Identity ownerIdentity) throws RepositoryException {
     Node node = getDocNode(activityParams.get(UIDocActivity.REPOSITORY), activityParams.get(UIDocActivity.WORKSPACE), 
