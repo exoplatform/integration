@@ -237,6 +237,24 @@
    //hides diplayPeopleBG
    listPeopleBGClass = "displayNone";
   }
+  def spaceSourceURI, spaceName, spaceImageSource, spaceID;
+  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
+
+    Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
+    spaceID = spaceSource.getId();
+    if (spaceSource != null) {
+      spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+      spaceName = spaceSource.displayName;
+      spaceImageSource = spaceSource.getAvatarUrl();
+      if (spaceImageSource == null) {
+        spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+      }
+    } else {
+      spaceSourceURI = LinkProvider.getActivityUriForSpace(streamOwner, streamOwner);
+      spaceName = Utils.getSpaceIdentity(streamOwner, false).profile.fullName;
+      spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+    }
+  }
 %>
 <div class="activityStream uiContentActivity" id="activityContainer${activity.id}">
 	<% uiform.begin() %>
@@ -246,7 +264,13 @@
 				<img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<div class="activityType"><span><i class="uiIconSocContentMini uiIconSocWhite"></i></span></div>
+		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
+    	<div class="activityType">
+        	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
+        		<img alt="$spaceName" src="$spaceImageSource"/>
+        	</a>
+        </div>
+        <%}%>
 	</div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
@@ -266,21 +290,6 @@
                             </a>
                         </div>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-								def spaceSourceURI, spaceName, spaceImageSource, spaceID;
-								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
-								spaceID = spaceSource.getId();
-                                if (spaceSource != null) {
-                                  spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
-                                  spaceName = spaceSource.displayName;
-                                  spaceImageSource = spaceSource.getAvatarUrl();
-                                  if (spaceImageSource == null) {
-                                    spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
-                                  }
-                } else {
-                  spaceSourceURI = LinkProvider.getActivityUriForSpace(streamOwner, streamOwner);
-                  spaceName = Utils.getSpaceIdentity(streamOwner, false).profile.fullName;
-                  spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
-                }
 						%>
                         <div class="ownerName">
      						<a title="$ownerName" href="$ownerUri">$ownerName</a>

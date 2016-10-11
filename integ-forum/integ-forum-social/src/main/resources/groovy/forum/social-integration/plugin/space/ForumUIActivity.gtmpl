@@ -168,6 +168,28 @@
     ownerName = space.displayName;
     if (!ownerAvatar) ownerAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
   }
+ def spaceSourceURI, spaceName, spaceImageSource, spaceID;
+    if (spaceGroupId.length() > 0) {
+        Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
+        spaceID = spaceSource.getId();
+        if (spaceSource != null) {
+            spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+            spaceName = spaceSource.displayName;
+            spaceImageSource = spaceSource.getAvatarUrl();
+            if (spaceImageSource == null) {
+                spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+            }
+        } else {
+            spaceSourceURI = LinkProvider.getActivityUriForSpace(streamOwner, streamOwner);
+            def spaceIdentity = Utils.getSpaceIdentity(streamOwner, false);
+            if (spaceIdentity != null) {
+                spaceName = spaceIdentity.profile.fullName;
+            } else {
+                spaceName = null;
+            }
+            spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+        }
+    }
 %>
 
 <div class="activityStream uiForumActivity" id="activityContainer${activity.id}">
@@ -178,7 +200,13 @@
 			  <img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<div class="activityType"><span><i class="uiIconSocForumMini uiIconSocWhite"></i></span></div>			
+		<%  if (spaceGroupId.length() > 0) {%>
+    	<div class="activityType">
+        	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
+        		<img alt="$spaceName" src="$spaceImageSource"/>
+        	</a>
+        </div>
+        <%}%>
 	</div><!--end activityTimeLine-->
 
 
@@ -200,27 +228,6 @@
                             </a>
                         </div>
 						<% if (spaceGroupId.length() > 0) {
-								def spaceSourceURI, spaceName, spaceImageSource, spaceID;
-								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
-								spaceID = spaceSource.getId();
-                				if (spaceSource != null) {
-                  					spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
-                  					spaceName = spaceSource.displayName;
-									spaceImageSource = spaceSource.getAvatarUrl();
-									if (spaceImageSource == null) {
-										spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
-									}
-                } else {
-                  spaceSourceURI = LinkProvider.getActivityUriForSpace(streamOwner, streamOwner);
-                  def spaceIdentity = Utils.getSpaceIdentity(streamOwner, false);
-                  if (spaceIdentity != null) {
-                    spaceName = spaceIdentity.profile.fullName;
-                  } else {
-                    spaceName = null;
-                  }
-									spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
-                }
-								
                 activityPostedTimeInSpace = uicomponent.getPostedTimeInSpaceString(_ctx, activity.postedTime);
                 if (spaceName != null){
 						%>
