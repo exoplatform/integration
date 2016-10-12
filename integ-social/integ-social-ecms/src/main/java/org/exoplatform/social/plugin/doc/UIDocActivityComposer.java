@@ -147,7 +147,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 
   @Override
   protected void onActivate(Event<UIActivityComposer> event) {
-    isDocumentReady = false;
+//    isDocumentReady = false;
     setCurrentUser(event.getRequestContext().getRemoteUser());
   }
 
@@ -352,6 +352,10 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   protected Node getDocNode(String repository, String workspace, String docPath) {
     NodeLocation nodeLocation = new NodeLocation(repository, workspace, docPath);
     return NodeLocation.getNodeByLocation(nodeLocation);
+  }
+  
+  protected void clearComposerData() {
+    resetValues();
   }
   
 }

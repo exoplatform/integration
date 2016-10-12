@@ -30,7 +30,7 @@ link
   def labelAttach = _ctx.appRes("UILinkComposerPlugin.label.Attach");
 
   def linkInfoDisplayed = uicomponent.isLinkInfoDisplayed();
-  uicomponent.setLinkInfoDisplayed(false);
+//  uicomponent.setLinkInfoDisplayed(false);
   def requestContext = _ctx.getRequestContext();
   def jsManager = requestContext.getJavascriptManager();
 
@@ -177,10 +177,11 @@ link
       }
     %>
   </div>
-<% } else { %>
-    <div id="LinkExtensionContainer" class="uiComposerLink uiGrayLightBox clearfix">
-      <div class="inputLink"><% uicomponent.renderChild(UIFormStringInput.class); %></div>
-      <div class="buttonLink"><button id="AttachButton" class="btn" >$labelAttach</button></div>
-    </div>
-<% } %>
+<% } else { 
+      def formDisplay = uicomponent.isDisplayed() ? "block" : "none"; %>
+      <div id="LinkExtensionContainer" class="uiComposerLink uiGrayLightBox clearfix" style="display:$formDisplay">
+        <div class="inputLink"><% uicomponent.renderChild(UIFormStringInput.class); %></div>
+        <div class="buttonLink"><button id="AttachButton" class="btn" >$labelAttach</button></div>
+      </div>
+<% }%>
 </div>

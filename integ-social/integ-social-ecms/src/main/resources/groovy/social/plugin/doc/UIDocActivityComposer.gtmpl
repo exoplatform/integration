@@ -43,8 +43,7 @@
       
       <%
     } else {
-      %>
-	  
+        if (uicomponent.isDisplayed()) { %>
         <div class="uiActivityActionAttach">
           <a class="browseFile" href="<%= uicomponent.event("SelectDocument")%>">
               <h5>
@@ -55,6 +54,7 @@
         </div>
 		
       <%
+      }
     }
   %>
 </div>
