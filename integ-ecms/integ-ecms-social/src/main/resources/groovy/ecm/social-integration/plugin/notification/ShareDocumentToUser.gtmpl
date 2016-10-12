@@ -1,3 +1,7 @@
+<%
+String perm = PERMISSION.equals("read") ? _ctx.appRes("Notification.label.view") : _ctx.appRes("Notification.label.modify");
+%>
+
 <table border="0" cellpadding="0" cellspacing="0" width="600" bgcolor="#ffffff" align="center" style="background-color: #ffffff; font-size: 13px;color:#333333;line-height: 18px;font-family: HelveticaNeue, Helvetica, Arial, sans-serif;">
 <tr>
 <td align="center"  valign="middle" >
@@ -22,7 +26,7 @@
 <p style="margin: 10px 0; color: #333333; font-family: HelveticaNeue,Helvetica,Arial,sans-serif; font-size: 13px; line-height: 18px;">
 <%
 String profileUrl = "<strong><a target=\"_blank\" style=\"color: #2f5e92; font-family: 'HelveticaNeue Bold', Helvetica, Arial, sans-serif; text-decoration: none; font-size: 13px; line-height: 18px;\" href=\""+ PROFILE_URL + "\">" + USER + "</a></strong>";
-String permission = "<strong><a>" + PERMISSION + "</a></strong>";
+String permission = "<strong><a>" + perm + "</a></strong>";
 %>
 <%=_ctx.appRes("Notification.message.ShareFileToUserPlugin", profileUrl, permission)%>:
 

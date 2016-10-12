@@ -1,3 +1,6 @@
+<%
+String perm = PERMISSION.equals("read") ? _ctx.appRes("Notification.label.view") : _ctx.appRes("Notification.label.modify");
+%>
 <li class="$READ clearfix" data-id="$NOTIFICATION_ID">
   <div class="media">
     <div class="avatarXSmall pull-left">
@@ -6,7 +9,7 @@
     <div class="media-body">
           <%
            String profileUrl = "<a class=\"user-name text-bold\" href=\"javascript:void(0)\">" + USER + "</a>";
-    String permission = "<span class=\"text-bold\">" + PERMISSION + "</span>";
+    String permission = "<span class=\"text-bold\">" + perm + "</span>";
     %>
         <div class="status"><%=_ctx.appRes("Notification.intranet.message.ShareFileToUserPlugin", profileUrl, permission)%></div>
         <div class="content">

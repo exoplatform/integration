@@ -40,6 +40,9 @@ import java.util.Map;
 
 public class MailTemplateProvider extends TemplateProvider {
 
+  private static final String SHARE_NOTIFICATION_VEW          = "$UIShareDocuments.label.notification.read";
+  private static final String SHARE_NOTIFICATION_MODIFY       = "$UIShareDocuments.label.notification.modify";
+
   public MailTemplateProvider(InitParams initParams) {
     super(initParams);
     this.templateBuilders.put(PluginKey.key(ShareFileToUserPlugin.ID), shareFileToUserPlugin);
@@ -53,6 +56,7 @@ public class MailTemplateProvider extends TemplateProvider {
 
       NotificationInfo notification = ctx.getNotificationInfo();
       String language = getLanguage(notification);
+      String permission = notification.getValueOwnerParameter(ShareFileToUserPlugin.PERMISSION);
 
 
       Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, notification.getFrom(), true);
@@ -61,7 +65,9 @@ public class MailTemplateProvider extends TemplateProvider {
 
       templateContext.put("DOCUMENT", notification.getValueOwnerParameter(ShareFileToUserPlugin.DOCUMENT_NAME));
 
-      templateContext.put("PERMISSION", notification.getValueOwnerParameter(ShareFileToUserPlugin.PERMISSION));
+      templateContext.put("PERMISSION", permission);
+
+      templateContext.put("NOTIF_PERM", permission.equals("read") ? SHARE_NOTIFICATION_VEW : SHARE_NOTIFICATION_MODIFY);
 
       String subject = TemplateUtils.processSubject(templateContext);
 
@@ -160,7 +166,7 @@ public class MailTemplateProvider extends TemplateProvider {
     protected MessageInfo makeMessage(NotificationContext ctx) {
       NotificationInfo notification = ctx.getNotificationInfo();
       String language = getLanguage(notification);
-
+      String permission = notification.getValueOwnerParameter(ShareFileToUserPlugin.PERMISSION);
 
       Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, notification.getFrom(), true);
       TemplateContext templateContext = new TemplateContext(notification.getKey().getId(), language);
@@ -169,6 +175,8 @@ public class MailTemplateProvider extends TemplateProvider {
       templateContext.put("DOCUMENT", notification.getValueOwnerParameter(ShareFileToSpacePlugin.DOCUMENT_NAME));
 
       templateContext.put("PERMISSION", notification.getValueOwnerParameter(ShareFileToSpacePlugin.PERMISSION));
+
+      templateContext.put("NOTIF_PERM", permission.equals("read") ? SHARE_NOTIFICATION_VEW : SHARE_NOTIFICATION_MODIFY);
 
       String subject = TemplateUtils.processSubject(templateContext);
 

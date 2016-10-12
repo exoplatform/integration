@@ -141,6 +141,7 @@
       <SelectASpace>Sélectionnez un espace</SelectASpace>
       <SharedADocument>a partagé un document</SharedADocument>
       <WhoHasAccess>Qui a accès</WhoHasAccess>
+      <success>Le document a été partagé avec succès</success>
       <NoSpace>Veuillez sélectionner au moins un espace ou un utilisateur valide</NoSpace>
       <NoPermission>Vous n'avez pas les permissions de partager ce document</NoPermission>
       <InvalidDeletion>Vous ne pouvez pas supprimer votre propre permission</InvalidDeletion>
@@ -152,6 +153,10 @@
         <read>Peut voir</read>
         <modify>Peut modifier</modify>
       </option>
+      <notification>
+        <read>lecture</read>
+        <modify>modification</modify>
+      </notification>
       <invite>
         <placeholder>Entrez les noms d\'utilisateurs ou espaces...</placeholder>
       </invite>

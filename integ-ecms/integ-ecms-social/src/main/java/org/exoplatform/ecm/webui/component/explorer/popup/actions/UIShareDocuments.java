@@ -171,6 +171,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       String message = "";
       String perm = "read";
       String user = ConversationState.getCurrent().getIdentity().getUserId();
+      boolean isShared = false;
       if (uiform.isOwner(user) || uiform.canEdit(user)) {
         if (event.getSource().getChild(UIFormTextAreaInput.class).getValue() != null)
           message = event.getSource().getChild(UIFormTextAreaInput.class).getValue();
@@ -192,6 +193,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                     .append(ShareFileToUserPlugin.MIMETYPE, uiform.getMimeType(node))
                     .append(ShareFileToUserPlugin.MESSAGE, message);
                 ctx.getNotificationExecutor().with(ctx.makeCommand(PluginKey.key(ShareFileToUserPlugin.ID))).execute(ctx);
+                isShared = true;
               } else {
                 String groupId = name.substring("*:".length());
                 service.unpublishDocumentToSpace(groupId, (ExtendedNode) node);
@@ -207,6 +209,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                     .append(ShareFileToSpacePlugin.ACTIVITY_ID, activityId)
                     .append(ShareFileToSpacePlugin.MESSAGE, message);
                 ctx.getNotificationExecutor().with(ctx.makeCommand(PluginKey.key(ShareFileToSpacePlugin.ID))).execute(ctx);
+                isShared = true;
               }
             } else if (!name.startsWith(SPACE_PREFIX2)) {
               service.unpublishDocumentToUser(name, (ExtendedNode) node);
@@ -241,6 +244,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                     .append(ShareFileToSpacePlugin.ACTIVITY_ID, activityId)
                     .append(ShareFileToSpacePlugin.MESSAGE, message);
                 ctx.getNotificationExecutor().with(ctx.makeCommand(PluginKey.key(ShareFileToSpacePlugin.ID))).execute(ctx);
+                isShared = true;
               } else {
                 service.publishDocumentToUser(entry, node, message, perm);
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToUserPlugin.NODE, node)
@@ -254,9 +258,15 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                     .append(ShareFileToUserPlugin.MESSAGE, message);
 
                 ctx.getNotificationExecutor().with(ctx.makeCommand(PluginKey.key(ShareFileToUserPlugin.ID))).execute(ctx);
+                isShared = true;
               }
             }
           }
+        }
+        if (isShared) {
+          UIApplication uiApp = event.getSource().getAncestorOfType(UIApplication.class);
+          uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.success", null,
+              ApplicationMessage.INFO));
         }
         event.getSource().getAncestorOfType(UIJCRExplorer.class).cancelAction();
       } else {
