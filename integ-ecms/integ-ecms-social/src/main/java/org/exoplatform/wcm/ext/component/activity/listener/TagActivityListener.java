@@ -50,13 +50,13 @@ public class TagActivityListener extends Listener<Node, String>{
     }else {
       bundleMessage = ActivityCommonService.TAG_ADDED_ACTIVITY.equals(eventName)?TAG_ADDED_BUNDLE:TAG_REMOVED_BUNDLE;
     }
-    Utils.postActivity(currentNode, bundleMessage, false, true, tagValue);
+    Utils.postActivity(currentNode, bundleMessage, false, true, tagValue, "");
     LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
     List<Node> links = linkManager.getAllLinks(currentNode, NodetypeConstant.EXO_SYMLINK);
 
     for(Node link: links){
       if(link.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)){
-        ExoSocialActivity linkTagActivity = Utils.postActivity(link, bundleMessage, false, true, tagValue);
+        ExoSocialActivity linkTagActivity = Utils.postActivity(link, bundleMessage, false, true, tagValue, "");
         if (linkTagActivity!=null) {
           ActivityTypeUtils.attachActivityId(link, linkTagActivity.getId());
         }

@@ -83,6 +83,7 @@ public class TestService extends AbstractKernelTest {
   private String perm = PermissionType.READ+","+PermissionType.ADD_NODE+","+PermissionType.SET_PROPERTY;
   private String comment = "Comment";
   private String spaceName = "/spaces/space1";
+  private String userName = "john";
   private String nodePath = "nodeToShare";
   private String activityId;
   private NodeLocation nodeLocation;
@@ -155,7 +156,7 @@ public class TestService extends AbstractKernelTest {
   //share node
     DocumentContext.getCurrent().getAttributes().put(DocumentContext.IS_SKIP_RAISE_ACT, false);
     IShareDocumentService temp = (IShareDocumentService) container.getComponentInstanceOfType(IShareDocumentService.class);
-    activityId = temp.publicDocumentToSpace(spaceName, NodeLocation.getNodeByLocation(nodeLocation), comment, perm);
+    activityId = temp.publishDocumentToSpace(spaceName, NodeLocation.getNodeByLocation(nodeLocation), comment, perm);
 
 
     //Test symbolic link
@@ -172,6 +173,25 @@ public class TestService extends AbstractKernelTest {
     ActivityManager manager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
     ExoSocialActivity activity = manager.getActivity(this.activityId);
     assertEquals(this.comment, activity.getTitle());
+  }
+
+  public void testShareUser() throws Exception {
+    //share node
+    DocumentContext.getCurrent().getAttributes().put(DocumentContext.IS_SKIP_RAISE_ACT, false);
+    IShareDocumentService temp = (IShareDocumentService) container.getComponentInstanceOfType(IShareDocumentService.class);
+    temp.publishDocumentToUser(userName, NodeLocation.getNodeByLocation(nodeLocation), comment, perm);
+
+
+    //Test symbolic link
+    NodeIterator nodeIterator = session.getRootNode().getNode("Users/j___/jo___/joh___/john/Private/Documents/Shared").getNodes();
+    assertEquals(1, nodeIterator.getSize());
+    Node target = nodeIterator.nextNode();
+    assertEquals("exo:symlink", target.getPrimaryNodeType().getName());
+    Node origin = linkManager.getTarget(target,true);
+    assertEquals("/" + nodePath, origin.getPath());
+    //Test permission
+    ExtendedNode extendedNode = (ExtendedNode) origin;
+    assertTrue(!extendedNode.getACL().getPermissions(userName).isEmpty());
   }
 
   public void applySystemSession() throws Exception{

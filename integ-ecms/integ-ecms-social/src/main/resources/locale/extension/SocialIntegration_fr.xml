@@ -37,7 +37,7 @@
       <emptySummary>Le sommaire a été supprimé.</emptySummary>
       <emptyContent>Le contenu a été supprimé.</emptyContent>
       <updateMetadata>{0} a été mis à jour par: {1}</updateMetadata>
-      <removeMetadata>{0} a été supprimé.</removeMetadata>  
+      <removeMetadata>{0} a été supprimé.</removeMetadata>
       <removeTitle>Le nom a été supprimé.</removeTitle>
       <removeName>Le titre a été supprimé.</removeName>
       <removeSummary>Le sommaire a été supprimé.</removeSummary>
@@ -92,8 +92,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Type de Ressource</resourceType>        
+      <label>
+        <resourceType>Type de Ressource</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -119,38 +119,54 @@
       <lock-node-read-only>Ce fichier est verrouillé par l'utilisateur {0}. Ouvrir en lecture seule?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Partager</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Partager</UIShareDocuments>
-<Share>Partager</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Partager</ShareButton>
-<CancelButton>Annuler</CancelButton>
-<TextAreaInit>Laissez un commentaire sur ce fichier...</TextAreaInit>
-<ShareWith>Partager avec:</ShareWith>
-<Access>Accès</Access>
-<SpaceMember>Membres</SpaceMember>
-<SelectASpace>Sélectionnez un espace</SelectASpace>
-<SharedADocument>a partagé un document</SharedADocument>
-<NoSpace>Veuillez sélectionner au moins un espace</NoSpace>
-<option>
-<read>Peut voir</read>
-<modify>Peut modifier</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Partager</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Partager</UIShareDocuments>
+      <Share>Partager</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Appliquer</ShareButton>
+      <CancelButton>Annuler</CancelButton>
+      <TextAreaInit>Envoyer un message pour le partage...</TextAreaInit>
+      <ShareWith>Partager avec</ShareWith>
+      <Access>Accès</Access>
+      <SpaceMember>Membres</SpaceMember>
+      <SelectASpace>Sélectionnez un espace</SelectASpace>
+      <SharedADocument>a partagé un document</SharedADocument>
+      <WhoHasAccess>Qui a accès</WhoHasAccess>
+      <success>Le document a été partagé avec succès</success>
+      <NoSpace>Veuillez sélectionner au moins un espace ou un utilisateur valide</NoSpace>
+      <NoPermission>Vous n'avez pas les permissions de partager ce document</NoPermission>
+      <InvalidDeletion>Vous ne pouvez pas supprimer votre propre permission</InvalidDeletion>
+      <NoPermissionDelete>Vous ne pouvez pas supprimer cette permission</NoPermissionDelete>
+      <InvalidEntry>Cette permission n'est pas modifiable</InvalidEntry>
+      <InvalidOwner>Vous ne pouvez pas changer les permissions du propriétaire</InvalidOwner>
+      <Invalid>Désolé, '{0}' ne correspond pas à un espace ou un utilisateur</Invalid>
+      <option>
+        <read>Peut voir</read>
+        <modify>Peut modifier</modify>
+      </option>
+      <notification>
+        <read>lecture</read>
+        <modify>modification</modify>
+      </notification>
+      <invite>
+        <placeholder>Entrez les noms d\'utilisateurs ou espaces...</placeholder>
+      </invite>
+      <owner>Propriétaire</owner>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Partager</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Partager</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

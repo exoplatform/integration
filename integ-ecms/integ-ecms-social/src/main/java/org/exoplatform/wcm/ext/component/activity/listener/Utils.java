@@ -23,6 +23,7 @@ import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.xml.PortalContainerInfo;
 import org.exoplatform.services.cms.BasePath;
 import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
@@ -40,6 +41,7 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.core.WebSchemaConfigService;
+import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.services.wcm.webcontent.WebContentSchemaHandler;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -55,11 +57,15 @@ import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.wcm.ext.component.activity.ContentUIActivity;
 import org.exoplatform.wcm.ext.component.activity.FileUIActivity;
 import org.exoplatform.webui.application.WebuiRequestContext;
+import org.exoplatform.webui.cssfile.CssClassIconFile;
+import org.exoplatform.webui.cssfile.CssClassManager;
+import org.exoplatform.webui.cssfile.CssClassUtils;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -87,7 +93,10 @@ public class Utils {
 
   /** the publication:currentState property name */
   private static final String CURRENT_STATE_PROP  = "publication:currentState";
-  
+
+  public static final String EXO_RESOURCES_URI            = "/eXoSkin/skin/images/themes/default/Icons/TypeIcons/EmailNotificationIcons/";
+  public static final String ICON_FILE_EXTENSION          = ".png";
+
   private static String MIX_COMMENT                = "exo:activityComment";
   private static String MIX_COMMENT_ID             = "exo:activityCommentID";
   private static int    MAX_SUMMARY_LINES_COUNT    = 4;
@@ -114,11 +123,11 @@ public class Utils {
   public static Map<String, String> populateActivityData(Node node,
           String activityOwnerId,
           String activityMsgBundleKey) throws Exception {
-	  return populateActivityData(node, activityOwnerId, activityMsgBundleKey, false, null);
+	  return populateActivityData(node, activityOwnerId, activityMsgBundleKey, false, null, null);
   }
   public static Map<String, String> populateActivityData(Node node,
                                                          String activityOwnerId, String activityMsgBundleKey, 
-                                                         boolean isSystemComment, String systemComment) throws Exception {
+                                                         boolean isSystemComment, String systemComment, String perm) throws Exception {
     /** The date formatter. */
     DateFormat dateFormatter = null;
     dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
@@ -179,47 +188,115 @@ public class Utils {
       activityParams.put(ContentUIActivity.IS_SYSTEM_COMMENT, String.valueOf(false));
       activityParams.put(ContentUIActivity.SYSTEM_COMMENT, "");
     }
+    activityParams.put(ContentUIActivity.PERMISSION, perm);
+    activityParams.put(ContentUIActivity.COMMENT, systemComment);
+    activityParams.put(ContentUIActivity.THUMBNAIL, getThumbnailUrl(node, repository, workspace) != null ? getThumbnailUrl(node, repository, workspace) : getDefaultThumbnailUrl(node));
     activityParams.put(ContentUIActivity.NODE_PATH, node.getPath());
     return activityParams;
   }
 
-  /**
-   * see the postActivity(Node node, String activityMsgBundleKey, Boolean isSystemComment, String systemComment)
-   */
-  public static void postActivity(Node node, String activityMsgBundleKey) throws Exception {
-    postActivity(node, activityMsgBundleKey, false, false, null);
+  private static String getDefaultThumbnailUrl(Node node) throws RepositoryException {
+    LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
+    String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(
+        node.getName(), getMimeType(linkManager.isLink(node)?linkManager.getTarget(node, true):node), CssClassManager.ICON_SIZE.ICON_64);
+
+    if (cssClass.indexOf(CssClassIconFile.DEFAULT_CSS) > 0) {
+      return CommonsUtils.getCurrentDomain() + EXO_RESOURCES_URI  + "uiIcon64x64Templatent_file.png";
+    }
+    return CommonsUtils.getCurrentDomain() + EXO_RESOURCES_URI + cssClass.split(" ")[0] + ICON_FILE_EXTENSION;
   }
 
-  public static ExoSocialActivity createShareActivity(Node node, String activityMsgBundleKey, String activityType, String comments) throws Exception{
+  private static String getThumbnailUrl(Node node, String repository, String workspace) {
+    try {
+      LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
+      String mimeType = getMimeType(linkManager.isLink(node)?linkManager.getTarget(node, true):node);
+      ExoContainer container = ExoContainerContext.getCurrentContainer();
+      PortalContainerInfo containerInfo = (PortalContainerInfo) container.getComponentInstanceOfType(PortalContainerInfo.class);
+      String portalName = containerInfo.getContainerName();
+
+      String restContextName = org.exoplatform.ecm.webui.utils.Utils.getRestContextName(portalName);
+      String preferenceWS = node.getSession().getWorkspace().getName();
+      String encodedPath = URLEncoder.encode(node.getPath(), "utf-8");
+      encodedPath = encodedPath.replaceAll ("%2F", "/");
+
+      if (mimeType.startsWith("image")) {
+
+        return CommonsUtils.getCurrentDomain() + "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/300x300/" +
+            repository + "/" + preferenceWS + encodedPath;
+      }
+      else if (mimeType.indexOf("icon") >=0) {
+        return getWebdavURL(node, repository, workspace);
+      }
+      else if (org.exoplatform.services.cms.impl.Utils.isSupportThumbnailView(mimeType)) {
+        return CommonsUtils.getCurrentDomain() + "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;
+      } else {
+        return null;
+      }
+
+    }
+    catch (Exception e) {
+      LOG.debug("Cannot get thumbnail url");
+    }
+    return StringUtils.EMPTY;
+  }
+
+  private static String getWebdavURL(Node contentNode, String repository, String workspace) throws Exception {
+    FriendlyService friendlyService = WCMCoreUtils.getService(FriendlyService.class);
+    String link = "#";
+
+    String portalName = PortalContainer.getCurrentPortalContainerName();
+    String restContextName = PortalContainer.getCurrentRestContextName();
+    if (contentNode.isNodeType("nt:frozenNode")) {
+      String uuid = contentNode.getProperty("jcr:frozenUuid").getString();
+      Node originalNode = contentNode.getSession().getNodeByUUID(uuid);
+      link = CommonsUtils.getCurrentDomain() + "/" + portalName + "/" + restContextName + "/jcr/" + repository + "/"
+          + workspace + originalNode.getPath() + "?version=" + contentNode.getParent().getName();
+    } else {
+      link = CommonsUtils.getCurrentDomain() + "/" + portalName + "/" + restContextName + "/jcr/" + repository + "/"
+          + workspace + contentNode.getPath();
+    }
+
+    return friendlyService.getFriendlyUri(link);
+  }
+
+  /**
+   * see the postActivity(Node node, String activityMsgBundleKey, Boolean isSystemComment, String systemComment, String perm)
+   */
+  public static void postActivity(Node node, String activityMsgBundleKey) throws Exception {
+    postActivity(node, activityMsgBundleKey, false, false, null, null);
+  }
+
+  public static ExoSocialActivity createShareActivity(Node node, String activityMsgBundleKey, String activityType, String comments, String perm) throws Exception{
     setActivityType(activityType);
     if(SHARE_FILE.equals(activityType)){
-      return postFileActivity(node,activityMsgBundleKey,false,false,comments);
+      return postFileActivity(node,activityMsgBundleKey,false,false,comments, perm);
     }else if(SHARE_CONTENT.equals(activityType)){
-      return postActivity(node,activityMsgBundleKey,false,false,comments);
+      return postActivity(node,activityMsgBundleKey,false,false,comments, perm);
     }else{
       setActivityType(null);
-      return postFileActivity(node,activityMsgBundleKey,false,false,comments);
+      return postFileActivity(node,activityMsgBundleKey,false,false,comments, perm);
     }
   }
   /**
-   * see the postFileActivity(Node node, String activityMsgBundleKey, Boolean isSystemComment, String systemComment)
+   * see the postFileActivity(Node node, String activityMsgBundleKey, Boolean isSystemComment, String systemComment, String perm)
    */
   public static void postFileActivity(Node node, String activityMsgBundleKey) throws Exception {
-    postFileActivity(node, activityMsgBundleKey, false, false, null);
+    postFileActivity(node, activityMsgBundleKey, false, false, null, null);
   }
-  
-  
+
   /**
    * 
    * @param node : activity raised from this source
    * @param activityMsgBundleKey
+   * @param needUpdate
    * @param isSystemComment
-   * @param systemComment the new value of System Posted activity, 
+   * @param systemComment the new value of System Posted activity,
    *        if (isSystemComment) systemComment can not be set to null, set to empty string instead of.
+   * @param perm the permission accorded for sharing file/content
    * @throws Exception
    */
   public static ExoSocialActivity postActivity(Node node, String activityMsgBundleKey, boolean needUpdate, 
-                                  boolean isSystemComment, String systemComment) throws Exception {
+                                  boolean isSystemComment, String systemComment, String perm) throws Exception {
     Object isSkipRaiseAct = DocumentContext.getCurrent()
                                            .getAttributes()
                                            .get(DocumentContext.IS_SKIP_RAISE_ACT);
@@ -266,7 +343,7 @@ public class Utils {
     if (activity==null) {
       String _activityType = StringUtils.isNotEmpty(activityType)?activityType:CONTENT_SPACES;
       activity = createActivity(identityManager, activityOwnerId,
-                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment);
+                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment, perm);
       setActivityType(null);
     }
     
@@ -360,7 +437,7 @@ public class Utils {
    * @throws Exception
    */
   public static ExoSocialActivity postFileActivity(Node node, String activityMsgBundleKey, boolean needUpdate, 
-                                  boolean isSystemComment, String systemComment) throws Exception {
+                                  boolean isSystemComment, String systemComment, String perm) throws Exception {
     Object isSkipRaiseAct = DocumentContext.getCurrent()
                                            .getAttributes()
                                            .get(DocumentContext.IS_SKIP_RAISE_ACT);
@@ -408,7 +485,7 @@ public class Utils {
     if (activity==null) {
       String _activityType = StringUtils.isNotEmpty(activityType)?activityType:FILE_SPACES;
       activity = createActivity(identityManager, activityOwnerId,
-                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment);
+                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment, perm);
       setActivityType(null);
     }
     
@@ -670,14 +747,14 @@ public class Utils {
   public static ExoSocialActivity createActivity(IdentityManager identityManager,
                                                  String activityOwnerId, Node node,
                                                  String activityMsgBundleKey, String activityType) throws Exception {
-	  return createActivity(identityManager, activityOwnerId, node, activityMsgBundleKey, activityType, false, null);
+	  return createActivity(identityManager, activityOwnerId, node, activityMsgBundleKey, activityType, false, null, null);
   }
   public static ExoSocialActivity createActivity(IdentityManager identityManager,
                                                  String activityOwnerId,
                                                  Node node, String activityMsgBundleKey, String activityType,
-                                                 boolean isSystemComment,  String systemComment) throws Exception {
+                                                 boolean isSystemComment,  String systemComment, String perm) throws Exception {
 		// Populate activity data
-	Map<String, String> activityParams = populateActivityData(node, activityOwnerId, activityMsgBundleKey, isSystemComment, systemComment);
+	Map<String, String> activityParams = populateActivityData(node, activityOwnerId, activityMsgBundleKey, isSystemComment, systemComment, perm);
 	
     String title = node.hasProperty(NodetypeConstant.EXO_TITLE) ? node.getProperty(NodetypeConstant.EXO_TITLE)
                                                                       .getString()

@@ -44,7 +44,7 @@ public class PublicationStateActivityListener extends Listener<Node, String> {
       	if(!currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE) || 
       			(currentNode.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE) && 
       					activityService.isBroadcastNTFileEvents(currentNode)))
-        Utils.postActivity(currentNode, bundlePrefix + handledState[i], true, true, "");
+        Utils.postActivity(currentNode, bundlePrefix + handledState[i], true, true, "", "");
       }
     }
   }

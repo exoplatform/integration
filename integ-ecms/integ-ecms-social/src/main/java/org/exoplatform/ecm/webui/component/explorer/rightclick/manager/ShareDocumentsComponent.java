@@ -65,7 +65,7 @@ public class ShareDocumentsComponent extends UIAbstractManagerComponent{
       NodeLocation location = new NodeLocation(uiExplorer.getRepositoryName(),uiExplorer.getWorkspaceName(),nodePath);      
       uiShareDocuments.setSelectedNode(location);
       uiShareDocuments.init();
-      objUIPopupContainer.activate(uiShareDocuments, 397, 0);
+      objUIPopupContainer.activate(uiShareDocuments, 520, 0);
       event.getRequestContext().addUIComponentToUpdateByAjax(objUIPopupContainer);
     }
   }

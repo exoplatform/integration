@@ -39,7 +39,7 @@ public class CategoryActivityListener extends Listener<Node, String> {
     String bundleMessage = eventName.equals(ActivityCommonService.CATEGORY_ADDED_ACTIVITY) ?
                            CATEGORY_ADDED_BUNDLE:CATEGORY_REMOVED_BUNDLE;
     if (eventName.equals(ActivityCommonService.CATEGORY_ADDED_ACTIVITY) || eventName.equals(ActivityCommonService.CATEGORY_REMOVED_ACTIVITY)) {
-      Utils.postActivity(currentNode, bundleMessage, false, true, categoryName);
+      Utils.postActivity(currentNode, bundleMessage, false, true, categoryName, "");
     }
   }
 

@@ -100,7 +100,7 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 	      	if(propertyName.equals(NodetypeConstant.DC_SOURCE) &&
 	      			newValue.split(ActivityCommonService.METADATA_VALUE_SEPERATOR).length > 1)
 	      		resourceBundle = "SocialIntegration.messages.addMultiSource";
-	      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue);
+	      	Utils.postFileActivity(currentNode, resourceBundle, needUpdate[i], true, commentValue, "");
 	      	hit = true;
 	        break;
 	      }
@@ -118,7 +118,7 @@ public class FileAddPropertyActivityListener extends Listener<Node, String> {
 	    	resourceBundle = portletRequestContext.getApplicationResourceBundle().getString(resourceBundle);
 	    	resourceBundle = resourceBundle.replace("{0}", dcProperty);
 	    	resourceBundle = resourceBundle.replace("{1}", commentValue);
-	    	Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue);
+	    	Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue, "");
 	    }
     }
   }
