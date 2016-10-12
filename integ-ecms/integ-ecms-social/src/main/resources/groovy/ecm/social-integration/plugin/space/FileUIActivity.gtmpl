@@ -194,6 +194,24 @@
     ownerName = space.displayName;
     if (!ownerAvatar) ownerAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
   }
+  def spaceSourceURI, spaceName, spaceImageSource, spaceID;
+	if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
+
+		Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
+		spaceID = spaceSource.getId();
+		if (spaceSource != null) {
+			spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
+			spaceName = spaceSource.displayName;
+			spaceImageSource = spaceSource.getAvatarUrl();
+			if (spaceImageSource == null) {
+				spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+			}
+		} else {
+			spaceSourceURI = LinkProvider.getActivityUriForSpace(streamOwner, streamOwner);
+			spaceName = Utils.getSpaceIdentity(streamOwner, false).profile.fullName;
+			spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+		}
+	}
 %>
 
 <%if (currentNode != null) {
@@ -257,44 +275,52 @@
 				<img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<div class="activityType"><span><i class="uiIconSocFileSharing uiIconSocWhite"></i></span></div>
+		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
+    	<div class="activityType">
+        	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
+        		<img alt="$spaceName" src="$spaceImageSource"/>
+        	</a>
+        </div>
+        <%}%>
 	</div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
 			<div id="ActivityContextBox${activity.id}">     
 				<div class="heading">
 					<span class="arrowLeft"></span>
-					<div class="actLink">
+					<div class="actLink  hidden-phone hidden-tablet">
 					  <a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" rel="tooltip" data-placement="bottom" title="$viewActivityTip" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
 					<% if (activityDeletable) {%>
 						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 					</div>
 					<div class="author">
-						<a title="$ownerName" href="$ownerUri">$ownerName</a>         
-					</div>	
-					<div class="dataInfor">
-						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
+    					<div class="hidden-desktop circleSpaceAvatar">
+        				    <a href="$ownerUri">
+                              <img alt="$ownerName" src="$ownerAvatar"/>
+                            </a>
+                        </div>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
-                def spaceSourceURI, spaceName, spaceImageSource;
-                if (spaceSource != null) {
-                  spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
-                  spaceName = spaceSource.displayName;
-									spaceImageSource = spaceSource.getAvatarUrl();
-									if (spaceImageSource == null) {
-										spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
-									}
-                } else {
-                  spaceSourceURI = LinkProvider.getActivityUriForSpace(streamOwner, streamOwner);
-                  spaceName = Utils.getSpaceIdentity(streamOwner, false).profile.fullName;
-									spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
-                }
 						%>
-						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI">
-							<img title="" alt="" src="$spaceImageSource" class="spaceIcon avatarMini" />&nbsp;$spaceName
+						<div class="ownerName">
+                        	<a title="$ownerName" href="$ownerUri">$ownerName</a>
+                        </div>
+						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
 						</a>
-						<%} %>
+						<%} else{%>
+							<div class="owner">
+                            	<a title="$ownerName" href="$ownerUri">$ownerName</a>
+                            </div>
+						<%}%>
+					</div>
+					<div class="dataInfor">
+						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
+						<div class=" actionLink hidden-desktop visible-tablet visible-phone">
+    					  <a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" rel="tooltip" data-placement="bottom" title="$viewActivityTip" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
+    					<% if (activityDeletable) {%>
+    						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+    						<%}%>
+    					</div>
 					</div>
 				</div><!--end heading-->
 				<% if (activityStatus != null) { %>
@@ -634,44 +660,52 @@
 				<img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<div class="activityType"><span><i class="uiIconSocFileSharing uiIconSocWhite"></i></span></div>
+		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
+    	<div class="activityType">
+        	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
+        		<img alt="$spaceName" src="$spaceImageSource"/>
+        	</a>
+        </div>
+        <%}%>
 	</div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
 			<div id="ActivityContextBox${activity.id}">     
 				<div class="heading">
 					<span class="arrowLeft"></span>
-					<div class="actLink">
+					<div class="actLink  hidden-phone hidden-tablet">
 					      <a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" rel="tooltip" data-placement="bottom" title="$viewActivityTip" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
 					<% if (activityDeletable) {%>
 						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
 						<%}%>
 					</div>
 					<div class="author">
-						<a title="$ownerName" href="$ownerUri">$ownerName</a>         
-					</div>	
-					<div class="dataInfor">
-						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span> 
+       					<div class="hidden-desktop circleSpaceAvatar">
+           				    <a href="$ownerUri">
+                                 <img alt="$ownerName" src="$ownerAvatar"/>
+                               </a>
+                         </div>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-								Space spaceSource = Utils.getSpaceService().getSpaceByPrettyName(streamOwner);
-                def spaceSourceURI, spaceName, spaceImageSource;
-                if (spaceSource != null) {
-                  spaceSourceURI = LinkProvider.getSpaceUri(spaceSource.url);
-                  spaceName = spaceSource.displayName;
-									spaceImageSource = spaceSource.getAvatarUrl();
-									if (spaceImageSource == null) {
-										spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
-									}
-                } else {
-                  spaceSourceURI = LinkProvider.getActivityUriForSpace(streamOwner, streamOwner);
-                  spaceName = Utils.getSpaceIdentity(streamOwner, false).profile.fullName;
-									spaceImageSource = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
-                }
 						%>
-						<a class="spaceName" rel="tooltip" data-placement="bottom" title="$spaceName" href="$spaceSourceURI">
-							<img title="" alt="" src="$spaceImageSource" class="spaceIcon avatarMini" />&nbsp;$spaceName
+						<div class="ownerName">
+    						<a title="$ownerName" href="$ownerUri">$ownerName</a>
+    					</div>
+						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
 						</a>
-						<%} %>
+						<%} else{%>
+							<div class="owner">
+        						<a title="$ownerName" href="$ownerUri">$ownerName</a>
+        					</div>
+						<%}%>
+					</div>
+					<div class="dataInfor">
+						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
+						<div class=" actionLink hidden-desktop visible-tablet visible-phone">
+    					      <a id="Permalink${activity.id}" class="uiIconLink uiIconLightGray" rel="tooltip" data-placement="bottom" title="$viewActivityTip" href="<%=uicomponent.getActivityPermalink(activity.id)%>"></a>
+    					<% if (activityDeletable) {%>
+    						  <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="uiIconClose uiIconLightGray controllDelete" id="DeleteActivityButton${activity.id}"></a>
+    						<%}%>
+    					</div>
 					</div>
 				</div><!--end heading-->
                 <% if (activityStatus != null) { %>
