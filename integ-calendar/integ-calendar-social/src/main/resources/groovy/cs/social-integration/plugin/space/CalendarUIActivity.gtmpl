@@ -98,10 +98,12 @@
   def commentListStatus = uicomponent.getCommentListStatus();
   def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
   def likesDisplayed = uicomponent.isAllLoaded();
+  def placeholder = _ctx.appRes("UIActivity.comment.placeholder");
   //params for init UIActivity javascript object
 
   def params = """ {
 	  activityId: '${activity.id}',
+      placeholderComment: '${placeholder}',
 	  inputWriteAComment: '$inputWriteAComment',
 	  commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
 	  commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
@@ -189,7 +191,7 @@
   String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 %>
 
-<div class="activityStream uiCalendarActivity" id="activityContainer${activity.id}"> 
+<div class="activityStream uiCalendarActivity" id="activityContainer${activity.id}">
   <% uiform.begin() %>
   <%
     def calendarIconClass = "eventActivityIcon";
@@ -213,10 +215,10 @@
         	</a>
         </div>
         <%}%>
-	</div><!--end activityTimeLine-->	
+	</div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
-			<div id="ActivityContextBox${activity.id}">     
+			<div id="ActivityContextBox${activity.id}">
 				<div class="heading">
 					<span class="arrowLeft"></span>
 					<div class="actLink  hidden-phone hidden-tablet">
@@ -263,25 +265,25 @@
 							if (uicomponent.getTypeOfEvent().contains("Task")) {
 						%>
 						<div class="pull-left statusTask"><i class="uiIconStatus-<%=event.getEventState()%>"  ></i></div>
-						<%} else { 
+						<%} else {
 					    SimpleDateFormat sdf = new SimpleDateFormat("MMM");
 					    sdf.setTimeZone(userTimeZone);
-						def month = sdf.format(event.getFromDateTime());    
+						def month = sdf.format(event.getFromDateTime());
 						sdf = new SimpleDateFormat("dd");
 						sdf.setTimeZone(userTimeZone);
 						def day = (sdf.format(event.getFromDateTime())) ;
-						
+
 						%> <!-- check if is event-->
 						  <div class="pull-left calendarBox">
 							<div class="heading">
-								$month 
+								$month
 							</div>
 							<div class="content">
 								$day
 							</div>
 						  </div>
-						<% } %>	
-						  <div class="text">								
+						<% } %>
+						  <div class="text">
 								  <%
 									title = "<a class='linkTitle' href='" + uicomponent.getEventPreviewLinkInSpace() +"'>" + uicomponent.getSummary() + "</a>";
 									print title;
@@ -299,20 +301,20 @@
 									<span class="dateTime"><%=_ctx.appRes("CalendarUIActivity.label.due-for")%>: $fullTask</span>
 								<% } else {
 									def full = uicomponent.getEventStartTime(_ctx) ;
-								%>  
+								%>
 									<span class="dateTime">$full</span><br/>
 									<span class="location"><%=uicomponent.getLocation();%><br></span>
 									<%}%>
-								<% } %>  
+								<% } %>
 						  </div>
 					</div>
-				</div><!--end introBox-->				  
+				</div><!--end introBox-->
 				<div class="actionBar clearfix $calendarIconClass">
 				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 					 def commentLink = "";
 				  %>
-				 <% if (activityCommentAndLikable) { %>						 
-					<ul class="pull-right statusAction">						
+				 <% if (activityCommentAndLikable) { %>
+					<ul class="pull-right statusAction">
 						<li>
 							<a class="$commentLink"  id="CommentLink${activity.id}" href="javascript:void(0);">
 								<i class="uiIconComment uiIconLightGray"></i>&nbsp;$totalComments
@@ -330,9 +332,9 @@
 							  <i class="uiIconThumbUp uiIconLightGray"></i>&nbsp;$totalLikesNum
 							</a>
 						</li>
-					  <% }%>											 
-					</ul>  
-				 <% }%>	
+					  <% }%>
+					</ul>
+				 <% }%>
 				</div><!--end actionBar-->
 			<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>
 			<div class="listLikedBox $listPeopleBGClass">
@@ -359,8 +361,8 @@
 					<% }%>
 				 </div>
 			  </div><!--end list like people-->
-				<%}%>       
-				<div id="CommentBlockBound${activity.id}" class="commentBox">					
+				<%}%>
+				<div id="CommentBlockBound${activity.id}" class="commentBox">
 					<% if (uicomponent.commentListToggleable()) {
 					  def showAllCommentsAction = uicomponent.event("SetCommentListStatus", "all");
 					  def hideAllCommentsAction = uicomponent.event("SetCommentListStatus", "none");
@@ -379,7 +381,7 @@
 			      <% } %>
 			      </div>
 			    <% } %>
-					<div class="commentList">	
+					<div class="commentList">
 					<%
 					def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
 					def first = true, commentContentClass;
@@ -411,7 +413,7 @@
 						  <a class="avatarXSmall" href="$commenterProfileUri" rel="tooltip" data-placement="bottom" title="$commenterFullName" >
 							<img alt="$commenterFullName" src="$commenterAvatarImgSrc" />
 						  </a>
-						</div><!--end commentLeft-->     
+						</div><!--end commentLeft-->
 						<div class="commentRight">
 							<div class="author">
 								<a href="$commenterProfileUri">$commenterFullName</a>
@@ -421,15 +423,15 @@
 							</div>
 							<p class="contentComment">
 								$commentMessage
-							</p>          
+							</p>
 						</div><!--end commentRight-->
 						<div class="actLink">
-						  <a id="Permalink${it.id}" rel="tooltip" data-placement="bottom" title="$viewActivityTip" class="uiIconLink uiIconLightGray" href="<%=uicomponent.getCommentPermalink(activity.id, it.id)%>"></a>
+                <a id="EditComment${activity.id}${commentCounter}" href="javascript:void(0);" onclick="<%= uicomponent.event("EditComment", uicomponent.id, it.id); %>"><i class="uiIconEdit uiIconLightGray"></i></a>
 					  <%
 						if (uicomponent.isCommentDeletable(it.userId)) {
 						  String idDeleteComment = "DeleteCommentButton${it.id}";
 					  %>
-						  <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"  class="uiIconClose uiIconLightGray controllDelete"></a>
+						  <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"  class="uiIconTrash uiIconLightGray controllDelete"></a>
 					  <% } %>					  
 					    </div>
 					  </div><!--end commentItem-->
@@ -456,8 +458,8 @@
 						</div><!--end commentLeft--> 
 						<div class="commentRight">
 							<div class="commentInputBox ">
-								 <button class="btn pull-right btn-primary" onclick="<%= uicomponent.event("PostComment") %>"  rel="tooltip" data-placement="bottom" title="$labelComment" id="CommentButton${activity.id}">$labelComment</button>
 								<div class="commentInput"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
+								<button class="btn btn-primary" onclick="<%= uicomponent.event("PostComment") %>"  rel="tooltip" data-placement="bottom" title="$labelComment" id="CommentButton${activity.id}">$labelComment</button>
 							</div>
 						</div><!--end commentRight-->      
 					  </div> <!--end commentItem-->		
