@@ -46,10 +46,8 @@
         if (uicomponent.isDisplayed()) { %>
         <div class="uiActivityActionAttach">
           <a class="browseFile" href="<%= uicomponent.event("SelectDocument")%>">
-              <h5>
-                  <i class="uiIconPlus blue"></i>
-                  $selectFileLabel
-              </h5>
+            <i class="uiIconPlus uiIconBlue"></i>
+            <span class="uiActivityActionAttachText">$selectFileLabel</span>
           </a>
         </div>
 		
