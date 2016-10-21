@@ -181,7 +181,7 @@
   def docOpenUri = uicomponent.getCurrentDocOpenUri();
   def escapedOwnerName = ownerName.replace("'", "\\'").replace("&#39;", "\\&#39;");
   def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'").replace("&#39;", "\\&#39;");
-  def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;")) : "";
+  def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;").replace("\n", "").replace("\r", "")) : "";
   def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "', isWebContent: true}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + escapedOwnerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "', status: '" + escapedActivityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + "}})})";
 
   def commentListStatus = uicomponent.getCommentListStatus();
