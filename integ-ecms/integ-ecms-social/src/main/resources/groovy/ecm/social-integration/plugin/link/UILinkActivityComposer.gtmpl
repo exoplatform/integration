@@ -109,7 +109,7 @@ link
      def embedHtml = uicomponent.getTemplateParams().get(uicomponent.HTML_PARAM);
                            %>
   <div class="uiLinkShareDisplay blastShare">
-	<a class="uiIconClose uiIconLightGray" href="javascript:void(0)" onclick="<%= uicomponent.event("Close")%>;" ></a>
+	<a class="uiIconClose uiIconLightGray" href="javascript:void(0)" onclick="<%= uicomponent.event("RemoveLink")%>;" ></a>
     <%
       if(UILinkUtil.isImageLink(link)){
         %>
