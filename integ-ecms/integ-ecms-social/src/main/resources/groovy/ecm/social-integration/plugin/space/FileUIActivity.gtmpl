@@ -249,7 +249,7 @@
 		def fileType = org.exoplatform.services.cms.impl.Utils.getFileType(currentNode);
 		def escapedOwnerName = ownerName.replace("'", "\\'").replace("&#39;", "\\&#39;");
 		def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'").replace("&#39;", "\\&#39;");
-		def escapedActivityStatus = activityStatus != null ? activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;") : "";
+		def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;")) : "";
 		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc({doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + escapedOwnerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "', status: '" + escapedActivityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + "}})})";
 		def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
 		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
