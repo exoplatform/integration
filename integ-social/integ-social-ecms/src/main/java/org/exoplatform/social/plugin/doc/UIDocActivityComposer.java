@@ -346,6 +346,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 //      activityComposer.setDisplayed(false);
       // Reset values
       docActivityComposer.resetValues();
+      event.getRequestContext().addUIComponentToUpdateByAjax(docActivityComposer);
     }
   }
   
