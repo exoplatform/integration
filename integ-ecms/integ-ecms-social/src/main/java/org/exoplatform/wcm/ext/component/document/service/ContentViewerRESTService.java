@@ -16,25 +16,6 @@
  */
 package org.exoplatform.wcm.ext.component.document.service;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Locale;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.portlet.ActionRequest;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
@@ -43,7 +24,6 @@ import org.exoplatform.groovyscript.text.BindingContext;
 import org.exoplatform.portal.application.PortalApplication;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.portal.UIPortal;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.portal.webui.workspace.UIPortalApplication;
 import org.exoplatform.resolver.ResourceResolver;
 import org.exoplatform.services.cms.templates.TemplateService;
@@ -53,20 +33,28 @@ import org.exoplatform.services.jcr.ext.app.SessionProviderService;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.resources.Orientation;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.web.ControllerContext;
 import org.exoplatform.web.WebAppController;
-import org.exoplatform.web.application.Application;
-import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.core.UIComponent;
-import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
-import org.gatein.api.site.SiteType;
-import org.gatein.pc.portlet.impl.jsr168.api.ActionRequestImpl;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Locale;
 
 /**
  *
@@ -129,6 +117,11 @@ public class ContentViewerRESTService implements ResourceContainer {
       uiDocViewer.processRender(requestContext);
 
       content = writer.toString();
+      String nodeId = writer.toString().split("PDFJS.pdfFile")[1].split(";")[0].split("/")[5];
+      if (nodeId.contains("\'")) nodeId = nodeId.replace("\'", "");
+      if (!nodeId.equals(uuid)) {
+        content = content.replace(nodeId, uuid);
+      }
 
     } catch (Exception e) {
       LOG.error("Cannot render content of document " + repoName + "/" + workspaceName + "/" + uuid, e);
