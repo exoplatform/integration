@@ -37,7 +37,7 @@
       <emptySummary>Tóm tắt vừa bị loại bỏ.</emptySummary>
       <emptyContent>Nội dung vừa bị loại bỏ.</emptyContent>
       <updateMetadata>Siêu dữ liệu {0} đã được cập nhật thành: {1}</updateMetadata>
-      <removeMetadata>Siêu dữ liệu {0} vừa bị loại bỏ.</removeMetadata>  
+      <removeMetadata>Siêu dữ liệu {0} vừa bị loại bỏ.</removeMetadata>
       <removeTitle>Tiêu đề vừa bị loại bỏ.</removeTitle>
       <removeName>Tên vừa bị loại bỏ.</removeName>
       <removeSummary>Tóm tắt vừa bị loại bỏ.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Loại Tài nguyên</resourceType>        
+      <label>
+        <resourceType>Loại Tài nguyên</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -116,38 +116,38 @@
       <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Chia sẻ</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Chia sẻ</UIShareDocuments>
-<Share>Chia sẻ</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Chia sẻ</ShareButton>
-<CancelButton>Hủy bỏ</CancelButton>
-<TextAreaInit>Add a comment about to this file...</TextAreaInit>
-<ShareWith>Chia sẻ với:</ShareWith>
-<Access>Truy cập</Access>
-<SpaceMember>Thành viên Nhóm</SpaceMember>
-<SelectASpace>Select a Space</SelectASpace>
-<SharedADocument>chia sẻ một tài liệu</SharedADocument>
-<NoSpace>Please select at least one space to share</NoSpace>
-<option>
-<read>Can View</read>
-<modify>Can Edit</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Chia sẻ</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Chia sẻ</UIShareDocuments>
+      <Share>Chia sẻ</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Chia sẻ</ShareButton>
+      <CancelButton>Hủy bỏ</CancelButton>
+      <TextAreaInit>Add a comment about to this file...</TextAreaInit>
+      <ShareWith>Chia sẻ với:</ShareWith>
+      <Access>Truy cập</Access>
+      <SpaceMember>Thành viên Nhóm</SpaceMember>
+      <SelectASpace>Select a Space</SelectASpace>
+      <SharedADocument>chia sẻ một tài liệu</SharedADocument>
+      <NoSpace>Please select at least one space to share</NoSpace>
+      <option>
+        <read>Can View</read>
+        <modify>Can Edit</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Chia sẻ</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Chia sẻ</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>
