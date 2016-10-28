@@ -33,7 +33,7 @@
       <editLanguage>Le language a été mis à jour: {0}</editLanguage>
       <editContent>Le contenu a été modifié.</editContent>
       <editFile>Le fichier a été modifié.</editFile>
-      <emptyTitle> Le titre a été supprimé.</emptyTitle>
+      <emptyTitle>Le titre a été supprimé.</emptyTitle>
       <emptySummary>Le sommaire a été supprimé.</emptySummary>
       <emptyContent>Le contenu a été supprimé.</emptyContent>
       <updateMetadata>{0} a été mis à jour par: {1}</updateMetadata>
@@ -116,7 +116,8 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Ce fichier est verrouillé par l'utilisateur {0}. Ouvrir en lecture seule?</lock-node-read-only>
+      <lock-node-read-only>Ce fichier est verrouillé par l'utilisateur {0}. Ouvrir en lecture seule?
+      </lock-node-read-only>
     </msg>
   </UIPopupMenu>
   <ECMContextMenu>

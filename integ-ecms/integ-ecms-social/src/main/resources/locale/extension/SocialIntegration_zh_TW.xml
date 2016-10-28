@@ -37,7 +37,7 @@
       <emptySummary>摘要已被移除。</emptySummary>
       <emptyContent>內容已被刪除。</emptyContent>
       <updateMetadata>已到更新中繼資料 {0}: {1}</updateMetadata>
-      <removeMetadata>中繼資料 {0} 已被移除。</removeMetadata>  
+      <removeMetadata>中繼資料 {0} 已被移除。</removeMetadata>
       <removeTitle>標題已被移除。</removeTitle>
       <removeName>名稱已被移除。</removeName>
       <removeSummary>摘要已被移除。</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>資源類型</resourceType>        
+      <label>
+        <resourceType>資源類型</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -116,38 +116,38 @@
       <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>分享</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>分享</UIShareDocuments>
-<Share>分享</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>分享</ShareButton>
-<CancelButton>取消</CancelButton>
-<TextAreaInit>Add a comment about to this file...</TextAreaInit>
-<ShareWith>Share with:</ShareWith>
-<Access>Access</Access>
-<SpaceMember>空間成員</SpaceMember>
-<SelectASpace>Select a Space</SelectASpace>
-<SharedADocument>shared a document</SharedADocument>
-<NoSpace>Please select at least one space to share</NoSpace>
-<option>
-<read>Can View</read>
-<modify>Can Edit</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>分享</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>分享</UIShareDocuments>
+      <Share>分享</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>分享</ShareButton>
+      <CancelButton>取消</CancelButton>
+      <TextAreaInit>Add a comment about to this file...</TextAreaInit>
+      <ShareWith>Share with:</ShareWith>
+      <Access>Access</Access>
+      <SpaceMember>空間成員</SpaceMember>
+      <SelectASpace>Select a Space</SelectASpace>
+      <SharedADocument>shared a document</SharedADocument>
+      <NoSpace>Please select at least one space to share</NoSpace>
+      <option>
+        <read>Can View</read>
+        <modify>Can Edit</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>分享</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>分享</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

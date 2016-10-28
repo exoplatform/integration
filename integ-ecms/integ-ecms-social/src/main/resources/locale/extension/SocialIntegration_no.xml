@@ -37,7 +37,7 @@
       <emptySummary>Sammendraget har blitt fjernet.</emptySummary>
       <emptyContent>Innholdet har blitt fjernet.</emptyContent>
       <updateMetadata>Metadata {0} har blitt oppdatert til: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} har blitt fjernet.</removeMetadata>  
+      <removeMetadata>Metadata {0} har blitt fjernet.</removeMetadata>
       <removeTitle>Tittelen har blitt fjernet.</removeTitle>
       <removeName>Navnet har blitt fjernet.</removeName>
       <removeSummary>Sammendrag har blitt fjernet.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Ressurstype</resourceType>        
+      <label>
+        <resourceType>Ressurstype</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -116,38 +116,38 @@
       <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Del</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Del</UIShareDocuments>
-<Share>Del</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Del</ShareButton>
-<CancelButton>Avbryt</CancelButton>
-<TextAreaInit>Add a comment about to this file...</TextAreaInit>
-<ShareWith>Share with:</ShareWith>
-<Access>Access</Access>
-<SpaceMember>Fellesskapets medlemmer</SpaceMember>
-<SelectASpace>Select a Space</SelectASpace>
-<SharedADocument>shared a document</SharedADocument>
-<NoSpace>Please select at least one space to share</NoSpace>
-<option>
-<read>Can View</read>
-<modify>Can Edit</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Del</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Del</UIShareDocuments>
+      <Share>Del</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Del</ShareButton>
+      <CancelButton>Avbryt</CancelButton>
+      <TextAreaInit>Add a comment about to this file...</TextAreaInit>
+      <ShareWith>Share with:</ShareWith>
+      <Access>Access</Access>
+      <SpaceMember>Fellesskapets medlemmer</SpaceMember>
+      <SelectASpace>Select a Space</SelectASpace>
+      <SharedADocument>shared a document</SharedADocument>
+      <NoSpace>Please select at least one space to share</NoSpace>
+      <option>
+        <read>Can View</read>
+        <modify>Can Edit</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Del</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Del</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

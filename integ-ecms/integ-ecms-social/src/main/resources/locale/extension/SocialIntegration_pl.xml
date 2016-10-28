@@ -37,7 +37,7 @@
       <emptySummary>Streszczenie zostało usunięte.</emptySummary>
       <emptyContent>Zawartość została usunięta.</emptyContent>
       <updateMetadata>Metadane {0} zostały zaktualizowane: {1}</updateMetadata>
-      <removeMetadata>Metadane {0} zostały usunięte.</removeMetadata>  
+      <removeMetadata>Metadane {0} zostały usunięte.</removeMetadata>
       <removeTitle>Tytuł został usunięty.</removeTitle>
       <removeName>Nazwa została usunięta.</removeName>
       <removeSummary>Streszczenie została usunięte.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Typ zasobu</resourceType>        
+      <label>
+        <resourceType>Typ zasobu</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -113,41 +113,42 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Ten plik jest zablokowany przez użytkownika {0}. Otworzyć tylko do odczytu?</lock-node-read-only>
+      <lock-node-read-only>Ten plik jest zablokowany przez użytkownika {0}. Otworzyć tylko do odczytu?
+      </lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Udostępnij</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Udostępnij</UIShareDocuments>
-<Share>Udostępnij</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Udostępnij</ShareButton>
-<CancelButton>Anuluj</CancelButton>
-<TextAreaInit>Dodaj komentarz do tego pliku ...</TextAreaInit>
-<ShareWith>Udostępnij:</ShareWith>
-<Access>Dostęp</Access>
-<SpaceMember>Członek przestrzeni</SpaceMember>
-<SelectASpace>Wybierz obszar</SelectASpace>
-<SharedADocument>dokument udostępniony</SharedADocument>
-<NoSpace>Wybierz co najmniej jeden obszar do udostępniania</NoSpace>
-<option>
-<read>Możliwy podgląd</read>
-<modify>Możliwa edycja</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Udostępnij</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Udostępnij</UIShareDocuments>
+      <Share>Udostępnij</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Udostępnij</ShareButton>
+      <CancelButton>Anuluj</CancelButton>
+      <TextAreaInit>Dodaj komentarz do tego pliku ...</TextAreaInit>
+      <ShareWith>Udostępnij:</ShareWith>
+      <Access>Dostęp</Access>
+      <SpaceMember>Członek przestrzeni</SpaceMember>
+      <SelectASpace>Wybierz obszar</SelectASpace>
+      <SharedADocument>dokument udostępniony</SharedADocument>
+      <NoSpace>Wybierz co najmniej jeden obszar do udostępniania</NoSpace>
+      <option>
+        <read>Możliwy podgląd</read>
+        <modify>Możliwa edycja</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Udostępnij</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Udostępnij</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

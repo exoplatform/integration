@@ -36,8 +36,8 @@
       <emptyTitle>تمّ حذف العنوان.</emptyTitle>
       <emptySummary>تمّ حذف الموجز</emptySummary>
       <emptyContent>تمّ حذف المحتوى.</emptyContent>
-      <updateMetadata>تم تحديث بيانات التعريف  من {0} الى : {1}</updateMetadata>
-      <removeMetadata>لقد تمّ حذف بيانات التعريف: {0}.</removeMetadata>  
+      <updateMetadata>تم تحديث بيانات التعريف من {0} الى : {1}</updateMetadata>
+      <removeMetadata>لقد تمّ حذف بيانات التعريف: {0}.</removeMetadata>
       <removeTitle>تمّ حذف العنوان.</removeTitle>
       <removeName>تمّ حذف الاسم.</removeName>
       <removeSummary>تمّ حذف الملخّص.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>نوع المورد</resourceType>        
+      <label>
+        <resourceType>نوع المورد</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -113,41 +113,41 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>هذا الملف مؤمن بواسطة المستخدم {0}. أترغب بفتحه بصيغة  القراءة فقط؟</lock-node-read-only>
+      <lock-node-read-only>هذا الملف مؤمن بواسطة المستخدم {0}. أترغب بفتحه بصيغة القراءة فقط؟</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>شارك</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>شارك</UIShareDocuments>
-<Share>شارك</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>شارك</ShareButton>
-<CancelButton>الغاء</CancelButton>
-<TextAreaInit>إضافة تعليق بخصوص هذا الملف...</TextAreaInit>
-<ShareWith>مشاركة مع:</ShareWith>
-<Access>الوصول</Access>
-<SpaceMember>أعضاء الفضاء</SpaceMember>
-<SelectASpace>اختيار فضاء</SelectASpace>
-<SharedADocument>مشاركة وثيقة</SharedADocument>
-<NoSpace>الرجاء اختيارعلى الأقل فضاء واحد قصد المشاركة</NoSpace>
-<option>
-<read>يمكنه رؤية</read>
-<modify>يمكنه التغيير</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>شارك</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>شارك</UIShareDocuments>
+      <Share>شارك</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>شارك</ShareButton>
+      <CancelButton>الغاء</CancelButton>
+      <TextAreaInit>إضافة تعليق بخصوص هذا الملف...</TextAreaInit>
+      <ShareWith>مشاركة مع:</ShareWith>
+      <Access>الوصول</Access>
+      <SpaceMember>أعضاء الفضاء</SpaceMember>
+      <SelectASpace>اختيار فضاء</SelectASpace>
+      <SharedADocument>مشاركة وثيقة</SharedADocument>
+      <NoSpace>الرجاء اختيارعلى الأقل فضاء واحد قصد المشاركة</NoSpace>
+      <option>
+        <read>يمكنه رؤية</read>
+        <modify>يمكنه التغيير</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>شارك</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>شارك</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

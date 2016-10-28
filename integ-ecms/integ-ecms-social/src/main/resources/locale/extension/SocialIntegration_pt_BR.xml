@@ -36,8 +36,8 @@
       <emptyTitle>O título foi removido.</emptyTitle>
       <emptySummary>O sumário foi removido.</emptySummary>
       <emptyContent>O conteúdo foi removido.</emptyContent>
-      <updateMetadata>O metadado {0}  foi atualizado para: {1}</updateMetadata>
-      <removeMetadata>O metadado {0} foi removido.</removeMetadata>  
+      <updateMetadata>O metadado {0} foi atualizado para: {1}</updateMetadata>
+      <removeMetadata>O metadado {0} foi removido.</removeMetadata>
       <removeTitle>O título foi removido.</removeTitle>
       <removeName>O nome foi removido.</removeName>
       <removeSummary>O sumário foi removido.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Tipo de Recurso</resourceType>        
+      <label>
+        <resourceType>Tipo de Recurso</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -113,41 +113,42 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Este arquivo está bloqueado pelo usuário {0}. Deseja abri-lo no modo leitura?</lock-node-read-only>
+      <lock-node-read-only>Este arquivo está bloqueado pelo usuário {0}. Deseja abri-lo no modo leitura?
+      </lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Compartilhar</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Compartilhar</UIShareDocuments>
-<Share>Compartilhar</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Compartilhar</ShareButton>
-<CancelButton>Cancelar</CancelButton>
-<TextAreaInit>Adicione um comentário sobre este arquivo...</TextAreaInit>
-<ShareWith>Compartilhar com:</ShareWith>
-<Access>Acessar</Access>
-<SpaceMember>Membros do Espaço</SpaceMember>
-<SelectASpace>Selecione um espaço</SelectASpace>
-<SharedADocument>compartilhou um documento</SharedADocument>
-<NoSpace>Selecione pelo menos um espaço para compartilhar</NoSpace>
-<option>
-<read>Pode ver</read>
-<modify>Pode editar</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Compartilhar</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Compartilhar</UIShareDocuments>
+      <Share>Compartilhar</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Compartilhar</ShareButton>
+      <CancelButton>Cancelar</CancelButton>
+      <TextAreaInit>Adicione um comentário sobre este arquivo...</TextAreaInit>
+      <ShareWith>Compartilhar com:</ShareWith>
+      <Access>Acessar</Access>
+      <SpaceMember>Membros do Espaço</SpaceMember>
+      <SelectASpace>Selecione um espaço</SelectASpace>
+      <SharedADocument>compartilhou um documento</SharedADocument>
+      <NoSpace>Selecione pelo menos um espaço para compartilhar</NoSpace>
+      <option>
+        <read>Pode ver</read>
+        <modify>Pode editar</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Compartilhar</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Compartilhar</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

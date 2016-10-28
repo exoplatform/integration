@@ -37,7 +37,7 @@
       <emptySummary>El resumen ha sido eliminado.</emptySummary>
       <emptyContent>El contenido ha sido eliminado.</emptyContent>
       <updateMetadata>Metadatos {0} ha sido actualizado a: {1}</updateMetadata>
-      <removeMetadata>Metadatos {0} ha sido eliminado.</removeMetadata>  
+      <removeMetadata>Metadatos {0} ha sido eliminado.</removeMetadata>
       <removeTitle>Título ha sido eliminado.</removeTitle>
       <removeName>Nombre ha sido eliminado.</removeName>
       <removeSummary>Resumen ha sido eliminado.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Tipo de Recursos</resourceType>        
+      <label>
+        <resourceType>Tipo de Recursos</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -116,38 +116,38 @@
       <lock-node-read-only>Este archivo está bloqueado por el usuario {0}. ¿Abrir en sólo lectura?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Compartir</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Compartir</UIShareDocuments>
-<Share>Compartir</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Compartir</ShareButton>
-<CancelButton>Cancelar</CancelButton>
-<TextAreaInit>Añadir un comentario sobre este fichero...</TextAreaInit>
-<ShareWith>Compartir con:</ShareWith>
-<Access>Acceso</Access>
-<SpaceMember>Espacio de miembros</SpaceMember>
-<SelectASpace>Seleccionar un espacio</SelectASpace>
-<SharedADocument>ha compartido un documento</SharedADocument>
-<NoSpace>Por favor seleccione al menos un espacio para compartir</NoSpace>
-<option>
-<read>Puede ver</read>
-<modify>Puede editar</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Compartir</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Compartir</UIShareDocuments>
+      <Share>Compartir</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Compartir</ShareButton>
+      <CancelButton>Cancelar</CancelButton>
+      <TextAreaInit>Añadir un comentario sobre este fichero...</TextAreaInit>
+      <ShareWith>Compartir con:</ShareWith>
+      <Access>Acceso</Access>
+      <SpaceMember>Espacio de miembros</SpaceMember>
+      <SelectASpace>Seleccionar un espacio</SelectASpace>
+      <SharedADocument>ha compartido un documento</SharedADocument>
+      <NoSpace>Por favor seleccione al menos un espacio para compartir</NoSpace>
+      <option>
+        <read>Puede ver</read>
+        <modify>Puede editar</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Compartir</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Compartir</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

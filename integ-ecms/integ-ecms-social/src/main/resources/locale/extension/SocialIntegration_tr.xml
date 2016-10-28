@@ -37,7 +37,7 @@
       <emptySummary>Özet kaldırıldı.</emptySummary>
       <emptyContent>İçerik kaldırıldı.</emptyContent>
       <updateMetadata>Meta veriler {0} için güncellendi: {1}</updateMetadata>
-      <removeMetadata>Meta veriler {0} kaldırıldı.</removeMetadata>  
+      <removeMetadata>Meta veriler {0} kaldırıldı.</removeMetadata>
       <removeTitle>Başlık kaldırıldı.</removeTitle>
       <removeName>Adı kaldırıldı.</removeName>
       <removeSummary>Özet kaldırıldı.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Kaynak Türü</resourceType>        
+      <label>
+        <resourceType>Kaynak Türü</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -113,41 +113,42 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Bu dosya {0} kullanıcısı tarafından kilitlenmiştir. Salt okunur olarak açılsın mı?</lock-node-read-only>
+      <lock-node-read-only>Bu dosya {0} kullanıcısı tarafından kilitlenmiştir. Salt okunur olarak açılsın mı?
+      </lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Paylaş</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Paylaş</UIShareDocuments>
-<Share>Paylaş</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Paylaş</ShareButton>
-<CancelButton>İptal</CancelButton>
-<TextAreaInit>Bu dosya ile ilgili bir yorum ekle...</TextAreaInit>
-<ShareWith>Paylaş:</ShareWith>
-<Access>Giriş</Access>
-<SpaceMember>Alan Üyeleri</SpaceMember>
-<SelectASpace>Bir Alan Seç</SelectASpace>
-<SharedADocument>bir belge paylaş</SharedADocument>
-<NoSpace>Lütfen paylaşmak için en az bir alan seçiniz</NoSpace>
-<option>
-<read>Gösterebilir</read>
-<modify>Düzenleyebilir</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Paylaş</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Paylaş</UIShareDocuments>
+      <Share>Paylaş</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Paylaş</ShareButton>
+      <CancelButton>İptal</CancelButton>
+      <TextAreaInit>Bu dosya ile ilgili bir yorum ekle...</TextAreaInit>
+      <ShareWith>Paylaş:</ShareWith>
+      <Access>Giriş</Access>
+      <SpaceMember>Alan Üyeleri</SpaceMember>
+      <SelectASpace>Bir Alan Seç</SelectASpace>
+      <SharedADocument>bir belge paylaş</SharedADocument>
+      <NoSpace>Lütfen paylaşmak için en az bir alan seçiniz</NoSpace>
+      <option>
+        <read>Gösterebilir</read>
+        <modify>Düzenleyebilir</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Paylaş</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Paylaş</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

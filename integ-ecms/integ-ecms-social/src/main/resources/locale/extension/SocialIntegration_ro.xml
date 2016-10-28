@@ -37,7 +37,7 @@
       <emptySummary>Rezumatul a fost eliminat.</emptySummary>
       <emptyContent>Conţinutul a fost eliminat.</emptyContent>
       <updateMetadata>Metadatele {0} au fost actualizate la: {1}</updateMetadata>
-      <removeMetadata>Metadatele {0} au fost eliminate.</removeMetadata>  
+      <removeMetadata>Metadatele {0} au fost eliminate.</removeMetadata>
       <removeTitle>Titlul a fost eliminat.</removeTitle>
       <removeName>Numele a fost eliminat.</removeName>
       <removeSummary>Rezumatul a fost eliminat.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Tipul resursei</resourceType>        
+      <label>
+        <resourceType>Tipul resursei</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -116,38 +116,38 @@
       <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Distribuie</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Distribuie</UIShareDocuments>
-<Share>Distribuie</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Distribuie</ShareButton>
-<CancelButton>Renunță</CancelButton>
-<TextAreaInit>Add a comment about to this file...</TextAreaInit>
-<ShareWith>Share with:</ShareWith>
-<Access>Access</Access>
-<SpaceMember>Membri Spațiu</SpaceMember>
-<SelectASpace>Select a Space</SelectASpace>
-<SharedADocument>shared a document</SharedADocument>
-<NoSpace>Please select at least one space to share</NoSpace>
-<option>
-<read>Can View</read>
-<modify>Can Edit</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Distribuie</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Distribuie</UIShareDocuments>
+      <Share>Distribuie</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Distribuie</ShareButton>
+      <CancelButton>Renunță</CancelButton>
+      <TextAreaInit>Add a comment about to this file...</TextAreaInit>
+      <ShareWith>Share with:</ShareWith>
+      <Access>Access</Access>
+      <SpaceMember>Membri Spațiu</SpaceMember>
+      <SelectASpace>Select a Space</SelectASpace>
+      <SharedADocument>shared a document</SharedADocument>
+      <NoSpace>Please select at least one space to share</NoSpace>
+      <option>
+        <read>Can View</read>
+        <modify>Can Edit</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Distribuie</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Distribuie</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

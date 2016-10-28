@@ -37,7 +37,7 @@
       <emptySummary>Il sommario è stato rimosso.</emptySummary>
       <emptyContent>Il contenuto è stato rimosso.</emptyContent>
       <updateMetadata>Metadati {0} è stato aggiornato a: {1}</updateMetadata>
-      <removeMetadata>Metadati {0} è stato rimosso.</removeMetadata>  
+      <removeMetadata>Metadati {0} è stato rimosso.</removeMetadata>
       <removeTitle>Titolo rimosso.</removeTitle>
       <removeName>Nome rimosso.</removeName>
       <removeSummary>Sommario rimosso.</removeSummary>
@@ -57,7 +57,7 @@
       <stateChange>
         <pending>Lo stato di pubblicazione ora è in sospeso.</pending>
         <approved>Il documento è stato approvato.</approved>
-        <staged>La Pubblicazione  è pronta.</staged>
+        <staged>La Pubblicazione è pronta.</staged>
         <published>Il documento è stato pubblicato.</published>
       </stateChange>
       <contentMoved>La pubblicazione è stata spostata a: {0}</contentMoved>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Tipo Risorsa</resourceType>        
+      <label>
+        <resourceType>Tipo Risorsa</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -116,38 +116,38 @@
       <lock-node-read-only>Questo file è bloccato dall'utente {0}. Apri in sola lettura?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Condividi</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Condividi</UIShareDocuments>
-<Share>Condividi</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Condividi</ShareButton>
-<CancelButton>Annulla</CancelButton>
-<TextAreaInit>Aggiungi un commento su questo file...</TextAreaInit>
-<ShareWith>Condividi con:</ShareWith>
-<Access>Accedi</Access>
-<SpaceMember>Membri dello spazio</SpaceMember>
-<SelectASpace>Seleziona uno spazio</SelectASpace>
-<SharedADocument>condiviso un documento</SharedADocument>
-<NoSpace>Seleziona almeno uno spazio da condividere</NoSpace>
-<option>
-<read>Possibile visualizzare</read>
-<modify>Possibile modificare</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Condividi</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Condividi</UIShareDocuments>
+      <Share>Condividi</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Condividi</ShareButton>
+      <CancelButton>Annulla</CancelButton>
+      <TextAreaInit>Aggiungi un commento su questo file...</TextAreaInit>
+      <ShareWith>Condividi con:</ShareWith>
+      <Access>Accedi</Access>
+      <SpaceMember>Membri dello spazio</SpaceMember>
+      <SelectASpace>Seleziona uno spazio</SelectASpace>
+      <SharedADocument>condiviso un documento</SharedADocument>
+      <NoSpace>Seleziona almeno uno spazio da condividere</NoSpace>
+      <option>
+        <read>Possibile visualizzare</read>
+        <modify>Possibile modificare</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Condividi</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Condividi</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

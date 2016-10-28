@@ -37,7 +37,7 @@
       <emptySummary>Η περίληψη έχει αφαιρεθεί.</emptySummary>
       <emptyContent>Το περιεχόμενο έχει αφαιρεθεί.</emptyContent>
       <updateMetadata>Τα μεταδεδομένα {0} ενημερώθηκαν σε: {1}</updateMetadata>
-      <removeMetadata>Τα μεταδεδομένα {0} αφαιρέθηκαν.</removeMetadata>  
+      <removeMetadata>Τα μεταδεδομένα {0} αφαιρέθηκαν.</removeMetadata>
       <removeTitle>Ο τίτλος αφαιρέθηκε.</removeTitle>
       <removeName>Το όνομα αφαιρέθηκε.</removeName>
       <removeSummary>Η περίληψη αφαιρέθηκε.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Τύπος πόρου</resourceType>        
+      <label>
+        <resourceType>Τύπος πόρου</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -113,41 +113,42 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Αυτό το αρχείο είναι κλειδωμένο από το χρήστη {0}. Άνοιγμα μόνο για ανάγνωση;</lock-node-read-only>
+      <lock-node-read-only>Αυτό το αρχείο είναι κλειδωμένο από το χρήστη {0}. Άνοιγμα μόνο για ανάγνωση;
+      </lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Μοιραστείτε</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Μοιραστείτε</UIShareDocuments>
-<Share>Μοιραστείτε</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Μοιραστείτε</ShareButton>
-<CancelButton>Ακύρωση</CancelButton>
-<TextAreaInit>Add a comment about to this file...</TextAreaInit>
-<ShareWith>Share with:</ShareWith>
-<Access>Access</Access>
-<SpaceMember>Μέλη του Χώρου</SpaceMember>
-<SelectASpace>Select a Space</SelectASpace>
-<SharedADocument>shared a document</SharedADocument>
-<NoSpace>Please select at least one space to share</NoSpace>
-<option>
-<read>Can View</read>
-<modify>Can Edit</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Μοιραστείτε</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Μοιραστείτε</UIShareDocuments>
+      <Share>Μοιραστείτε</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Μοιραστείτε</ShareButton>
+      <CancelButton>Ακύρωση</CancelButton>
+      <TextAreaInit>Add a comment about to this file...</TextAreaInit>
+      <ShareWith>Share with:</ShareWith>
+      <Access>Access</Access>
+      <SpaceMember>Μέλη του Χώρου</SpaceMember>
+      <SelectASpace>Select a Space</SelectASpace>
+      <SharedADocument>shared a document</SharedADocument>
+      <NoSpace>Please select at least one space to share</NoSpace>
+      <option>
+        <read>Can View</read>
+        <modify>Can Edit</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Μοιραστείτε</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Μοιραστείτε</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>

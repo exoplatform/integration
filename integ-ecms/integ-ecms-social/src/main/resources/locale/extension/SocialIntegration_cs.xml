@@ -37,7 +37,7 @@
       <emptySummary>Souhrn byl odstraněn.</emptySummary>
       <emptyContent>Obsah byl odstraněn.</emptyContent>
       <updateMetadata>Metadata {0} byla aktualizována na: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} byla odstraněna.</removeMetadata>  
+      <removeMetadata>Metadata {0} byla odstraněna.</removeMetadata>
       <removeTitle>Nadpis byl odstraněn.</removeTitle>
       <removeName>Název byl odstraněn.</removeName>
       <removeSummary>Souhrn byl odstraněn.</removeSummary>
@@ -89,8 +89,8 @@
   </UIPopupWindow>
   <ElementSet>
     <dialog>
-      <label>       
-        <resourceType>Typ zdroje</resourceType>        
+      <label>
+        <resourceType>Typ zdroje</resourceType>
       </label>
     </dialog>
   </ElementSet>
@@ -116,38 +116,38 @@
       <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
-<ECMContextMenu>
-<event>
-<ShareDocuments>Sdílet</ShareDocuments>
-</event>
-</ECMContextMenu>
-<UIPopupWindow>
-<title>
-<UIShareDocuments>Sdílet</UIShareDocuments>
-<Share>Sdílet</Share>
-</title>
-</UIPopupWindow>
-<UIShareDocuments>
-<label>
-<ShareButton>Sdílet</ShareButton>
-<CancelButton>Zrušit</CancelButton>
-<TextAreaInit>Add a comment about to this file...</TextAreaInit>
-<ShareWith>Share with:</ShareWith>
-<Access>Přístupové právo</Access>
-<SpaceMember>Členové skupiny</SpaceMember>
-<SelectASpace>Select a Space</SelectASpace>
-<SharedADocument>shared a document</SharedADocument>
-<NoSpace>Please select at least one space to share</NoSpace>
-<option>
-<read>Can View</read>
-<modify>Can Edit</modify>
-</option>
-</label>
-</UIShareDocuments>
+  <ECMContextMenu>
+    <event>
+      <ShareDocuments>Sdílet</ShareDocuments>
+    </event>
+  </ECMContextMenu>
+  <UIPopupWindow>
+    <title>
+      <UIShareDocuments>Sdílet</UIShareDocuments>
+      <Share>Sdílet</Share>
+    </title>
+  </UIPopupWindow>
+  <UIShareDocuments>
+    <label>
+      <ShareButton>Sdílet</ShareButton>
+      <CancelButton>Zrušit</CancelButton>
+      <TextAreaInit>Add a comment about to this file...</TextAreaInit>
+      <ShareWith>Share with:</ShareWith>
+      <Access>Přístupové právo</Access>
+      <SpaceMember>Členové skupiny</SpaceMember>
+      <SelectASpace>Select a Space</SelectASpace>
+      <SharedADocument>shared a document</SharedADocument>
+      <NoSpace>Please select at least one space to share</NoSpace>
+      <option>
+        <read>Can View</read>
+        <modify>Can Edit</modify>
+      </option>
+    </label>
+  </UIShareDocuments>
 
-<UIActionBar>
-<tooltip>
-<ShareDocuments>Sdílet</ShareDocuments>
-</tooltip>
-</UIActionBar>
+  <UIActionBar>
+    <tooltip>
+      <ShareDocuments>Sdílet</ShareDocuments>
+    </tooltip>
+  </UIActionBar>
 </bundle>
