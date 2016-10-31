@@ -608,7 +608,7 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 <a href="$commenterProfileUri">$commenterFullName</a>
                 <span class="dateTime">$commentPostedTime</span>
 </div>
-              <p class="contentComment">$commentMessage</p>
+              <div class="contentComment">$commentMessage</div>
 </div><!--end commentRight-->
             <div class="actLink">
               <a id="Permalink${it.id}" rel="tooltip" data-placement="bottom" title="$viewActivityTip" class="uiIconLink uiIconLightGray" href="<%=uicomponent.getCommentPermalink(activity.id, it.id)%>"></a>
@@ -872,7 +872,7 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 <a href="$commenterProfileUri">$commenterFullName</a>
                 <span class="dateTime">$commentPostedTime</span>
 </div>
-              <p class="contentComment">$commentMessage</p>
+              <div class="contentComment">$commentMessage</div>
 </div><!--end commentRight-->
             <div class="actLink">
               <a id="Permalink${it.id}" rel="tooltip" data-placement="bottom" title="$viewActivityTip" class="uiIconLink uiIconLightGray" href="<%=uicomponent.getCommentPermalink(activity.id, it.id)%>"></a>
