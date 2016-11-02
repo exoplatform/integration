@@ -114,11 +114,16 @@ public class UIDocViewer extends UIBaseNodePresentation {
   }
 
   public String getTemplate() {
-  	if(getDocNode() == null) return null;
+    Node docNode = getDocNode();
+  	if(docNode == null) return null;
     TemplateService templateService = getApplicationComponent(TemplateService.class);
     String userName = Util.getPortalRequestContext().getRemoteUser() ;
     try {
-      String nodeType = getDocNode().getPrimaryNodeType().getName();
+      if (docNode.isNodeType("nt:frozenNode")) {
+        String uuid = docNode.getProperty("jcr:frozenUuid").getString();
+        docNode = docNode.getSession().getNodeByUUID(uuid);
+      }
+      String nodeType = docNode.getPrimaryNodeType().getName();
       if(templateService.isManagedNodeType(nodeType)) {
         return templateService.getTemplatePathByUser(false, nodeType, userName);
       }
