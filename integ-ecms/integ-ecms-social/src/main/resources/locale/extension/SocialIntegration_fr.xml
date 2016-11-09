@@ -65,7 +65,7 @@
       <revisionChanged>Le document a été restauré à la version: {0}</revisionChanged>
       <version>Version: {0}</version>
       <updatedOn>Modifié le</updatedOn>
-      <updatedBy>par</updatedBy>
+      <updatedBy>de</updatedBy>
     </messages>
     <publicationStates>
       <archived>Archivé</archived>
@@ -82,7 +82,7 @@
     <view>Voir</view>
     <edit>Modifier</edit>
     <download>Télécharger</download>
-    <preview>Prévisualiser</preview>
+    <preview>Aperçu</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -116,8 +116,7 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Ce fichier est verrouillé par l'utilisateur {0}. Ouvrir en lecture seule?
-      </lock-node-read-only>
+      <lock-node-read-only>Ce fichier est verrouillé par l'utilisateur {0}. Ouvrir en lecture seule?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
   <ECMContextMenu>
@@ -135,7 +134,7 @@
     <label>
       <ShareButton>Appliquer</ShareButton>
       <CancelButton>Annuler</CancelButton>
-      <TextAreaInit>Envoyer un message pour le partage...</TextAreaInit>
+      <TextAreaInit>Envoyer un message en partageant...</TextAreaInit>
       <ShareWith>Partager avec</ShareWith>
       <Access>Accès</Access>
       <SpaceMember>Membres</SpaceMember>
@@ -143,25 +142,25 @@
       <SharedADocument>a partagé un document</SharedADocument>
       <WhoHasAccess>Qui a accès</WhoHasAccess>
       <success>Le document a été partagé avec succès</success>
-      <NoSpace>Veuillez sélectionner au moins un espace ou un utilisateur valide</NoSpace>
-      <NoPermission>Vous n'avez pas les permissions de partager ce document</NoPermission>
-      <InvalidDeletion>Vous ne pouvez pas supprimer votre propre permission</InvalidDeletion>
+      <NoSpace>Veuillez sélectionner au moins un espace ou un utilisateur</NoSpace>
+      <NoPermission>Vous n'êtes pas autorisé à partager ce document</NoPermission>
       <NoPermissionDelete>Vous ne pouvez pas supprimer cette permission</NoPermissionDelete>
-      <InvalidEntry>Cette permission n'est pas modifiable</InvalidEntry>
-      <InvalidOwner>Vous ne pouvez pas changer les permissions du propriétaire</InvalidOwner>
-      <Invalid>Désolé, '{0}' ne correspond pas à un espace ou un utilisateur</Invalid>
+      <InvalidDeletion>Vous ne pouvez pas supprimer vos propres permissions</InvalidDeletion>
+      <InvalidEntry>Cette permission ne peut pas être modifiée</InvalidEntry>
+      <InvalidOwner>Vous ne pouvez pas modifier les permissions du propriétaire</InvalidOwner>
+      <Invalid>Désolé, nous n'avons pas pu reconnaître '{0}' comme un nom d'utilisateur ou d'espace</Invalid>
       <option>
         <read>Peut voir</read>
         <modify>Peut modifier</modify>
       </option>
       <notification>
-        <read>lecture</read>
-        <modify>modification</modify>
+        <read>lire</read>
+        <modify>modifier</modify>
       </notification>
       <invite>
-        <placeholder>Entrez les noms d\'utilisateurs ou espaces...</placeholder>
+        <placeholder>Noms d'utilisateurs ou d'espaces...</placeholder>
       </invite>
-      <owner>Propriétaire</owner>
+      <owner>Utilisateur</owner>
     </label>
   </UIShareDocuments>
 

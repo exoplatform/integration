@@ -64,6 +64,8 @@
       <fileMoved>وقد تم نقل الملف إلى: {0}</fileMoved>
       <revisionChanged>تم استعادة المنشور إلى الاصدار: {0}</revisionChanged>
       <version>الإصدار: {0}</version>
+      <updatedOn>Updated on</updatedOn>
+      <updatedBy>من قبل</updatedBy>
     </messages>
     <publicationStates>
       <archived>بالأرشيف</archived>
@@ -80,11 +82,12 @@
     <view>رأي</view>
     <edit>تغيير</edit>
     <download>تنزيل هذا الملف</download>
+    <preview>معاينة</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
       <DocViewer>معاينة</DocViewer>
-      <UIReadOnlyFileConfirmMessage>فتح الوثيقة</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -96,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>أضف تعليقك...</commentTextAreaPreview>
+      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
       <no-comment-yet>لا تعليق حتى الآن</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -118,36 +121,52 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>شارك</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>شارك</UIShareDocuments>
-      <Share>شارك</Share>
+      <UIShareDocuments>Share</UIShareDocuments>
+      <Share>Share</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>شارك</ShareButton>
-      <CancelButton>الغاء</CancelButton>
-      <TextAreaInit>إضافة تعليق بخصوص هذا الملف...</TextAreaInit>
-      <ShareWith>مشاركة مع:</ShareWith>
+      <ShareButton>تطبيق</ShareButton>
+      <CancelButton>Cancel</CancelButton>
+      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
+      <ShareWith>Share with</ShareWith>
       <Access>الوصول</Access>
-      <SpaceMember>أعضاء الفضاء</SpaceMember>
+      <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>اختيار فضاء</SelectASpace>
       <SharedADocument>مشاركة وثيقة</SharedADocument>
-      <NoSpace>الرجاء اختيارعلى الأقل فضاء واحد قصد المشاركة</NoSpace>
+      <WhoHasAccess>Who has access</WhoHasAccess>
+      <success>The document was shared successfully</success>
+      <NoSpace>Please select at least one valid space or user</NoSpace>
+      <NoPermission>You are not allowed to share this document</NoPermission>
+      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
+      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
+      <InvalidEntry>This permission can't be edited</InvalidEntry>
+      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
+      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
       <option>
-        <read>يمكنه رؤية</read>
-        <modify>يمكنه التغيير</modify>
+        <read>Can view</read>
+        <modify>Can edit</modify>
       </option>
+      <notification>
+        <read>read</read>
+        <modify>edit</modify>
+      </notification>
+      <invite>
+        <placeholder>Enter users or spaces names...</placeholder>
+      </invite>
+      <owner>المستخدم</owner>
     </label>
   </UIShareDocuments>
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>شارك</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

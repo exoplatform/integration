@@ -64,27 +64,30 @@
       <fileMoved>Datoteka je bila premaknjena na: {0}</fileMoved>
       <revisionChanged>Objava je bila obnovljena na različico: {0}</revisionChanged>
       <version>Različica: {0}</version>
+      <updatedOn>Updated on</updatedOn>
+      <updatedBy>od</updatedBy>
     </messages>
     <publicationStates>
       <archived>Arhivirano</archived>
       <obsolete>Zastarelo</obsolete>
       <unpublished>Neobjavljeno</unpublished>
       <draft>Osnutek</draft>
-      <pending>Čakajoči</pending>
-      <approved>Odobreno</approved>
+      <pending>Pending</pending>
+      <approved>Approved</approved>
       <inreview>V pregledu</inreview>
       <staged>Postavljeno</staged>
       <published>Objavljeno</published>
       <live>Objavljeno</live>
     </publicationStates>
-    <view>Prikaz</view>
-    <edit>Uredi</edit>
-    <download>Prenesi</download>
+    <view>View</view>
+    <edit>Edit</edit>
+    <download>Download</download>
+    <preview>Predogled</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Predogled</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Odpri dokument</UIReadOnlyFileConfirmMessage>
+      <DocViewer>Preview</DocViewer>
+      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -96,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Dodaj svoj komentar...</commentTextAreaPreview>
+      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
       <no-comment-yet>Še ni komentarja</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -118,36 +121,52 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Daj v skupno rabo</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Daj v skupno rabo</UIShareDocuments>
-      <Share>Daj v skupno rabo</Share>
+      <UIShareDocuments>Share</UIShareDocuments>
+      <Share>Share</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Daj v skupno rabo</ShareButton>
-      <CancelButton>Prekliči</CancelButton>
-      <TextAreaInit>Dodaj komentar o tej datoteki ...</TextAreaInit>
-      <ShareWith>Deli z:</ShareWith>
+      <ShareButton>Uveljavi</ShareButton>
+      <CancelButton>Cancel</CancelButton>
+      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
+      <ShareWith>Share with</ShareWith>
       <Access>Dostop</Access>
-      <SpaceMember>Člani prostora</SpaceMember>
+      <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Izberi prostor</SelectASpace>
       <SharedADocument>je dal(a) dokument v skupno rabo</SharedADocument>
-      <NoSpace>Prosimo, izberite vsaj en prostor, ki ga želite dati v skupno rabo</NoSpace>
+      <WhoHasAccess>Who has access</WhoHasAccess>
+      <success>The document was shared successfully</success>
+      <NoSpace>Please select at least one valid space or user</NoSpace>
+      <NoPermission>You are not allowed to share this document</NoPermission>
+      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
+      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
+      <InvalidEntry>This permission can't be edited</InvalidEntry>
+      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
+      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
       <option>
-        <read>Lahko si ogledate</read>
-        <modify>Lahko urejate</modify>
+        <read>Can view</read>
+        <modify>Can edit</modify>
       </option>
+      <notification>
+        <read>read</read>
+        <modify>edit</modify>
+      </notification>
+      <invite>
+        <placeholder>Enter users or spaces names...</placeholder>
+      </invite>
+      <owner>Lastnik</owner>
     </label>
   </UIShareDocuments>
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Daj v skupno rabo</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

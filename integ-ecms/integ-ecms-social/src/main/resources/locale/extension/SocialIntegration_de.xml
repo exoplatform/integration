@@ -64,6 +64,8 @@
       <fileMoved>Die Datei wurde nach: {0} verschoben</fileMoved>
       <revisionChanged>Die Veröffentlichung wurde auf Version: {0} wiederhergstellt</revisionChanged>
       <version>Version: {0}</version>
+      <updatedOn>Updated on</updatedOn>
+      <updatedBy>von</updatedBy>
     </messages>
     <publicationStates>
       <archived>Archiviert</archived>
@@ -80,6 +82,7 @@
     <view>Anzeigen</view>
     <edit>Bearbeiten</edit>
     <download>Herunterladen</download>
+    <preview>Vorschau</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -96,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Ihren Kommentar hinzufügen...</commentTextAreaPreview>
+      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
       <no-comment-yet>Noch kein Kommentar</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -118,36 +121,52 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Teilen</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Teilen</UIShareDocuments>
-      <Share>Teilen</Share>
+      <UIShareDocuments>Share</UIShareDocuments>
+      <Share>Share</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Teilen</ShareButton>
-      <CancelButton>Abbrechen</CancelButton>
-      <TextAreaInit>Fügen Sie einen Kommentar über diese Datei hinzu...</TextAreaInit>
-      <ShareWith>Teilen mit:</ShareWith>
+      <ShareButton>Anwenden</ShareButton>
+      <CancelButton>Cancel</CancelButton>
+      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
+      <ShareWith>Share with</ShareWith>
       <Access>Zugriff</Access>
-      <SpaceMember>Raum-Mitglieder</SpaceMember>
+      <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Wählen Sie einen Raum</SelectASpace>
       <SharedADocument>hat ein Dokument geteilt</SharedADocument>
-      <NoSpace>Bitte wählen Sie mindestens einen Raum zum Teilen</NoSpace>
+      <WhoHasAccess>Who has access</WhoHasAccess>
+      <success>The document was shared successfully</success>
+      <NoSpace>Please select at least one valid space or user</NoSpace>
+      <NoPermission>You are not allowed to share this document</NoPermission>
+      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
+      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
+      <InvalidEntry>This permission can't be edited</InvalidEntry>
+      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
+      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
       <option>
-        <read>Kann anzeigen</read>
-        <modify>Kann bearbeiten</modify>
+        <read>Can view</read>
+        <modify>Can edit</modify>
       </option>
+      <notification>
+        <read>read</read>
+        <modify>edit</modify>
+      </notification>
+      <invite>
+        <placeholder>Enter users or spaces names...</placeholder>
+      </invite>
+      <owner>Eigentümer</owner>
     </label>
   </UIShareDocuments>
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Teilen</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

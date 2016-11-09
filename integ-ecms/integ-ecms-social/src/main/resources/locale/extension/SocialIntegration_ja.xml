@@ -64,6 +64,8 @@
       <fileMoved>ファイルが移動されました： {0}</fileMoved>
       <revisionChanged>文書は、バージョン{0} で保存されました</revisionChanged>
       <version>バージョン: {0}</version>
+      <updatedOn>Updated on</updatedOn>
+      <updatedBy>作成者</updatedBy>
     </messages>
     <publicationStates>
       <archived>アーカイブ</archived>
@@ -80,6 +82,7 @@
     <view>ビュー</view>
     <edit>編集</edit>
     <download>ファイルをダウンロード</download>
+    <preview>プレビュー</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -96,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>コメントを追加...</commentTextAreaPreview>
+      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
       <no-comment-yet>No comment yet</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -118,36 +121,52 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>共有</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>共有</UIShareDocuments>
-      <Share>共有</Share>
+      <UIShareDocuments>Share</UIShareDocuments>
+      <Share>Share</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>共有</ShareButton>
-      <CancelButton>キャンセル</CancelButton>
-      <TextAreaInit>Add a comment about to this file...</TextAreaInit>
-      <ShareWith>Share with:</ShareWith>
+      <ShareButton>適用</ShareButton>
+      <CancelButton>Cancel</CancelButton>
+      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
+      <ShareWith>Share with</ShareWith>
       <Access>Access</Access>
-      <SpaceMember>スペースメンバー</SpaceMember>
+      <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Select a Space</SelectASpace>
       <SharedADocument>shared a document</SharedADocument>
-      <NoSpace>Please select at least one space to share</NoSpace>
+      <WhoHasAccess>Who has access</WhoHasAccess>
+      <success>The document was shared successfully</success>
+      <NoSpace>Please select at least one valid space or user</NoSpace>
+      <NoPermission>You are not allowed to share this document</NoPermission>
+      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
+      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
+      <InvalidEntry>This permission can't be edited</InvalidEntry>
+      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
+      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
       <option>
-        <read>Can View</read>
-        <modify>Can Edit</modify>
+        <read>Can view</read>
+        <modify>Can edit</modify>
       </option>
+      <notification>
+        <read>read</read>
+        <modify>edit</modify>
+      </notification>
+      <invite>
+        <placeholder>Enter users or spaces names...</placeholder>
+      </invite>
+      <owner>所有者</owner>
     </label>
   </UIShareDocuments>
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>共有</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

@@ -64,6 +64,8 @@
       <fileMoved>文件已被移动到: {0}</fileMoved>
       <revisionChanged>出版物已还原到版本: {0}</revisionChanged>
       <version>版本 {0}</version>
+      <updatedOn>Updated on</updatedOn>
+      <updatedBy>由</updatedBy>
     </messages>
     <publicationStates>
       <archived>存档</archived>
@@ -80,6 +82,7 @@
     <view>查看</view>
     <edit>编辑</edit>
     <download>下载</download>
+    <preview>预览</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -118,36 +121,52 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>分享</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>分享</UIShareDocuments>
-      <Share>分享</Share>
+      <UIShareDocuments>Share</UIShareDocuments>
+      <Share>Share</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>分享</ShareButton>
-      <CancelButton>取消</CancelButton>
-      <TextAreaInit>Add a comment about to this file...</TextAreaInit>
-      <ShareWith>Share with:</ShareWith>
+      <ShareButton>适用</ShareButton>
+      <CancelButton>Cancel</CancelButton>
+      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
+      <ShareWith>Share with</ShareWith>
       <Access>访问权限设置</Access>
-      <SpaceMember>空间成员</SpaceMember>
+      <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Select a Space</SelectASpace>
       <SharedADocument>shared a document</SharedADocument>
-      <NoSpace>Please select at least one space to share</NoSpace>
+      <WhoHasAccess>Who has access</WhoHasAccess>
+      <success>The document was shared successfully</success>
+      <NoSpace>Please select at least one valid space or user</NoSpace>
+      <NoPermission>You are not allowed to share this document</NoPermission>
+      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
+      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
+      <InvalidEntry>This permission can't be edited</InvalidEntry>
+      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
+      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
       <option>
-        <read>Can View</read>
-        <modify>Can Edit</modify>
+        <read>Can view</read>
+        <modify>Can edit</modify>
       </option>
+      <notification>
+        <read>read</read>
+        <modify>edit</modify>
+      </notification>
+      <invite>
+        <placeholder>Enter users or spaces names...</placeholder>
+      </invite>
+      <owner>所有者</owner>
     </label>
   </UIShareDocuments>
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>分享</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

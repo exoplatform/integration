@@ -64,6 +64,8 @@
       <fileMoved>crwdns6789851:0{0}crwdne6789851:0</fileMoved>
       <revisionChanged>crwdns6789852:0{0}crwdne6789852:0</revisionChanged>
       <version>crwdns6789853:0{0}crwdne6789853:0</version>
+      <updatedOn>crwdns6842280:0crwdne6842280:0</updatedOn>
+      <updatedBy>crwdns6842281:0crwdne6842281:0</updatedBy>
     </messages>
     <publicationStates>
       <archived>crwdns6789854:0crwdne6789854:0</archived>
@@ -80,6 +82,7 @@
     <view>crwdns6789864:0crwdne6789864:0</view>
     <edit>crwdns6789865:0crwdne6789865:0</edit>
     <download>crwdns6789866:0crwdne6789866:0</download>
+    <preview>crwdns6842282:0crwdne6842282:0</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -129,19 +132,35 @@
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>crwdns6826261:0crwdne6826261:0</ShareButton>
+      <ShareButton>crwdns6840082:0crwdne6840082:0</ShareButton>
       <CancelButton>crwdns6826262:0crwdne6826262:0</CancelButton>
-      <TextAreaInit>crwdns6826263:0crwdne6826263:0</TextAreaInit>
-      <ShareWith>crwdns6826264:0crwdne6826264:0</ShareWith>
+      <TextAreaInit>crwdns6840083:0crwdne6840083:0</TextAreaInit>
+      <ShareWith>crwdns6840084:0crwdne6840084:0</ShareWith>
       <Access>crwdns6826265:0crwdne6826265:0</Access>
       <SpaceMember>crwdns6826266:0crwdne6826266:0</SpaceMember>
       <SelectASpace>crwdns6826267:0crwdne6826267:0</SelectASpace>
       <SharedADocument>crwdns6826268:0crwdne6826268:0</SharedADocument>
-      <NoSpace>crwdns6826269:0crwdne6826269:0</NoSpace>
+      <WhoHasAccess>crwdns6842283:0crwdne6842283:0</WhoHasAccess>
+      <success>crwdns6842461:0crwdne6842461:0</success>
+      <NoSpace>crwdns6840087:0crwdne6840087:0</NoSpace>
+      <NoPermission>crwdns6842478:0crwdne6842478:0</NoPermission>
+      <NoPermissionDelete>crwdns6842286:0crwdne6842286:0</NoPermissionDelete>
+      <InvalidDeletion>crwdns6842287:0crwdne6842287:0</InvalidDeletion>
+      <InvalidEntry>crwdns6842463:0crwdne6842463:0</InvalidEntry>
+      <InvalidOwner>crwdns6842464:0crwdne6842464:0</InvalidOwner>
+      <Invalid>crwdns6842479:0{0}crwdne6842479:0</Invalid>
       <option>
-        <read>crwdns6826270:0crwdne6826270:0</read>
-        <modify>crwdns6826271:0crwdne6826271:0</modify>
+        <read>crwdns6840094:0crwdne6840094:0</read>
+        <modify>crwdns6840095:0crwdne6840095:0</modify>
       </option>
+      <notification>
+        <read>crwdns6842291:0crwdne6842291:0</read>
+        <modify>crwdns6842466:0crwdne6842466:0</modify>
+      </notification>
+      <invite>
+        <placeholder>crwdns6842293:0crwdne6842293:0</placeholder>
+      </invite>
+      <owner>crwdns6842294:0crwdne6842294:0</owner>
     </label>
   </UIShareDocuments>
 

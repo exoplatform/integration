@@ -64,6 +64,8 @@
       <fileMoved>Файл було переміщено до: {0}</fileMoved>
       <revisionChanged>Публікація була відновлена до версії: {0}</revisionChanged>
       <version>Версія {0}</version>
+      <updatedOn>Updated on</updatedOn>
+      <updatedBy>за</updatedBy>
     </messages>
     <publicationStates>
       <archived>Архівні</archived>
@@ -80,6 +82,7 @@
     <view>Перегляд</view>
     <edit>Редагувати</edit>
     <download>Завантажити</download>
+    <preview>Попередній перегляд</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -96,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Додати свій коментар...</commentTextAreaPreview>
+      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
       <no-comment-yet>Ще немає коментарів</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -118,36 +121,52 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Поділитися</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Поділитися</UIShareDocuments>
-      <Share>Поділитися</Share>
+      <UIShareDocuments>Share</UIShareDocuments>
+      <Share>Share</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Поділитися</ShareButton>
-      <CancelButton>Скасувати</CancelButton>
-      <TextAreaInit>Додати коментар про цей файл...</TextAreaInit>
-      <ShareWith>Поділитися з:</ShareWith>
+      <ShareButton>Застосувати</ShareButton>
+      <CancelButton>Cancel</CancelButton>
+      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
+      <ShareWith>Share with</ShareWith>
       <Access>Дозвіл на доступ</Access>
-      <SpaceMember>Члени області</SpaceMember>
+      <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Виберіть простір</SelectASpace>
       <SharedADocument>надав доступ до документа</SharedADocument>
-      <NoSpace>Будь ласка, виберіть принаймні один простір, щоб поділитися</NoSpace>
+      <WhoHasAccess>Who has access</WhoHasAccess>
+      <success>The document was shared successfully</success>
+      <NoSpace>Please select at least one valid space or user</NoSpace>
+      <NoPermission>You are not allowed to share this document</NoPermission>
+      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
+      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
+      <InvalidEntry>This permission can't be edited</InvalidEntry>
+      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
+      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
       <option>
-        <read>Можна переглянути</read>
-        <modify>Можна редагувати</modify>
+        <read>Can view</read>
+        <modify>Can edit</modify>
       </option>
+      <notification>
+        <read>read</read>
+        <modify>edit</modify>
+      </notification>
+      <invite>
+        <placeholder>Enter users or spaces names...</placeholder>
+      </invite>
+      <owner>Власник</owner>
     </label>
   </UIShareDocuments>
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Поділитися</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

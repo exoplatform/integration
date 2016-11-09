@@ -64,6 +64,8 @@
       <fileMoved>Fișierul a fost mutat la: {0}</fileMoved>
       <revisionChanged>Publicarea a fost restaurată la versiunea: {0}</revisionChanged>
       <version>Versiunea {0}</version>
+      <updatedOn>Updated on</updatedOn>
+      <updatedBy>de</updatedBy>
     </messages>
     <publicationStates>
       <archived>Arhivată</archived>
@@ -80,6 +82,7 @@
     <view>Afișare</view>
     <edit>Modifică</edit>
     <download>Descarcă</download>
+    <preview>Previzualizare</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -96,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Adaugă comentariul tău...</commentTextAreaPreview>
+      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
       <no-comment-yet>No comment yet</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -118,36 +121,52 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Distribuie</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Distribuie</UIShareDocuments>
-      <Share>Distribuie</Share>
+      <UIShareDocuments>Share</UIShareDocuments>
+      <Share>Share</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Distribuie</ShareButton>
-      <CancelButton>Renunță</CancelButton>
-      <TextAreaInit>Add a comment about to this file...</TextAreaInit>
-      <ShareWith>Share with:</ShareWith>
+      <ShareButton>Aplică</ShareButton>
+      <CancelButton>Cancel</CancelButton>
+      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
+      <ShareWith>Share with</ShareWith>
       <Access>Access</Access>
-      <SpaceMember>Membri Spațiu</SpaceMember>
+      <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Select a Space</SelectASpace>
       <SharedADocument>shared a document</SharedADocument>
-      <NoSpace>Please select at least one space to share</NoSpace>
+      <WhoHasAccess>Who has access</WhoHasAccess>
+      <success>The document was shared successfully</success>
+      <NoSpace>Please select at least one valid space or user</NoSpace>
+      <NoPermission>You are not allowed to share this document</NoPermission>
+      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
+      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
+      <InvalidEntry>This permission can't be edited</InvalidEntry>
+      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
+      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
       <option>
-        <read>Can View</read>
-        <modify>Can Edit</modify>
+        <read>Can view</read>
+        <modify>Can edit</modify>
       </option>
+      <notification>
+        <read>read</read>
+        <modify>edit</modify>
+      </notification>
+      <invite>
+        <placeholder>Enter users or spaces names...</placeholder>
+      </invite>
+      <owner>Proprietar</owner>
     </label>
   </UIShareDocuments>
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Distribuie</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>
