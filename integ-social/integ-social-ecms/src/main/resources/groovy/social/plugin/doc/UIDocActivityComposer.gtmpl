@@ -33,19 +33,26 @@
       %>
 
       <div class="uiActivityFileAttachment">
-        <i class="<%=uicomponent.getDocumentIcon()%>"></i>&nbsp;<%=uicomponent.getDocumentName()%>&nbsp;
-        <a class="uiIconLightGray uiIconClose" href="<%=uicomponent.event("RemoveDocument")%>"></a>
+        <a class="uiIconLightGray uiIconClose uiClose pull-right" href="<%=uicomponent.event("RemoveDocument")%>"></a>      
+        <i class="<%=uicomponent.getDocumentIcon()%> pull-left"></i>
+        <span class="fileName"><%=uicomponent.getDocumentName()%></span>
+        <br/>
+        <span class="userInfo"><%=uicomponent.getDocInfo()%></span>
+
       </div>
       
       <%
     } else {
-      %>
-	  
-        <div class="uiActivityFileAttachment" style="display:none">
-          <a class="browseFile" href="<%= uicomponent.event("SelectDocument")%>">$selectFileLabel</a>
+        if (uicomponent.isDisplayed()) { %>
+        <div class="uiActivityActionAttach">
+          <a class="browseFile" href="<%= uicomponent.event("SelectDocument")%>">
+            <i class="uiIconPlus uiIconBlue"></i>
+            <span class="uiActivityActionAttachText">$selectFileLabel</span>
+          </a>
         </div>
 		
       <%
+      }
     }
   %>
 </div>

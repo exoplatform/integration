@@ -30,7 +30,7 @@ link
   def labelAttach = _ctx.appRes("UILinkComposerPlugin.label.Attach");
 
   def linkInfoDisplayed = uicomponent.isLinkInfoDisplayed();
-  uicomponent.setLinkInfoDisplayed(false);
+//  uicomponent.setLinkInfoDisplayed(false);
   def requestContext = _ctx.getRequestContext();
   def jsManager = requestContext.getJavascriptManager();
 
@@ -109,7 +109,7 @@ link
      def embedHtml = uicomponent.getTemplateParams().get(uicomponent.HTML_PARAM);
                            %>
   <div class="uiLinkShareDisplay blastShare">
-	<a class="uiIconClose uiIconLightGray" href="javascript:void(0)" onclick="<%= uicomponent.event("Close")%>;" ></a>
+	<a class="uiIconClose uiIconLightGray" href="javascript:void(0)" onclick="<%= uicomponent.event("RemoveLink")%>;" ></a>
     <%
       if(UILinkUtil.isImageLink(link)){
         %>
@@ -177,10 +177,11 @@ link
       }
     %>
   </div>
-<% } else { %>
-    <div id="LinkExtensionContainer" class="uiComposerLink clearfix" style="display:<%=((uicomponent.isDisplayed)?"block":"none")%>">
-      <button id="AttachButton" class="btn pull-right" >$labelAttach</button>
-      <div class="inputLink"><% uicomponent.renderChild(UIFormStringInput.class); %></div>
-    </div>
-<% } %>
+<% } else { 
+      def formDisplay = uicomponent.isDisplayed() ? "block" : "none"; %>
+      <div id="LinkExtensionContainer" class="uiComposerLink uiGrayLightBox clearfix" style="display:$formDisplay">
+        <div class="inputLink"><% uicomponent.renderChild(UIFormStringInput.class); %></div>
+        <div class="buttonLink"><button id="AttachButton" class="btn" >$labelAttach</button></div>
+      </div>
+<% }%>
 </div>

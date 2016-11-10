@@ -246,7 +246,6 @@ public class UILinkActivityComposer extends UIActivityComposer {
       UILinkActivityComposer uiComposerLinkExtension = event.getSource();
       uiComposerLinkExtension.clearLinkShare();
       uiComposerLinkExtension.setLinkInfoDisplayed(false);
-      uiComposerLinkExtension.setDisplayed(true);
       uiComposerLinkExtension.setReadyForPostingActivity(false);
       
       event.getRequestContext().addUIComponentToUpdateByAjax(uiComposerLinkExtension);
@@ -323,5 +322,11 @@ public class UILinkActivityComposer extends UIActivityComposer {
     setTemplateParams(null);
     clearLinkShare();
     return activityManager.getActivity(activity.getId());
+  }
+  
+  protected void clearComposerData() {
+    clearLinkShare();
+    resetToDefault();
+    setLinkInfoDisplayed(false);
   }
 }
