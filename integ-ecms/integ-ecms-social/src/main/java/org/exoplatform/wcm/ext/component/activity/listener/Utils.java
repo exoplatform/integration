@@ -51,6 +51,7 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.SpaceUtils;
@@ -303,9 +304,9 @@ public class Utils {
     if (isSkipRaiseAct != null && Boolean.valueOf(isSkipRaiseAct.toString())) {
       return null;
     }
-    if (!isSupportedContent(node)) {
-      return null;
-    }
+//    if (!isSupportedContent(node)) {
+//      return null;
+//    }
 
     // get services
     ExoContainer container = ExoContainerContext.getCurrentContainer();
@@ -444,9 +445,9 @@ public class Utils {
     if (isSkipRaiseAct != null && Boolean.valueOf(isSkipRaiseAct.toString())) {
       return null;
     }
-    if (!isSupportedContent(node)) {
-      return null;
-    }
+//    if (!isSupportedContent(node)) {
+//      return null;
+//    }
 
     // get services
     ExoContainer container = ExoContainerContext.getCurrentContainer();
@@ -565,7 +566,7 @@ public class Utils {
     }
   }
   
-  private static void updateNotifyMessages(ExoSocialActivity activity, String activityMsgBundleKey, String systemComment) 
+  public static void updateNotifyMessages(ExoSocialActivity activity, String activityMsgBundleKey, String systemComment)
       throws Exception {     
     Locale locale = new Locale("en");
     ResourceBundleService resourceBundleService = WCMCoreUtils.getService(ResourceBundleService.class);
@@ -992,5 +993,31 @@ public class Utils {
     } catch (MissingResourceException e) {
       return key;
     }
+  }
+
+  public static String processMentions(String comment) {
+    String excerpts[] = comment.split("@");
+    comment = excerpts[0];
+    String mentioned = "";
+    for (int i=1; i<excerpts.length; i++) {
+      String name = excerpts[i].split(" ")[0];
+      Identity identity = org.exoplatform.social.notification.Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, name, true);
+      if (identity != null) {
+        mentioned = addMentioned(name, identity.getProfile().getFullName());
+      }
+      if (mentioned.isEmpty()) {
+        if (excerpts[i].isEmpty()) comment = comment + " ";
+        else comment = comment + excerpts[i] + " ";
+      } else {
+        comment = comment + mentioned + excerpts[i].substring(name.length(),excerpts[i].length());
+        mentioned = "";
+      }
+    }
+    return comment;
+  }
+
+  private static String addMentioned(String mention, String fullname) {
+    String profileURL = CommonsUtils.getCurrentDomain() + LinkProvider.getProfileUri(mention);
+    return "<a href=" + profileURL + " type=\"mentionedUser\" rel=\"nofollow\">" + fullname + "</a>";
   }
 }

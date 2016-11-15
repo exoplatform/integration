@@ -15,10 +15,6 @@ package org.exoplatform.wcm.ext.component.activity.listener;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import java.util.Map;
-
-import javax.jcr.Node;
-
 import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
@@ -27,6 +23,9 @@ import org.exoplatform.services.listener.Listener;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.wcm.ext.component.activity.ContentUIActivity;
+
+import javax.jcr.Node;
+import java.util.Map;
 /**
  * Created by The eXo Platform SAS
  * Author : Nguyen The Vinh From ECM Of eXoPlatform
@@ -47,6 +46,7 @@ public class CommentUpdatedActivityListener extends Listener<Node, Node> {
       }
     }
     if (commentContent==null) return;
+    commentContent = commentContent.replaceAll("&#64;","@");
     String activityID = ActivityTypeUtils.getActivityId(commentNode);
     ExoContainer container = ExoContainerContext.getCurrentContainer();
     ActivityManager activityManager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
@@ -58,8 +58,13 @@ public class CommentUpdatedActivityListener extends Listener<Node, Node> {
       return;
     }
     Map<String, String> paramsMap = commentActivity.getTemplateParams();
+    commentActivity.setTitle(commentContent);
     paramsMap.put(ContentUIActivity.SYSTEM_COMMENT, commentContent);
     commentActivity.setTemplateParams(paramsMap);
     activityManager.updateActivity(commentActivity);
+    commentContent = Utils.processMentions(commentContent);
+    commentNode.setProperty("exo:commentContent", commentContent);
+    commentNode.save();
+    commentNode.getSession().save();
   }
 }
