@@ -260,6 +260,7 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     docIcon = CssClassUtils.getCSSClassByFileNameAndFileType(documentName, selectField, CssClassManager.ICON_SIZE.ICON_64);
     
     Node docNode = getDocNode(REPOSITORY, WORKSPACE, documentPath);
+    documentName = getDocumentName(docNode, documentName);
     Calendar date = org.exoplatform.services.cms.impl.Utils.getDate(docNode);
     docInfo =  getFullName(docNode) +
                org.exoplatform.services.cms.impl.Utils.fileSize(docNode) + 
@@ -268,7 +269,15 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     UIActivityComposer activityComposer = getActivityComposerManager().getCurrentActivityComposer();
     activityComposer.setDisplayed(true);
   }  
-  
+
+  private String getDocumentName(Node docNode, String pathName) {
+    try {
+      return docNode.getProperty("exo:title").getString();
+    } catch (RepositoryException ex) {
+      return pathName;
+    }
+  }
+
   private String getFullName(Node docNode) throws Exception {
       String ownerId = org.exoplatform.services.cms.impl.Utils.getOwner(docNode);
       OrganizationService organizationService = getApplicationComponent(OrganizationService.class);
