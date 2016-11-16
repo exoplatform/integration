@@ -121,12 +121,7 @@ def isLiked = uicomponent.isLiked();
                             <span class="pull-right dateTime">$commentPostedTime</span>
                         </div>
                         <p class="cont">$commentMessage</p>
-                      <%if (uicomponent.isCommentDeletable(it.userId)) {
-                        String idDeleteComment = "DeleteCommentButton${it.id}";
-                        %>
-                        <!-- <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment" data-delete="<%=uicomponent.event(uicomponent.REMOVE_COMMENT, it.id); %>"  class="uiIconClose uiIconLightGray controllDelete"></a> -->
-                        <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment" data-delete="<%=uicomponent.event(uicomponent.REMOVE_COMMENT, it.id); %>"  class="close previewControllDelete"><i class="uiIconLightGray uiIconClose " commentId="$it.id"></i></a>
-                      <% } %>
+                        <div class="clearfix"></div>
                     </div>
                 </li>
             <%})%>

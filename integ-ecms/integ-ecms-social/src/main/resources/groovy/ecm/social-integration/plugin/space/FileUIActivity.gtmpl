@@ -610,6 +610,7 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 </div>
               <div class="contentComment">$commentMessage</div>
 </div><!--end commentRight-->
+<div class="clearfix"></div>
             <div class="actLink">
               <a id="Permalink${it.id}" rel="tooltip" data-placement="bottom" title="$viewActivityTip" class="uiIconLink uiIconLightGray" href="<%=uicomponent.getCommentPermalink(activity.id, it.id)%>"></a>
 <%if (uicomponent.isCommentDeletable(it.userId)) {
@@ -648,6 +649,7 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 <button class="btn visible-phone" id="CancelButton${activity.id}">$labelCancel</button>
 </div>
 						</div><!--end commentRight-->
+                    <div class="clearfix"></div>
 </div> <!--end commentItem-->
 					</div><!--end commentlist-->
 </div><!--end commentBox-->
@@ -874,6 +876,7 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 </div>
               <div class="contentComment">$commentMessage</div>
 </div><!--end commentRight-->
+<div class="clearfix"></div>
             <div class="actLink">
               <a id="Permalink${it.id}" rel="tooltip" data-placement="bottom" title="$viewActivityTip" class="uiIconLink uiIconLightGray" href="<%=uicomponent.getCommentPermalink(activity.id, it.id)%>"></a>
 <%if (uicomponent.isCommentDeletable(it.userId)) {
@@ -912,6 +915,7 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 <div class="commentInput"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
 </div>
 						</div><!--end commentRight-->
+                    <div class="clearfix"></div>
 </div> <!--end commentItem-->
 					</div><!--end commentlist-->
 </div><!--end commentBox-->
