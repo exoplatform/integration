@@ -48,6 +48,11 @@ public class CommentAddedActivityListener extends Listener<Node, Node> {
       }
     }
     if (commentContent==null) return;
+    try {
+      Utils.setAvatarUrl(commentNode);
+    }catch (Exception e) {
+      commentNode.setProperty("exo:commentorAvatar", Utils.DEFAULT_AVATAR);
+    }
     commentContent = commentContent.replaceAll("&#64;","@");
     ExoSocialActivity commentActivity;
     if(currentNode.isNodeType(NodetypeConstant.NT_FILE)) {

@@ -46,6 +46,11 @@ public class CommentUpdatedActivityListener extends Listener<Node, Node> {
       }
     }
     if (commentContent==null) return;
+    try {
+      Utils.setAvatarUrl(commentNode);
+    }catch (Exception e) {
+      commentNode.setProperty("exo:commentorAvatar", Utils.DEFAULT_AVATAR);
+    }
     commentContent = commentContent.replaceAll("&#64;","@");
     String activityID = ActivityTypeUtils.getActivityId(commentNode);
     ExoContainer container = ExoContainerContext.getCurrentContainer();
