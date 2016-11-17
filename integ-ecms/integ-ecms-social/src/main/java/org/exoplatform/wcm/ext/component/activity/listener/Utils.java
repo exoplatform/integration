@@ -47,10 +47,12 @@ import org.exoplatform.services.wcm.webcontent.WebContentSchemaHandler;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.SpaceUtils;
@@ -96,6 +98,7 @@ public class Utils {
 
   public static final String EXO_RESOURCES_URI            = "/eXoSkin/skin/images/themes/default/Icons/TypeIcons/EmailNotificationIcons/";
   public static final String ICON_FILE_EXTENSION          = ".png";
+  public static final String DEFAULT_AVATAR          = "/eXoSkin/skin/images/themes/default/social/skin/ShareImages/UserAvtDefault.png";
 
   private static String MIX_COMMENT                = "exo:activityComment";
   private static String MIX_COMMENT_ID             = "exo:activityCommentID";
@@ -303,9 +306,9 @@ public class Utils {
     if (isSkipRaiseAct != null && Boolean.valueOf(isSkipRaiseAct.toString())) {
       return null;
     }
-    if (!isSupportedContent(node)) {
-      return null;
-    }
+//    if (!isSupportedContent(node)) {
+//      return null;
+//    }
 
     // get services
     ExoContainer container = ExoContainerContext.getCurrentContainer();
@@ -444,9 +447,9 @@ public class Utils {
     if (isSkipRaiseAct != null && Boolean.valueOf(isSkipRaiseAct.toString())) {
       return null;
     }
-    if (!isSupportedContent(node)) {
-      return null;
-    }
+//    if (!isSupportedContent(node)) {
+//      return null;
+//    }
 
     // get services
     ExoContainer container = ExoContainerContext.getCurrentContainer();
@@ -565,7 +568,7 @@ public class Utils {
     }
   }
   
-  private static void updateNotifyMessages(ExoSocialActivity activity, String activityMsgBundleKey, String systemComment) 
+  public static void updateNotifyMessages(ExoSocialActivity activity, String activityMsgBundleKey, String systemComment)
       throws Exception {     
     Locale locale = new Locale("en");
     ResourceBundleService resourceBundleService = WCMCoreUtils.getService(ResourceBundleService.class);
@@ -992,5 +995,42 @@ public class Utils {
     } catch (MissingResourceException e) {
       return key;
     }
+  }
+
+  public static String processMentions(String comment) {
+    String excerpts[] = comment.split("@");
+    comment = excerpts[0];
+    String mentioned = "";
+    for (int i=1; i<excerpts.length; i++) {
+      String name = excerpts[i].split(" ")[0];
+      Identity identity = org.exoplatform.social.notification.Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, name, true);
+      if (identity != null) {
+        mentioned = addMentioned(name, identity.getProfile().getFullName());
+      }
+      if (mentioned.isEmpty()) {
+        if (excerpts[i].isEmpty()) comment = comment + " ";
+        else comment = comment + excerpts[i] + " ";
+      } else {
+        comment = comment + mentioned + excerpts[i].substring(name.length(),excerpts[i].length());
+        mentioned = "";
+      }
+    }
+    return comment;
+  }
+
+  private static String addMentioned(String mention, String fullname) {
+    String profileURL = CommonsUtils.getCurrentDomain() + LinkProvider.getProfileUri(mention);
+    return "<a href=" + profileURL + " type=\"mentionedUser\" rel=\"nofollow\">" + fullname + "</a>";
+  }
+
+  public static void setAvatarUrl(Node commentNode) throws RepositoryException {
+    String name = commentNode.getProperty("exo:commentor").getString();;
+    Identity identity = org.exoplatform.social.notification.Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, name, true);
+    Profile profile = identity.getProfile();
+    if (profile.getAvatarUrl() != null ) {
+      commentNode.setProperty("exo:commentorAvatar", profile.getAvatarUrl());
+    } else {
+      commentNode.setProperty("exo:commentorAvatar", DEFAULT_AVATAR);
+    } ;
   }
 }

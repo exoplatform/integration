@@ -15,6 +15,7 @@ package org.exoplatform.wcm.ext.component.activity.listener;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 import org.exoplatform.commons.utils.ActivityTypeUtils;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.listener.Event;
@@ -47,18 +48,24 @@ public class CommentAddedActivityListener extends Listener<Node, Node> {
       }
     }
     if (commentContent==null) return;
+    try {
+      Utils.setAvatarUrl(commentNode);
+    }catch (Exception e) {
+      commentNode.setProperty("exo:commentorAvatar", Utils.DEFAULT_AVATAR);
+    }
+    commentContent = commentContent.replaceAll("&#64;","@");
     ExoSocialActivity commentActivity;
     if(currentNode.isNodeType(NodetypeConstant.NT_FILE)) {
-      commentActivity = Utils.postFileActivity(currentNode, "{0}", false, true, commentContent, "");
+      commentActivity = Utils.postFileActivity(currentNode, commentContent, false, false, null, null);
     }else{
-      commentActivity= Utils.postActivity(currentNode, "{0}", false, true, commentContent, "");
+      commentActivity= Utils.postActivity(currentNode, commentContent, false, false, null, null);
     }
     LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
     List<Node> links = linkManager.getAllLinks(currentNode, NodetypeConstant.EXO_SYMLINK);
 
     for(Node link: links){
       if(link.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)){
-        ExoSocialActivity linkCommentActivity = Utils.postActivity(link, "{0}", false, true, commentContent, "");
+        ExoSocialActivity linkCommentActivity = Utils.postActivity(link, commentContent, false, false, null, null);
         if (commentActivity!=null) {
           ActivityTypeUtils.attachActivityId(link, linkCommentActivity.getId());
         }
@@ -68,5 +75,9 @@ public class CommentAddedActivityListener extends Listener<Node, Node> {
       ActivityTypeUtils.attachActivityId(commentNode, commentActivity.getId());
       commentNode.getSession().save();
     }
+    commentContent = Utils.processMentions(commentContent);
+    commentNode.setProperty("exo:commentContent", commentContent);
+    commentNode.save();
+    commentNode.getSession().save();
   }
 }

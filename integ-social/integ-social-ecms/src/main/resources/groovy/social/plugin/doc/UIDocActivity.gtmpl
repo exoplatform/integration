@@ -54,6 +54,7 @@
 <% if (activity && currentNode != null) { //process if not null 
 
   def labelComment = _ctx.appRes("UIActivity.label.Comment");
+  def labelCancel = _ctx.appRes("UIActivity.label.Cancel");
   def labelLike = _ctx.appRes("UIActivity.label.Like");
   def labelUnlike = _ctx.appRes("UIActivity.label.Unlike");
   def labelSource = _ctx.appRes("UIActivity.label.Source");
@@ -103,10 +104,12 @@
   def commentListStatus = uicomponent.getCommentListStatus();
   def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
   def likesDisplayed = uicomponent.isAllLoaded();
+  def placeholder = _ctx.appRes("UIActivity.comment.placeholder");
   //params for init UIActivity javascript object
 
     def params = """ {
       activityId: '${activity.id}',
+    placeholderComment: '${placeholder}',
     inputWriteAComment: '$inputWriteAComment',
     commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
     commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
@@ -114,12 +117,12 @@
     allCommentSize: '${allComments.size()}',
     commentFormFocused: '${uicomponent.isCommentFormFocused()}'
     } """
-  
+
   jsManager.require("SHARED/uiForm")
            .require("SHARED/jquery", "jq")
            .require("SHARED/bts_tooltip").addScripts("jq('*[rel=\"tooltip\"]').tooltip();")
            .require("SHARED/social-ui-activity", "activity").addScripts("activity.onLoad($params);");
-  
+
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
   def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
@@ -181,7 +184,7 @@
   def version = 0;
   def title = null;
   def summary = uicomponent.getSummary();
-  
+
   def mimeType = "";
   def binarySrc;
   def uicontentpresentation = uicomponent.addChild(ContentPresentation.class, null, null);
@@ -200,15 +203,15 @@
     preferenceWS  = currentNode.getSession().getWorkspace().getName();
     fileComponent = uicontentpresentation.getUIComponent(mimeType);
   }
-  
+
   def downloadFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.Download");
   def viewFileLabel = _ctx.appRes("UIComposerDocumentExtension.label.View_File");
   def versionLabel = _ctx.appRes("UIComposerDocumentExtension.label.Version");
-  
+
   ExoContainer container = ExoContainerContext.getCurrentContainer();
   PortalContainerInfo containerInfo = (PortalContainerInfo) container.getComponentInstanceOfType(PortalContainerInfo.class);
   String portalName = containerInfo.getContainerName();
-  
+
   String restContextName = org.exoplatform.ecm.webui.utils.Utils.getRestContextName(portalName);
 
     def spaceSourceURI, spaceName, spaceImageSource, spaceID;
@@ -249,7 +252,7 @@
 	</div><!--end activityTimeLine-->
     <div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
-			<div id="ActivityContextBox${activity.id}"> 
+			<div id="ActivityContextBox${activity.id}">
 				<div class="heading">
 					<span class="arrowLeft"></span>
 					<div class="actLink  hidden-phone hidden-tablet">
@@ -289,8 +292,8 @@
 					</div>
 				</div><!--end heading-->
 				<div class="description">$dMessage</div><!--end description-->
-				<div class="uiBox roundedBottom introBox fileShare">                 
-			    <% 
+				<div class="uiBox roundedBottom introBox fileShare">
+			    <%
              if(mimeType.startsWith("image")) {
           %>
           <div class="clearfix isPreviewable">
@@ -305,12 +308,12 @@
 	             <%
 	               def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 	               encodedPath = encodedPath.replaceAll ("%2F", "/");
-	               String docThumbnail = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;               
+	               String docThumbnail = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;
 	             %>
 	             <a href="javascript:void(0)" onclick="$docPreviewUri" rel="tooltip" data-placement="bottom" title="$title"><img src="$docThumbnail" class="pdfImageBorder"/></a>
 	          </div>
 	        <%
-	          } else if(fileComponent != null) { 
+	          } else if(fileComponent != null) {
 	        %>
 	        <div class="clearfix isPreviewable">
             <div id="MediaContent${activity.id}" class="pull-left PlayerContianer">
@@ -328,7 +331,7 @@
               </div>
           <%
             }
-          %>  
+          %>
               <div class="text">
                 <a class="linkTitle" href="$docPreviewUri">
                     <% if (title == null) { %>
@@ -340,20 +343,20 @@
                 <p class="linkDescription">$summary</p>
                 <span class="versionFile">
                     <% if (version != 0) { %>
-                    $versionLabel $version - 
+                    $versionLabel $version -
                     <% } %>
                     $fileSize
                 </span>
               </div>
-          </div><!--end clearfix -->       
-               
-			    </div><!--end introBox,linkShare-->     
-				  <div class="actionBar clearfix docActivityIcon">	
+          </div><!--end clearfix -->
+
+			    </div><!--end introBox,linkShare-->
+				  <div class="actionBar clearfix docActivityIcon">
 						<% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 						 def commentLink = "";
 						%>
-						<% if (activityCommentAndLikable) { %>											
-						<ul class="pull-right statusAction">	
+						<% if (activityCommentAndLikable) { %>
+						<ul class="pull-right statusAction">
 						<li>
 							<a class="$commentLink"  id="CommentLink${activity.id}" href="javascript:void(0);">
 							 <i class="uiIconComment uiIconLightGray"></i>&nbsp;$totalComments
@@ -377,9 +380,9 @@
 					 <ul class="pull-left statusAction">
 						<li><a href="<%= uicomponent.event("DownloadDocument")%>"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;$downloadFileLabel</a></li>
 					 </ul>
-				</div><!--end actionBar-->		
-				<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>               
-        <div class="listLikedBox $listPeopleBGClass">       
+				</div><!--end actionBar-->
+				<% if (identityLikesNum > 0 || uicomponent.isLiked()) {%>
+        <div class="listLikedBox $listPeopleBGClass">
               <div class="listPeopleContent">
               <% if (!labelLikes) labelLikes = ""; %>
                         <p>$labelLikes</p>
@@ -401,10 +404,10 @@
                     <button onclick="$loadLikesAction" class="btn">...</button>
                 </div>
                 <% }%>
-             </div>             
-        </div><!--end list like people--> 
+             </div>
+        </div><!--end list like people-->
 				<%}%>
-				<div id="CommentBlockBound${activity.id}" class="commentBox">    
+				<div id="CommentBlockBound${activity.id}" class="commentBox">
 				  <% if (uicomponent.commentListToggleable()) {
 				  def showAllCommentsAction = uicomponent.event("SetCommentListStatus", "all");
 				  def hideAllCommentsAction = uicomponent.event("SetCommentListStatus", "none");
@@ -454,7 +457,7 @@
 						  <a class="avatarXSmall" href="$commenterProfileUri" rel="tooltip" data-placement="bottom" title="$commenterFullName" >
 							<img alt="$commenterFullName" src="$commenterAvatarImgSrc" />
 						  </a>
-						</div><!--end commentLeft--> 
+						</div><!--end commentLeft-->
 						<div class="commentRight">
 							<div class="author">
 								<a href="$commenterProfileUri">$commenterFullName</a>
@@ -462,17 +465,18 @@
 									 $commentPostedTime
 								 </span>
 							</div>
-							<p class="contentComment">
+							<div class="contentComment">
 								$commentMessage
-							</p>          
+							</div>
 						</div><!--end commentRight-->
+                        <div class="clearfix"></div>
 						<div class="actLink">
-						  <a id="Permalink${it.id}" rel="tooltip" data-placement="bottom" title="$viewActivityTip" class="uiIconLink uiIconLightGray" href="<%=uicomponent.getCommentPermalink(activity.id, it.id)%>"></a>
+						<a id="Permalink${it.id}" rel="tooltip" data-placement="bottom" title="$viewActivityTip" class="uiIconLink uiIconLightGray" href="<%=uicomponent.getCommentPermalink(activity.id, it.id)%>"></a>
 					<%
 					  if (uicomponent.isCommentDeletable(it.userId)) {
 					    String idDeleteComment = "DeleteCommentButton${it.id}";
 					%>
-					      <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"  class="uiIconClose uiIconLightGray controllDelete"></a>
+					      <a href="javascript:void(0)" id="$idDeleteComment" data-confirm="$labelToDeleteThisComment" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton" data-delete="<%= uicomponent.event("DeleteComment", uicomponent.id, it.id); %>"  class="uiIconTrash uiIconLightGray controllDelete"></a>
 					<% } %>
 					    </div>
 					</div><!--end commentItem-->
@@ -499,10 +503,12 @@
 						</div><!--end commentLeft-->
 						<div class="commentRight">
 							<div class="commentInputBox ">
-								 <button class="btn pull-right btn-primary" onclick="<%= uicomponent.event("PostComment") %>" rel="tooltip" data-placement="bottom" title="$labelComment" id="CommentButton${activity.id}">$labelComment</button>
 								<div class="commentInput"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
+                                <button class="btn pull-left btn-primary" onclick="<%= uicomponent.event("PostComment") %>" rel="tooltip" data-placement="bottom" title="$labelComment" id="CommentButton${activity.id}" disabled>$labelComment</button>
+                                <button class="btn visible-phone" id="CancelButton${activity.id}">$labelCancel</button>
 							</div>
-						</div><!--end commentRight-->    	
+						</div><!--end commentRight-->
+                        <div class="clearfix"></div>
 					 </div><!--end commentItem-->					
 					</div><!--end commentlist-->	  
 				</div><!--end commentBox-->
