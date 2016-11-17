@@ -107,8 +107,9 @@ link
 <% if (linkInfoDisplayed) {
      uicomponent.clearLinkShare();
      def embedHtml = uicomponent.getTemplateParams().get(uicomponent.HTML_PARAM);
-                           %>
-  <div class="uiLinkShareDisplay blastShare">
+     def formDisplay = uicomponent.isDisplayed() ? "block" : "none"; %>
+
+  <div class="uiLinkShareDisplay blastShare" style="display:$formDisplay">
 	<a class="uiIconClose uiIconLightGray" href="javascript:void(0)" onclick="<%= uicomponent.event("RemoveLink")%>;" ></a>
     <%
       if(UILinkUtil.isImageLink(link)){
