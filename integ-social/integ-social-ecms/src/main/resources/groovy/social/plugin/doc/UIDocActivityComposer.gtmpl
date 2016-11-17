@@ -26,7 +26,7 @@
 %>
 <div id="<%=uicomponent.id%>">
   <%
-    if(uicomponent.isDocumentReady()){
+    if(uicomponent.isDocumentReady() && uicomponent.isDisplayed()){
       def jsManager = _ctx.getRequestContext().getJavascriptManager();
       jsManager.require("SHARED/social-ui-activity-composer", "composer")
                .addScripts("composer.activeShareButton();");
