@@ -54,13 +54,25 @@ String displayed = null;
     <% if (uicomponent.getPermission().equals(SHARE_PERMISSION_MODIFY)) { %>
         <div class="btn-toolbar pull-right" id="selectPermission" style="margin: 0;">
             <div class="dropdown">
-                <div data-toggle="dropdown" id=$idModify class="uiActionWithLabel"><a><i class="uiIconEdit uiIconBlue"></i><a class="responsivePerm"> $SHARE_OPTION_CANMODIFY</a></a> <i class="uiIconMiniArrowDown uiIconBlue"></i></span></div>
+              <div data-toggle="dropdown" id=$idModify class="uiActionWithLabel">
+                <a>
+                  <i class="uiIconEdit uiIconBlue"></i>
+                  <a class="responsivePerm"> $SHARE_OPTION_CANMODIFY</a>
+                </a>
+                <i class="uiIconMiniArrowDown uiIconBlue"></i>
+              </div>
             </div><!-- dropdown -->
         </div>
     <% } else { %>
         <div class="btn-toolbar pull-right" id="selectPermission" style="margin: 0;">
             <div class="dropdown">
-                <div data-toggle="dropdown" id=$idView class="uiActionWithLabel"><a><i class="uiIconWatch uiIconBlue"></i><a class="responsivePerm"> $SHARE_OPTION_CANVEW</a></a> <i class="uiIconMiniArrowDown uiIconBlue"></i></span></div>
+              <div data-toggle="dropdown" id=$idView class="uiActionWithLabel">
+                <a>
+                  <i class="uiIconWatch uiIconBlue"></i>
+                  <a class="responsivePerm"> $SHARE_OPTION_CANVEW</a>
+                </a>
+                <i class="uiIconMiniArrowDown uiIconBlue"></i>
+              </div>
             </div><!-- dropdown -->
         </div>
     <% } %>
