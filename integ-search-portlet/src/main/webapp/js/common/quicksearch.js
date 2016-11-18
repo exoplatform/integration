@@ -53,7 +53,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
      	</a>";
     
     var OTHER_RESULT_TEMPLATE  = "\
-		<a href=\"%{url}\" class=\"avatarTiny\"><img src=\"%{imageSrc}\"/>%{title}</a>\
+		<a href=\"%{url}\"><img src=\"%{imageSrc}\" class=\"avatarTiny\"/>%{title}</a>\
 		";
         
     var QUICKSEARCH_TABLE_TEMPLATE=" \
