@@ -160,7 +160,7 @@
       <invite>
         <placeholder>Noms d'utilisateurs ou d'espaces...</placeholder>
       </invite>
-      <owner>Utilisateur</owner>
+      <owner>Propriétaire</owner>
     </label>
   </UIShareDocuments>
 
