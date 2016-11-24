@@ -65,7 +65,7 @@ link
     description = uicomponent.templateParams.get("description");
     
     def image;
-    if(uicomponent.templateParams.get("image") == null){
+    if(uicomponent.templateParams.get("image") == null || uicomponent.templateParams.get("image").isEmpty()) {
       images = [];
     } else {
       images = [uicomponent.templateParams.get("image")];
