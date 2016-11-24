@@ -107,6 +107,9 @@ public class UIWhoHasAccessEntry extends UIContainer {
         uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermissionDelete", null,
             ApplicationMessage.WARNING));
       }
+      event.getRequestContext().getJavascriptManager()
+          .require("SHARED/share-content", "shareContent")
+          .addScripts("eXo.ecm.ShareContent.checkUpdatedEntry();");
       event.getRequestContext().addUIComponentToUpdateByAjax(uiShareDocuments);
     }
   }
@@ -124,6 +127,9 @@ public class UIWhoHasAccessEntry extends UIContainer {
       }
       UIWhoHasAccess uiWhoHasAccess = uiform.getParent();
       uiWhoHasAccess.updateEntry(uiform.getId(), uiform.getPermission());
+      event.getRequestContext().getJavascriptManager()
+          .require("SHARED/share-content", "shareContent")
+          .addScripts("eXo.ecm.ShareContent.checkUpdatedEntry();");
       event.getRequestContext().addUIComponentToUpdateByAjax(uiform.getParent().getParent());
     }
   }

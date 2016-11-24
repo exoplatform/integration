@@ -87,8 +87,8 @@ String SHARE_PERMISSION_MODIFY      = "modify";
 </div>
 
 <div class="uiActionBorder">
-  <button type="button" class="btn btn-primary" onclick="eXo.ecm.ShareContent.doShare();"><%=_ctx.appRes("UIShareDocuments.label.ShareButton")%></button>
-  <button type="button" class="hidden" id="shareActionBtn" onclick="<%=uicomponent.event("Confirm")%>"></button>
+  <button type="button" class="btn btn-primary" onclick="eXo.ecm.ShareContent.doShare();" disabled><%=_ctx.appRes("UIShareDocuments.label.ShareButton")%></button>
+  <button type="button" class="hidden" id="shareActionBtn" onclick="<%=uicomponent.event("Confirm")%>" disabled></button>
   <button type="button" class="btn" onclick="<%=uicomponent.event("Cancel")%>"><%=_ctx.appRes("UIShareDocuments.label.CancelButton")%></button>
 </div>
 
