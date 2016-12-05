@@ -117,11 +117,6 @@ public class ContentViewerRESTService implements ResourceContainer {
       uiDocViewer.processRender(requestContext);
 
       content = writer.toString();
-      String nodeId = writer.toString().split("PDFJS.pdfFile")[1].split(";")[0].split("/")[5];
-      if (nodeId.contains("\'")) nodeId = nodeId.replace("\'", "");
-      if (!nodeId.equals(uuid)) {
-        content = content.replace(nodeId, uuid);
-      }
 
     } catch (Exception e) {
       LOG.error("Cannot render content of document " + repoName + "/" + workspaceName + "/" + uuid, e);
