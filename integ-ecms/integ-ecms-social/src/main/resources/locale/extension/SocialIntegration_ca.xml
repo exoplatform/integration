@@ -20,7 +20,7 @@
       <editedBy>va ser editat per</editedBy>
       <system>el sistema</system>
       <readmore>...Llegeix més.</readmore>
-      <editTitle>Title has been updated to: {0}</editTitle>
+      <editTitle>El títol ha estat actualitzat a: {0}</editTitle>
       <editName>El nom ha estat actualitzat a: {0}</editName>
       <editDescription>La descripció ha estat actualitzada a: {0}</editDescription>
       <singleCreator>L'autor es {0}</singleCreator>
@@ -64,7 +64,7 @@
       <fileMoved>El fitxer ha estat mogut a: {0}</fileMoved>
       <revisionChanged>La publicació s'ha restaurat a la versió: {0}</revisionChanged>
       <version>Versió {0}</version>
-      <updatedOn>Updated on</updatedOn>
+      <updatedOn>Actualitzat el</updatedOn>
       <updatedBy>per</updatedBy>
     </messages>
     <publicationStates>
@@ -72,22 +72,22 @@
       <obsolete>Obsolet</obsolete>
       <unpublished>No publicat</unpublished>
       <draft>Esborrany</draft>
-      <pending>Pending</pending>
-      <approved>Approved</approved>
+      <pending>Pendent</pending>
+      <approved>Aprovat</approved>
       <inreview>En revisió</inreview>
       <staged>Llest per publicar</staged>
       <published>Publicat</published>
-      <live>Published</live>
+      <live>Publicat</live>
     </publicationStates>
-    <view>View</view>
-    <edit>Edit</edit>
+    <view>Veure</view>
+    <edit>Edita</edit>
     <download>Descarrega</download>
     <preview>Vista prèvia</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Preview</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <DocViewer>Vista prèvia</DocViewer>
+      <UIReadOnlyFileConfirmMessage>Obre el Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -99,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
+      <commentTextAreaPreview>Afegeix el teu comentari...</commentTextAreaPreview>
       <no-comment-yet>Encara no hi han comentaris</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -121,44 +121,44 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Compartir</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Share</UIShareDocuments>
-      <Share>Share</Share>
+      <UIShareDocuments>Compartir</UIShareDocuments>
+      <Share>Compartir</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
       <ShareButton>Aplica</ShareButton>
-      <CancelButton>Cancel</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
+      <CancelButton>Cancel·la</CancelButton>
+      <TextAreaInit>Envia un missatge en compartir...</TextAreaInit>
+      <ShareWith>Comparteix amb</ShareWith>
       <Access>Accés</Access>
-      <SpaceMember>Space Members</SpaceMember>
+      <SpaceMember>Membres del Espai</SpaceMember>
       <SelectASpace>Selecciona un espai</SelectASpace>
       <SharedADocument>compartit un document</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <WhoHasAccess>Qui té accés</WhoHasAccess>
+      <success>El document s'ha compartit amb èxit</success>
+      <NoSpace>Si us plau, selecciona almenys un espai o usuari</NoSpace>
+      <NoPermission>No tens permís per compartir aquest document</NoPermission>
+      <NoPermissionDelete>No pot suprimir aquest permís</NoPermissionDelete>
+      <InvalidDeletion>No pot suprimir el seu propi permís</InvalidDeletion>
+      <InvalidEntry>Aquest permís no pot ser editat</InvalidEntry>
+      <InvalidOwner>No pot canviar els permisos del propietari</InvalidOwner>
+      <Invalid>Ho sentim, no podem reconèixer '{0}' com a nom d'usuari o espai vàlid</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>Pot veure</read>
+        <modify>Pot editar</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>llegir</read>
+        <modify>editar</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>Introdueix usuaris o noms d'espais...</placeholder>
       </invite>
       <owner>Propietari</owner>
     </label>
@@ -166,7 +166,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Compartir</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>
