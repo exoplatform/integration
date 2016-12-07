@@ -205,8 +205,6 @@ public class ForumUIActivity extends BaseKSActivity {
       //
       ExoSocialActivity activity = getActivity();
       activity = ForumActivityBuilder.updateNumberOfReplies(activity, false);
-      activity.setTitle(null);
-      activity.setBody(null);
       ForumActivityUtils.updateActivities(activity);
 
       return post;
