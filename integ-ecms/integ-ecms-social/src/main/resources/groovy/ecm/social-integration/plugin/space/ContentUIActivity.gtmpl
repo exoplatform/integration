@@ -374,7 +374,7 @@
           <% }%>
           <ul class="pull-left statusAction">
             <% if (uicomponent.isContentSupportPreview(currentNode)) { %>
-              <li><a href="$docPreviewUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
+              <li><a href="#" onclick="$docPreviewUri"><i class="uiIconWatch uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.view");%></a></li>
             <% }%>
           </ul>
         </div><!--end actionBar-->
