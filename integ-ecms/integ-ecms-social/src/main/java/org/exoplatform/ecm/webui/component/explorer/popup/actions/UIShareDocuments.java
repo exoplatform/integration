@@ -37,6 +37,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -66,6 +67,8 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.exoplatform.wcm.notification.plugin.FileActivityChildPlugin.EXO_RESOURCES_URI;
 import static org.exoplatform.wcm.notification.plugin.FileActivityChildPlugin.ICON_FILE_EXTENSION;
@@ -177,9 +180,12 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
           message = event.getSource().getChild(UIFormTextAreaInput.class).getValue();
         for (String name : accessList) {
           try {
-            if ((permissions.containsKey(name) && permissions.get(name).equals(uiform.getPermission(name)))
-              || uiform.isOwner(name)) continue;
-                      else if (permissions.containsKey(name)) {
+            if (IdentityConstants.ANY.equals(name)
+                    || IdentityConstants.SYSTEM.equals(name)
+                    || (permissions.containsKey(name) && permissions.get(name).equals(uiform.getPermission(name)))
+                    || uiform.isOwner(name)) {
+              continue;
+            } else if (permissions.containsKey(name)) {
               if (!name.startsWith(SPACE_PREFIX2)) {
                 service.unpublishDocumentToUser(name, (ExtendedNode) node);
                 service.publishDocumentToUser(name, node, message, permissions.get(name));
@@ -511,13 +517,11 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   }
 
   public Map<String, String> getAllPermissions() {
-    Map<String, String> perm = new HashMap<String, String>();
-    Iterator it = getWhoHasAccess().iterator();
-    while (it.hasNext()) {
-      String identity = (String) it.next();
-      if (!isOwner(identity)) perm.put(identity, getPermission(identity));
-    }
-    return perm;
+    return getWhoHasAccess().stream()
+            .filter(identity -> !IdentityConstants.ANY.equals(identity)
+                    && !IdentityConstants.SYSTEM.equals(identity)
+                    && !isOwner(identity))
+            .collect(Collectors.toMap(Function.identity(), identity -> getPermission(identity)));
   }
 
   public String getRestURL() {

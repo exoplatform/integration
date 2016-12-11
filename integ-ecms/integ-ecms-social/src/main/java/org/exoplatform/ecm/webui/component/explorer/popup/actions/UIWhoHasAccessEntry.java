@@ -17,13 +17,10 @@
 package org.exoplatform.ecm.webui.component.explorer.popup.actions;
 
 
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.social.core.service.LinkProvider;
-import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -142,18 +139,5 @@ public class UIWhoHasAccessEntry extends UIContainer {
       if(LOG.isErrorEnabled())
         LOG.error(e.getMessage(), e);
     }
-  }
-
-  public String getPrettySpaceName(String name) {
-    SpaceService spaceService = getApplicationComponent(SpaceService.class);
-    if (name.startsWith(SPACE_PREFIX1)) return spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX1.length())).getDisplayName();
-    else return spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX2.length())).getDisplayName();
-  }
-
-  public String getSpaceUrl(String name) {
-    String space;
-    if (name.startsWith(SPACE_PREFIX1)) space = name.substring(SPACE_PREFIX1.length());
-    else space = name.substring(SPACE_PREFIX2.length());
-    return CommonsUtils.getCurrentDomain() + LinkProvider.getSpaceUri(space.replace(" ","_"));
   }
 }
