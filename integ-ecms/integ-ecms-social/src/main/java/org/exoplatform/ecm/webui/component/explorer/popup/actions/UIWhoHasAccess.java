@@ -21,6 +21,8 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -104,6 +106,50 @@ public class UIWhoHasAccess extends UIContainer {
         LOG.error(e.getMessage(), e);
     }
   }
+
+  public String getProfileUrl(String name) {
+    return CommonsUtils.getCurrentDomain() + LinkProvider.getProfileUri(name);
+  }
+
+  private boolean isSpace(String name) {
+    return (name.startsWith(SPACE_PREFIX1) || name.startsWith(SPACE_PREFIX2));
+  }
+
+  private boolean isGroup(String name) {
+    return (name.startsWith(GROUP_PREFIX) && !name.startsWith(SPACE_PREFIX2));
+  }
+
+  public String getUserFullName(String name) throws Exception {
+    String userFullName = "";
+    if(IdentityConstants.ANY.equals(name) || IdentityConstants.SYSTEM.equals(name)) {
+      userFullName = name;
+    } else {
+      User user = getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(name);
+      if(user != null) {
+        userFullName = user.getDisplayName();
+      }
+    }
+    return userFullName;
+  }
+
+  public String getPrettySpaceName(String name) {
+    SpaceService spaceService = getApplicationComponent(SpaceService.class);
+    if (name.startsWith(SPACE_PREFIX1)) return spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX1.length())).getDisplayName();
+    else return spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX2.length())).getDisplayName();
+  }
+
+  public String getSpaceUrl(String name) {
+    String space;
+    if (name.startsWith(SPACE_PREFIX1)) space = name.substring(SPACE_PREFIX1.length());
+    else space = name.substring(SPACE_PREFIX2.length());
+    return CommonsUtils.getCurrentDomain() + LinkProvider.getSpaceUri(space.replace(" ","_"));
+  }
+
+  /**
+   * Return the URL of the entry's avatar
+   * @param name Entry name
+   * @return Entry's avatar URL
+   */
   public String getAvatar(String name) {
     try {
       if (!isSpace(name)) {
@@ -123,25 +169,46 @@ public class UIWhoHasAccess extends UIContainer {
     }
   }
 
-  public String getProfileUrl(String name) {
-    return CommonsUtils.getCurrentDomain() + LinkProvider.getProfileUri(name);
-  }
-
-  private boolean isSpace(String name) {
-    return (name.startsWith(SPACE_PREFIX1) || name.startsWith(SPACE_PREFIX2));
-  }
-
-  private boolean isGroup(String name) {
-    return (name.startsWith(GROUP_PREFIX) && !name.startsWith(SPACE_PREFIX2));
-  }
-
-  public String getFullName(String name) {
+  /**
+   * Return the display name of the entry.
+   * @param name Entry name
+   * @return Entry's display name
+   */
+  public String getDisplayName(String name) {
+    String displayName = "";
     try {
-      return getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(name).getDisplayName();
+      if(this.isSpace(name)) {
+        displayName = this.getPrettySpaceName(name);
+      } else if(this.isGroup(name)) {
+        displayName = this.getPrettyGroupName(name);
+      } else {
+        displayName = this.getUserFullName(name);
+      }
     } catch (Exception e) {
-      LOG.error(e.getMessage(), e);
+      LOG.error("Cannot display name for entry " + name + " : " + e.getMessage(), e);
     }
-    return "";
+    return displayName;
+  }
+
+  /**
+   * Return the entry URL
+   * @param name Entry name
+   * @return Entry's URL
+   */
+  public String getEntryURL(String name) {
+    String url = null;
+    try {
+      if(this.isSpace(name)) {
+        url = this.getSpaceUrl(name);
+      } else if(this.isGroup(name)) {
+        url = null;
+      } else {
+        url = this.getProfileUrl(name);
+      }
+    } catch (Exception e) {
+      LOG.error("Cannot URL for entry " + name + " : " + e.getMessage(), e);
+    }
+    return url;
   }
 
   public String getPrettyGroupName(String name) {

@@ -31,23 +31,17 @@ String displayed = null;
     </ul>
 </div>
 <div id="AccessEntry">
-    <% String fullName = (uiWhoHasAccess.isSpace(name) || uiWhoHasAccess.isGroup(name)) ? null : uiWhoHasAccess.getFullName(name); %>
-    <% if (uiWhoHasAccess.isGroup(name)) {
-        displayed = uiWhoHasAccess.getPrettyGroupName(name);
-    } else if (uiWhoHasAccess.isSpace(name)) {
-        displayed = uicomponent.getPrettySpaceName(name);
-    }  %>
     <% String avatar = uiWhoHasAccess.getAvatar(name); %>
     <div class="avatarXSmall pull-left">
         <img src="$avatar" alt="$displayed"/>
     </div>
     <div id="entry" >
-        <% if (fullName != null) { %>
-            <a href="<%=uiWhoHasAccess.getProfileUrl(name)%>" >$fullName</a>
-        <% } else if (uiWhoHasAccess.isSpace(name)) { %>
-            <a href="<%=uicomponent.getSpaceUrl(name)%>" >$displayed</a>
+        <% String entryDisplayName = uiWhoHasAccess.getDisplayName(name); %>
+        <% String entryURL = uiWhoHasAccess.getEntryURL(name); %>
+        <% if (entryURL?.trim()) { %>
+            <a href="<%=entryURL%>" >$entryDisplayName</a>
         <% } else { %>
-            $displayed
+            $entryDisplayName
         <% } %>
     </div>
     <div class="deleteEntry pull-right"><a class="actionIcon" onclick="<%=uicomponent.event("RemoveEntry")%>"><i class="uiIconDelete uiIconLightGray"></i></a></div>

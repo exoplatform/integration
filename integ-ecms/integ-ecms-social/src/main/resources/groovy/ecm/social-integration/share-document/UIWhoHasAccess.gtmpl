@@ -10,10 +10,10 @@ String owner = uicomponent.getAncestorOfType(UIShareDocuments.class).getOwner();
 <a id="add"><strong><%=_ctx.appRes("UIShareDocuments.label.WhoHasAccess")%></strong></a>
 <div class="accessSpaceMember clearfix" id="owner" >
         <div class="avatarXSmall pull-left">
-            <img src="<%=uicomponent.getAvatar(owner)%>" alt="<%=uicomponent.getFullName(owner)%>"/>
+            <img src="<%=uicomponent.getAvatar(owner)%>" alt="<%=uicomponent.getUserFullName(owner)%>"/>
         </div>
         <div id="entry">
-            <a href="<%=uicomponent.getProfileUrl(owner)%>" ><%=uicomponent.getFullName(owner)%></a>
+            <a href="<%=uicomponent.getProfileUrl(owner)%>" ><%=uicomponent.getUserFullName(owner)%></a>
         </div>
         <div class="accessMember pull-right input-medium clearfix">
             <label><strong><%=_ctx.appRes("UIShareDocuments.label.owner")%></strong></label>
