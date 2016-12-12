@@ -6,11 +6,11 @@ String perm = PERMISSION.equals("read") ? _ctx.appRes("Notification.label.view")
     <div class="avatarXSmall pull-left">
       <img src="$AVATAR" alt="$USER" />
     </div>
-    <div class="media-body">
-          <%
-           String profileUrl = "<a class=\"user-name text-bold\" href=\"javascript:void(0)\">" + USER + "</a>";
-    String permission = "<span class=\"text-bold\">" + perm + "</span>";
-    %>
+    <div class="media-body" onclick="javascript:location.href='$DOCUMENT_URL'">
+        <%
+          String profileUrl = "<a class=\"user-name text-bold\" href=\"javascript:void(0)\">" + USER + "</a>";
+          String permission = "<span class=\"text-bold\">" + perm + "</span>";
+        %>
         <div class="status"><%=_ctx.appRes("Notification.intranet.message.ShareFileToUserPlugin", profileUrl, permission)%></div>
         <div class="content">
             <a href=$DOCUMENT_URL>
