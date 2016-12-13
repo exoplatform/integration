@@ -32,10 +32,7 @@ import org.exoplatform.wiki.utils.Utils;
 import org.exoplatform.wiki.utils.WikiConstants;
 import org.xwiki.rendering.syntax.Syntax;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class WikiSpaceActivityPublisher extends PageWikiListener {
   
@@ -302,7 +299,11 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
        activityParams.put(WikiUIActivity.COMMENT_MESSAGE_KEY2, commentMsgKey2);
        activityParams.put(WikiUIActivity.COMMENT_MESSAGE_ARGS2,
                           StringUtils.join(args2, WikiUIActivity.COMMENT_MESSAGE_ARGS_ELEMENT_SAPERATOR));
-       builder.append("<br/>").append(getValueFromResourceBundle(commentMsgKey2, args2));
+       if (args2 != null) {
+         builder.append("<br/>").append(getValueFromResourceBundle(commentMsgKey2, args2));
+       } else {
+         builder.append("<br/>").append(commentMsgKey2);
+       }
        break;
    }
    newComment.setTemplateParams(activityParams);
