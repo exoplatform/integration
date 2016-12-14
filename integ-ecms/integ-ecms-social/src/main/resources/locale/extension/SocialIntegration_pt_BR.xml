@@ -36,7 +36,7 @@
       <emptyTitle>O título foi removido.</emptyTitle>
       <emptySummary>O sumário foi removido.</emptySummary>
       <emptyContent>O conteúdo foi removido.</emptyContent>
-      <updateMetadata>O metadado {0} foi atualizado para: {1}</updateMetadata>
+      <updateMetadata>O metadado {0}  foi atualizado para: {1}</updateMetadata>
       <removeMetadata>O metadado {0} foi removido.</removeMetadata>
       <removeTitle>O título foi removido.</removeTitle>
       <removeName>O nome foi removido.</removeName>

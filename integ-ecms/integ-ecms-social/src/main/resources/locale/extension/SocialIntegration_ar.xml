@@ -36,7 +36,7 @@
       <emptyTitle>تمّ حذف العنوان.</emptyTitle>
       <emptySummary>تمّ حذف الموجز</emptySummary>
       <emptyContent>تمّ حذف المحتوى.</emptyContent>
-      <updateMetadata>تم تحديث بيانات التعريف من {0} الى : {1}</updateMetadata>
+      <updateMetadata>تم تحديث بيانات التعريف  من {0} الى : {1}</updateMetadata>
       <removeMetadata>لقد تمّ حذف بيانات التعريف: {0}.</removeMetadata>
       <removeTitle>تمّ حذف العنوان.</removeTitle>
       <removeName>تمّ حذف الاسم.</removeName>
@@ -116,7 +116,7 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>هذا الملف مؤمن بواسطة المستخدم {0}. أترغب بفتحه بصيغة القراءة فقط؟</lock-node-read-only>
+      <lock-node-read-only>هذا الملف مؤمن بواسطة المستخدم {0}. أترغب بفتحه بصيغة  القراءة فقط؟</lock-node-read-only>
     </msg>
   </UIPopupMenu>
   <ECMContextMenu>
