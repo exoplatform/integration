@@ -57,7 +57,7 @@
       <stateChange>
         <pending>Lo stato di pubblicazione ora è in sospeso.</pending>
         <approved>Il documento è stato approvato.</approved>
-        <staged>La Pubblicazione è pronta.</staged>
+        <staged>La Pubblicazione  è pronta.</staged>
         <published>Il documento è stato pubblicato.</published>
       </stateChange>
       <contentMoved>La pubblicazione è stata spostata a: {0}</contentMoved>
