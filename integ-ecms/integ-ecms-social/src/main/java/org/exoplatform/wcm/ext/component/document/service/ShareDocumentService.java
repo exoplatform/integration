@@ -218,14 +218,14 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
 
       rootSpace = (Node) session.getItem(nodeCreator.getJcrPath(BasePath.CMS_GROUPS_PATH) + space);
       rootSpace = rootSpace.getNode("Documents");
-      sharedNode = rootSpace.getNode("Shared");
-      sharedNode.getNode(node.getName()).remove();
+      if (rootSpace.hasNode("Shared")) {
+        sharedNode = rootSpace.getNode("Shared");
+        sharedNode.getNode(node.getName()).remove();
+        rootSpace.save();
+      }
 
       removeSpacePermission(node, space);
-
       node.getSession().save();
-      rootSpace.save();
-
     } catch (RepositoryException e) {
       if(LOG.isErrorEnabled())
         LOG.error(e.getMessage(), e);

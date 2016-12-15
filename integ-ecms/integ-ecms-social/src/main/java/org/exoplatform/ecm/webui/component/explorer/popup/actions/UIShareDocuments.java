@@ -119,10 +119,18 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   }
 
   public void updatePermission(String id, String permission) {
-    this.permissions.remove(id);
     this.permissions.put(id,permission);
   }
 
+  /**
+   * @return true if given name is a Group type, not a Space
+   */
+  public boolean isGroupType(String name) {
+    if (name != null && name.startsWith("*:/") && !name.startsWith(SPACE_PREFIX2)) {
+      return true;
+    }
+    return false;
+  }
 
   public static class ChangeActionListener extends EventListener<UIShareDocuments> {
 
@@ -163,38 +171,37 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
 
     @Override
     public void execute(Event<UIShareDocuments> event) throws Exception {
-
       UIShareDocuments uiform = event.getSource();
       IShareDocumentService service = WCMCoreUtils.getService(IShareDocumentService.class);
       SpaceService spaceService = WCMCoreUtils.getService(SpaceService.class);
       List<String> entries = uiform.entries;
       Map<String,String> permissions = uiform.permissions;
       Set<String> accessList = uiform.getWhoHasAccess();
-      Node node = event.getSource().getNode();
+      Node node = uiform.getNode();
       String message = "";
-      String perm = "read";
       String user = ConversationState.getCurrent().getIdentity().getUserId();
       boolean isShared = false;
       if (uiform.isOwner(user) || uiform.canEdit(user)) {
-        if (event.getSource().getChild(UIFormTextAreaInput.class).getValue() != null)
-          message = event.getSource().getChild(UIFormTextAreaInput.class).getValue();
+        if (uiform.getChild(UIFormTextAreaInput.class).getValue() != null)
+          message = uiform.getChild(UIFormTextAreaInput.class).getValue();
         for (String name : accessList) {
           try {
             if (IdentityConstants.ANY.equals(name)
-                    || IdentityConstants.SYSTEM.equals(name)
-                    || (permissions.containsKey(name) && permissions.get(name).equals(uiform.getPermission(name)))
-                    || uiform.isOwner(name)) {
+                || IdentityConstants.SYSTEM.equals(name)
+                || uiform.hasPermission(name, uiform.getPermission(name))
+                || uiform.isOwner(name) || uiform.isGroupType(name)) {
               continue;
             } else if (permissions.containsKey(name)) {
+              String perm = permissions.get(name);
               if (!name.startsWith(SPACE_PREFIX2)) {
                 service.unpublishDocumentToUser(name, (ExtendedNode) node);
-                service.publishDocumentToUser(name, node, message, permissions.get(name));
+                service.publishDocumentToUser(name, node, message, perm);
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToUserPlugin.NODE, node)
                     .append(ShareFileToUserPlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToUserPlugin.NODEID, node.getUUID())
                     .append(ShareFileToUserPlugin.URL, getDocumentUrl(node))
                     .append(ShareFileToUserPlugin.RECEIVER, name)
-                    .append(ShareFileToUserPlugin.PERM, permissions.get(name))
+                    .append(ShareFileToUserPlugin.PERM, perm)
                     .append(ShareFileToUserPlugin.ICON, uiform.getDefaultThumbnail(node))
                     .append(ShareFileToUserPlugin.MIMETYPE, uiform.getMimeType(node))
                     .append(ShareFileToUserPlugin.MESSAGE, message);
@@ -203,13 +210,13 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
               } else {
                 String groupId = name.substring("*:".length());
                 service.unpublishDocumentToSpace(groupId, (ExtendedNode) node);
-                String activityId = service.publishDocumentToSpace(groupId, node, message, permissions.get(name));
+                String activityId = service.publishDocumentToSpace(groupId, node, message, perm);
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToSpacePlugin.NODE, node)
                     .append(ShareFileToSpacePlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToSpacePlugin.NODEID, node.getUUID())
                     .append(ShareFileToUserPlugin.URL, getDocumentUrl(node))
                     .append(ShareFileToSpacePlugin.RECEIVER, groupId)
-                    .append(ShareFileToSpacePlugin.PERM, permissions.get(name))
+                    .append(ShareFileToSpacePlugin.PERM, perm)
                     .append(ShareFileToSpacePlugin.ICON, uiform.getDefaultThumbnail(node))
                     .append(ShareFileToSpacePlugin.MIMETYPE, uiform.getMimeType(node))
                     .append(ShareFileToSpacePlugin.ACTIVITY_ID, activityId)
@@ -224,8 +231,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
               service.unpublishDocumentToSpace(groupId, (ExtendedNode) node);
             }
           } catch (RepositoryException e) {
-            UIShareDocuments uicomp = event.getSource() ;
-            UIApplication uiApp = uicomp.getAncestorOfType(UIApplication.class);
+            UIApplication uiApp = uiform.getAncestorOfType(UIApplication.class);
             uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.InvalidEntry", null,
                 ApplicationMessage.WARNING));
           }
@@ -234,7 +240,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
           for (String entry : entries) {
             if (entry.equals("") || uiform.isOwner(entry)) continue;
             else {
-              perm = permissions.get(entry);
+              String perm = permissions.get(entry);
               String activityId = "";
               if (entry.startsWith(SPACE_PREFIX2)) {
                 String groupId = spaceService.getSpaceByPrettyName(entry.substring(SPACE_PREFIX2.length())).getGroupId();
@@ -258,7 +264,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                     .append(ShareFileToUserPlugin.NODEID, node.getUUID())
                     .append(ShareFileToUserPlugin.URL, getDocumentUrl(node))
                     .append(ShareFileToUserPlugin.RECEIVER, entry)
-                    .append(ShareFileToUserPlugin.PERM, permissions.get(entry))
+                    .append(ShareFileToUserPlugin.PERM, perm)
                     .append(ShareFileToUserPlugin.ICON, uiform.getDefaultThumbnail(node))
                     .append(ShareFileToUserPlugin.MIMETYPE, uiform.getMimeType(node))
                     .append(ShareFileToUserPlugin.MESSAGE, message);
@@ -270,14 +276,13 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
           }
         }
         if (isShared) {
-          UIApplication uiApp = event.getSource().getAncestorOfType(UIApplication.class);
+          UIApplication uiApp = uiform.getAncestorOfType(UIApplication.class);
           uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.success", null,
               ApplicationMessage.INFO));
         }
-        event.getSource().getAncestorOfType(UIJCRExplorer.class).cancelAction();
+        uiform.getAncestorOfType(UIJCRExplorer.class).cancelAction();
       } else {
-        UIShareDocuments uicomp = event.getSource() ;
-        UIApplication uiApp = uicomp.getAncestorOfType(UIApplication.class);
+        UIApplication uiApp = uiform.getAncestorOfType(UIApplication.class);
         uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermission", null,
             ApplicationMessage.WARNING));
       }
@@ -300,13 +305,12 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
     @Override
     public void execute(Event<UIShareDocuments> event) throws Exception {
       UIShareDocuments uicomponent = event.getSource();
-      List<String> entries = event.getSource().entries;
+      List<String> entries = uicomponent.entries;
       UIFormStringInput input = uicomponent.getUIStringInput(USER);
       String value = input.getValue();
       input.setValue(null);
       if (value == null || value.trim().isEmpty()) {
-        UIShareDocuments uicomp = event.getSource() ;
-        UIApplication uiApp = uicomp.getAncestorOfType(UIApplication.class);
+        UIApplication uiApp = uicomponent.getAncestorOfType(UIApplication.class);
         uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoSpace", null,
             ApplicationMessage.WARNING)) ;
       }
@@ -325,14 +329,12 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                 if (isExisting(name) && !uicomponent.isOwner(name)) {
                   if (name.startsWith(SPACE_PREFIX1)) name = name.replace(SPACE_PREFIX1, SPACE_PREFIX2);
                   if (!uicomponent.hasPermission(name, permission)) {
-                    if (uicomponent.permissions.containsKey(name)) uicomponent.permissions.remove(name);
-                    uicomponent.permissions.put(name, permission);
+                    uicomponent.updatePermission(name, permission);
                     uicomponent.getChild(UIWhoHasAccess.class).update(name, permission);
                     if (!entries.contains(name)) entries.add(name);
                   }
                 } else if (uicomponent.isOwner(name)) {
-                  UIShareDocuments uicomp = event.getSource() ;
-                  UIApplication uiApp = uicomp.getAncestorOfType(UIApplication.class);
+                  UIApplication uiApp = uicomponent.getAncestorOfType(UIApplication.class);
                   uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.InvalidOwner", null,
                           ApplicationMessage.WARNING)) ;
                 } else {
@@ -342,8 +344,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
             }
           }
           if (notFound.size() > 0) {
-            UIShareDocuments uicomp = event.getSource() ;
-            UIApplication uiApp = uicomp.getAncestorOfType(UIApplication.class);
+            UIApplication uiApp = uicomponent.getAncestorOfType(UIApplication.class);
             uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.Invalid", new String[]{notFound.toString()
                 .replace("[","").replace("]","")},
                 ApplicationMessage.WARNING)) ;
@@ -353,8 +354,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
               .require("SHARED/share-content", "shareContent")
               .addScripts("eXo.ecm.ShareContent.checkSelectedEntry('" + entries + "');");
         } else {
-          UIShareDocuments uicomp = event.getSource() ;
-          UIApplication uiApp = uicomp.getAncestorOfType(UIApplication.class);
+          UIApplication uiApp = uicomponent.getAncestorOfType(UIApplication.class);
           uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermission", null,
               ApplicationMessage.WARNING));
         }
@@ -520,7 +520,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
     return getWhoHasAccess().stream()
             .filter(identity -> !IdentityConstants.ANY.equals(identity)
                     && !IdentityConstants.SYSTEM.equals(identity)
-                    && !isOwner(identity))
+                    && !isOwner(identity)).filter(identity -> !isGroupType(identity))
             .collect(Collectors.toMap(Function.identity(), identity -> getPermission(identity)));
   }
 
