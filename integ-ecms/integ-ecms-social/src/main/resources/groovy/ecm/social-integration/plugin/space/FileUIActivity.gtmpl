@@ -45,6 +45,35 @@ import org.exoplatform.wcm.connector.collaboration.OpenInOfficeConnector;
 
 //ECMS import END
 
+public void getOwnerSpace(String ownerName, String ownerUri, String spaceSourceURI, String spaceID, String spaceName) {
+	%>
+	<div class="ownerName">
+	<a title="$ownerName" href="$ownerUri">$ownerName</a>
+                        </div>
+	<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
+	</a>
+	<%
+}
+
+public void getOwner(String ownerName, String ownerUri) {
+	%>
+	<div class="owner">
+		<a title="$ownerName" href="$ownerUri">$ownerName</a>
+	</div>
+	<%
+}
+
+public void addActivityTimeLine(String ownerName, String ownerUri, String ownerAvatar) {
+	%>
+	<div class="activityTimeLine pull-left">
+		<div class="activityAvatar avatarCircle">
+			<a title="$ownerName" href="$ownerUri">
+				<img alt="$ownerName" src="$ownerAvatar"/>
+			</a>
+		</div>
+	<%
+}
+
 def pcontext = Util.getPortalRequestContext();
 def labelActivityHasBeenDeleted = _ctx.appRes("UIActivity.label.Activity_Has_Been_Deleted");
 def activity = uicomponent.getActivity();
@@ -128,6 +157,7 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 	def commentListStatus = uicomponent.getCommentListStatus();
 	def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
 	def likesDisplayed = uicomponent.isAllLoaded();
+	def spaceURL = uicomponent.getSpaceURL();
 	def placeholder = _ctx.appRes("UIActivity.comment.placeholder").replace("'", "\\'");
 	//params for init UIActivity javascript object
 	def params = """ {
@@ -137,6 +167,7 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
       commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
       commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
       commentFormDisplayed: '$commentFormDisplayed',
+      spaceURL:'$spaceURL',
       allCommentSize: '${allComments.size()}',
       commentFormFocused: '${uicomponent.isCommentFormFocused()}'
     } """
@@ -253,7 +284,7 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 		def escapedOwnerName = ownerName.replace("'", "\\'").replace("&#39;", "\\&#39;");
 		def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'").replace("&#39;", "\\&#39;");
 		def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;").replace("\n", "").replace("\r", "")) : "";
-		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc(event, {doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + escapedOwnerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "', status: '" + escapedActivityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + "}})})";
+		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc(event, {doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + escapedOwnerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "', status: '" + escapedActivityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + ", spaceURL: '" + spaceURL + "'}})})";
 		def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
 		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
 		def size = uicomponent.getSize(currentNode);
@@ -272,12 +303,7 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 
 		<div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 		<% uiform.begin() %>
-		<div class="activityTimeLine pull-left">
-		<div class="activityAvatar avatarCircle">
-		<a title="$ownerName" href="$ownerUri">
-		<img alt="$ownerName" src="$ownerAvatar"/>
-		</a>
-		</div>
+		<%addActivityTimeLine(ownerName, ownerUri, ownerAvatar);%>
 		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
 			<div class="activityType">
 			<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
@@ -304,17 +330,10 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 	</a>
                         </div>
 	<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-		%>
-		<div class="ownerName">
-		<a title="$ownerName" href="$ownerUri">$ownerName</a>
-                        </div>
-		<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
-		</a>
-						<%} else{%>
-							<div class="owner">
-                            	<a title="$ownerName" href="$ownerUri">$ownerName</a>
-		</div>
-						<%}%>
+		getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName);
+	} else{
+		getOwner(ownerName, ownerUri);
+	} %>
 					</div>
 		<div class="dataInfor">
 		<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
@@ -661,11 +680,7 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 <% } else {// currentNode == null %>
 <div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 <% uiform.begin() %>
-<div class="activityTimeLine pull-left">
-<div class="activityAvatar avatarCircle">
-<a title="$ownerName" href="$ownerUri">
-<img alt="$ownerName" src="$ownerAvatar"/>
-</a>
+<%addActivityTimeLine(ownerName, ownerUri, ownerAvatar);%>
 		</div>
 <%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
 	<div class="activityType">
@@ -693,17 +708,10 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 </a>
                          </div>
 <% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-	%>
-	<div class="ownerName">
-	<a title="$ownerName" href="$ownerUri">$ownerName</a>
-    					</div>
-	<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
-	</a>
-						<%} else{%>
-							<div class="owner">
-        						<a title="$ownerName" href="$ownerUri">$ownerName</a>
-	</div>
-						<%}%>
+	getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName);
+} else {
+	getOwner(ownerName, ownerUri);
+} %>
 					</div>
 	<div class="dataInfor">
 	<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
