@@ -24,6 +24,8 @@ public class JcrSearchDriver extends SearchService {
 
   public JcrSearchDriver(InitParams initParams){
     this.specialCharacters = initParams.get("exo.search.excluded-characters").toString();
+    // Escaping characters that are special for regular expression.
+      specialCharacters = specialCharacters.replace(".","\\.").replace("-","\\-");
   }
     @Override
     public Map<String, Collection<SearchResult>> search(SearchContext context, String query, Collection<String> sites, Collection<String> types, int offset, int limit, String sort, String order) {

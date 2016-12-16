@@ -17,13 +17,15 @@
 package org.exoplatform.commons.search.service;
 
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.exoplatform.commons.api.search.SearchService;
 import org.exoplatform.commons.api.search.data.SearchResult;
+import org.exoplatform.commons.search.driver.jcr.JcrSearchDriver;
 import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
@@ -39,7 +41,6 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Ignore;
 
 /**
  * Created by The eXo Platform SAS
@@ -61,7 +62,6 @@ import org.junit.Ignore;
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/controller.xml")  
 })
-@Ignore("not ready yet")
 public class UnifiedSearchServiceTest extends AbstractServiceTest implements ResourceContainer{
   
   protected static Log    LOG         = ExoLogger.getLogger(UnifiedSearchServiceTest.class);
@@ -76,12 +76,14 @@ public class UnifiedSearchServiceTest extends AbstractServiceTest implements Res
 
   private static final String  REST_CONTEXT = "";
   
-  private static UnifiedSearchService unifiedSearchService; 
-  
+  private static UnifiedSearchService unifiedSearchService;
+
+  private JcrSearchDriver searchService;
+
   private Collection<MembershipEntry> membershipEntries = new ArrayList<MembershipEntry>();
   
   public UnifiedSearchServiceTest() throws Exception{
-    
+    System.setProperty("search.excluded-characters",".-_");
   }
 
   public void setUp() throws Exception {
@@ -93,6 +95,7 @@ public class UnifiedSearchServiceTest extends AbstractServiceTest implements Res
     
     PortalContainer portalContainer = (PortalContainer)ExoContainerContext.getCurrentContainer();    
     unifiedSearchService = (UnifiedSearchService) portalContainer.getComponentInstanceOfType(UnifiedSearchService.class);
+    searchService = (JcrSearchDriver)portalContainer.getComponentInstanceOfType(SearchService.class);
     registry(unifiedSearchService);       
   }
   
@@ -115,6 +118,21 @@ public class UnifiedSearchServiceTest extends AbstractServiceTest implements Res
   @Override
   protected void afterRunBare() {
     super.afterRunBare();
+  }
+
+  public void testReplaceSpecialCharacters() throws Exception {
+    Method method = searchService.getClass().getDeclaredMethod("replaceSpecialCharacters", String.class);
+    method.setAccessible(true);
+    String result = (String) method.invoke(searchService,"space1");
+    assertEquals("space1", result);
+    result = (String) method.invoke(searchService,"space1.test");
+    assertEquals("space1 test", result);
+    result = (String) method.invoke(searchService,"space1_test");
+    assertEquals("space1 test", result);
+    result = (String) method.invoke(searchService,"space1-test");
+    assertEquals("space1 test", result);
+    result = (String) method.invoke(searchService,"space1+test");
+    assertEquals("space1+test", result);
   }
   
   public void skipTestSearch() throws Exception {
