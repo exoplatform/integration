@@ -60,6 +60,13 @@
       </component-plugin>
        
     </component-plugins>
+
+    <init-params>
+      <value-param>
+        <name>exo.search.excluded-characters</name>
+        <value>${search.excluded-characters:.-_}</value>
+      </value-param>
+    </init-params>
   </component>
 
 </configuration>
