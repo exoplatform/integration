@@ -375,7 +375,7 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
     return isPublic;
   }
   
-  private void saveActivity(String wikiType, String wikiOwner, String pageId, Page page, PageUpdateType activityType) throws WikiException {
+  protected void saveActivity(String wikiType, String wikiOwner, String pageId, Page page, PageUpdateType activityType) throws WikiException {
     try {
       Class.forName("org.exoplatform.social.core.space.spi.SpaceService");
     } catch (ClassNotFoundException e) {
@@ -457,7 +457,13 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
 
   @Override
   public void postUpdatePage(String wikiType, String wikiOwner, String pageId, Page page, PageUpdateType wikiUpdateType) throws WikiException {
-    if(page != null) {
+    // Generate an activity only in the following cases
+    if(page != null && wikiUpdateType != null
+            && (wikiUpdateType.equals(PageUpdateType.ADD_PAGE)
+            || wikiUpdateType.equals(PageUpdateType.EDIT_PAGE_CONTENT)
+            || wikiUpdateType.equals(PageUpdateType.EDIT_PAGE_TITLE)
+            || wikiUpdateType.equals(PageUpdateType.EDIT_PAGE_CONTENT_AND_TITLE)
+            || wikiUpdateType.equals(PageUpdateType.MOVE_PAGE))) {
       saveActivity(wikiType, wikiOwner, pageId, page, wikiUpdateType);
     }
   }
