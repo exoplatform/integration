@@ -121,18 +121,18 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Post</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Post</UIShareDocuments>
-      <Share>Post</Share>
+      <UIShareDocuments>Share Document</UIShareDocuments>
+      <Share>Share</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Apply</ShareButton>
+      <ShareButton>Share</ShareButton>
       <CancelButton>Cancel</CancelButton>
       <TextAreaInit>Send a message upon sharing...</TextAreaInit>
       <ShareWith>Share with</ShareWith>
@@ -166,7 +166,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Post</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

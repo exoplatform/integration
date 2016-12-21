@@ -64,7 +64,7 @@
       <fileMoved>File spostato a: {0}</fileMoved>
       <revisionChanged>Pubblicazione restaurata alla versione: {0}</revisionChanged>
       <version>Versione: {0}</version>
-      <updatedOn>Updated on</updatedOn>
+      <updatedOn>Aggiornato il</updatedOn>
       <updatedBy>da</updatedBy>
     </messages>
     <publicationStates>
@@ -99,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
+      <commentTextAreaPreview>Aggiungi il tuo commento...</commentTextAreaPreview>
       <no-comment-yet>Nessun commento</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -121,44 +121,44 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Post</ShareDocuments>
+      <ShareDocuments>Condividi</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Post</UIShareDocuments>
-      <Share>Post</Share>
+      <UIShareDocuments>Condividi</UIShareDocuments>
+      <Share>Condividi</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
       <ShareButton>Applica</ShareButton>
-      <CancelButton>Cancel</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
+      <CancelButton>Annulla</CancelButton>
+      <TextAreaInit>Invia un messaggio sulla condivisione...</TextAreaInit>
+      <ShareWith>Condividi con</ShareWith>
       <Access>Accedi</Access>
-      <SpaceMember>Space Members</SpaceMember>
+      <SpaceMember>Membri dello spazio</SpaceMember>
       <SelectASpace>Seleziona uno spazio</SelectASpace>
       <SharedADocument>condiviso un documento</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <WhoHasAccess>Chi ha accesso</WhoHasAccess>
+      <success>Il documento è stato condiviso con successo</success>
+      <NoSpace>Seleziona almeno uno spazio o un utente valido</NoSpace>
+      <NoPermission>Non ti è consentito condividere questo documento</NoPermission>
+      <NoPermissionDelete>Non puoi cancellare questa autorizzazione</NoPermissionDelete>
+      <InvalidDeletion>Non puoi cancellare la tua autorizzazione</InvalidDeletion>
+      <InvalidEntry>Questa autorizzazione non può essere modificata</InvalidEntry>
+      <InvalidOwner>Non è possibile modificare le autorizzazioni del proprietario</InvalidOwner>
+      <Invalid>Siamo spiacenti, non siamo riusciti a riconoscere '{0}' come un utente o il nome di uno spazio valido</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>Può vedere</read>
+        <modify>Può modificare</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>leggi</read>
+        <modify>modifica</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>Inserisci nomi utenti o di spazi...</placeholder>
       </invite>
       <owner>Proprietario</owner>
     </label>
@@ -166,7 +166,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Post</ShareDocuments>
+      <ShareDocuments>Condividi</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>
