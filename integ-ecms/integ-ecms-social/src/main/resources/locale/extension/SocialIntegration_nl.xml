@@ -41,7 +41,7 @@
       <removeTitle>Titel is verwijderd.</removeTitle>
       <removeName>Naam is verwijderd.</removeName>
       <removeSummary>Samenvatting is verwijderd.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
+      <removeDescription>Beschrijving is verwijderd.</removeDescription>
       <removeCreator>Maker: {0} is verwijderd.</removeCreator>
       <removeMultiCreator>Makers: {0} zijn verwijderd.</removeMultiCreator>
       <removeLanguage>Taal is verwijderd.</removeLanguage>
@@ -64,7 +64,7 @@
       <fileMoved>Bestand is verplaatst naar: {0}</fileMoved>
       <revisionChanged>Publicatie is gerestaureerd tot versie: {0}</revisionChanged>
       <version>Versie: {0}</version>
-      <updatedOn>Updated on</updatedOn>
+      <updatedOn>Bijgewerkt tot</updatedOn>
       <updatedBy>door</updatedBy>
     </messages>
     <publicationStates>
@@ -73,15 +73,15 @@
       <unpublished>UnPublished</unpublished>
       <draft>Ontwerp</draft>
       <pending>In behandeling</pending>
-      <approved>Approved</approved>
+      <approved>Goedgekeurd</approved>
       <inreview>In Review</inreview>
       <staged>Geënsceneerd</staged>
       <published>Gepubliceerd</published>
       <live>Gepubliceerd</live>
     </publicationStates>
     <view>Tonen</view>
-    <edit>Edit</edit>
-    <download>Download</download>
+    <edit>Bewerken</edit>
+    <download>Downloaden</download>
     <preview>Voorbeeld</preview>
   </SocialIntegration>
   <UIPopupWindow>
@@ -121,44 +121,44 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Post</ShareDocuments>
+      <ShareDocuments>Delen</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Post</UIShareDocuments>
-      <Share>Post</Share>
+      <UIShareDocuments>Delen</UIShareDocuments>
+      <Share>Delen</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
       <ShareButton>Toepassen</ShareButton>
-      <CancelButton>Cancel</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
+      <CancelButton>Annuleren</CancelButton>
+      <TextAreaInit>Stuur een bericht over het delen ...</TextAreaInit>
+      <ShareWith>Delen met...</ShareWith>
       <Access>Toegang</Access>
-      <SpaceMember>Space Members</SpaceMember>
+      <SpaceMember>Ruimte leden</SpaceMember>
       <SelectASpace>Selecteer een ruimte</SelectASpace>
       <SharedADocument>deelde een document</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <WhoHasAccess>Wie heeft toegang?</WhoHasAccess>
+      <success>Het document werd met succes gedeeld</success>
+      <NoSpace>Selecteer tenminste één geldige ruimte of gebruiker</NoSpace>
+      <NoPermission>U bent niet gemachtigd om dit document te delen</NoPermission>
+      <NoPermissionDelete>U kunt deze toestemming niet verwijderen</NoPermissionDelete>
+      <InvalidDeletion>U kunt uw eigen toestemming niet verwijderen</InvalidDeletion>
+      <InvalidEntry>Deze toestemming kan niet worden bewerkt</InvalidEntry>
+      <InvalidOwner>U kunt geen eigenaarsrechten veranderen</InvalidOwner>
+      <Invalid>Sorry, we konden '{0}' niet als een geldige gebruiker of ruimtenaam herkennen</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>Kan zien</read>
+        <modify>Kan bewerken</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>lezen</read>
+        <modify>bewerken</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>Voer gebruikers- of ruimtenamen in ...</placeholder>
       </invite>
       <owner>Eigenaar</owner>
     </label>
@@ -166,7 +166,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Post</ShareDocuments>
+      <ShareDocuments>Delen</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

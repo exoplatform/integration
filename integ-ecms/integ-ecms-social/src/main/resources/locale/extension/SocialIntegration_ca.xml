@@ -126,7 +126,7 @@
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Compartir</UIShareDocuments>
+      <UIShareDocuments>Comparteix un Document</UIShareDocuments>
       <Share>Compartir</Share>
     </title>
   </UIPopupWindow>

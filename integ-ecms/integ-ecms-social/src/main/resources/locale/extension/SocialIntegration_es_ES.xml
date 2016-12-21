@@ -46,12 +46,12 @@
       <removeMultiCreator>Creadores: {0} han sido eliminados.</removeMultiCreator>
       <removeLanguage>Idioma ha sido eliminado.</removeLanguage>
       <removeContent>Contenido ha sido eliminado.</removeContent>
-      <attachmentAdded>Archivo (s) ha sido asignado.</attachmentAdded>
+      <attachmentAdded>Archivo(s) ha sido adjuntado.</attachmentAdded>
       <attachmentRemoved>Archivo(s) ha sido eliminado.</attachmentRemoved>
       <categoryAdded>Categoría: {0} ha sido añadida.</categoryAdded>
       <categoryRemoved>Categoría: {0} ha sido eliminada.</categoryRemoved>
       <tagAdded>Etiqueta: {0} ha sido añadida.</tagAdded>
-      <tagsAdded>Etiquetas: {0} se han agregado.</tagsAdded>
+      <tagsAdded>Etiquetas: {0} se han añadido.</tagsAdded>
       <tagRemoved>Etiqueta: {0} ha sido eliminada.</tagRemoved>
       <tagsRemoved>Etiquetas: {0} se han eliminado.</tagsRemoved>
       <stateChange>

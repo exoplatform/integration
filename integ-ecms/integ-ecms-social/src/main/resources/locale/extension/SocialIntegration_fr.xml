@@ -126,13 +126,13 @@
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Partager</UIShareDocuments>
+      <UIShareDocuments>Partager un Document</UIShareDocuments>
       <Share>Partager</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Appliquer</ShareButton>
+      <ShareButton>Partager</ShareButton>
       <CancelButton>Annuler</CancelButton>
       <TextAreaInit>Envoyer un message en partageant...</TextAreaInit>
       <ShareWith>Partager avec</ShareWith>
