@@ -42,6 +42,34 @@
 	import org.exoplatform.wcm.connector.collaboration.OpenInOfficeConnector;
   //ECMS import END
 
+  public void addActivityTimeLine(String ownerName, String ownerUri, String ownerAvatar) {
+	%>
+	<div class="activityTimeLine pull-left">
+		<div class="activityAvatar avatarCircle">
+			<a title="$ownerName" href="$ownerUri">
+				<img alt="$ownerName" src="$ownerAvatar"/>
+			</a>
+		</div>
+	<%
+  }
+
+  public void getOwnerSpace(String ownerName, String ownerUri, String spaceSourceURI, String spaceID, String spaceName) {
+	%>
+	<div class="ownerName">
+	  <a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
+	</div>
+	<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
+	<%
+  }
+
+  public void getOwner(String ownerName, String ownerUri) {
+	%>
+	<div class="owner">
+	  <a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
+	</div>
+	<%
+  }
+
   def pcontext = Util.getPortalRequestContext();
   def labelActivityHasBeenDeleted = _ctx.appRes("UIActivity.label.Activity_Has_Been_Deleted");
   def activity = uicomponent.getActivity();
@@ -262,12 +290,7 @@
 
 <div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 	<% uiform.begin() %>
-	<div class="activityTimeLine pull-left">
-		<div class="activityAvatar avatarCircle">
-			<a title="$ownerName" href="$ownerUri">
-				<img alt="$ownerName" src="$ownerAvatar"/>
-			</a>
-		</div>
+	<%addActivityTimeLine(ownerName, ownerUri, ownerAvatar);%>
 		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
     	<div class="activityType">
         	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
@@ -296,16 +319,10 @@
                             </a>
                         </div>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-						%>
-                        <div class="ownerName">
-							<a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
-						</div>
-						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
-						<%} else {%>
-	                        <div class="owner">
-    							<a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
-    						</div>
-						<%}%>
+				  			getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName);
+						} else {
+							getOwner(ownerName, ownerUri);
+						} %>
 					</div>
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
@@ -656,12 +673,7 @@
 <% } else {// currentNode == null %>
 <div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 	<% uiform.begin() %>
-	<div class="activityTimeLine pull-left">
-		<div class="activityAvatar avatarCircle">
-			<a title="$ownerName" href="$ownerUri">
-				<img alt="$ownerName" src="$ownerAvatar"/>
-			</a>
-		</div>
+	<%addActivityTimeLine(ownerName, ownerUri, ownerAvatar);%>
 		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
     	<div class="activityType">
         	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
@@ -690,16 +702,10 @@
                             </a>
                         </div>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-						%>
-						<div class="ownerName">
-                			<a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
-                		</div>
-						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
-						<%} else{%>
-							<div class="owner">
-                    			<a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
-                    		</div>
-						<%}%>
+							getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName);
+						} else {
+							getOwner(ownerName, ownerUri);
+						} %>
                    </div>
 					<div class="dataInfor">
 						<span class="dateTime"><i class="uiIconClock uiIconLightGray"></i>&nbsp;$activityPostedTime</span>
