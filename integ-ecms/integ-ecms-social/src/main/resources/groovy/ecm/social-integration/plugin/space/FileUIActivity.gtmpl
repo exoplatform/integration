@@ -681,7 +681,6 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 <div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 <% uiform.begin() %>
 <%addActivityTimeLine(ownerName, ownerUri, ownerAvatar);%>
-		</div>
 <%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
 	<div class="activityType">
 	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
@@ -920,7 +919,6 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 <div class="commentInput"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
 <button class="btn pull-left btn-primary" onclick="<%= uicomponent.event("PostComment") %>"  rel="tooltip" data-placement="bottom" title="$labelComment" id="CommentButton${activity.id}">$labelComment</button>
 
-<div class="commentInput"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
 </div>
 						</div><!--end commentRight-->
                     <div class="clearfix"></div>
