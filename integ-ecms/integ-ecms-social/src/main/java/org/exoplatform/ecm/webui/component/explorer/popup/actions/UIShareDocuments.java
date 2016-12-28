@@ -370,6 +370,9 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       if (uicomponent.getPermission().equals(SHARE_PERMISSION_MODIFY)) uicomponent.setPermission(SHARE_PERMISSION_VIEW);
       else uicomponent.setPermission(SHARE_PERMISSION_MODIFY);
       event.getRequestContext().addUIComponentToUpdateByAjax(uicomponent);
+      event.getRequestContext().getJavascriptManager()
+          .require("SHARED/share-content", "shareContent")
+          .addScripts("eXo.ecm.ShareContent.checkSelectedEntry();");
     }
   }
 
