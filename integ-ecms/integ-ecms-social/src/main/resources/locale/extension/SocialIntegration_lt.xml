@@ -132,7 +132,7 @@
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Taikyti</ShareButton>
+      <ShareButton>Bendrinti</ShareButton>
       <CancelButton>Cancel</CancelButton>
       <TextAreaInit>Send a message upon sharing...</TextAreaInit>
       <ShareWith>Share with</ShareWith>

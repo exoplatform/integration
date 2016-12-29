@@ -64,7 +64,7 @@
       <fileMoved>Dosya taşındı: {0}</fileMoved>
       <revisionChanged>Yayın sürümüne geri yüklendi: {0}</revisionChanged>
       <version>Sürüm: {0}</version>
-      <updatedOn>Updated on</updatedOn>
+      <updatedOn>Şu tarihte güncellendi:</updatedOn>
       <updatedBy>tarafından</updatedBy>
     </messages>
     <publicationStates>
@@ -99,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
+      <commentTextAreaPreview>Yorum ekle...</commentTextAreaPreview>
       <no-comment-yet>Henüz yorum yok</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -121,44 +121,44 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Paylaş</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Share Document</UIShareDocuments>
-      <Share>Share</Share>
+      <UIShareDocuments>Paylaş</UIShareDocuments>
+      <Share>Paylaş</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Uygula</ShareButton>
-      <CancelButton>Cancel</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
+      <ShareButton>Paylaş</ShareButton>
+      <CancelButton>İptal</CancelButton>
+      <TextAreaInit>Paylaşıldığında bir mesaj gönder...</TextAreaInit>
+      <ShareWith>Şununla paylaş:</ShareWith>
       <Access>Giriş</Access>
-      <SpaceMember>Space Members</SpaceMember>
+      <SpaceMember>Alan Üyeleri</SpaceMember>
       <SelectASpace>Bir Alan Seç</SelectASpace>
       <SharedADocument>bir belge paylaş</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <WhoHasAccess>Erişimi olanlar</WhoHasAccess>
+      <success>Belge başarıyla paylaşıldı</success>
+      <NoSpace>Lütfen en az bir geçerli alan veya kullanıcı seçin</NoSpace>
+      <NoPermission>Bu belgeyi paylaşmaya izniniz yok</NoPermission>
+      <NoPermissionDelete>Bu izni silemezsiniz</NoPermissionDelete>
+      <InvalidDeletion>Kendi izninizi silemezsiniz</InvalidDeletion>
+      <InvalidEntry>Bu izin düzenlenemez</InvalidEntry>
+      <InvalidOwner>Sahip izinlerini değiştiremezsiniz</InvalidOwner>
+      <Invalid>Üzgünüz, '{0}' geçerli bir kullanıcı veya uzay adı olarak tanınamadı</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>Görüntüleyebilir</read>
+        <modify>Düzenleyebilir</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>oku</read>
+        <modify>düzenle</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>Kullanıcı veya alan adlarını girin...</placeholder>
       </invite>
       <owner>Sahibi</owner>
     </label>
@@ -166,7 +166,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Paylaş</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

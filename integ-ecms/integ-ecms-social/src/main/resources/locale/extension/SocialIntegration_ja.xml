@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>読み取り専用として開く</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>ドキュメントを開く</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -56,15 +56,15 @@
       <tagsRemoved>タグ: {0} が削除されました</tagsRemoved>
       <stateChange>
         <pending>公開ステータスが、保留中になっています</pending>
-        <approved>Document has been approved.</approved>
+        <approved>文書が承認されました。</approved>
         <staged>文書が承認申請されました</staged>
-        <published>Document has been published.</published>
+        <published>ドキュメントが公開されました。</published>
       </stateChange>
       <contentMoved>文書が移動されました： {0}</contentMoved>
       <fileMoved>ファイルが移動されました： {0}</fileMoved>
       <revisionChanged>文書は、バージョン{0} で保存されました</revisionChanged>
       <version>バージョン: {0}</version>
-      <updatedOn>Updated on</updatedOn>
+      <updatedOn>更新日</updatedOn>
       <updatedBy>作成者</updatedBy>
     </messages>
     <publicationStates>
@@ -87,7 +87,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>プレビュー</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>ドキュメントを開く</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -99,8 +99,8 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <commentTextAreaPreview>コメントを追加...</commentTextAreaPreview>
+      <no-comment-yet>まだコメントはありません</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -116,49 +116,49 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>このファイルは、ユーザー {0} によってロックされています。読み取り専用として開きますか？</lock-node-read-only>
     </msg>
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>共有</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Share Document</UIShareDocuments>
-      <Share>Share</Share>
+      <UIShareDocuments>共有</UIShareDocuments>
+      <Share>共有</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>適用</ShareButton>
-      <CancelButton>Cancel</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
-      <Access>Access</Access>
-      <SpaceMember>Space Members</SpaceMember>
-      <SelectASpace>Select a Space</SelectASpace>
-      <SharedADocument>shared a document</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <ShareButton>シェアする</ShareButton>
+      <CancelButton>キャンセル</CancelButton>
+      <TextAreaInit>共有時にメッセージを送ります...</TextAreaInit>
+      <ShareWith>共有先</ShareWith>
+      <Access>アクセス</Access>
+      <SpaceMember>スペースメンバー</SpaceMember>
+      <SelectASpace>スペースを選択します</SelectASpace>
+      <SharedADocument>ドキュメントを共有</SharedADocument>
+      <WhoHasAccess>アクセスできる人</WhoHasAccess>
+      <success>文書が正常に共有されました</success>
+      <NoSpace>少なくとも1つの有効なスペースまたはユーザーを選択してください</NoSpace>
+      <NoPermission>あなたはこの文書を共有することが許可されていません</NoPermission>
+      <NoPermissionDelete>あなたはこの権限を削除することはできません</NoPermissionDelete>
+      <InvalidDeletion>あなたはあなた自身の許可を削除することはできません</InvalidDeletion>
+      <InvalidEntry>この権限は編集できません</InvalidEntry>
+      <InvalidOwner>あなたは所有者の権限を変更することはできません</InvalidOwner>
+      <Invalid>申し訳ありませんが、'{0}' を有効なユーザーまたはスペース名として認識できませんでした</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>表示可能</read>
+        <modify>編集可能</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>読む</read>
+        <modify>編集</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>ユーザーまたはスペース名を入力してください...</placeholder>
       </invite>
       <owner>所有者</owner>
     </label>
@@ -166,7 +166,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>共有</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

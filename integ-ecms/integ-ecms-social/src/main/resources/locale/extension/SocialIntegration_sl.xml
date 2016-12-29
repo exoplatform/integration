@@ -72,22 +72,22 @@
       <obsolete>Zastarelo</obsolete>
       <unpublished>Neobjavljeno</unpublished>
       <draft>Osnutek</draft>
-      <pending>Pending</pending>
-      <approved>Approved</approved>
+      <pending>Čakajoči</pending>
+      <approved>Odobreno</approved>
       <inreview>V pregledu</inreview>
       <staged>Postavljeno</staged>
       <published>Objavljeno</published>
       <live>Objavljeno</live>
     </publicationStates>
-    <view>View</view>
-    <edit>Edit</edit>
-    <download>Download</download>
+    <view>Prikaz</view>
+    <edit>Uredi</edit>
+    <download>Prenesi</download>
     <preview>Predogled</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Preview</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <DocViewer>Predogled</DocViewer>
+      <UIReadOnlyFileConfirmMessage>Odpri dokument</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -99,7 +99,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
+      <commentTextAreaPreview>Dodaj svoj komentar...</commentTextAreaPreview>
       <no-comment-yet>Še ni komentarja</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -121,23 +121,23 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Daj v skupno rabo</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Share Document</UIShareDocuments>
-      <Share>Share</Share>
+      <UIShareDocuments>Daj v skupno rabo</UIShareDocuments>
+      <Share>Daj v skupno rabo</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Uveljavi</ShareButton>
-      <CancelButton>Cancel</CancelButton>
+      <ShareButton>Daj v skupno rabo</ShareButton>
+      <CancelButton>Prekliči</CancelButton>
       <TextAreaInit>Send a message upon sharing...</TextAreaInit>
       <ShareWith>Share with</ShareWith>
       <Access>Dostop</Access>
-      <SpaceMember>Space Members</SpaceMember>
+      <SpaceMember>Člani prostora</SpaceMember>
       <SelectASpace>Izberi prostor</SelectASpace>
       <SharedADocument>je dal(a) dokument v skupno rabo</SharedADocument>
       <WhoHasAccess>Who has access</WhoHasAccess>
@@ -166,7 +166,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Daj v skupno rabo</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>
