@@ -132,7 +132,7 @@
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Toepassen</ShareButton>
+      <ShareButton>Delen</ShareButton>
       <CancelButton>Annuleren</CancelButton>
       <TextAreaInit>Stuur een bericht over het delen ...</TextAreaInit>
       <ShareWith>Delen met...</ShareWith>

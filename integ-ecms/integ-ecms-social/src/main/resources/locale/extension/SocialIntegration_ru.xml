@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>Открыть только для чтения</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Открыть документ</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -64,7 +64,7 @@
       <fileMoved>Файл был перемещен в: {0}</fileMoved>
       <revisionChanged>Публикация была восстановлена до версии: {0}</revisionChanged>
       <version>Версия: {0}</version>
-      <updatedOn>Updated on</updatedOn>
+      <updatedOn>Оновлено</updatedOn>
       <updatedBy>От</updatedBy>
     </messages>
     <publicationStates>
@@ -87,7 +87,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Предварительный просмотр</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Открыть документ</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -99,8 +99,8 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <commentTextAreaPreview>Добавьте свой комментарий...</commentTextAreaPreview>
+      <no-comment-yet>Пока нет комментариев</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -116,49 +116,49 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>Этот файл заблокирован пользователем {0}. Открыть только для чтения?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Поделиться</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Share Document</UIShareDocuments>
-      <Share>Share</Share>
+      <UIShareDocuments>Поделиться</UIShareDocuments>
+      <Share>Поделиться</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Применить</ShareButton>
-      <CancelButton>Cancel</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
-      <Access>Access</Access>
-      <SpaceMember>Space Members</SpaceMember>
-      <SelectASpace>Select a Space</SelectASpace>
-      <SharedADocument>shared a document</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <ShareButton>Поделиться</ShareButton>
+      <CancelButton>Отмена</CancelButton>
+      <TextAreaInit>Отправить сообщение на общее пользование...</TextAreaInit>
+      <ShareWith>Поделиться с</ShareWith>
+      <Access>Права доступа</Access>
+      <SpaceMember>Члены области</SpaceMember>
+      <SelectASpace>Выбрать область</SelectASpace>
+      <SharedADocument>поделился документом</SharedADocument>
+      <WhoHasAccess>Кто имеет доступ</WhoHasAccess>
+      <success>Этот документ был успешно поделён</success>
+      <NoSpace>Пожалуйста, выберите хотя бы одну допустимую область или пользователя</NoSpace>
+      <NoPermission>Вам не разрешено делиться этим документом</NoPermission>
+      <NoPermissionDelete>Вы не можете удалить это разрешение</NoPermissionDelete>
+      <InvalidDeletion>Вы не можете удалить своё разрешение</InvalidDeletion>
+      <InvalidEntry>Ваше разрешение не может быть изменено</InvalidEntry>
+      <InvalidOwner>Нельзя изменить разрешения владельца</InvalidOwner>
+      <Invalid>К сожалению мы не смогли признать «{0}» как допустимого пользователя или имя области</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>Можно просмотреть</read>
+        <modify>Можно редактировать</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>читать</read>
+        <modify>редактировать</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>Введите имена пользователей или областей...</placeholder>
       </invite>
       <owner>Владелец</owner>
     </label>
@@ -166,7 +166,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Поделиться</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>
