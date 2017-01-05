@@ -60,18 +60,31 @@ public class UIWhoHasAccess extends UIContainer {
 
   public UIWhoHasAccess()  {
   }
-  public void init() {
-    try {
-      UIShareDocuments uishareDocuments = getAncestorOfType(UIShareDocuments.class);
-      for (String id : uishareDocuments.getAllPermissions().keySet()) {
-        if (getChildById(id) == null) addChild(UIWhoHasAccessEntry.class, null, id);
-        UIWhoHasAccessEntry uiWhoHasAccessEntry = getChildById(id);
-        uiWhoHasAccessEntry.init(id, uishareDocuments.getPermission(id));
-      }
 
-    } catch (Exception e) {
-      if (LOG.isErrorEnabled())
-        LOG.error(e.getMessage(), e);
+  public void init() {
+    UIShareDocuments uishareDocuments = getAncestorOfType(UIShareDocuments.class);
+    for (String id : uishareDocuments.getAllPermissions().keySet()) {
+      try {
+        // Mange only Spaces (without memberships) and users
+        if (IdentityConstants.ANY.equals(id) || IdentityConstants.SYSTEM.equals(id) || (id.contains(":/") && !isSpace(id))) {
+          continue;
+        }
+        // if id is not a valid user nor a space, ignore it
+        if (!isSpace(id)) {
+          User user = getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(id);
+          if (user == null) {
+            continue;
+          }
+        }
+
+        UIWhoHasAccessEntry uiWhoHasAccessEntry = getChildById(id);
+        if (uiWhoHasAccessEntry == null) {
+          uiWhoHasAccessEntry = addChild(UIWhoHasAccessEntry.class, null, id);
+        }
+        uiWhoHasAccessEntry.init(id, uishareDocuments.getPermission(id));
+      } catch (Exception e) {
+        LOG.error("Error initializing Share documents permission entry for id = " + id, e);
+      }
     }
   }
 
@@ -115,19 +128,11 @@ public class UIWhoHasAccess extends UIContainer {
     return (name.startsWith(SPACE_PREFIX1) || name.startsWith(SPACE_PREFIX2));
   }
 
-  private boolean isGroup(String name) {
-    return (name.startsWith(GROUP_PREFIX) && !name.startsWith(SPACE_PREFIX2));
-  }
-
   public String getUserFullName(String name) throws Exception {
-    String userFullName = "";
-    if(IdentityConstants.ANY.equals(name) || IdentityConstants.SYSTEM.equals(name)) {
-      userFullName = name;
-    } else {
-      User user = getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(name);
-      if(user != null) {
-        userFullName = user.getDisplayName();
-      }
+    String userFullName = name;
+    User user = getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(name);
+    if(user != null) {
+      userFullName = user.getDisplayName();
     }
     return userFullName;
   }
@@ -152,17 +157,17 @@ public class UIWhoHasAccess extends UIContainer {
    */
   public String getAvatar(String name) {
     try {
-      if (!isSpace(name)) {
-        Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, name, true);
-        Profile profile = identity.getProfile();
-        return profile.getAvatarUrl() != null ? profile.getAvatarUrl() : LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
-      } else {
+      if (isSpace(name)) {
         SpaceService spaceService = getApplicationComponent(SpaceService.class);
         Space space;
         if (name.startsWith(SPACE_PREFIX1))
           space = spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX1.length()));
         else space = spaceService.getSpaceByPrettyName(name.substring(SPACE_PREFIX2.length()));
         return space.getAvatarUrl() != null ? space.getAvatarUrl() : LinkProvider.SPACE_DEFAULT_AVATAR_URL;
+      } else {
+        Identity identity = Utils.getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, name, true);
+        Profile profile = identity.getProfile();
+        return profile.getAvatarUrl() != null ? profile.getAvatarUrl() : LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
       }
     } catch (Exception e) {
       return LinkProvider.SPACE_DEFAULT_AVATAR_URL;
@@ -175,12 +180,10 @@ public class UIWhoHasAccess extends UIContainer {
    * @return Entry's display name
    */
   public String getDisplayName(String name) {
-    String displayName = "";
+    String displayName = name;
     try {
       if(this.isSpace(name)) {
         displayName = this.getPrettySpaceName(name);
-      } else if(this.isGroup(name)) {
-        displayName = this.getPrettyGroupName(name);
       } else {
         displayName = this.getUserFullName(name);
       }
@@ -200,8 +203,6 @@ public class UIWhoHasAccess extends UIContainer {
     try {
       if(this.isSpace(name)) {
         url = this.getSpaceUrl(name);
-      } else if(this.isGroup(name)) {
-        url = null;
       } else {
         url = this.getProfileUrl(name);
       }
