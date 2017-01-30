@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -295,6 +296,7 @@ public class UnifiedSearchService implements ResourceContainer {
   */
   @POST
   @Path("/setting")
+  @RolesAllowed("administrators")
   public Response REST_setSearchSetting(@FormParam("resultsPerPage") long resultsPerPage, @FormParam("searchTypes") String searchTypes, @FormParam("searchCurrentSiteOnly") boolean searchCurrentSiteOnly, @FormParam("hideSearchForm") boolean hideSearchForm, @FormParam("hideFacetsFilter") boolean hideFacetsFilter) {
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_resultsPerPage", new SettingValue<Long>(resultsPerPage));    
     settingService.set(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchTypes", new SettingValue<String>(searchTypes));
