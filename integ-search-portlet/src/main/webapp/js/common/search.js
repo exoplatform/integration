@@ -211,7 +211,7 @@ window.initSearch = function initSearch() {
     
     function getSpaceName(nodePath) {
       var groupPrefix = "/Groups/spaces/";
-      if (!nodePath.startsWith(groupPrefix)) {
+      if (0 != nodePath.indexOf(groupPrefix)) {
         return false;
       }
       var path = nodePath.substring(groupPrefix.length);
@@ -271,7 +271,7 @@ window.initSearch = function initSearch() {
             if(previewUrl == null) {
               previewUrl = result.url;
             }
-            avatar = "<a href=\""+previewUrl+"\">" + avatar + "</a>";
+            avatar = '<a href="javascript:void(0)" onclick="'+previewUrl+'">' + avatar + '</a>';
             
             break;
         case "document":
@@ -281,7 +281,7 @@ window.initSearch = function initSearch() {
           if(previewUrl == null) {
             previewUrl = result.url;
           }
-          avatar = "<a href=\""+previewUrl+"\">" + avatar + "</a>";
+          avatar = '<a href="javascript:void(0)" onclick="'+previewUrl+'">' + avatar + '</a>';
           break;
 
         case "page":
