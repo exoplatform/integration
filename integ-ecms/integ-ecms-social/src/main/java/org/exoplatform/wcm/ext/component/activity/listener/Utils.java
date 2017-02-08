@@ -30,6 +30,7 @@ import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.cms.templates.TemplateService;
 import org.exoplatform.services.context.DocumentContext;
+import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator;
@@ -72,6 +73,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -534,6 +536,10 @@ public class Utils {
             true);
         activityManager.saveActivityNoReturn(spaceIdentity, activity);
       } else if (activityOwnerId != null && activityOwnerId.length() > 0) {
+        if (!isPublic(node)) {
+          // only post activity to user status stream if that upload is public
+          return null;
+        }
         // post activity to user status stream
         Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
             activityOwnerId,
@@ -542,7 +548,7 @@ public class Utils {
       } else {
         return null;
       }
-      String activityId = activity.getId();
+      String activityId = activity != null ? activity.getId() : null;
       if (!StringUtils.isEmpty(activityId)) {
         ActivityTypeUtils.attachActivityId(node, activityId);
       }
@@ -722,6 +728,25 @@ public class Utils {
     }
 
     return spaceName;
+  }
+
+  private static boolean isPublic(Node node) {
+    if (node instanceof ExtendedNode) {
+      ExtendedNode n = (ExtendedNode)node;
+      try {
+        List<String> permissions =n.getACL().getPermissions("any");
+        if(permissions != null && permissions.size() > 0) {
+          for (String p : permissions) {
+            if ("read".equalsIgnoreCase(p)) {
+              return true;
+            }
+          }
+        }
+      } catch (RepositoryException ex) {
+        return false;
+      }
+    }
+    return false;
   }
 
   /**
