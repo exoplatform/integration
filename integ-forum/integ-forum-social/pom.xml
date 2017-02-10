@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ-forum</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>4.5.x-SNAPSHOT</version>
+    <version>5.0.x-SNAPSHOT</version>
   </parent>
   <artifactId>integ-forum-social</artifactId>
   <packaging>jar</packaging>
@@ -44,7 +44,7 @@
       <artifactId>exo.kernel.container</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.webui.core</artifactId>
     </dependency>
     <dependency>
@@ -56,19 +56,19 @@
       <artifactId>social-component-webui</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.component.portal</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.component.web.controller</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.webui.framework</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.webui.portal</artifactId>
     </dependency>
     <!-- mvn analyze unused but build failed when remove -->
@@ -95,7 +95,7 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.component.resources</artifactId>
       <scope>runtime</scope>
     </dependency>
@@ -156,24 +156,24 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.component.identity</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.component.portal</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.component.test.core</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.gatein.portal</groupId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
       <artifactId>exo.portal.component.test.jcr</artifactId>
       <scope>test</scope>
     </dependency>
