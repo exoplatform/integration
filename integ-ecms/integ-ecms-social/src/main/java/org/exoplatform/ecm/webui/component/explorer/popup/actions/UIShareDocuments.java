@@ -174,6 +174,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       UIShareDocuments uiform = event.getSource();
       IShareDocumentService service = WCMCoreUtils.getService(IShareDocumentService.class);
       SpaceService spaceService = WCMCoreUtils.getService(SpaceService.class);
+      DocumentService documentService = WCMCoreUtils.getService(DocumentService.class);
       List<String> entries = uiform.entries;
       Map<String,String> permissions = uiform.permissions;
       Set<String> accessList = uiform.getWhoHasAccess();
@@ -199,7 +200,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToUserPlugin.NODE, node)
                     .append(ShareFileToUserPlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToUserPlugin.NODEID, node.getUUID())
-                    .append(ShareFileToUserPlugin.URL, getDocumentUrl(node))
+                    .append(ShareFileToUserPlugin.URL, documentService.getDocumentUrlInPersonalDocuments(node, name))
                     .append(ShareFileToUserPlugin.RECEIVER, name)
                     .append(ShareFileToUserPlugin.PERM, perm)
                     .append(ShareFileToUserPlugin.ICON, uiform.getDefaultThumbnail(node))
@@ -214,7 +215,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToSpacePlugin.NODE, node)
                     .append(ShareFileToSpacePlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToSpacePlugin.NODEID, node.getUUID())
-                    .append(ShareFileToUserPlugin.URL, getDocumentUrl(node))
+                    .append(ShareFileToUserPlugin.URL, documentService.getDocumentUrlInSpaceDocuments(node, groupId))
                     .append(ShareFileToSpacePlugin.RECEIVER, groupId)
                     .append(ShareFileToSpacePlugin.PERM, perm)
                     .append(ShareFileToSpacePlugin.ICON, uiform.getDefaultThumbnail(node))
@@ -248,7 +249,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToSpacePlugin.NODE, node)
                     .append(ShareFileToSpacePlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToSpacePlugin.NODEID, node.getUUID())
-                    .append(ShareFileToUserPlugin.URL, getDocumentUrl(node))
+                    .append(ShareFileToUserPlugin.URL, documentService.getDocumentUrlInSpaceDocuments(node, groupId))
                     .append(ShareFileToSpacePlugin.RECEIVER, groupId)
                     .append(ShareFileToSpacePlugin.PERM, perm)
                     .append(ShareFileToSpacePlugin.ICON, uiform.getDefaultThumbnail(node))
@@ -262,7 +263,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToUserPlugin.NODE, node)
                     .append(ShareFileToUserPlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToUserPlugin.NODEID, node.getUUID())
-                    .append(ShareFileToUserPlugin.URL, getDocumentUrl(node))
+                    .append(ShareFileToUserPlugin.URL, documentService.getDocumentUrlInPersonalDocuments(node, entry))
                     .append(ShareFileToUserPlugin.RECEIVER, entry)
                     .append(ShareFileToUserPlugin.PERM, perm)
                     .append(ShareFileToUserPlugin.ICON, uiform.getDefaultThumbnail(node))
@@ -285,17 +286,6 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
         UIApplication uiApp = uiform.getAncestorOfType(UIApplication.class);
         uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermission", null,
             ApplicationMessage.WARNING));
-      }
-    }
-
-    private String getDocumentUrl(Node node) {
-      DocumentService docServ = WCMCoreUtils.getService(DocumentService.class);
-      try {
-        return CommonsUtils.getCurrentDomain()
-            + docServ.getShortLinkInDocumentsApp(node.getSession().getWorkspace().getName(), node.getUUID());
-      } catch (Exception e) {
-        LOG.error(e.getMessage(), e);
-        return "";
       }
     }
   }
