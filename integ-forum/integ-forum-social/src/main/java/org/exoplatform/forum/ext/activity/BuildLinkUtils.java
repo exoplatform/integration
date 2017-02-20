@@ -128,7 +128,7 @@ public class BuildLinkUtils {
   }
 
   public static String buildLink(String parentObjectId, String objectId, PORTLET_INFO portletInfo) {
-    return buildLink(parentObjectId, objectId, portletInfo, "intranet");
+    return buildLink(parentObjectId, objectId, portletInfo, CommonsUtils.getCurrentSite().getName());
   }
 
   public static String buildLink(String parentObjectId, String objectId, PORTLET_INFO portletInfo, String siteName) {
