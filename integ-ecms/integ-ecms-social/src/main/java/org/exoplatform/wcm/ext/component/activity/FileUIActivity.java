@@ -27,6 +27,7 @@ import org.exoplatform.container.xml.PortalContainerInfo;
 import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.cms.documents.DocumentService;
+import org.exoplatform.services.cms.documents.VersionHistoryUtils;
 import org.exoplatform.services.cms.drives.DriveData;
 import org.exoplatform.services.cms.drives.impl.ManageDriveServiceImpl;
 import org.exoplatform.services.jcr.access.PermissionType;
@@ -481,14 +482,20 @@ public class FileUIActivity extends BaseUIActivity{
   }
 
   protected int getVersion(Node node) {
-  	String currentVersion = null;
-  	try {
-      currentVersion = contentNode.getBaseVersion().getName();      
+    String currentVersion = null;
+    try {
+      if (contentNode.isNodeType(VersionHistoryUtils.MIX_DISPLAY_VERSION_NAME) &&
+              contentNode.hasProperty(VersionHistoryUtils.MAX_VERSION_PROPERTY)) {
+        //Get max version ID
+        int max = (int) contentNode.getProperty(VersionHistoryUtils.MAX_VERSION_PROPERTY).getLong();
+        return max - 1;
+      }
+      currentVersion = contentNode.getBaseVersion().getName();
       if (currentVersion.contains("jcr:rootVersion")) currentVersion = "0";
     }catch (Exception e) {
       currentVersion ="0";
     }
-  	return Integer.parseInt(currentVersion);
+    return Integer.parseInt(currentVersion);
   }
 
   public String getUserProfileUri(String userId) {
