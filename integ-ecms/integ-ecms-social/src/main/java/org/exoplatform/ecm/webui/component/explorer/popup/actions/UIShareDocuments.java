@@ -116,6 +116,9 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
 
   public void removePermission(String id) {
     this.permissions.remove(id);
+    if (this.entries.contains(id)) {
+      this.entries.remove(id);
+    }
   }
 
   public void updatePermission(String id, String permission) {
