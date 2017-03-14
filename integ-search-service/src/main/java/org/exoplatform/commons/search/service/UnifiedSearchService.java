@@ -16,33 +16,6 @@
  */
 package org.exoplatform.commons.search.service;
 
-import java.io.File;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.ListIterator;
-import java.util.Map;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.RuntimeDelegate;
-
 import org.exoplatform.commons.api.search.SearchService;
 import org.exoplatform.commons.api.search.SearchServiceConnector;
 import org.exoplatform.commons.api.search.data.SearchContext;
@@ -63,6 +36,14 @@ import org.exoplatform.web.WebAppController;
 import org.exoplatform.web.controller.metadata.ControllerDescriptor;
 import org.exoplatform.web.controller.metadata.DescriptorBuilder;
 import org.exoplatform.web.controller.router.Router;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import javax.ws.rs.ext.RuntimeDelegate;
+import java.io.File;
+import java.net.URL;
+import java.util.*;
 
 /**
  * This class provides RESTful services endpoints which will help all external components to call unified search functions.
@@ -245,7 +226,7 @@ public class UnifiedSearchService implements ResourceContainer {
   private SearchSetting getSearchSetting() {
     SearchSetting newSearchSetting = defaultSearchSetting;
     try {
-      Long resultsPerPage = ((SettingValue<Long>)settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_resultsPerPage")).getValue();
+      Long resultsPerPage = Long.parseLong(settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_resultsPerPage").getValue().toString());
       newSearchSetting.setResultsPerPage(resultsPerPage);
     } catch(Exception e) {
       LOG.info("Cannot get searchResult_resultsPerPage parameter for search settings. Use default one instead");
@@ -257,19 +238,19 @@ public class UnifiedSearchService implements ResourceContainer {
       LOG.info("Cannot get searchResult_searchTypes parameter for search settings. Use default one instead");
     }
     try {
-      Boolean searchCurrentSiteOnly = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchCurrentSiteOnly")).getValue();
+      Boolean searchCurrentSiteOnly = Boolean.parseBoolean(settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_searchCurrentSiteOnly").getValue().toString());
       newSearchSetting.setSearchCurrentSiteOnly(searchCurrentSiteOnly);
     } catch (Exception e) {
       LOG.info("Cannot get searchResult_searchCurrentSiteOnly parameter for search settings. Use default one instead");
     }
     try {
-      Boolean hideSearchForm = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideSearchForm")).getValue();
+      Boolean hideSearchForm = Boolean.parseBoolean(settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideSearchForm").getValue().toString());
       newSearchSetting.setHideSearchForm(hideSearchForm);
     } catch (Exception e) {
       LOG.info("Cannot get searchResult_hideSearchForm parameter for search settings. Use default one instead");
     }
     try {
-      Boolean hideFacetsFilter = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideFacetsFilter")).getValue();
+      Boolean hideFacetsFilter = Boolean.parseBoolean(settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchResult_hideFacetsFilter").getValue().toString());
       newSearchSetting.setHideFacetsFilter(hideFacetsFilter);
     } catch (Exception e) {
       LOG.info("Cannot get searchResult_hideFacetsFilter parameter for search settings. Use default one instead");
@@ -312,7 +293,7 @@ public class UnifiedSearchService implements ResourceContainer {
   private SearchSetting getQuickSearchSetting() {
     SearchSetting newSearchSetting = defaultQuicksearchSetting;
     try {
-      Long resultsPerPage = ((SettingValue<Long>)settingService.get(Context.GLOBAL, Scope.WINDOWS, "resultsPerPage")).getValue();
+      Long resultsPerPage = Long.parseLong(settingService.get(Context.GLOBAL, Scope.WINDOWS, "resultsPerPage").getValue().toString());
       newSearchSetting.setResultsPerPage(resultsPerPage);
     } catch(Exception e) {
       LOG.info("Cannot get resultsPerPage parameter for quick search settings. Use default one instead");
@@ -324,7 +305,7 @@ public class UnifiedSearchService implements ResourceContainer {
       LOG.info("Cannot get searchTypes parameter for quick search settings. Use default one instead");
     }
     try {
-      Boolean searchCurrentSiteOnly = ((SettingValue<Boolean>) settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchCurrentSiteOnly")).getValue();
+      Boolean searchCurrentSiteOnly = Boolean.parseBoolean(settingService.get(Context.GLOBAL, Scope.WINDOWS, "searchCurrentSiteOnly").getValue().toString());
       newSearchSetting.setSearchCurrentSiteOnly(searchCurrentSiteOnly);
     } catch (Exception e) {
       LOG.info("Cannot get searchCurrentSiteOnly parameter for quick search settings. Use default one instead");
