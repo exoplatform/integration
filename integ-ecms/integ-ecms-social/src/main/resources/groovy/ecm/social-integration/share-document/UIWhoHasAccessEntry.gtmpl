@@ -1,6 +1,7 @@
 <%
 import org.exoplatform.ecm.webui.component.explorer.popup.actions.UIShareDocuments;
 import org.exoplatform.ecm.webui.component.explorer.popup.actions.UIWhoHasAccess;
+import org.apache.commons.lang.StringEscapeUtils;
 
 String SHARECONTENT_BUNDLE_LOCATION = _ctx.appRes("locale.extension.SocialIntegration");
 String SHARE_OPTION_CANVEW          = _ctx.appRes("UIShareDocuments.label.option.read");
@@ -36,7 +37,7 @@ String displayed = null;
         <img src="$avatar" alt="$displayed"/>
     </div>
     <div id="entry" >
-        <% String entryDisplayName = uiWhoHasAccess.getDisplayName(name); %>
+        <% String entryDisplayName = StringEscapeUtils.escapeHtml(uiWhoHasAccess.getDisplayName(name)); %>
         <% String entryURL = uiWhoHasAccess.getEntryURL(name); %>
         <% if (entryURL?.trim()) { %>
             <a href="<%=entryURL%>" >$entryDisplayName</a>

@@ -19,6 +19,7 @@
 */
 
   import org.exoplatform.webui.form.UIFormStringInput;
+  import org.apache.commons.lang.StringEscapeUtils;
 
   def rcontext = _ctx.getRequestContext();
       
@@ -37,7 +38,7 @@
         <i class="<%=uicomponent.getDocumentIcon()%> pull-left"></i>
         <span class="fileName"><%=uicomponent.getDocumentName()%></span>
         <br/>
-        <span class="userInfo"><%=uicomponent.getDocInfo()%></span>
+        <span class="userInfo"><%=StringEscapeUtils.escapeHtml(uicomponent.getDocInfo())%></span>
 
       </div>
       
