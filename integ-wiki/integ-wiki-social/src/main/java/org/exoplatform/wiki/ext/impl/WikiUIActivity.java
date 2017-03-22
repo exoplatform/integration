@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.webui.util.Util;
@@ -73,7 +74,7 @@ public class WikiUIActivity extends BaseUIActivity {
       return "";
     }        
     return new StringBuilder().append("<a href='").append(getOwnerIdentity().getProfile().getUrl()).append("'>")
-                                .append(getOwnerIdentity().getProfile().getFullName()).append("</a>").toString();    
+                                .append(StringEscapeUtils.escapeHtml(getOwnerIdentity().getProfile().getFullName())).append("</a>").toString();
   }
 
   public String getUserFullName(String userId) {

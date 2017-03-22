@@ -5,13 +5,13 @@ String perm = PERMISSION.equals("read") ? _ctx.appRes("Notification.label.view")
 <li class="$READ clearfix" data-id="$NOTIFICATION_ID">
   <div class="media">
     <div class="avatarXSmall pull-left">
-      <img src="$AVATAR" alt="$USER" />
+      <img src="$AVATAR" alt="<%=_ctx.escapeHTML(USER)%>" />
     </div>
     <div class="media-body" onclick="javascript:location.href='$DOCUMENT_URL'">
       <%
-        String profileUrl = "<a class=\"user-name text-bold\" href=\"javascript:void(0)\">" + USER + "</a>";
+        String profileUrl = "<a class=\"user-name text-bold\" href=\"javascript:void(0)\">" + _ctx.escapeHTML(USER) + "</a>";
         String permission = "<span class=\"text-bold\">" + perm + "</span>";
-        String space = "<span class=\"text-bold\">" + SPACE + "</span>";
+        String space = "<span class=\"text-bold\">" + _ctx.escapeHTML(SPACE) + "</span>";
       %>
       <div class="status"><%=_ctx.appRes("Notification.intranet.message.ShareFileToSpacePlugin", profileUrl, permission, space)%></div>
       <div class="content">
