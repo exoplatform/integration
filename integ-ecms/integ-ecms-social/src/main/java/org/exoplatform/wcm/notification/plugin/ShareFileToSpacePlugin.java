@@ -89,7 +89,7 @@ public class ShareFileToSpacePlugin extends BaseNotificationPlugin {
           .to(list)
           .with(NODE_ID, ctx.value(NODEID))
           .with(DOCUMENT_URL, ctx.value(URL))
-          .with(SPACE_URL, space.getUrl())
+          .with(SPACE_URL, LinkProviderUtils.getRedirectUrl("space", space.getId()))
           .with(DOCUMENT_NAME, node.getName())
           .with(SPACE_NAME, space.getDisplayName())
           .with(DOCUMENT_ICON, ctx.value(ICON))
