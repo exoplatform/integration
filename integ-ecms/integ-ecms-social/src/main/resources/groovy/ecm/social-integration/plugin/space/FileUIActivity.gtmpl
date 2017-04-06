@@ -268,8 +268,9 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 
 		def state = uicomponent.getState();
 		def author = uicomponent.getAuthor();
-		def lastModified = uicomponent.getLastModified();
+		def lastModified = uicomponent.getLastModified() == null ?  "" : uicomponent.getLastModified();
 		def dateCreated = uicomponent.getDateCreated();
+		def version = uicomponent.getVersion(currentNode);
 
 		String portalName = uicomponent.getContainerName();
 
@@ -385,7 +386,7 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 		                 <%
 		                   def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
-		String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;
+		String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath+ "?version="+ version+"&lastModified="+ lastModified.hashCode();
 		def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);
 		%>
 		<span><img src="$pdfThumbnailImage" onerror="var self = this; require(['SHARED/wcm-utils'], function(wcmutil) { wcmutil.WCMUtils.loadFallbackImage(self); });" class="pdfImageBorder"/></span>
@@ -436,7 +437,6 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 								</div>
 			<div class="infoFile">
 			<%
-			def version = uicomponent.getVersion(currentNode);
 			if (version > 0) {
 				%>
 				<span class="versionFile badgeDefault badgePrimary">v$version</span>
