@@ -189,13 +189,6 @@
 			  <img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
-    	<div class="activityType">
-        	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
-        		<img alt="$spaceName" src="$spaceImageSource"/>
-        	</a>
-        </div>
-        <%}%>
 	</div><!--end activityTimeLine-->
 	  <div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}" class="uiBox contentBox">
@@ -219,7 +212,9 @@
 						<div class="ownerName">
                         	<a  href="$ownerUri">$ownerName</a>
                         </div>
-						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
+						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>
+							<img  class="avatarMini" alt="$spaceName" src="$spaceImageSource"/>&nbsp;$spaceName
+						</a>
 						</a>
 						<%} else{%>
 							<div class="owner">

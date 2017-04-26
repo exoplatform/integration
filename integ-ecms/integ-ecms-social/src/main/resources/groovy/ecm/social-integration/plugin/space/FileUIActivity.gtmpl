@@ -45,12 +45,13 @@ import org.exoplatform.wcm.connector.collaboration.OpenInOfficeConnector;
 
 //ECMS import END
 
-public void getOwnerSpace(String ownerName, String ownerUri, String spaceSourceURI, String spaceID, String spaceName) {
+public void getOwnerSpace(String ownerName, String ownerUri, String spaceSourceURI, String spaceID, String spaceName, String spaceImageSource) {
 	%>
 	<div class="ownerName">
 	<a title="$ownerName" href="$ownerUri">$ownerName</a>
                         </div>
-	<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
+	<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>
+		<img  class="avatarMini" alt="$spaceName" src="$spaceImageSource"/>&nbsp;$spaceName
 	</a>
 	<%
 }
@@ -305,13 +306,6 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 		<div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 		<% uiform.begin() %>
 		<%addActivityTimeLine(ownerName, ownerUri, ownerAvatar);%>
-		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
-			<div class="activityType">
-			<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
-			<img alt="$spaceName" src="$spaceImageSource"/>
-			</a>
-        </div>
-			<%}%>
 		</div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
@@ -331,7 +325,7 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 	</a>
                         </div>
 	<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-		getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName);
+		getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName, spaceImageSource);
 	} else{
 		getOwner(ownerName, ownerUri);
 	} %>
@@ -681,13 +675,6 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 <div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 <% uiform.begin() %>
 <%addActivityTimeLine(ownerName, ownerUri, ownerAvatar);%>
-<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
-	<div class="activityType">
-	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
-	<img alt="$spaceName" src="$spaceImageSource"/>
-	</a>
-        </div>
-	<%}%>
 </div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
@@ -707,7 +694,7 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 </a>
                          </div>
 <% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-	getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName);
+	getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName, spaceImageSource);
 } else {
 	getOwner(ownerName, ownerUri);
 } %>

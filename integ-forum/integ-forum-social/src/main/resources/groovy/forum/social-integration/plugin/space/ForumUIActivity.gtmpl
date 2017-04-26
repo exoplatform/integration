@@ -203,13 +203,6 @@
 			  <img alt="$ownerName" src="$ownerAvatar"/>
 			</a>
 		</div>
-		<%  if (spaceGroupId.length() > 0) {%>
-    	<div class="activityType">
-        	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
-        		<img alt="$spaceName" src="$spaceImageSource"/>
-        	</a>
-        </div>
-        <%}%>
 	</div><!--end activityTimeLine-->
 
 
@@ -239,7 +232,9 @@
 						$ownerName
 						</a>
 						</div>
-						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
+						<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>
+							<img  class="avatarMini" alt="$spaceName" src="$spaceImageSource"/>&nbsp;$spaceName
+						</a>
                 <%}
            } else { %>
                         <div class="owner">

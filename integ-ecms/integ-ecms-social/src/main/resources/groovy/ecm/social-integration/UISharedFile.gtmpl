@@ -58,7 +58,9 @@
 	<div class="ownerName">
 	  <a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
 	</div>
-	<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>&nbsp;$spaceName</a>
+	<a class="space-avatar spaceName" href="$spaceSourceURI" space-data="$spaceID"><span class="uiIconArrowRightMini uiIconLightGray"></span>
+		<img  class="avatarMini" alt="$spaceName" src="$spaceImageSource"/>&nbsp;$spaceName
+	</a>
 	<%
   }
 
@@ -291,13 +293,6 @@
 <div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 	<% uiform.begin() %>
 	<%addActivityTimeLine(ownerName, ownerUri, ownerAvatar);%>
-		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
-    	<div class="activityType">
-        	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
-        		<img alt="$spaceName" src="$spaceImageSource"/>
-        	</a>
-        </div>
-        <%}%>
 	</div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
@@ -674,13 +669,6 @@
 <div class="activityStream uiContentActivity fileActivity" id="activityContainer${activity.id}">
 	<% uiform.begin() %>
 	<%addActivityTimeLine(ownerName, ownerUri, ownerAvatar);%>
-		<%  if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
-    	<div class="activityType">
-        	<a  class="space-avatar" href="$spaceSourceURI" space-data="$spaceID">
-        		<img alt="$spaceName" src="$spaceImageSource"/>
-        	</a>
-        </div>
-        <%}%>
 	</div><!--end activityTimeLine-->
 	<div class="boxContainer" id="boxContainer">
 		<div id="ContextBox${activity.id}"class="uiBox contentBox">
