@@ -1,14 +1,5 @@
 package org.exoplatform.commons.search.driver.jcr;
 
-import org.apache.commons.lang.StringUtils;
-import org.exoplatform.commons.api.search.SearchService;
-import org.exoplatform.commons.api.search.SearchServiceConnector;
-import org.exoplatform.commons.api.search.data.SearchContext;
-import org.exoplatform.commons.api.search.data.SearchResult;
-import org.exoplatform.commons.search.service.UnifiedSearchService;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import org.exoplatform.container.xml.InitParams;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,22 +9,37 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+import org.exoplatform.commons.api.search.SearchService;
+import org.exoplatform.commons.api.search.SearchServiceConnector;
+import org.exoplatform.commons.api.search.data.SearchContext;
+import org.exoplatform.commons.api.search.data.SearchResult;
+import org.exoplatform.commons.search.es.ElasticSearchServiceConnector;
+import org.exoplatform.commons.search.service.UnifiedSearchService;
+import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+
 public class JcrSearchDriver extends SearchService {
     private final static Log LOG = ExoLogger.getLogger(JcrSearchDriver.class);
   private String specialCharacters;
+  private String fuzzySyntax;
+  private String esFuzzySyntax;
 
   public JcrSearchDriver(InitParams initParams){
     this.specialCharacters = initParams.get("exo.search.excluded-characters").toString();
     // Escaping characters that are special for regular expression.
       specialCharacters = specialCharacters.replace(".","\\.").replace("-","\\-");
+      fuzzySyntax = getFuzzySyntax(false);
+      esFuzzySyntax = getFuzzySyntax(true);
   }
     @Override
     public Map<String, Collection<SearchResult>> search(SearchContext context, String query, Collection<String> sites, Collection<String> types, int offset, int limit, String sort, String order) {
-        String fuzzySyntax = getFuzzySyntax();
+
       query = replaceSpecialCharacters(query);
-        HashMap<String, ArrayList<String>> terms = parse(query); //parse query for single and quoted terms
-        query = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s" + fuzzySyntax, terms.get("single"), " "); //add a fuzzySyntax after each single term (for fuzzy search)
-        Map<String, Collection<SearchResult>> results = new HashMap<String, Collection<SearchResult>>();
+      HashMap<String, ArrayList<String>> terms = parse(query); //parse query for single and quoted terms
+
+      Map<String, Collection<SearchResult>> results = new HashMap<String, Collection<SearchResult>>();
       if(StringUtils.isBlank(query)) return results;
         if(null==types || types.isEmpty()) return results;
         List<String> enabledTypes = UnifiedSearchService.getEnabledSearchTypes();
@@ -42,7 +48,13 @@ public class JcrSearchDriver extends SearchService {
             if(!types.contains("all") && !types.contains(connector.getSearchType())) continue; //search requested types only
             LOG.debug("\n[UNIFIED SEARCH]: connector = " + connector.getClass().getSimpleName());
             try {
-                results.put(connector.getSearchType(), connector.search(context, query, sites, offset, limit, sort, order));
+              String connectorQuery = null;
+              if(connector instanceof ElasticSearchServiceConnector) {
+                connectorQuery = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s" + esFuzzySyntax, terms.get("single"), " "); //add an ES fuzzySyntax after each single term (for fuzzy search)
+              } else {
+                connectorQuery = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s" + fuzzySyntax, terms.get("single"), " "); //add a fuzzySyntax after each single term (for fuzzy search)
+              }
+              results.put(connector.getSearchType(), connector.search(context, connectorQuery, sites, offset, limit, sort, order));
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
                 continue; //skip this connector and continue searching with the others
@@ -94,7 +106,7 @@ public class JcrSearchDriver extends SearchService {
         return sb.toString();
     }
 
-    private static String getFuzzySyntax() {
+    private static String getFuzzySyntax(boolean esFuzzyExpression) {
         String fuzzySyntax = "";
         String fuzzySimilarity = System.getProperty("unified-search.engine.fuzzy.similarity");
         Double fuzzySimilarityDouble = 0.5;
@@ -108,6 +120,10 @@ public class JcrSearchDriver extends SearchService {
             }
             if (fuzzySimilarityDouble < 0 || fuzzySimilarityDouble >= 1) {
                 fuzzySimilarityDouble = 0.5;
+            }
+            if (esFuzzyExpression) {
+              // Value must be 0, 1 or 2 (Levenshtein distance, 0 = disable fuzzy)
+            	fuzzySimilarityDouble = (double)(2 - (int)(fuzzySimilarityDouble * 2));
             }
             fuzzySyntax = "~" + String.valueOf(fuzzySimilarityDouble);
         }

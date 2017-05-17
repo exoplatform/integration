@@ -68,5 +68,5 @@
       </value-param>
     </init-params>
   </component>
-
+  <remove-configuration>org.exoplatform.commons.persistence.impl.EntityManagerService</remove-configuration>
 </configuration>
