@@ -105,7 +105,7 @@
     </dependency>
     <!-- mvn dependency:analyze marks unused but build failed if remove -->
     <dependency>
-      <groupId>org.gatein.shindig</groupId>
+      <groupId>org.apache.shindig</groupId>
       <artifactId>shindig-social-api</artifactId>
     </dependency>
     <dependency>

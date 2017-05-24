@@ -55,7 +55,7 @@
     <!-- Platform Project 3rd party Dependencies -->
     <org.powermock.version>1.6.5</org.powermock.version>
     <!-- GateIn Project Dependencies -->
-    <org.gatein.shindig.version>2.0.2.Final-gatein-4</org.gatein.shindig.version>
+    <org.apache.shindig.version>2.5.2</org.apache.shindig.version>
     <!-- For surefire and failsafe to be compatible with jacoco -->
     <argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
   </properties>
@@ -226,9 +226,9 @@
       </dependency>
       <!-- To be replaced by an import of GateIn Shinding parent POM -->
       <dependency>
-        <groupId>org.gatein.shindig</groupId>
+        <groupId>org.apache.shindig</groupId>
         <artifactId>shindig-social-api</artifactId>
-        <version>${org.gatein.shindig.version}</version>
+        <version>${org.apache.shindig.version}</version>
       </dependency>
       <!-- Import versions from jcr project -->
       <dependency>
