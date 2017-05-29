@@ -20,6 +20,8 @@
 
   import org.exoplatform.webui.form.UIFormStringInput;
   import org.apache.commons.lang.StringEscapeUtils;
+  import org.exoplatform.ecm.utils.text.Text;
+
 
   def rcontext = _ctx.getRequestContext();
       
@@ -36,7 +38,7 @@
       <div class="uiActivityFileAttachment">
         <a class="uiIconLightGray uiIconClose uiClose pull-right" href="<%=uicomponent.event("RemoveDocument")%>"></a>      
         <i class="<%=uicomponent.getDocumentIcon()%> pull-left"></i>
-        <span class="fileName"><%=uicomponent.getDocumentName()%></span>
+        <span class="fileName"><%=Text.unescapeIllegalJcrChars(uicomponent.getDocumentName())%></span>
         <br/>
         <span class="userInfo"><%=StringEscapeUtils.escapeHtml(uicomponent.getDocInfo())%></span>
 
