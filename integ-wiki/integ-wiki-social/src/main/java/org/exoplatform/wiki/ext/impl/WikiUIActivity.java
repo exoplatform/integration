@@ -36,7 +36,8 @@ import org.exoplatform.wiki.service.WikiService;
         @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
         @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
         @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) 
+        @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)
       }
 )
 public class WikiUIActivity extends BaseUIActivity {
