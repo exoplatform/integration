@@ -55,20 +55,19 @@ public class FileUIActivityBuilder extends BaseUIActivityBuilder {
       SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
       for (String ws : manageRepo.getWorkspaceNames()) {
         try {
-          if(StringUtils.isEmpty(fileActivity.getNodeUUID())) {
-            String contentLink = fileActivity.getContentLink();
-            String _ws = contentLink.split("/")[0];
-            String _repo = contentLink.split("/")[1];
-            String nodePath = contentLink.replace(_ws + "/" + _repo, "");
-            contentNode = (Node)sessionProvider.getSession(ws, manageRepo).getItem(nodePath);
-            fileActivity.setContentNode(contentNode);
-            return;
+          for (int i = 0; i < fileActivity.getFilesCount(); i++) {
+            if(StringUtils.isEmpty(fileActivity.getNodeUUID(i))) {
+              String contentLink = fileActivity.getContentLink(i);
+              String _ws = contentLink.split("/")[0];
+              String _repo = contentLink.split("/")[1];
+              String nodePath = contentLink.replace(_ws + "/" + _repo, "");
+              contentNode = (Node)sessionProvider.getSession(ws, manageRepo).getItem(nodePath);
+              fileActivity.setContentNode(contentNode, i);
+            } else {
+              contentNode = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(fileActivity.getNodeUUID(i));
+            }
+            fileActivity.setContentNode(contentNode, i);
           }
-          contentNode = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(fileActivity.getNodeUUID());
-          fileActivity.docPath = contentNode.getPath();
-          fileActivity.workspace = ws;
-          fileActivity.repository = manageRepo.toString();
-          break;
         } catch (RepositoryException e) {
           continue;
         }
@@ -76,8 +75,6 @@ public class FileUIActivityBuilder extends BaseUIActivityBuilder {
     } catch (RepositoryException re) {
       LOG.error("Can not get the repository. ", re);
     }
-      
-    fileActivity.setContentNode(contentNode);
   }
 
 }

@@ -66,6 +66,7 @@
       <version>Version: {0}</version>
       <updatedOn>Modifié le</updatedOn>
       <updatedBy>de</updatedBy>
+      <loadMoreFiles>+{0} fichiers</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Archivé</archived>
@@ -82,6 +83,7 @@
     <view>Voir</view>
     <edit>Modifier</edit>
     <download>Télécharger</download>
+    <downloadAll>Télécharger tout</downloadAll>
     <preview>Aperçu</preview>
   </SocialIntegration>
   <UIPopupWindow>

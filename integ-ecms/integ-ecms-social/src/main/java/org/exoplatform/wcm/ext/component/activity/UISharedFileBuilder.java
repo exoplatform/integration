@@ -65,9 +65,6 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       Node currentNode = sessionProvider.getSession(workspaceName, manageRepo).getNodeByUUID(nodeUUID);
       if(!trashService.isInTrash(currentNode)){
         contentNode = linkManager.getTarget(currentNode);
-        fileActivity.docPath = contentNode.getPath();
-        fileActivity.workspace = workspaceName;
-        fileActivity.repository = manageRepo.toString();
       }else {
         org.exoplatform.wcm.ext.component.activity.listener.Utils.deleteFileActivity(currentNode);
       }
@@ -80,6 +77,6 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
         LOG.error("Can not get the repository. ", re);
     }
     fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
-    fileActivity.setContentNode(contentNode);
+    fileActivity.setContentNode(contentNode, 0);
   }
 }

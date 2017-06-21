@@ -79,7 +79,7 @@
   def likeActivityAction = uicomponent.event("LikeActivity", "true");
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
 
-  def docPreviewUri = uicomponent.event("ViewDocument");
+  def docPreviewUri = uicomponent.event("ViewDocument", "0");
   def docOpenUri = uicomponent.getDocOpenUri();
 
   def commentList = uicomponent.getComments();
@@ -233,7 +233,6 @@
         }
     }
 %>
-
 <div class="activityStream fileActivity uiContentActivity uiDocActivity" id="activityContainer${activity.id}">
   <% uiform.begin() %>
 	<div class="activityTimeLine pull-left">
