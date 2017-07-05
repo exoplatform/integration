@@ -31,13 +31,17 @@ import org.exoplatform.services.cms.impl.Utils;
 import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.cms.mimetype.DMSMimeTypeResolver;
 import org.exoplatform.services.jcr.access.AccessControlEntry;
+import org.exoplatform.services.jcr.access.AccessControlList;
+import org.exoplatform.services.jcr.access.AccessManager;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
+import org.exoplatform.services.jcr.impl.core.SessionImpl;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityConstants;
+import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -101,7 +105,6 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   private static final String SHARE_PERMISSION_MODIFY      = "modify";
   private static final String SPACE_PREFIX1 = "space::";
   private static final String SPACE_PREFIX2 = "*:/spaces/";
-
 
   private String permission = SHARE_PERMISSION_VIEW;
   private boolean permDropDown = false;
@@ -180,9 +183,9 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       Set<String> accessList = uiform.getWhoHasAccess();
       Node node = uiform.getNode();
       String message = "";
-      String user = ConversationState.getCurrent().getIdentity().getUserId();
+      Identity identity = ConversationState.getCurrent().getIdentity();
       boolean isShared = false;
-      if (uiform.isOwner(user) || uiform.canEdit(user)) {
+      if (uiform.isOwner(identity.getUserId()) || uiform.canEdit(identity)) {
         if (uiform.getChild(UIFormTextAreaInput.class).getValue() != null)
           message = uiform.getChild(UIFormTextAreaInput.class).getValue();
         for (String name : accessList) {
@@ -307,8 +310,8 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       if (value != null) {
         String[] selectedIdentities = value.split(",");
         String name = null;
-        String user = ConversationState.getCurrent().getIdentity().getUserId();
-        if (uicomponent.hasPermissionDropDown() && (uicomponent.canEdit(user) || uicomponent.isOwner(user))) {
+        Identity identity = ConversationState.getCurrent().getIdentity();
+        if (uicomponent.hasPermissionDropDown() && (uicomponent.canEdit(identity) || uicomponent.isOwner(identity.getUserId()))) {
           String permission = uicomponent.getPermission();
           List<String> notFound = new LinkedList<String>();
           int i=0;
@@ -476,17 +479,39 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
     }
     return set;
   }
-
+  
+  /**
+   * Used to check edit permission on the current document node for users, spaces members
+   * @param username
+   * @return True if the given username has Edit permission on the current node.
+   */
   public boolean canEdit(String username) {
     try {
-      return getNode().getACL().getPermissions(username).contains("add_node")
-          && getNode().getACL().getPermissions(username).contains("set_property");
+      AccessControlList controlList = getNode().getACL();
+      return controlList.getPermissions(username).contains(PermissionType.ADD_NODE)
+              && controlList.getPermissions(username).contains(PermissionType.SET_PROPERTY);
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
       return false;
     }
   }
-
+  
+  /**
+   * Used to check edit permission on the current document node for the logged in user.
+   * @param identity
+   * @return True if the given identity has Edit permission on the current node.
+   */
+  public boolean canEdit(Identity identity) {
+    try {
+      AccessManager accessManager = ((SessionImpl)getNode().getSession()).getAccessManager();
+      return accessManager.hasPermission(getNode().getACL(), new String[]{PermissionType.ADD_NODE, PermissionType.SET_PROPERTY}, identity);
+    }
+    catch (Exception e) {
+      LOG.error(e.getMessage(), e);
+      return false;
+    }
+  }
+  
   public String getPermission(String name) {
     return canEdit(name) ? SHARE_PERMISSION_MODIFY : SHARE_PERMISSION_VIEW;
   }
