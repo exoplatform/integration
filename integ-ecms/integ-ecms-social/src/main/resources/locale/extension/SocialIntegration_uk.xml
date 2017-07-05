@@ -66,6 +66,7 @@
       <version>Версія {0}</version>
       <updatedOn>Оновлене</updatedOn>
       <updatedBy>за</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Архівні</archived>
@@ -82,6 +83,7 @@
     <view>Перегляд</view>
     <edit>Редагувати</edit>
     <download>Завантажити</download>
+    <downloadAll>Download All</downloadAll>
     <preview>Попередній перегляд</preview>
   </SocialIntegration>
   <UIPopupWindow>

@@ -66,6 +66,7 @@
       <version>Versiunea {0}</version>
       <updatedOn>Updated on</updatedOn>
       <updatedBy>de</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Arhivată</archived>
@@ -82,6 +83,7 @@
     <view>Afișare</view>
     <edit>Modifică</edit>
     <download>Descarcă</download>
+    <downloadAll>Download All</downloadAll>
     <preview>Previzualizare</preview>
   </SocialIntegration>
   <UIPopupWindow>

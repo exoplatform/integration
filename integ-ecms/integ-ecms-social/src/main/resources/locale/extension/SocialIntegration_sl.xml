@@ -66,6 +66,7 @@
       <version>Različica: {0}</version>
       <updatedOn>Posodobljeno</updatedOn>
       <updatedBy>od</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Arhivirano</archived>
@@ -82,6 +83,7 @@
     <view>Prikaz</view>
     <edit>Uredi</edit>
     <download>Prenesi</download>
+    <downloadAll>Download All</downloadAll>
     <preview>Predogled</preview>
   </SocialIntegration>
   <UIPopupWindow>

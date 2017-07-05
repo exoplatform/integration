@@ -66,6 +66,7 @@
       <version>版本 {0}</version>
       <updatedOn>Updated on</updatedOn>
       <updatedBy>由</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>存档</archived>
@@ -82,6 +83,7 @@
     <view>查看</view>
     <edit>编辑</edit>
     <download>下载</download>
+    <downloadAll>Download All</downloadAll>
     <preview>预览</preview>
   </SocialIntegration>
   <UIPopupWindow>

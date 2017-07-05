@@ -66,6 +66,7 @@
       <version>Version {0}</version>
       <updatedOn>Updated on</updatedOn>
       <updatedBy>av</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Arkiverad</archived>
@@ -82,6 +83,7 @@
     <view>Visa</view>
     <edit>Redigera</edit>
     <download>Ladda ner</download>
+    <downloadAll>Download All</downloadAll>
     <preview>Förhandsgranska</preview>
   </SocialIntegration>
   <UIPopupWindow>

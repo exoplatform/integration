@@ -66,6 +66,7 @@
       <version>バージョン: {0}</version>
       <updatedOn>更新日</updatedOn>
       <updatedBy>作成者</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>アーカイブ</archived>
@@ -82,6 +83,7 @@
     <view>ビュー</view>
     <edit>編集</edit>
     <download>ファイルをダウンロード</download>
+    <downloadAll>Download All</downloadAll>
     <preview>プレビュー</preview>
   </SocialIntegration>
   <UIPopupWindow>
