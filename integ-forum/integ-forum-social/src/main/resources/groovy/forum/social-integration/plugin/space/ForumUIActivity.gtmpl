@@ -292,12 +292,13 @@
 						  <%
 			          def href = "<a class='textBold linkTitle' href=\"%s\">%s</a>";
 			          def activityContentTitle = uicomponent.getActivityContentTitle(_ctx, href);
+			          def activityBody = StringEscapeUtils.unescapeHtml(activity.getBody()).trim();
 			        %>
 							$activityContentTitle
 						</div>
 					</div>
 				  <div class="contentForum theContent">
-					<p class="text">$activity.body</p>
+					<p class="text">$activityBody</p>
 <%
           def numberOfReplies = uicomponent.getNumberOfReplies();
 

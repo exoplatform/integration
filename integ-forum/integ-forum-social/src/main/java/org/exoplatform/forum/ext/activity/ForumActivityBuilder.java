@@ -143,7 +143,12 @@ public class ForumActivityBuilder {
         sb.append("BR_");
       }
     }
-    String str = StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(sb.toString(), null)).trim();
+    String str = null;
+    if (sb.toString().contains("<a target=")) {
+      str = StringEscapeUtils.escapeHtml(sb.toString()).trim();
+    } else {
+      str = StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(sb.toString(), null)).trim();
+    }
     //
     return trunc(str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("BR_", "<br/>"), NUMBER_CHARS, tab.length > nbOfLines);
   }
