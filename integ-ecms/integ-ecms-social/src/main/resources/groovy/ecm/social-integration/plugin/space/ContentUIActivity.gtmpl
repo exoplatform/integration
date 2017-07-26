@@ -517,7 +517,7 @@
                       <li>
                         <a class="likeCommentBackground" data-placement="bottom" data-html="true" rel="tooltip" title="$likersList" id="LikeCommentLink_${it.id}" href="javascript:void(0);">
                           <i class="uiIconThumbUp uiIconWhite"></i>
-                        </a>$totalCommentLiked
+                        </a>&nbsp;$totalCommentLiked
                       </li>
 
                       <% } else { %>
@@ -530,7 +530,7 @@
                       <li>
                         <a data-placement="bottom" rel="tooltip" data-html="true" title="$likersList" id="LikeCommentLink_${it.id}" href="javascript:void(0);">
                           <i class="uiIconThumbUp uiIconWhite"></i>
-                        </a>$totalCommentLiked
+                        </a>&nbsp;$totalCommentLiked
                       </li>
 
                       <%    }
