@@ -26,12 +26,12 @@ import javax.portlet.PortletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.ecm.jcr.model.VersionNode;
 import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.services.cms.documents.DocumentService;
-import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
@@ -51,7 +51,6 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
-import org.exoplatform.webui.cssfile.CssClassIconFile;
 import org.exoplatform.webui.cssfile.CssClassManager;
 import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
@@ -177,10 +176,7 @@ public class UIDocActivity extends BaseUIActivity {
   }
 
   protected String getCssClassIconFile(String fileName, String fileType) {
-    String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(fileName, fileType, CssClassManager.ICON_SIZE.ICON_64);
-    if (cssClass.indexOf(CssClassIconFile.DEFAULT_CSS) > 0) {
-      return "uiIcon64x64Templatent_file uiIcon64x64nt_file";
-    }
+    String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(fileName, fileType, CssClassManager.ICON_SIZE.ICON_64).replace("uiIcon", "uiBgd");
     return cssClass;
   }
 

@@ -66,6 +66,7 @@
       <version>Versjon {0}</version>
       <updatedOn>Updated on</updatedOn>
       <updatedBy>ved</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Arkivert</archived>
@@ -82,6 +83,7 @@
     <view>Vis</view>
     <edit>Rediger</edit>
     <download>Last ned</download>
+    <downloadAll>Download All</downloadAll>
     <preview>Forhåndsvisning</preview>
   </SocialIntegration>
   <UIPopupWindow>

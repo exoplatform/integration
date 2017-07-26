@@ -66,6 +66,7 @@
       <version>Versija: {0}</version>
       <updatedOn>Updated on</updatedOn>
       <updatedBy>pagal</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Suarchyvuota</archived>
@@ -82,6 +83,7 @@
     <view>Rodyti</view>
     <edit>Redaguoti</edit>
     <download>Atsisiųsti</download>
+    <downloadAll>Download All</downloadAll>
     <preview>Peržiūrėti</preview>
   </SocialIntegration>
   <UIPopupWindow>

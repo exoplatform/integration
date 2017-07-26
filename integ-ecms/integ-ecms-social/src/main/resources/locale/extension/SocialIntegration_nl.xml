@@ -66,6 +66,7 @@
       <version>Versie: {0}</version>
       <updatedOn>Bijgewerkt tot</updatedOn>
       <updatedBy>door</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Gearchiveerd</archived>
@@ -82,6 +83,7 @@
     <view>Tonen</view>
     <edit>Bewerken</edit>
     <download>Downloaden</download>
+    <downloadAll>Download All</downloadAll>
     <preview>Voorbeeld</preview>
   </SocialIntegration>
   <UIPopupWindow>

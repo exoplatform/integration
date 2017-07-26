@@ -66,6 +66,7 @@
       <version>Phiên bản: {0}</version>
       <updatedOn>Updated on</updatedOn>
       <updatedBy>bởi</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Được sao lưu</archived>
@@ -82,6 +83,7 @@
     <view>Xem</view>
     <edit>Chỉnh sửa</edit>
     <download>Tải về</download>
+    <downloadAll>Download All</downloadAll>
     <preview>Xem lại</preview>
   </SocialIntegration>
   <UIPopupWindow>

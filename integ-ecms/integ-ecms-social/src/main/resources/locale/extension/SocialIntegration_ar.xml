@@ -66,6 +66,7 @@
       <version>الإصدار: {0}</version>
       <updatedOn>تم التحديث بتاريخ</updatedOn>
       <updatedBy>من قبل</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>بالأرشيف</archived>
@@ -82,6 +83,7 @@
     <view>رأي</view>
     <edit>تغيير</edit>
     <download>تنزيل هذا الملف</download>
+    <downloadAll>Download All</downloadAll>
     <preview>معاينة</preview>
   </SocialIntegration>
   <UIPopupWindow>

@@ -17,32 +17,27 @@
 
 package org.exoplatform.social.plugin.doc;
 
-import static org.exoplatform.social.plugin.doc.UIDocActivityBuilder.ACTIVITY_TYPE;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.exoplatform.services.organization.UserHandler;
-
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.wcm.utils.WCMCoreUtils;
-import org.exoplatform.webui.cssfile.CssClassManager;
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.commons.utils.ActivityTypeUtils;
-import org.exoplatform.commons.utils.ISO8601;
-import org.exoplatform.container.PortalContainer;
+
+import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.ecm.webui.selector.UISelectable;
-import org.exoplatform.ecm.webui.utils.Utils;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.wcm.core.NodeLocation;
-import org.exoplatform.services.wcm.core.NodetypeConstant;
-import org.exoplatform.social.core.BaseActivityProcessorPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -53,82 +48,121 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.plugin.doc.selector.UIComposerMultiUploadSelector;
 import org.exoplatform.social.webui.composer.PopupContainer;
 import org.exoplatform.social.webui.composer.UIActivityComposer;
-import org.exoplatform.social.webui.composer.UIActivityComposerManager;
 import org.exoplatform.social.webui.composer.UIComposer;
 import org.exoplatform.social.webui.composer.UIComposer.PostContext;
 import org.exoplatform.social.webui.profile.UIUserActivitiesDisplay;
+import org.exoplatform.wcm.connector.fckeditor.DriverConnector;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIPortletApplication;
-import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIFormStringInput;
 
 /**
- * The templateParamsProcessor to process an activity. Replace template
- * key by template value in activity's title.
- * @author    Zun
- * @since     Apr 19, 2010
+ * The templateParamsProcessor to process an activity. Replace template key by
+ * template value in activity's title.
+ * 
+ * @author Zun
+ * @since Apr 19, 2010
  */
-@ComponentConfig(
-  template = "classpath:groovy/social/plugin/doc/UIDocActivityComposer.gtmpl",
-  events = {
+@ComponentConfig(template = "classpath:groovy/social/plugin/doc/UIDocActivityComposer.gtmpl", events = {
     @EventConfig(listeners = UIActivityComposer.CloseActionListener.class),
     @EventConfig(listeners = UIActivityComposer.SubmitContentActionListener.class),
     @EventConfig(listeners = UIActivityComposer.ActivateActionListener.class),
     @EventConfig(listeners = UIDocActivityComposer.SelectDocumentActionListener.class),
-    @EventConfig(listeners = UIDocActivityComposer.RemoveDocumentActionListener.class)
-  }
-)
+    @EventConfig(listeners = UIDocActivityComposer.RemoveDocumentActionListener.class) })
 public class UIDocActivityComposer extends UIActivityComposer implements UISelectable {
-  public static final String REPOSITORY = "repository";
-  public static final String WORKSPACE = "collaboration";
-  private static final String FILE_SPACES = "files:spaces";
-  private final static String POPUP_COMPOSER = "UIPopupComposer";
-  private final String docActivityTitle = "<a href=\"${"+ UIDocActivity.DOCLINK +"}\">" + "${" +UIDocActivity.DOCNAME +"}</a>";
+  private static final Log                          LOG                     = ExoLogger.getLogger(UIDocActivityComposer.class);
 
-  private String documentRefLink;
-  private String documentPath;
-  private String documentName;
-  private boolean isDocumentReady;
-  private String currentUser;
-  private String docIcon = "";
-  private String docInfo = "";
-  
+  public static final String                        REPOSITORY              = "repository";
+
+  public static final String                        WORKSPACE               = "collaboration";
+
+  protected static final String                     UI_COMPOSER_MULTIUPLOAD = "UIComposerMultiUpload";
+
+  private static final String                       FILE_SPACES             = "files:spaces";
+
+  private final static String                       POPUP_COMPOSER          = "UIPopupComposer";
+
+  private final String                              docActivityTitle        = "<a href=\"${" + UIDocActivity.DOCLINK
+      + "}\">" + "${" + UIDocActivity.DOCNAME + "}</a>";
+
+  private SpaceService                              spaceService;
+
+  private IdentityManager                           identityManager;
+
+  private ActivityManager                           activityManager;
+
+  private List<ComposerFileItem>                    selectedFileItems        = new ArrayList<>();
+
+  private String                                    currentUser;
+
+  private int                                       maxFilesCount           = 20;
+
+  private int                                       maxFileSize             = 5;
+
+  private int                                       filesCounter            = 5;
+
+  private boolean                                   duplicatedFilesSelection   = false;
+
+  private List<String>                              duplicatedFileNames   = new ArrayList<>();
+
+  private Map<String, UIAbstractSelectFileComposer> uiFileSelectors         = new HashMap<>();
+
   /**
    * constructor
+   * 
+   * @throws Exception exception thrown when adding children
    */
-  public UIDocActivityComposer() {
+  public UIDocActivityComposer() throws Exception {
+    DriverConnector driverConnector = getApplicationComponent(DriverConnector.class);
+    String maxFilesCountString = PropertyManager.getProperty("exo.social.composer.maxToUpload");
+    if (StringUtils.isNotBlank(maxFilesCountString)) {
+      maxFilesCount = Integer.parseInt(maxFilesCountString);
+    }
+    String maxFileSizeString = PropertyManager.getProperty("exo.social.composer.maxFileSizeInMB");
+    if (StringUtils.isNotBlank(maxFileSizeString)) {
+      maxFileSize = Integer.parseInt(maxFileSizeString);
+    } else {
+      maxFileSize = driverConnector.getLimitSize();
+    }
+
+    spaceService = getApplicationComponent(SpaceService.class);
+    identityManager = getApplicationComponent(IdentityManager.class);
+    activityManager = getApplicationComponent(ActivityManager.class);
+
     addChild(new UIFormStringInput("InputDoc", "InputDoc", null));
+
+    UIComposerMultiUploadSelector uiMultiUpload = addChild(UIComposerMultiUploadSelector.class, null, UIComposerMultiUploadSelector.CONTAINER_ID);
+    uiMultiUpload.init(maxFilesCount, maxFileSize);
+
+    uiFileSelectors.put(uiMultiUpload.getId(), uiMultiUpload);
+
     resetValues();
   }
 
+  @Override
+  public boolean isReadyForPostingActivity() {
+    return !getSelectedFileItems().isEmpty();
+  }
+
+  public int getAndIncrementFilesCounter() {
+    return filesCounter++;
+  }
+
   private void resetValues() {
-    documentRefLink = "";
-    isDocumentReady = false;
+    selectedFileItems.clear();
+    for (UIAbstractSelectFileComposer selectFileComposer : getUIFileSelectors().values()) {
+      selectFileComposer.resetSelection();
+    }
     setReadyForPostingActivity(false);
-  }
-
-  public boolean isDocumentReady() {
-    return isDocumentReady;
-  }
-
-  public String getDocumentName() {
-    return documentName;
-  }
-
-  public String getDocumentIcon() {
-    return docIcon;
-  }
-  
-  public String getDocInfo() {
-    return docInfo;
   }
 
   /**
@@ -147,7 +181,6 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 
   @Override
   protected void onActivate(Event<UIActivityComposer> event) {
-//    isDocumentReady = false;
     setCurrentUser(event.getRequestContext().getRemoteUser());
   }
 
@@ -159,77 +192,69 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
   @Override
   protected void onSubmit(Event<UIActivityComposer> event) {
   }
-  
+
   @Override
-  public void onPostActivity(PostContext postContext, UIComponent source,
-                             WebuiRequestContext requestContext, String postedMessage) throws Exception {
+  public void onPostActivity(PostContext postContext,
+                             UIComponent source,
+                             WebuiRequestContext requestContext,
+                             String postedMessage) throws Exception {
   }
 
   @Override
   public ExoSocialActivity onPostActivity(PostContext postContext, String postedMessage) throws Exception {
     ExoSocialActivity activity = null;
-    if(!isDocumentReady){
-      getAncestorOfType(UIPortletApplication.class)
-        .addMessage(new ApplicationMessage("UIComposer.msg.error.Must_select_file", null, ApplicationMessage.INFO));
+    if (!isReadyForPostingActivity()) {
+      getAncestorOfType(UIPortletApplication.class).addMessage(new ApplicationMessage("UIComposer.msg.error.Must_select_file",
+                                                                                      null,
+                                                                                      ApplicationMessage.INFO));
     } else {
       Map<String, String> activityParams = new LinkedHashMap<String, String>();
-      Node node = getDocNode(REPOSITORY, WORKSPACE, documentPath);
-      activityParams.put(UIDocActivity.DOCUMENT_TITLE, Utils.getTitle(node));
+      List<ComposerFileItem> selectedFileItemsList = new ArrayList<>(getSelectedFileItems());
+      Collections.sort(selectedFileItemsList);
 
-      boolean isSymlink = node.isNodeType(NodetypeConstant.EXO_SYMLINK);
-      if (isSymlink){
-        node = Utils.getNodeSymLink(node);
+      for (ComposerFileItem composerFileItem : selectedFileItemsList) {
+        UIAbstractSelectFileComposer uiSelectFileComposer = getResolver(composerFileItem.getResolverType());
+        Object obj = uiSelectFileComposer.preActivitySave(composerFileItem, postContext);
+        uiSelectFileComposer.putActivityParams(obj, composerFileItem, activityParams);
       }
 
-      activityParams.put(UIDocActivity.IS_SYMLINK, String.valueOf(isSymlink));
-      activityParams.put(UIDocActivity.DOCNAME, documentName);
-      activityParams.put(UIDocActivity.DOCLINK, documentRefLink);
-      activityParams.put(UIDocActivity.DOCPATH, documentPath);
-      activityParams.put(UIDocActivity.REPOSITORY, REPOSITORY);
-      activityParams.put(UIDocActivity.WORKSPACE, WORKSPACE);
-      activityParams.put(UIDocActivity.MESSAGE, postedMessage);      
-      activityParams.put(BaseActivityProcessorPlugin.TEMPLATE_PARAM_TO_PROCESS, UIDocActivity.MESSAGE);
-      
-      if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)
-              || node.isNodeType(NodetypeConstant.EXO_ACCESSIBLE_MEDIA)) {
-        String activityOwnerId = UIDocActivity.getActivityOwnerId(node);
-        DateFormat dateFormatter = null;
-        dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
-        
-        String illustrationImg = UIDocActivity.getIllustrativeImage(node);
-        String strDateCreated = "";
-        if (node.hasProperty(NodetypeConstant.EXO_DATE_CREATED)) {
-          Calendar dateCreated = node.getProperty(NodetypeConstant.EXO_DATE_CREATED).getDate();
-          strDateCreated = dateFormatter.format(dateCreated.getTime());
-        }
-        String strLastModified = "";
-        if (node.hasNode(NodetypeConstant.JCR_CONTENT)) {
-          Node contentNode = node.getNode(NodetypeConstant.JCR_CONTENT);
-          if (contentNode.hasProperty(NodetypeConstant.JCR_LAST_MODIFIED)) {
-            Calendar lastModified = contentNode.getProperty(NodetypeConstant.JCR_LAST_MODIFIED)
-                                               .getDate();
-            strLastModified = dateFormatter.format(lastModified.getTime());
-          }
-        }
+      activityParams.put(UIDocActivity.MESSAGE, postedMessage);
 
-        activityParams.put(UIDocActivity.ID, node.isNodeType(NodetypeConstant.MIX_REFERENCEABLE) ? node.getUUID() : "");
-        activityParams.put(UIDocActivity.CONTENT_NAME, node.getName());
-        activityParams.put(UIDocActivity.AUTHOR, activityOwnerId);
-        activityParams.put(UIDocActivity.DATE_CREATED, strDateCreated);
-        activityParams.put(UIDocActivity.LAST_MODIFIED, strLastModified);
-        activityParams.put(UIDocActivity.CONTENT_LINK, UIDocActivity.getContentLink(node));
-        activityParams.put(UIDocActivity.MIME_TYPE, UIDocActivity.getMimeType(node));
-        activityParams.put(UIDocActivity.IMAGE_PATH, illustrationImg);
-      }
       //
-      if(postContext == UIComposer.PostContext.SPACE){
-        activity = postActivityToSpace(activityParams);
-      } else if (postContext == UIComposer.PostContext.USER){
+      if (postContext == UIComposer.PostContext.SPACE) {
+        Space space = spaceService.getSpaceByUrl(SpaceUtils.getSpaceUrlByContext());
+        Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
+        //
+        activity = saveActivity(activityParams, identityManager, spaceIdentity);
+
+        for (ComposerFileItem composerFileItem : selectedFileItemsList) {
+          UIAbstractSelectFileComposer uiSelectFileComposer = getResolver(composerFileItem.getResolverType());
+          uiSelectFileComposer.postActivitySave(composerFileItem, postContext, activity);
+        }
+      } else if (postContext == UIComposer.PostContext.USER) {
         activity = postActivityToUser(activityParams);
       }
     }
     resetValues();
     return activity;
+  }
+
+  public Map<String, UIAbstractSelectFileComposer> getUIFileSelectors() {
+    return uiFileSelectors;
+  }
+
+  private UIAbstractSelectFileComposer getResolver(String resolverType) {
+    if (resolverType == null) {
+      return null;
+    }
+    UIAbstractSelectFileComposer uiSelectFileComposer = null;
+    for (UIAbstractSelectFileComposer uiFileSelector : uiFileSelectors.values()) {
+      if (StringUtils.equals(uiFileSelector.getResolverType(), resolverType)) {
+        uiSelectFileComposer = uiFileSelector;
+        break;
+      }
+    }
+    return uiSelectFileComposer;
   }
 
   private ExoSocialActivity postActivityToUser(Map<String, String> activityParams) throws Exception {
@@ -240,63 +265,92 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     return saveActivity(activityParams, identityManager, ownerIdentity);
   }
 
-  private ExoSocialActivity postActivityToSpace(Map<String, String> activityParams) throws Exception {
-    Space space = getApplicationComponent(SpaceService.class).getSpaceByUrl(SpaceUtils.getSpaceUrlByContext());
-    IdentityManager identityManager = getApplicationComponent(IdentityManager.class);
-    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(),false);
-    //
-    return saveActivity(activityParams, identityManager, spaceIdentity);
-  }
-
+  @SuppressWarnings("unchecked")
   public void doSelect(String selectField, Object value) throws Exception {
-    String rawPath = value.toString();
-    rawPath = rawPath.substring(rawPath.indexOf(":/") + 2);
-    documentRefLink = buildDocumentLink(rawPath);
-    documentName = rawPath.substring(rawPath.lastIndexOf("/") + 1);
-    documentPath = buildDocumentPath(rawPath);
-    isDocumentReady = true;
-    documentRefLink = documentRefLink.replace("//", "/");
-    documentPath = documentPath.replace("//", "/");
-    docIcon = CssClassUtils.getCSSClassByFileNameAndFileType(documentName, selectField, CssClassManager.ICON_SIZE.ICON_64);
-    
-    Node docNode = getDocNode(REPOSITORY, WORKSPACE, documentPath);
-    documentName = getDocumentName(docNode, documentName);
-    Calendar date = org.exoplatform.services.cms.impl.Utils.getDate(docNode);
-    docInfo =  getFullName(docNode) +
-               org.exoplatform.services.cms.impl.Utils.fileSize(docNode) + 
-               formatDate(date);
-    setReadyForPostingActivity(true);
-    UIActivityComposer activityComposer = getActivityComposerManager().getCurrentActivityComposer();
-    activityComposer.setDisplayed(true);
-  }  
+    if (StringUtils.isEmpty(selectField) || !selectField.equals(UIAbstractSelectFileComposer.COMPOSER_SELECTION_TYPE)) {
+      LOG.warn("No selection is not retrieved with expected type");
+      return;
+    }
 
-  private String getDocumentName(Node docNode, String pathName) {
-    try {
-      return docNode.getProperty("exo:title").getString();
-    } catch (RepositoryException ex) {
-      return pathName;
+    Set<ComposerFileItem> selectedComposerChildItems = (Set<ComposerFileItem>) value;
+    Set<ComposerFileItem> duplicatedItems = new HashSet<>(selectedComposerChildItems);
+    duplicatedItems.retainAll(selectedFileItems);
+    for (ComposerFileItem composerFileItem : duplicatedItems) {
+      addDuplicatedFileName(composerFileItem.getName());
+    }
+
+    selectedComposerChildItems.removeAll(selectedFileItems);
+    int remainingFilesToSelect = getRemainingFilesToSelect();
+    if(remainingFilesToSelect >= selectedComposerChildItems.size()) {
+      for (ComposerFileItem composerFileItem : selectedComposerChildItems) {
+        if(!selectedFileItems.contains(composerFileItem)) {
+          selectedFileItems.add(composerFileItem);
+        }
+      }
+    } else {
+      ArrayList<ComposerFileItem> selectedItemList = new ArrayList<>(selectedComposerChildItems);
+      List<ComposerFileItem> subList = selectedItemList.subList(0, remainingFilesToSelect);
+      selectedFileItems.addAll(subList);
+    }
+    Collections.sort(selectedFileItems);
+  }
+
+  public boolean testAndSetMaxCountReached(boolean duplicated) {
+    if(duplicatedFilesSelection) {
+      duplicatedFilesSelection = duplicated;
+      return true;
+    } else {
+      duplicatedFilesSelection = duplicated;
+      return false;
     }
   }
 
-  private String getFullName(Node docNode) throws Exception {
-      String ownerId = org.exoplatform.services.cms.impl.Utils.getOwner(docNode);
-      OrganizationService organizationService = getApplicationComponent(OrganizationService.class);
-      UserHandler userHandler = organizationService.getUserHandler();
-      return userHandler.findUserByName(ownerId).getDisplayName();
-  }
-  
-  private String formatDate(Calendar date) {
-      DateFormat format = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.FULL, SimpleDateFormat.SHORT);
-      return " - " + format.format(date.getTime());
+  public boolean hasDuplicatedFilesInSelection() {
+    return !duplicatedFileNames.isEmpty();
   }
 
-  private ExoSocialActivity saveActivity(Map<String, String> activityParams, IdentityManager identityManager, Identity ownerIdentity) throws RepositoryException {
-    Node node = getDocNode(activityParams.get(UIDocActivity.REPOSITORY), activityParams.get(UIDocActivity.WORKSPACE), 
-                           activityParams.get(UIDocActivity.DOCPATH));
-    String activity_type = ACTIVITY_TYPE;
-    if(node.getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
-      activity_type = FILE_SPACES;
+  public void addDuplicatedFileName(String duplicatedFileName) {
+    this.duplicatedFileNames.add(duplicatedFileName);
+  }
+
+  public String getAndClearDuplicatedFiles() {
+    String duplicatedFiles = StringUtils.join(duplicatedFileNames, ",");
+    duplicatedFileNames.clear();
+    return duplicatedFiles;
+  }
+
+  public void removeFileItem(ComposerFileItem fileItem) {
+    for (UIAbstractSelectFileComposer selectFileComposer : uiFileSelectors.values()) {
+      selectFileComposer.removeFile(fileItem);
     }
+    selectedFileItems.remove(fileItem);
+  }
+
+  public List<ComposerFileItem> getSelectedFileItems() {
+    return getSelectedFileItems(true);
+  }
+
+  public List<ComposerFileItem> getSelectedFileItems(boolean computeFromSelectors) {
+    if (computeFromSelectors) {
+      for (UIAbstractSelectFileComposer selectFileComposer : uiFileSelectors.values()) {
+        Set<ComposerFileItem> selectFiles = selectFileComposer.getSelectFiles();
+        if(selectFiles != null && !selectFiles.isEmpty()) {
+          for (ComposerFileItem composerFileItem : selectFiles) {
+            if(!selectedFileItems.contains(composerFileItem)) {
+              selectedFileItems.add(composerFileItem);
+            }
+          }
+          Collections.sort(selectedFileItems);
+        }
+      }
+    }
+    return selectedFileItems;
+  }
+
+  private ExoSocialActivity saveActivity(Map<String, String> activityParams,
+                                         IdentityManager identityManager,
+                                         Identity ownerIdentity) throws RepositoryException {
+    String activity_type = FILE_SPACES;
     String remoteUser = ConversationState.getCurrent().getIdentity().getUserId();
     Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, remoteUser, true);
     String title = activityParams.get(UIDocActivity.MESSAGE);
@@ -306,66 +360,66 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     ExoSocialActivity activity = new ExoSocialActivityImpl(userIdentity.getId(), activity_type, title, null);
     activity.setTemplateParams(activityParams);
     //
-    ActivityManager activityManager = getApplicationComponent(ActivityManager.class);
     activityManager.saveActivityNoReturn(ownerIdentity, activity);
-    
-    String activityId = activity.getId();
-    if (!StringUtils.isEmpty(activityId)) {
-      ActivityTypeUtils.attachActivityId(node, activityId);
-      node.save();
-    }
+
     //
     return activityManager.getActivity(activity.getId());
   }
 
-  private String buildDocumentLink(String rawPath) {
-    String portalContainerName = PortalContainer.getCurrentPortalContainerName();
-    String restContextName = PortalContainer.getCurrentRestContextName();
-    String restService = "jcr";
-    return new StringBuilder().append("/").append(portalContainerName)
-                                            .append("/").append(restContextName)
-                                            .append("/").append(restService)
-                                            .append("/").append(REPOSITORY)
-                                            .append("/").append(WORKSPACE)
-                                            .append("/").append(rawPath).toString();
-  }
-
-  public String buildDocumentPath(String rawPath){
-    return "/" + rawPath;
-  }
-
-  public static class SelectDocumentActionListener  extends EventListener<UIDocActivityComposer> {
+  public static class SelectDocumentActionListener extends EventListener<UIDocActivityComposer> {
     @Override
     public void execute(Event<UIDocActivityComposer> event) throws Exception {
       UIDocActivityComposer docActivityComposer = event.getSource();
       PopupContainer popupContainer = docActivityComposer.getAncestorOfType(UIPortletApplication.class)
-                                                          .findFirstComponentOfType(PopupContainer.class);
-      popupContainer.activate(UIDocActivitySelector.class, 500, POPUP_COMPOSER);
+                                                         .findFirstComponentOfType(PopupContainer.class);
+      UIDocActivityPopup uiDocActivityPopup = popupContainer.createUIComponent(UIDocActivityPopup.class, null, null);
+      popupContainer.activate(uiDocActivityPopup, 570, 0, false, POPUP_COMPOSER);
+      for (UIAbstractSelectFileComposer uiSelector : uiDocActivityPopup.getUIFileSelectors()) {
+        docActivityComposer.getUIFileSelectors().put(uiSelector.getId(), uiSelector);
+      }
+      uiDocActivityPopup.setMaxFilesCount(docActivityComposer.getRemainingFilesToSelect());
       event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
     }
   }
-  
-  public static class RemoveDocumentActionListener  extends EventListener<UIDocActivityComposer> {
+
+  public static class RemoveDocumentActionListener extends EventListener<UIDocActivityComposer> {
     @Override
     public void execute(Event<UIDocActivityComposer> event) throws Exception {
       final UIDocActivityComposer docActivityComposer = event.getSource();
-      final UIActivityComposerManager activityComposerManager = docActivityComposer.getActivityComposerManager();
-      final UIActivityComposer activityComposer = activityComposerManager.getCurrentActivityComposer();
-//      activityComposerManager.setDefaultActivityComposer();
-//      activityComposer.setDisplayed(false);
-      // Reset values
-      docActivityComposer.resetValues();
+      String selectedId = event.getRequestContext().getRequestParameter(OBJECTID);
+      List<ComposerFileItem> selectedFileItems = docActivityComposer.getSelectedFileItems(false);
+      Iterator<ComposerFileItem> iterator = selectedFileItems.iterator();
+      while (iterator.hasNext()) {
+        ComposerFileItem composerFileItem = (ComposerFileItem) iterator.next();
+        if (composerFileItem.getId().equals(selectedId)) {
+          iterator.remove();
+          for (UIAbstractSelectFileComposer uiAbstractSelectFileComposer : docActivityComposer.getUIFileSelectors().values()) {
+            uiAbstractSelectFileComposer.removeFile(composerFileItem);
+          }
+        }
+      }
       event.getRequestContext().addUIComponentToUpdateByAjax(docActivityComposer);
     }
   }
-  
+
   protected Node getDocNode(String repository, String workspace, String docPath) {
     NodeLocation nodeLocation = new NodeLocation(repository, workspace, docPath);
     return NodeLocation.getNodeByLocation(nodeLocation);
   }
-  
+
+  public int getRemainingFilesToSelect() {
+    return getMaxUploadCount() - getSelectedFileItems().size();
+  }
+
+  public int getMaxUploadCount() {
+    return maxFilesCount;
+  }
+
   protected void clearComposerData() {
     resetValues();
   }
-  
+
+  public int getLimitFileSize() {
+    return maxFileSize;
+  }
 }

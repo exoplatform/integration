@@ -16,18 +16,14 @@
  */
 package org.exoplatform.wcm.notification.plugin;
 
-import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.exoplatform.commons.api.notification.NotificationContext;
 import org.exoplatform.commons.api.notification.model.ArgumentLiteral;
 import org.exoplatform.commons.api.notification.model.NotificationInfo;
@@ -36,25 +32,17 @@ import org.exoplatform.commons.api.notification.service.template.TemplateContext
 import org.exoplatform.commons.notification.NotificationUtils;
 import org.exoplatform.commons.notification.template.TemplateUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.container.ExoContainer;
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.InitParams;
-import org.exoplatform.container.xml.PortalContainerInfo;
-import org.exoplatform.services.cms.documents.DocumentService;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodeLocation;
-import org.exoplatform.services.wcm.core.NodetypeConstant;
-import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
-import org.exoplatform.social.core.service.LinkProvider;
-import org.exoplatform.social.notification.LinkProviderUtils;
+import org.exoplatform.wcm.ext.component.activity.FileUIActivity;
 import org.exoplatform.wcm.ext.component.activity.listener.Utils;
 import org.exoplatform.webui.cssfile.CssClassIconFile;
 import org.exoplatform.webui.cssfile.CssClassManager;
@@ -80,17 +68,18 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
   public static final String EXO_RESOURCES_URI            = "/eXoSkin/skin/images/themes/default/Icons/TypeIcons/EmailNotificationIcons/";
   public static final String DOCNAME                      = "DOCNAME";
   public static final String ICON_FILE_EXTENSION          = ".png";
+  public static final String CONTENT_LINK                 = "contenLink";
 
-  private String             mimeType;
-  private String             nodeUUID;
-  private Node               contentNode;
-  private NodeLocation       nodeLocation;
-  private String             documentTitle;
-  private ExoSocialActivity  activity;
-  private String             repository;
-  private String             workspace;
-  private String             baseURI;
-  private String             docName;
+  private String[]             mimeType;
+  private String[]             nodeUUID;
+  private Node[]               contentNode;
+  private NodeLocation[]       nodeLocation;
+  private String[]             documentTitle;
+  private ExoSocialActivity    activity;
+  private String               baseURI;
+  private String[]             docName;
+  private String[]             contentLink;
+  private int                  filesCount;
 
   public FileActivityChildPlugin(InitParams initParams) {
     super(initParams);
@@ -119,34 +108,45 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       getAndSetFileInfo(templateParams);
 
       //
-      Node currentNode = getContentNode();
       
       // File uploaded to Content Explorer hasn't MESSAGE field
       String message = templateParams.get(MESSAGE) != null ? NotificationUtils.processLinkTitle(templateParams.get(MESSAGE)) : "";
-      templateContext.put("ACTIVITY_URL", CommonsUtils.getCurrentDomain() + activity.getTemplateParams().get("contenLink"));
+
       templateContext.put("ACTIVITY_TITLE", message);
+
+      boolean[] isVideo = new boolean[this.filesCount];
+      String[] thumbnailURL = new String[this.filesCount];
+      String[] summaries = new String[this.filesCount];
+      String[] sizes = new String[this.filesCount];
+      int[] versions = new int[this.filesCount];
+      for (int i = 0; i < this.filesCount; i++) {
+        isVideo[i] = this.mimeType[i].startsWith("video");
+        thumbnailURL[i] = getDefaultThumbnail(i);
+        Node currentNode = getContentNode(i);
+        summaries[i] = Utils.getSummary(currentNode);
+        sizes[i] = getSize(currentNode);
+        versions[i] = getVersion(currentNode);
+        if(this.contentLink != null && this.contentLink.length > i) {
+          this.contentLink[i] = CommonsUtils.getCurrentDomain() + this.contentLink[i];
+        }
+      }
+
+      templateContext.put("ACTIVITY_URL", this.contentLink);
       templateContext.put("DOCUMENT_TITLE", this.documentTitle);
-      templateContext.put("SUMMARY", Utils.getSummary(currentNode));
-      templateContext.put("SIZE", getSize(currentNode));
-      templateContext.put("VERSION", getVersion(currentNode));
-      templateContext.put("IS_VIDEO", this.mimeType.startsWith("video"));
-      String thumbnailUrl = null;
-      templateContext.put("DEFAULT_THUMBNAIL_URL", getDefaultThumbnail());
-      templateContext.put("THUMBNAIL_URL", thumbnailUrl);
+      templateContext.put("SUMMARY", summaries);
+      templateContext.put("SIZE", sizes);
+      templateContext.put("VERSION", versions);
+      templateContext.put("IS_VIDEO", isVideo);
+      templateContext.put("DEFAULT_THUMBNAIL_URL", thumbnailURL);
+      templateContext.put("THUMBNAIL_URL", null);
+      templateContext.put("COUNT", filesCount);
+
       String content = TemplateUtils.processGroovy(templateContext);
       return content;
     } catch (Exception e) {
       LOG.error("Failed at makeContent().", e);
       return (activity != null) ? activity.getTitle() : "";
     }
-  }
-
-  private String getSpaceDocuments(String space) {
-    return "g/:spaces:" + space + "/" +space + "/" + "documents";
-  }
-
-  private String capitalizeFirstLetter(String str) throws Exception {
-    return str.substring(0, 1).toUpperCase() + str.substring(1);
   }
 
   @Override
@@ -160,17 +160,20 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
   }
   
   private void getAndSetFileInfo(Map<String, String> templateParams) {
-    this.repository = templateParams.get(REPOSITORY);
-    this.workspace = templateParams.get(WORKSPACE);
-    this.nodeUUID = templateParams.get(NODE_UUID);
-    this.mimeType = templateParams.get(MIME_TYPE);
-    this.docName = templateParams.get(DOCNAME);
-    
-    String documentTitle = templateParams.get(DOCUMENT_TITLE);
+    this.nodeUUID = getParameterValues(templateParams, NODE_UUID);
+    this.filesCount = this.nodeUUID.length;
+    this.mimeType = getParameterValues(templateParams, MIME_TYPE);
+    this.docName = getParameterValues(templateParams, DOCNAME);
+    this.contentLink = getParameterValues(templateParams, CONTENT_LINK);
+
+    this.contentNode = new Node[this.filesCount];
+    this.nodeLocation = new NodeLocation[this.filesCount];
+
+    String[] documentTitle = getParameterValues(templateParams, DOCUMENT_TITLE);
     if (documentTitle != null) {
       this.documentTitle = documentTitle;
     } else {
-      this.documentTitle = templateParams.get(CONTENT_NAME);;
+      this.documentTitle = getParameterValues(templateParams, CONTENT_NAME);
     }
     
     //get node data
@@ -180,26 +183,27 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
       manageRepo = repositoryService.getCurrentRepository();
       SessionProvider sessionProvider = CommonsUtils.getSystemSessionProvider();
       for (String ws : manageRepo.getWorkspaceNames()) {
-        try {
-          this.contentNode = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(this.nodeUUID);
-          break;
-        } catch (RepositoryException e) {
-          continue;
+        for (int i = 0; i < this.filesCount; i++) {
+          try {
+            this.contentNode[i] = sessionProvider.getSession(ws, manageRepo).getNodeByUUID(this.nodeUUID[i]);
+            this.nodeLocation[i] = NodeLocation.getNodeLocationByNode(contentNode[i]);
+          } catch (RepositoryException e) {
+            continue;
+          }
         }
       }
     } catch (RepositoryException re) {
       LOG.error("Can not get the repository. ", re);
     }
 
-    this.nodeLocation = NodeLocation.getNodeLocationByNode(contentNode);
     
     //
     this.baseURI = CommonsUtils.getCurrentDomain();
   }
 
-  private Object getDefaultThumbnail() {
+  private String getDefaultThumbnail(int i) {
     String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(
-        this.docName, this.mimeType, CssClassManager.ICON_SIZE.ICON_64);
+        (this.docName == null ? (this.documentTitle == null ? null : this.documentTitle[i]) : this.docName[i]), (this.mimeType == null ? null : this.mimeType[i]), CssClassManager.ICON_SIZE.ICON_64);
     
     if (cssClass.indexOf(CssClassIconFile.DEFAULT_CSS) > 0) {
       return baseURI + EXO_RESOURCES_URI  + "uiIcon64x64Templatent_file.png";
@@ -207,52 +211,8 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
     return baseURI + EXO_RESOURCES_URI + cssClass.split(" ")[0] + ICON_FILE_EXTENSION;
   }
 
-  private String getThumbnailUrl(Node currentNode) {
-    try {
-      ExoContainer container = ExoContainerContext.getCurrentContainer();
-      PortalContainerInfo containerInfo = (PortalContainerInfo) container.getComponentInstanceOfType(PortalContainerInfo.class);
-      String portalName = containerInfo.getContainerName();
-
-      String restContextName = org.exoplatform.ecm.webui.utils.Utils.getRestContextName(portalName);
-      String preferenceWS = currentNode.getSession().getWorkspace().getName();
-      String encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
-      encodedPath = encodedPath.replaceAll ("%2F", "/");
-
-      if (this.mimeType.startsWith("image")) {
-        int imageWidth = getImageWidth(currentNode);
-        int imageHeight = getImageHeight(currentNode);
-        if (imageHeight > imageWidth && imageHeight > 300) {
-          imageWidth = (300 * imageWidth) / imageHeight;
-          imageHeight = 300;
-        } else if(imageWidth > imageHeight && imageWidth > 300){
-          imageHeight = (300 * imageHeight) / imageWidth;
-          imageWidth = 300;
-        } else if(imageWidth == imageHeight && imageHeight > 300) {
-          imageWidth = 300;
-          imageHeight= 300;
-        }
-
-        return this.baseURI + "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/" + imageWidth + "x" + imageHeight + "/" +
-          this.repository + "/" + preferenceWS + encodedPath;
-      }
-      else if (this.mimeType.indexOf("icon") >=0) {
-        return getWebdavURL();
-      }
-      else if (org.exoplatform.services.cms.impl.Utils.isSupportThumbnailView(mimeType)) {
-        return this.baseURI + "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + this.repository + "/" + preferenceWS + encodedPath;
-      } else {
-        return null;
-      }
-
-    }
-    catch (Exception e) {
-      LOG.debug("Cannot get thumbnail url");
-    }
-    return StringUtils.EMPTY;
-  }
-
-  private Node getContentNode() {
-    return NodeLocation.getNodeByLocation(nodeLocation);
+  private Node getContentNode(int i) {
+    return NodeLocation.getNodeByLocation(nodeLocation[i]);
   }
 
   private String getSize(Node node) {
@@ -280,70 +240,29 @@ public class FileActivityChildPlugin extends AbstractNotificationChildPlugin {
     return fileSize;    
   }
 
-  private String getWebdavURL() throws Exception {
-    contentNode = getContentNode();
-    FriendlyService friendlyService = WCMCoreUtils.getService(FriendlyService.class);
-    String link = "#";
-
-    String portalName = PortalContainer.getCurrentPortalContainerName();
-    String restContextName = PortalContainer.getCurrentRestContextName();
-    if (this.contentNode.isNodeType("nt:frozenNode")) {
-      String uuid = this.contentNode.getProperty("jcr:frozenUuid").getString();
-      Node originalNode = this.contentNode.getSession().getNodeByUUID(uuid);
-      link = baseURI + "/" + portalName + "/" + restContextName + "/jcr/" + this.repository + "/"
-          + this.workspace + originalNode.getPath() + "?version=" + this.contentNode.getParent().getName();
-    } else {
-      link = baseURI + "/" + portalName + "/" + restContextName + "/jcr/" + this.repository + "/"
-          + this.workspace + this.contentNode.getPath();
-    }
-
-    return friendlyService.getFriendlyUri(link);
-  }
-
-  private int getImageWidth(Node node) {
-    int imageWidth = 0;
-    try {
-      if(node.hasNode(NodetypeConstant.JCR_CONTENT)) node = node.getNode(NodetypeConstant.JCR_CONTENT);
-      ImageReader reader = ImageIO.getImageReadersByMIMEType(mimeType).next();
-      ImageInputStream iis = ImageIO.createImageInputStream(node.getProperty("jcr:data").getStream());
-      reader.setInput(iis, true);
-      imageWidth = reader.getWidth(0);
-      iis.close();
-      reader.dispose();     
-    } catch (RepositoryException | IOException e ){
-      if (LOG.isWarnEnabled()) {
-        LOG.warn("Can not get image width in " + this.getClass().getName());
-      }
-    }
-    return imageWidth;
-  }
-
-  private int getImageHeight(Node node) {
-    int imageHeight = 0;
-    try {
-      if(node.hasNode(NodetypeConstant.JCR_CONTENT)) node = node.getNode(NodetypeConstant.JCR_CONTENT);
-      ImageReader reader = ImageIO.getImageReadersByMIMEType(mimeType).next();
-      ImageInputStream iis = ImageIO.createImageInputStream(node.getProperty("jcr:data").getStream());
-      reader.setInput(iis, true);
-      imageHeight = reader.getHeight(0);
-      iis.close();
-      reader.dispose();     
-    } catch (RepositoryException | IOException e ){
-      if (LOG.isWarnEnabled()) {
-        LOG.warn("Can not get image height in " + this.getClass().getName());
-      }
-    }
-    return imageHeight;
-  }
-
   private int getVersion(Node node) {
     String currentVersion = null;
     try {
-      currentVersion = contentNode.getBaseVersion().getName();      
+      currentVersion = node.getBaseVersion().getName();
       if (currentVersion.contains("jcr:rootVersion")) currentVersion = "0";
     }catch (Exception e) {
       currentVersion ="0";
     }
     return Integer.parseInt(currentVersion);
   }
+
+  private String[] getParameterValues(Map<String, String> activityParams, String paramName) {
+    String[] values = null;
+    String value = activityParams.get(paramName);
+    if(value != null) {
+      values = value.split(FileUIActivity.SEPARATOR_REGEX);
+    }
+    if (LOG.isDebugEnabled()) {
+      if(this.filesCount != 0 && (values == null || values.length != this.filesCount)) {
+          LOG.debug("Parameter '{}' hasn't same length as other activity parmameters", paramName);
+      }
+    }
+    return values;
+  }
+
 }

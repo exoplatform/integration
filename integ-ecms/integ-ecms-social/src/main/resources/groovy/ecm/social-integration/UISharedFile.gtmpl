@@ -29,7 +29,7 @@
   import org.exoplatform.social.core.service.LinkProvider;
   import org.apache.commons.lang.StringUtils;
   import org.exoplatform.wcm.webui.reader.ContentReader;
-	import org.apache.commons.lang.StringEscapeUtils;
+  import org.apache.commons.lang.StringEscapeUtils;
   //ECMS import BEGIN
   import org.exoplatform.wcm.ext.component.activity.ContentPresentation;
   import org.exoplatform.services.jcr.util.Text;
@@ -53,7 +53,7 @@
 	<%
   }
 
-  public void getOwnerSpace(String ownerName, String ownerUri, String spaceSourceURI, String spaceID, String spaceName) {
+  public void getOwnerSpace(String ownerName, String ownerUri, String spaceSourceURI, String spaceID, String spaceName, String spaceImageSource) {
 	%>
 	<div class="ownerName">
 	  <a title="$ownerName" href="$ownerUri">$ownerName</a> <i><%=_ctx.appRes("UIShareDocuments.label.SharedADocument")%></i>
@@ -78,7 +78,7 @@
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
   def streamOwner = activity.getStreamOwner();
-  def currentNode = uicomponent.getContentNode();
+  def currentNode = uicomponent.getContentNode(0);
   
   def rcontext = _ctx.getRequestContext();
   rcontext.getJavascriptManager().require("SHARED/jquery", "gj").addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
@@ -120,10 +120,10 @@
   
   def activityStatus = uicomponent.getActivityStatus();
   def activityTitle = uicomponent.getActivityTitle();
-  def contentName = uicomponent.getContentName();
+  def contentName = uicomponent.getContentName(0);
   def activityContentTitle = Text.unescapeIllegalJcrChars(activity.title);
-	def contentNode = uicomponent.getContentNode();
-  def mimeType = uicomponent.getMimeType();
+	def contentNode = uicomponent.getContentNode(0);
+  def mimeType = uicomponent.getMimeType(0);
   
   //
   def commentList = uicomponent.getComments();
@@ -249,34 +249,34 @@
 
 	  def uicontentpresentation = uicomponent.addChild(ContentPresentation.class, null, null);
 	  uicontentpresentation.setNode(currentNode);
-      def binarySrc = uicomponent.getWebdavURL();
+      def binarySrc = uicomponent.getWebdavURL(0);
       def summary =  uicomponent.getSummary(currentNode);
       String repository = ((ManageableRepository)currentNode.getSession().getRepository()).getConfiguration().getName();
       def preferenceWS  = currentNode.getSession().getWorkspace().getName();
       def fileComponent = uicontentpresentation.getUIComponent(mimeType);
 
-	  def ilBinarySrc = uicomponent.getImagePath();
+	  def ilBinarySrc = uicomponent.getImagePath(0);
 
-	  def state = uicomponent.getState();
-	  def author = StringEscapeUtils.escapeHtml(uicomponent.getAuthor());
-	  def lastModified = uicomponent.getLastModified();
-	  def dateCreated = uicomponent.getDateCreated();
+	  def state = uicomponent.getState(0);
+	  def author = StringEscapeUtils.escapeHtml(uicomponent.getAuthor(0));
+	  def lastModified = uicomponent.getLastModified(0);
+	  def dateCreated = uicomponent.getDateCreated(0);
 
 	  String portalName = uicomponent.getContainerName();
 
 	  String restContextName = org.exoplatform.ecm.webui.utils.Utils.getRestContextName(portalName);
 	  if(mimeType.equals("application/rss+xml")) mimeType="text/html";
 	  //ECMS declare variables - END
-	  def docTypeName = uicomponent.getDocTypeName();
-	  def docSummary = uicomponent.getDocSummary();
-	  def docDownloadUrl = uicomponent.getDownloadLink();
-		def docOpenUri = uicomponent.getCurrentDocOpenUri();
+	  def docTypeName = uicomponent.getDocTypeName(0);
+	  def docSummary = uicomponent.getDocSummary(0);
+	  def docDownloadUrl = uicomponent.getDownloadLink(0);
+		def docOpenUri = uicomponent.getCurrentDocOpenUri(0);
 		def escapedOwnerName = ownerName.replace("'", "\\'").replace("&#39;", "\\&#39;");
 		def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'").replace("&#39;", "\\&#39;");
 		def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;").replace("\n", "").replace("\r", "")) : "";
 		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc(event, {doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + escapedOwnerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "', status: '" + escapedActivityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + ", spaceURL: '" + spaceURL + "'}})})";
-		def docFolderRelativePath = uicomponent.getDocFolderRelativePath();
-		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks();
+		def docFolderRelativePath = uicomponent.getDocFolderRelativePath(0);
+		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks(0);
 		def size = uicomponent.getSize(currentNode);
 	  def fileSize = uicomponent.getFileSize(currentNode);
 	  def description = uicomponent.getSummary(currentNode);
@@ -314,7 +314,7 @@
                             </a>
                         </div>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-				  			getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName);
+				  			getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName, spaceImageSource);
 						} else {
 							getOwner(ownerName, ownerUri);
 						} %>
@@ -342,8 +342,8 @@
 		        <%   if( (mimeType.startsWith("image") || mimeType.indexOf("icon") >=0)  && currentNode != null){%>
 		               <div id="MediaContent${activity.id}" class=" pull-left mediaContent " onclick="$docPreviewUri" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle">
 		           	     <%
-		           	       def imageWidth = uicomponent.getImageHeight(currentNode);
-		           	       def imageHeight = uicomponent.getImageHeight(currentNode);
+		           	       def imageWidth = uicomponent.getImageHeight(currentNode, 0);
+		           	       def imageHeight = uicomponent.getImageHeight(currentNode, 0);
 		           	       if (imageHeight > imageWidth && imageHeight > 300) {
 		           	         imageWidth = (300 * imageWidth) / imageHeight;
 		           	         imageHeight = 300;
@@ -358,7 +358,7 @@
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                   String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/"+imageWidth+"x"+imageHeight+"/" + repository + "/" + preferenceWS + encodedPath;
 		                   if(mimeType.indexOf("icon") >=0) thumbnailImage = binarySrc;
-		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);
+		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType, 0);
 
 									   %>
 										 <span><img src="$thumbnailImage" onerror="var self = this; require(['SHARED/wcm-utils'], function(wcmutil) { wcmutil.WCMUtils.loadFallbackImage(self); });" class="pdfImageBorder"/></span>
@@ -372,7 +372,7 @@
 		                   def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 		           	       encodedPath = encodedPath.replaceAll ("%2F", "/");
 		                   String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/big/" + repository + "/" + preferenceWS + encodedPath;
-		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);
+		                   def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType, 0);
 		                 %>
 										 <span><img src="$pdfThumbnailImage" onerror="var self = this; require(['SHARED/wcm-utils'], function(wcmutil) { wcmutil.WCMUtils.loadFallbackImage(self); });" class="pdfImageBorder"/></span>
 										 <span class="fallbackImage" style="display: none;"><i class="<%=classIconName%>"></i></span>
@@ -386,7 +386,7 @@
 		            %>
 		              <div id="MediaContent${activity.id}" class="fileTypeContent">
 		               <%
-		                 def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType);
+		                 def classIconName = uicomponent.getCssClassIconFile(activityContentTitle, mimeType, 0);
 		               %>
 		               <a href="$docPreviewUri"  data-original-title="$activityContentTitle" rel="tooltip" data-placement="bottom"><i class="<%=classIconName%>"></i></a>
 					  </div>
@@ -690,7 +690,7 @@
                             </a>
                         </div>
 						<% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {
-							getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName);
+							getOwnerSpace(ownerName, ownerUri, spaceSourceURI, spaceID, spaceName, spaceImageSource);
 						} else {
 							getOwner(ownerName, ownerUri);
 						} %>
@@ -714,7 +714,7 @@
 					<div class="clearfix isPreviewable">
 		              <div id="MediaContent${activity.id}" class="fileTypeContent">
 			           <%
-		                 def classIconName = uicomponent.getCssClassIconFile(contentName, mimeType);
+		                 def classIconName = uicomponent.getCssClassIconFile(contentName, mimeType, 0);
 		               %>
 		               <i class="<%=classIconName%>"></i>
 					  </div>

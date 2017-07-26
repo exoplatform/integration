@@ -66,6 +66,7 @@
       <version>Версия: {0}</version>
       <updatedOn>Оновлено</updatedOn>
       <updatedBy>От</updatedBy>
+      <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>В архиве</archived>
@@ -82,6 +83,7 @@
     <view>Показать</view>
     <edit>Редактировать</edit>
     <download>Загрузить</download>
+    <downloadAll>Download All</downloadAll>
     <preview>Предварительный просмотр</preview>
   </SocialIntegration>
   <UIPopupWindow>
