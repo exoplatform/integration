@@ -17,9 +17,7 @@
 package org.exoplatform.wcm.ext.component.activity;
 
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.cms.documents.TrashService;
-import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
@@ -55,19 +53,17 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       workspaceName = activity.getTemplateParams().get(ContentUIActivity.WORKSPACE);
     }
     //get node data
-    Node contentNode = null;
     try {
       ManageableRepository manageRepo = WCMCoreUtils.getRepository();
       if(StringUtils.isEmpty(workspaceName)) workspaceName = manageRepo.getConfiguration().getDefaultWorkspaceName();
       SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
-      LinkManager linkManager = PortalContainer.getInstance().getComponentInstanceOfType(LinkManager.class);
       TrashService trashService = WCMCoreUtils.getService(TrashService.class);
       Node currentNode = sessionProvider.getSession(workspaceName, manageRepo).getNodeByUUID(nodeUUID);
-      if(!trashService.isInTrash(currentNode)){
-        contentNode = linkManager.getTarget(currentNode);
-      }else {
+      if(trashService.isInTrash(currentNode)) {
         org.exoplatform.wcm.ext.component.activity.listener.Utils.deleteFileActivity(currentNode);
       }
+      fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
+      fileActivity.setContentNode(currentNode, 0);
     } catch (ItemNotFoundException infe){
       LOG.error("Item not found. Activity will be deleted ", infe);
       ActivityManager activityManager = WCMCoreUtils.getService(ActivityManager.class);
@@ -76,7 +72,5 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       if(LOG.isErrorEnabled())
         LOG.error("Can not get the repository. ", re);
     }
-    fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
-    fileActivity.setContentNode(contentNode, 0);
   }
 }
