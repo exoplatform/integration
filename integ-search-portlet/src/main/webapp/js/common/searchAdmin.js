@@ -28,8 +28,7 @@ function initSearchAdmin() {
       });
     });
 
-
-    $(".contentType").live("click", function(){
+    $('body').on('click', '.contentType', function() {
       if("Enable"==$(this).attr("name")) {
         $(this).attr("name","Disable");
         $(this).val(eXo.ecm.WCMUtils.getBundle("SearchAdmin.action.Disable", eXo.env.portal.language));
@@ -44,16 +43,19 @@ function initSearchAdmin() {
       $.each($(".contentType"), function(){
         if("Disable"== this.name) enabledTypes.push(this.id);
       });
-      
-      var jqxhr = $.post("/rest/search/enabled-searchtypes/"+enabledTypes, {
-        searchTypes:enabledTypes.join(",")
-      });
 
-      jqxhr.complete(function(data) {
-        if("ok"==data.responseText){
-          console.log("Search setting has been saved succesfully.");
-        } else {
-          alert("Problem occurred when saving your setting: "+data.responseText);
+      $.ajax({
+        url: '/rest/search/enabled-searchtypes/' + enabledTypes,
+        method: 'POST',
+        data: {
+          searchTypes: enabledTypes.join(",")
+        },
+        complete: function (data) {
+          if ("ok" == data.responseText) {
+            console.log("Search setting has been saved succesfully.");
+          } else {
+            alert("Problem occurred when saving your setting: " + data.responseText);
+          }
         }
       });
     });

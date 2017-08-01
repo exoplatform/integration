@@ -780,24 +780,26 @@ window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk)
 
 
     // Call REST service to save the setting
-    $("#btnSave").click(function(){
-      //var url = "/rest/search/setting/"+$("#resultsPerPage").val()+"/"+getSelectedTypes()+"/"+$("#searchCurrentSiteOnly").is(":checked").toString()+"/"+$("#hideSearchForm").is(":checked").toString()+"/"+$("#hideFacetsFilter").is(":checked").toString();      
-      var jqxhr = $.post("/rest/search/setting", {
-        resultsPerPage: $("#resultsPerPage").val(),
-        searchTypes: getSelectedTypes(),
-        searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked"),
-        hideSearchForm: $("#hideSearchForm").is(":checked"),
-        hideFacetsFilter: $("#hideFacetsFilter").is(":checked")
-      });
-
-      jqxhr.complete(function(data) {
-        alert("ok"==data.responseText?"Your setting has been saved.":"Problem occurred when saving your setting: "+data.responseText);
+    $("#btnSave").click(function () {
+      //var url = "/rest/search/setting/"+$("#resultsPerPage").val()+"/"+getSelectedTypes()+"/"+$("#searchCurrentSiteOnly").is(":checked").toString()+"/"+$("#hideSearchForm").is(":checked").toString()+"/"+$("#hideFacetsFilter").is(":checked").toString();
+      $.ajax({
+        url: '/rest/search/setting',
+        method: 'POST',
+        data: {
+          resultsPerPage: $("#resultsPerPage").val(),
+          searchTypes: getSelectedTypes(),
+          searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked"),
+          hideSearchForm: $("#hideSearchForm").is(":checked"),
+          hideFacetsFilter: $("#hideFacetsFilter").is(":checked")
+        },
+        complete: function (data) {
+          alert("ok" == data.responseText ? "Your setting has been saved." : "Problem occurred when saving your setting: " + data.responseText);
+        }
       });
     });
 
-
     // Handler for the checkboxes
-    $(":checkbox[name='searchInOption']").live("click", function(){
+    $('body').on('click', ":checkbox[name='searchInOption']", function() {
       if("all"==this.value){ //All checked
         if($(this).is(":checked")) { // check/uncheck all
           $(":checkbox[name='searchInOption']").attr('checked', true);
@@ -808,7 +810,6 @@ window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk)
         $(":checkbox[name='searchInOption'][value='all']").attr('checked', false); //uncheck All Sites
       }
     });
-
 
     // Load all needed configurations and settings from the service to build the UI
     $.getJSON("/rest/search/registry", function(registry){
