@@ -57,12 +57,14 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
 		";
         
     var QUICKSEARCH_TABLE_TEMPLATE=" \
+        <div class=\"result-container\">\
           <table class=\"uiGrid table table-striped  rounded-corners\"> \
             <col width=\"30%\"> \
             <col width=\"70%\"> \
             %{resultRows} \
-            %{messageRow} \
-          </table> \
+           </table>\
+        </div>\
+        %{messageRow} \
         ";
 
     var QUICKSEARCH_TABLE_ROW_TEMPLATE=" \
@@ -77,11 +79,9 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
         ";
 
     var QUICKSEARCH_SEE_ALL=" \
-        <tr> \
-          <td colspan=\"2\" class=\"message\"> \
-            <a id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+seeAllMsg+"</a> \
-          </td> \
-        </tr> \
+        <div class=\"seeAllmsg\"> \
+          <a id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+seeAllMsg+"</a> \
+        </div> \
         ";
 
     var QUICKSEARCH_NO_RESULT=" \
