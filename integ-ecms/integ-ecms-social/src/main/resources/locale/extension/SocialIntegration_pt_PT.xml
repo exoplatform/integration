@@ -13,41 +13,41 @@
   </UISocialPopupWindow>
   <SocialIntegration>
     <titles>
-      <fileSize>Tamanho do arquivo</fileSize>
+      <fileSize>Tamanho do Ficheiro</fileSize>
     </titles>
     <messages>
-      <createdBy>was created by</createdBy>
-      <editedBy>was edited by</editedBy>
-      <system>the system</system>
+      <createdBy>foi criado por</createdBy>
+      <editedBy>foi editado por</editedBy>
+      <system>o sistema</system>
       <readmore>...Ler mais.</readmore>
       <editTitle>O título foi atualizado para: {0}</editTitle>
       <editName>O nome foi atualizado para: {0}</editName>
       <editDescription>A descrição foi atualizada para: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <addSource>O Arquivo de origem: {0} foi adicionado</addSource>
-      <addMultiSource>Fontes de arquivos: {0} foram adicionados</addMultiSource>
-      <removeSource>O arquivo de origem: {0} foi removido</removeSource>
-      <removeMultiSource>Fontes de arquivos: {0} foram removidos</removeMultiSource>
+      <singleCreator>O criador é {0}</singleCreator>
+      <multiCreator>Os criadores são {0}</multiCreator>
+      <addSource>O ficheiro de origem: {0} foi adicionado</addSource>
+      <addMultiSource>Fontes de ficheiro: foram adicionados {0}</addMultiSource>
+      <removeSource>Fonte do ficheiro: {0} foi removido</removeSource>
+      <removeMultiSource>Fonte de ficheiro: {0} foram removidos</removeMultiSource>
       <editSummary>O sumário foi atualizado para: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
-      <editContent>Content has been updated.</editContent>
-      <editFile>O arquivo foi atualizado.</editFile>
-      <emptyTitle>The title has been removed.</emptyTitle>
+      <editLanguage>O idioma foi atualizado para: {0}</editLanguage>
+      <editContent>O conteúdo foi atualizado.</editContent>
+      <editFile>O ficheiro foi atualizado.</editFile>
+      <emptyTitle>O título foi removido.</emptyTitle>
       <emptySummary>O sumário foi removido.</emptySummary>
       <emptyContent>O conteúdo foi removido.</emptyContent>
       <updateMetadata>O metadado {0}  foi atualizado para: {1}</updateMetadata>
       <removeMetadata>O metadado {0} foi removido.</removeMetadata>
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Name has been removed.</removeName>
+      <removeTitle>O título foi removido.</removeTitle>
+      <removeName>O nome foi removido.</removeName>
       <removeSummary>O sumário foi removido.</removeSummary>
       <removeDescription>A descrição foi removida.</removeDescription>
       <removeCreator>O criador: {0} foi removido.</removeCreator>
       <removeMultiCreator>Os seguintes criadores: {0} foram removidos.</removeMultiCreator>
       <removeLanguage>O idioma foi removido.</removeLanguage>
       <removeContent>O Conteúdo foi removido.</removeContent>
-      <attachmentAdded>Arquivo(s) foi/foram anexado(s).</attachmentAdded>
-      <attachmentRemoved>Arquivo(s) foi/foram removido(s).</attachmentRemoved>
+      <attachmentAdded>Ficheiros(s) foi/foram anexado(s).</attachmentAdded>
+      <attachmentRemoved>Ficheiro(s) foi/foram removido(s).</attachmentRemoved>
       <categoryAdded>A categoria: {0} foi adicionada.</categoryAdded>
       <categoryRemoved>A Categoria: {0} foi removida.</categoryRemoved>
       <tagAdded>O marcador: {0} foi adicionado.</tagAdded>
@@ -61,19 +61,19 @@
         <published>O documento foi publicado.</published>
       </stateChange>
       <contentMoved>A Publicação foi movida para: {0}</contentMoved>
-      <fileMoved>O arquivo foi movido para: {0}</fileMoved>
+      <fileMoved>O ficheiro foi movido para: {0}</fileMoved>
       <revisionChanged>A publicação foi restaurada para a versão: {0}</revisionChanged>
-      <version>Version: {0}</version>
+      <version>Versão: {0}</version>
       <updatedOn>Atualizado em</updatedOn>
       <updatedBy>por</updatedBy>
-      <loadMoreFiles>+{0} more</loadMoreFiles>
+      <loadMoreFiles>+{0} mais</loadMoreFiles>
     </messages>
     <publicationStates>
-      <archived>Archived</archived>
-      <obsolete>Obsolete</obsolete>
+      <archived>Arquivado</archived>
+      <obsolete>Obsoleto</obsolete>
       <unpublished>Não publicado</unpublished>
       <draft>Rascunho</draft>
-      <pending>Pending</pending>
+      <pending>Pendente</pending>
       <approved>Aprovado</approved>
       <inreview>Em revisão</inreview>
       <staged>Pronto para ser publicado</staged>
@@ -81,9 +81,9 @@
       <live>Publicado</live>
     </publicationStates>
     <view>Visualizar</view>
-    <edit>Edit</edit>
+    <edit>Editar</edit>
     <download>Descarregar</download>
-    <downloadAll>Download All</downloadAll>
+    <downloadAll>Descarregar todos</downloadAll>
     <preview>Pré-visualizar</preview>
   </SocialIntegration>
   <UIPopupWindow>
@@ -118,26 +118,26 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>Este arquivo está bloqueado pelo usuário {0}. Deseja abri-lo no modo leitura?</lock-node-read-only>
+      <lock-node-read-only>Este ficheiro está bloqueado pelo utilizador {0}. Deseja abri-lo em modo leitura?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Compartilhar</ShareDocuments>
+      <ShareDocuments>Partilhar</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Compartilhar</UIShareDocuments>
-      <Share>Compartilhar</Share>
+      <UIShareDocuments>Partilhar documento</UIShareDocuments>
+      <Share>Partilhar</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Compartilhar</ShareButton>
+      <ShareButton>Partilhar</ShareButton>
       <CancelButton>Cancelar</CancelButton>
       <TextAreaInit>Envie uma mensagem após a partilha...</TextAreaInit>
-      <ShareWith>Compartilhar com</ShareWith>
+      <ShareWith>Partilhar com</ShareWith>
       <Access>Acessar</Access>
       <SpaceMember>Membros do Espaço</SpaceMember>
       <SelectASpace>Selecione um espaço</SelectASpace>
@@ -168,7 +168,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Compartilhar</ShareDocuments>
+      <ShareDocuments>Partilhar</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>
