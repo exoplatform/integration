@@ -653,8 +653,8 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 			</li>
 			<li>
 				<a onclick="(function(evt){ evt.stopPropagation();})(event)" data-placement="bottom" class="likeCommentBackground" data-html="true" rel="tooltip" title="$likersList" id="LikeCommentLink_${it.id}" href="javascript:void(0);">
-					<i class="uiIconThumbUp uiIconWhite"></i>
-				</a>&nbsp;$totalCommentLiked
+					<i class="uiIconThumbUp icon-thumb-drawn"><span class="path1"></span><span class="path2"></span></i>
+				</a>$totalCommentLiked
 			</li>
 
 			<% } else { %>
@@ -666,8 +666,8 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
 			<%if ( totalCommentLiked > 0 ){%>
 			<li>
 				<a onclick="(function(evt){ evt.stopPropagation();})(event)" data-placement="bottom" class="likeCommentBackground" rel="tooltip" data-html="true" title="$likersList" id="LikeCommentLink_${it.id}" href="javascript:void(0);">
-					<i class="uiIconThumbUp uiIconWhite"></i>
-				</a>&nbsp;$totalCommentLiked
+					<i class="uiIconThumbUp icon-thumb-drawn"><span class="path1"></span><span class="path2"></span></i>
+				</a>$totalCommentLiked
 			</li>
 
 			<%    }
