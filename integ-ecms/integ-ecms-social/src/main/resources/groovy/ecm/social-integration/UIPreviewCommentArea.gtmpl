@@ -10,6 +10,8 @@ import org.exoplatform.services.cms.impl.Utils;
 import org.exoplatform.social.core.service.LinkProvider;
 import org.apache.commons.lang.StringEscapeUtils;
 
+import static org.exoplatform.social.webui.activity.BaseUIActivity.TEMPLATE_PARAM_COMMENT;
+
 def refreshCommentsAction = URLEncoder.encode(uicomponent.event(uicomponent.REFRESH_COMMENTS), "utf-8");
 def likeActivityAction = uicomponent.event("LikeActivity", "true");
 def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
@@ -123,7 +125,7 @@ def isLiked = uicomponent.isLiked();
                         <p class="cont">$commentMessage</p>
                         <div class="clearfix"></div>
                         <%
-                            _ctx.put("comment", it);
+                            _ctx.put(TEMPLATE_PARAM_COMMENT, it);
                             org.exoplatform.groovyscript.text.TemplateService templateService = org.exoplatform.container.ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(org.exoplatform.groovyscript.text.TemplateService.class);
                             org.exoplatform.groovyscript.GroovyTemplate template = templateService.getTemplate("war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl", new org.exoplatform.resolver.ServletResourceResolver(org.exoplatform.container.PortalContainer.getInstance().getPortalContext(), "war:"));
                             template.render(_ctx.getWriter(), _ctx, (java.util.Locale) _ctx.get("locale"));

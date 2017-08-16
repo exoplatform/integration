@@ -43,6 +43,8 @@
 	import org.exoplatform.wcm.connector.collaboration.OpenInOfficeConnector;
   //ECMS import END
 
+  import static org.exoplatform.social.webui.activity.BaseUIActivity.TEMPLATE_PARAM_COMMENT;
+
   public void addActivityTimeLine(String ownerName, String ownerUri, String ownerAvatar) {
 	%>
 	<div class="activityTimeLine pull-left">
@@ -628,7 +630,7 @@
               </div>
               <div class="contentComment">$commentMessage</div>
               <%
-                  _ctx.put("comment", it);
+                  _ctx.put(TEMPLATE_PARAM_COMMENT, it);
                   org.exoplatform.groovyscript.text.TemplateService templateService = org.exoplatform.container.ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(org.exoplatform.groovyscript.text.TemplateService.class);
                   org.exoplatform.groovyscript.GroovyTemplate template = templateService.getTemplate("war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl", new org.exoplatform.resolver.ServletResourceResolver(org.exoplatform.container.PortalContainer.getInstance().getPortalContext(), "war:"));
                   template.render(_ctx.getWriter(), _ctx, (java.util.Locale) _ctx.get("locale"));
@@ -887,7 +889,7 @@
               </div>
               <div class="contentComment">$commentMessage</div>
               <%
-                  _ctx.put("comment", it);
+                  _ctx.put(TEMPLATE_PARAM_COMMENT, it);
                   org.exoplatform.groovyscript.text.TemplateService templateService = org.exoplatform.container.ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(org.exoplatform.groovyscript.text.TemplateService.class);
                   org.exoplatform.groovyscript.GroovyTemplate template = templateService.getTemplate("war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl", new org.exoplatform.resolver.ServletResourceResolver(org.exoplatform.container.PortalContainer.getInstance().getPortalContext(), "war:"));
                   template.render(_ctx.getWriter(), _ctx, (java.util.Locale) _ctx.get("locale"));
