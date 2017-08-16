@@ -138,19 +138,21 @@ public void addActivityTimeLine(String ownerName, String ownerUri, String ownerA
     def likesDisplayed = uicomponent.isAllLoaded();
     def spaceURL = uicomponent.getSpaceURL();
     def placeholder = _ctx.appRes("UIActivity.comment.placeholder").replace("'", "\\'");
-    //params for init UIActivity javascript object
+
     def IgnoreLabel = _ctx.appRes("UserProfilePopup.label.Ignore");
     def ConnectLabel = _ctx.appRes("UserProfilePopup.label.Connect");
     def ConfirmLabel = _ctx.appRes("UserProfilePopup.label.Confirm");
     def CancelRequestLabel = _ctx.appRes("UserProfilePopup.label.CancelRequest");
     def RemoveConnectionLabel = _ctx.appRes("UserProfilePopup.label.RemoveConnection");
     def labels = """ {
-                    Connect: '$ConnectLabel',
-                    Confirm: '$ConfirmLabel',
-                	CancelRequest: '$CancelRequestLabel',
-                	RemoveConnection: '$RemoveConnectionLabel',
-                	Ignore: '$IgnoreLabel'
+      Connect: '$ConnectLabel',
+      Confirm: '$ConfirmLabel',
+      CancelRequest: '$CancelRequestLabel',
+      RemoveConnection: '$RemoveConnectionLabel',
+      Ignore: '$IgnoreLabel'
     }"""
+
+    //params for init UIActivity javascript object
     def params = """ {
       activityId: '${activity.id}',
       placeholderComment: '${placeholder}',
@@ -160,13 +162,13 @@ public void addActivityTimeLine(String ownerName, String ownerUri, String ownerA
       commentFormDisplayed: '$commentFormDisplayed',
       spaceURL:'$spaceURL',
       allCommentSize: '${allComments.size()}',
-      commentFormFocused: '${uicomponent.isCommentFormFocused()}'
+      commentFormFocused: '${uicomponent.isCommentFormFocused()}',
+      labels: $labels
     } """
 
     def jsManager = Util.getPortalRequestContext().getJavascriptManager();
     jsManager.require("SHARED/jquery", "gj").addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
-    //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
-    jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params,$labels);");
+    jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
     jsManager.require("SHARED/wcm-utils", "wcmutil");
 
     //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
