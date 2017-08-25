@@ -349,9 +349,9 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
     def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'").replace("&#39;", "\\&#39;");
     def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;").replace("\n", "").replace("\r", "")) : "";
     def size = uicomponent.getSize(currentNode);
-    def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], \
-                           function(activity) { \
-                                    activity.previewDoc(event, { \
+    def docPreviewUri = "javascript:require(['SHARED/documentPreview'], \
+                           function(documentPreview) { \
+                                    documentPreview.init({ \
                                                             doc: { \
                                                                 id:'" + currentNode.getUUID() + "', \
                                                                 repository:'" + repository + "', \
