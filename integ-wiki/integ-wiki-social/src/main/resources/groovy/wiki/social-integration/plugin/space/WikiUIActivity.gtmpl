@@ -411,9 +411,8 @@
                             </div>
                             <%
                                 _ctx.put(TEMPLATE_PARAM_COMMENT, it);
-                                org.exoplatform.groovyscript.text.TemplateService templateService = uicomponent.getApplicationComponent(org.exoplatform.groovyscript.text.TemplateService.class);
-                                org.exoplatform.groovyscript.GroovyTemplate template = templateService.getTemplate("war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl", new org.exoplatform.resolver.ServletResourceResolver(org.exoplatform.container.PortalContainer.getInstance().getPortalContext(), "war:"));
-                                template.render(_ctx.getWriter(), _ctx, (java.util.Locale) _ctx.get("locale"));
+                                def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
+                                _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
                             %>
                         </div><!--end commentRight-->
                         <div class="clearfix"></div>
