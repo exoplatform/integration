@@ -21,6 +21,7 @@
 */
 %>
 <%
+  import org.apache.commons.lang.ArrayUtils;
   import org.exoplatform.portal.webui.util.Util;
   import org.exoplatform.webui.form.UIFormTextAreaInput;
   import org.exoplatform.social.core.service.LinkProvider;
@@ -29,6 +30,8 @@
   import org.exoplatform.social.core.service.LinkProvider;
   import org.exoplatform.forum.ext.impl.ForumSpaceActivityPublisher;
   import org.apache.commons.lang.StringEscapeUtils;
+
+  import static org.exoplatform.social.webui.activity.BaseUIActivity.TEMPLATE_PARAM_COMMENT;
 
   def pcontext = Util.getPortalRequestContext();
   
@@ -94,20 +97,37 @@
   def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
   def likesDisplayed = uicomponent.isAllLoaded();
   def placeholder = _ctx.appRes("UIActivity.comment.placeholder").replace("'", "\\'");
+
+  def LikePopupTitleLabel = _ctx.appRes("UIActivity.title.PopupCommentLikers");
+  def IgnoreLabel = _ctx.appRes("UserProfilePopup.label.Ignore");
+  def ConnectLabel = _ctx.appRes("UserProfilePopup.label.Connect");
+  def ConfirmLabel = _ctx.appRes("UserProfilePopup.label.Confirm");
+  def CancelRequestLabel = _ctx.appRes("UserProfilePopup.label.CancelRequest");
+  def RemoveConnectionLabel = _ctx.appRes("UserProfilePopup.label.RemoveConnection");
+  def labels = """ {
+    LikePopupTitle: '$LikePopupTitleLabel',
+    Connect: '$ConnectLabel',
+    Confirm: '$ConfirmLabel',
+    CancelRequest: '$CancelRequestLabel',
+    RemoveConnection: '$RemoveConnectionLabel',
+    Ignore: '$IgnoreLabel'
+  }"""
+
   //params for init UIActivity javascript object
   def params = """ {
-      activityId: '${activity.id}',
-      placeholderComment: '${placeholder}',
-      inputWriteAComment: '$inputWriteAComment',
-      commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
-      commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
-      commentFormDisplayed: '$commentFormDisplayed',
-      allCommentSize: '${totalComments}',
-      commentFormFocused: '${uicomponent.isCommentFormFocused()}'
-    } """
-  //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
-    jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);")
-	         .require("SHARED/jquery", "gj").addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
+    activityId: '${activity.id}',
+    placeholderComment: '${placeholder}',
+    inputWriteAComment: '$inputWriteAComment',
+    commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
+    commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
+    commentFormDisplayed: '$commentFormDisplayed',
+    allCommentSize: '${totalComments}',
+    commentFormFocused: '${uicomponent.isCommentFormFocused()}',
+    labels: $labels
+  } """
+
+  jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);")
+           .require("SHARED/jquery", "gj").addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
 
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
@@ -432,6 +452,11 @@
 							<div class="contentComment">
 								$commentMessage
 							</div>
+                            <%
+                                _ctx.put(TEMPLATE_PARAM_COMMENT, it);
+                                def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
+                                _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
+                            %>
 						</div><!--end commentRight-->
                         <div class="clearfix"></div>
 						<div class="actLink">

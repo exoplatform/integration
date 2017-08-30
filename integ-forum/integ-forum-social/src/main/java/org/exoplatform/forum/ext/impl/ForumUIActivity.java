@@ -43,7 +43,8 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
     @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
     @EventConfig(listeners = ForumUIActivity.PostCommentActionListener.class),
     @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) })
+    @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)})
 public class ForumUIActivity extends BaseKSActivity {
 
   private static final Log LOG = ExoLogger.getLogger(ForumUIActivity.class);

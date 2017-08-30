@@ -21,6 +21,7 @@
 */
 %>
 <%
+import org.apache.commons.lang.ArrayUtils;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.social.core.space.model.Space;
@@ -43,6 +44,8 @@ import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.wcm.connector.collaboration.OpenInOfficeConnector;
 
 //ECMS import END
+
+import static org.exoplatform.social.webui.activity.BaseUIActivity.TEMPLATE_PARAM_COMMENT;
 
 public void getOwnerSpace(String ownerName, String ownerUri, String spaceSourceURI, String spaceID, String spaceName, String spaceImageSource) {
     %>
@@ -135,6 +138,22 @@ public void addActivityTimeLine(String ownerName, String ownerUri, String ownerA
     def likesDisplayed = uicomponent.isAllLoaded();
     def spaceURL = uicomponent.getSpaceURL();
     def placeholder = _ctx.appRes("UIActivity.comment.placeholder").replace("'", "\\'");
+
+    def LikePopupTitleLabel = _ctx.appRes("UIActivity.title.PopupCommentLikers");
+    def IgnoreLabel = _ctx.appRes("UserProfilePopup.label.Ignore");
+    def ConnectLabel = _ctx.appRes("UserProfilePopup.label.Connect");
+    def ConfirmLabel = _ctx.appRes("UserProfilePopup.label.Confirm");
+    def CancelRequestLabel = _ctx.appRes("UserProfilePopup.label.CancelRequest");
+    def RemoveConnectionLabel = _ctx.appRes("UserProfilePopup.label.RemoveConnection");
+    def labels = """ {
+      LikePopupTitle: '$LikePopupTitleLabel',
+      Connect: '$ConnectLabel',
+      Confirm: '$ConfirmLabel',
+      CancelRequest: '$CancelRequestLabel',
+      RemoveConnection: '$RemoveConnectionLabel',
+      Ignore: '$IgnoreLabel'
+    }"""
+
     //params for init UIActivity javascript object
     def params = """ {
       activityId: '${activity.id}',
@@ -145,12 +164,12 @@ public void addActivityTimeLine(String ownerName, String ownerUri, String ownerA
       commentFormDisplayed: '$commentFormDisplayed',
       spaceURL:'$spaceURL',
       allCommentSize: '${allComments.size()}',
-      commentFormFocused: '${uicomponent.isCommentFormFocused()}'
+      commentFormFocused: '${uicomponent.isCommentFormFocused()}',
+      labels: $labels
     } """
 
     def jsManager = Util.getPortalRequestContext().getJavascriptManager();
     jsManager.require("SHARED/jquery", "gj").addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
-    //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
     jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
     jsManager.require("SHARED/wcm-utils", "wcmutil");
 
@@ -330,9 +349,9 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
     def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'").replace("&#39;", "\\&#39;");
     def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;").replace("\n", "").replace("\r", "")) : "";
     def size = uicomponent.getSize(currentNode);
-    def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], \
-                           function(activity) { \
-                                    activity.previewDoc(event, { \
+    def docPreviewUri = "javascript:require(['SHARED/documentPreview'], \
+                           function(documentPreview) { \
+                                    documentPreview.init({ \
                                                             doc: { \
                                                                 id:'" + currentNode.getUUID() + "', \
                                                                 repository:'" + repository + "', \
@@ -406,11 +425,11 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
      <div id="MediaContent${activity.id}-$index" class="mediaContent PlayerContianer">
         <% uicontentpresentation.renderUIComponent(fileComponent);%>
      </div>
-    <% 
+    <%
                 } %>
 
             <% }
-            
+
 			   if (index == 2 && uicomponent.getFilesCount() > 3) { %>
 			             <div id="LoadMore${activity.id}-$index" class="MediaName LoadMore">
 			            <%=_ctx.appRes("SocialIntegration.messages.loadMoreFiles").replace("{0}", String.valueOf(uicomponent.getFilesCount() - maxToDisplay + 1))%>
@@ -618,6 +637,11 @@ if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT
                 <span class="dateTime">$commentPostedTime</span>
 </div>
               <div class="contentComment">$commentMessage</div>
+              <%
+                  _ctx.put(TEMPLATE_PARAM_COMMENT, it);
+                  def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
+                  _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
+              %>
 </div><!--end commentRight-->
 <div class="clearfix"></div>
             <div class="actLink">

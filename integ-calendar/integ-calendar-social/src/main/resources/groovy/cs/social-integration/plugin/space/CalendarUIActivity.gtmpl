@@ -21,6 +21,7 @@
 */
 %>
 <%
+  import org.apache.commons.lang.ArrayUtils;
   import java.text.SimpleDateFormat;
   import org.exoplatform.portal.webui.util.Util;
   import org.exoplatform.webui.form.UIFormTextAreaInput;
@@ -32,6 +33,8 @@
   import org.exoplatform.cs.ext.impl.CalendarSpaceActivityPublisher;
   import org.apache.commons.lang.StringEscapeUtils;
   /* end block */
+
+  import static org.exoplatform.social.webui.activity.BaseUIActivity.TEMPLATE_PARAM_COMMENT;
 	
   uicomponent.init();
   def pcontext = Util.getPortalRequestContext();
@@ -100,8 +103,23 @@
   def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
   def likesDisplayed = uicomponent.isAllLoaded();
   def placeholder = _ctx.appRes("UIActivity.comment.placeholder").replace("'", "\\'");
-  //params for init UIActivity javascript object
 
+  def LikePopupTitleLabel = _ctx.appRes("UIActivity.title.PopupCommentLikers");
+  def IgnoreLabel = _ctx.appRes("UserProfilePopup.label.Ignore");
+  def ConnectLabel = _ctx.appRes("UserProfilePopup.label.Connect");
+  def ConfirmLabel = _ctx.appRes("UserProfilePopup.label.Confirm");
+  def CancelRequestLabel = _ctx.appRes("UserProfilePopup.label.CancelRequest");
+  def RemoveConnectionLabel = _ctx.appRes("UserProfilePopup.label.RemoveConnection");
+  def labels = """ {
+    LikePopupTitle: '$LikePopupTitleLabel',
+    Connect: '$ConnectLabel',
+    Confirm: '$ConfirmLabel',
+    CancelRequest: '$CancelRequestLabel',
+    RemoveConnection: '$RemoveConnectionLabel',
+    Ignore: '$IgnoreLabel'
+  }"""
+
+  //params for init UIActivity javascript object
   def params = """ {
 	  activityId: '${activity.id}',
       placeholderComment: '${placeholder}',
@@ -110,7 +128,8 @@
 	  commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
 	  commentFormDisplayed: '$commentFormDisplayed',
 	  allCommentSize: '${allComments.size()}',
-	  commentFormFocused: '${uicomponent.isCommentFormFocused()}'
+	  commentFormFocused: '${uicomponent.isCommentFormFocused()}',
+	  labels: $labels
 	} """
 
   jsManager.require("SHARED/jquery", "jq")
@@ -420,6 +439,11 @@
 							<div class="contentComment">
 								$commentMessage
 							</div>
+                            <%
+                                _ctx.put(TEMPLATE_PARAM_COMMENT, it);
+                                def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
+                                _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
+                             %>
 						</div><!--end commentRight-->
 						<div class="clearfix"></div>
 						<div class="actLink">

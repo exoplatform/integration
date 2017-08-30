@@ -110,7 +110,8 @@ import org.exoplatform.webui.ext.UIExtensionManager;
                 @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
                 @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
                 @EventConfig(listeners = FileUIActivity.OpenFileActionListener.class),
-                @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class)}),
+                @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)}),
 })
 public class FileUIActivity extends BaseUIActivity{
 

@@ -21,6 +21,7 @@
 */
 %>
 <%
+  import org.apache.commons.lang.ArrayUtils;
   import org.exoplatform.portal.webui.util.Util;
   import org.exoplatform.webui.form.UIFormTextAreaInput;
   import org.exoplatform.social.core.service.LinkProvider;
@@ -41,6 +42,8 @@
 	import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 	import org.exoplatform.wcm.connector.collaboration.OpenInOfficeConnector;
   //ECMS import END
+
+  import static org.exoplatform.social.webui.activity.BaseUIActivity.TEMPLATE_PARAM_COMMENT;
 
   public void addActivityTimeLine(String ownerName, String ownerUri, String ownerAvatar) {
 	%>
@@ -153,19 +156,36 @@
   def likesDisplayed = uicomponent.isAllLoaded();
   def spaceURL = uicomponent.getSpaceURL();
   def placeholder = _ctx.appRes("UIActivity.comment.placeholder").replace("'", "\\'");
+
+  def LikePopupTitleLabel = _ctx.appRes("UIActivity.title.PopupCommentLikers");
+  def IgnoreLabel = _ctx.appRes("UserProfilePopup.label.Ignore");
+  def ConnectLabel = _ctx.appRes("UserProfilePopup.label.Connect");
+  def ConfirmLabel = _ctx.appRes("UserProfilePopup.label.Confirm");
+  def CancelRequestLabel = _ctx.appRes("UserProfilePopup.label.CancelRequest");
+  def RemoveConnectionLabel = _ctx.appRes("UserProfilePopup.label.RemoveConnection");
+  def labels = """ {
+    LikePopupTitle: '$LikePopupTitleLabel',
+    Connect: '$ConnectLabel',
+    Confirm: '$ConfirmLabel',
+    CancelRequest: '$CancelRequestLabel',
+    RemoveConnection: '$RemoveConnectionLabel',
+    Ignore: '$IgnoreLabel'
+  }"""
+
   //params for init UIActivity javascript object
   def params = """ {
-      activityId: '${activity.id}',
-      placeholderComment: '${placeholder}',
-      inputWriteAComment: '$inputWriteAComment',
-      commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
-      commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
-      commentFormDisplayed: '$commentFormDisplayed',
-      spaceURL:'$spaceURL',
-      allCommentSize: '${allComments}',
-      commentFormFocused: '${uicomponent.isCommentFormFocused()}'
-    } """
-  //jsManager.addOnLoadJavascript("initUIActivity${activity.id}");
+    activityId: '${activity.id}',
+    placeholderComment: '${placeholder}',
+    inputWriteAComment: '$inputWriteAComment',
+    commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
+    commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
+    commentFormDisplayed: '$commentFormDisplayed',
+    spaceURL:'$spaceURL',
+    allCommentSize: '${allComments}',
+    commentFormFocused: '${uicomponent.isCommentFormFocused()}',
+    labels: $labels
+  } """
+
   jsManager.require("SHARED/social-ui-activity","activity").addScripts("activity.onLoad($params);");
   jsManager.require("SHARED/wcm-utils", "wcmutil");
 
@@ -274,7 +294,7 @@
 		def escapedOwnerName = ownerName.replace("'", "\\'").replace("&#39;", "\\&#39;");
 		def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'").replace("&#39;", "\\&#39;");
 		def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;").replace("\n", "").replace("\r", "")) : "";
-		def docPreviewUri = "javascript:require(['SHARED/social-ui-activity'], function(activity) {activity.previewDoc(event, {doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + escapedOwnerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "', status: '" + escapedActivityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + ", spaceURL: '" + spaceURL + "'}})})";
+		def docPreviewUri = "javascript:require(['SHARED/documentPreview'], function(documentPreview) {documentPreview.init({doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + escapedOwnerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "', status: '" + escapedActivityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + ", spaceURL: '" + spaceURL + "'}})})";
 		def docFolderRelativePath = uicomponent.getDocFolderRelativePath(0);
 		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks(0);
 		def size = uicomponent.getSize(currentNode);
@@ -614,6 +634,11 @@
                 <span class="dateTime">$commentPostedTime</span>
               </div>
               <div class="contentComment">$commentMessage</div>
+              <%
+                  _ctx.put(TEMPLATE_PARAM_COMMENT, it);
+                  def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
+                  _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
+              %>
             </div><!--end commentRight-->
 			<div class="clearfix"></div>
             <div class="actLink">
@@ -867,6 +892,11 @@
                 <span class="dateTime">$commentPostedTime</span>
               </div>
               <div class="contentComment">$commentMessage</div>
+              <%
+                  _ctx.put(TEMPLATE_PARAM_COMMENT, it);
+                  def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
+                  _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
+              %>
             </div><!--end commentRight-->
 			<div class="clearfix"></div>
             <div class="actLink">

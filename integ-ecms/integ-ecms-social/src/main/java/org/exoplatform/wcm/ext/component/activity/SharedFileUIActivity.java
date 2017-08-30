@@ -39,7 +39,10 @@ import org.exoplatform.webui.core.UIPopupContainer;
         @EventConfig(listeners = BaseUIActivity.SetCommentListStatusActionListener.class),
         @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
         @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
-        @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class) }),
+        @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class),
+        @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)}),
+
+
     @ComponentConfig(
        type = UIPopupWindow.class, template = "system:/groovy/webui/core/UIPopupWindow.gtmpl",
        events = @EventConfig(listeners = SharedFileUIActivity.CloseActionListener.class, name="ClosePopup"))
