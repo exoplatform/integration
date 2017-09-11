@@ -31,6 +31,8 @@ import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.service.impl.model.PostFilter;
 import org.exoplatform.poll.service.Poll;
 import org.exoplatform.poll.service.PollService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -48,6 +50,8 @@ import org.exoplatform.social.core.space.spi.SpaceService;
  * Jan 10, 2013  
  */
 public class ForumActivityUtils {
+
+  private static final Log LOG = ExoLogger.getLogger(ForumActivityUtils.class);
 
   private static final int TYPE_PRIVATE = 2;
   /*
@@ -292,7 +296,11 @@ public class ForumActivityUtils {
   public static void removeActivities(String ... activityIds) {
     ActivityManager am = getActivityManager();
     for(String activityId : activityIds) {
-      am.deleteActivity(activityId);
+      try {
+        am.deleteActivity(activityId);
+      } catch(Exception e) {
+        LOG.error("Cannot delete activity " + activityId, e);
+      }
     }
   }
   

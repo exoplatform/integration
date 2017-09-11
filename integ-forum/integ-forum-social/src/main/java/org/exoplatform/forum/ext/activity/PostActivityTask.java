@@ -59,7 +59,7 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
     protected ExoSocialActivity processComment(ForumActivityContext ctx, ExoSocialActivity comment) {
       
       //censoring status or not approved yet, hidden post's comment in stream
-      if (ctx.getPost().getIsWaiting() || ! ctx.getPost().getIsApproved()) {
+      if (ctx.getPost().getIsWaiting() || !ctx.getPost().getIsApproved()) {
         comment.isHidden(true);
       }
 

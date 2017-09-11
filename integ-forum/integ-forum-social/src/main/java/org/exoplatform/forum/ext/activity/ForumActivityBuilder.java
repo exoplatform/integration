@@ -196,7 +196,7 @@ public class ForumActivityBuilder {
     activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName()));
     activity.setBody(body);
     activity.isComment(false);
-    activity.isHidden(false);
+    activity.isHidden(!topic.getIsApproved());
     activity.setType(FORUM_ACTIVITY_TYPE);
     
     //

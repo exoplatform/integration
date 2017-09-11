@@ -16,11 +16,13 @@
  */
 package org.exoplatform.forum.ext.forum;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import org.exoplatform.commons.testing.BaseExoTestCase;
+import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
@@ -33,12 +35,21 @@ import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.services.jcr.util.IdGenerator;
+import org.exoplatform.social.common.RealtimeListAccess;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
+import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.profile.ProfileFilter;
 
 @ConfiguredBy({
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.social.component.core.test.configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.social.component.search.test.configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/test-portal-configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.forum.component.core.test.configuration.xml"),
   @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.forum.test.jcr-configuration.xml"),
@@ -51,6 +62,10 @@ public abstract class BaseForumActivityTestCase extends BaseExoTestCase {
   
   protected KSDataLocation    dataLocation;
 
+  protected IdentityManager   identityManager;
+
+  protected ActivityManager   activityManager;
+
   public String categoryId = "forumCategoryabctest";
 
   public String forumId    = "forumtheidforumoftest";
@@ -60,8 +75,10 @@ public abstract class BaseForumActivityTestCase extends BaseExoTestCase {
   @Override
   public void setUp() throws Exception {
     begin();
-    dataLocation = (KSDataLocation) getService(KSDataLocation.class);
-    forumService = (ForumService) getService(ForumService.class);
+    dataLocation = getService(KSDataLocation.class);
+    forumService = getService(ForumService.class);
+    identityManager = getService(IdentityManager.class);
+    activityManager = getService(ActivityManager.class);
     //
     initDefaultData();
   }
