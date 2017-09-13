@@ -16,6 +16,9 @@
  */
 package org.exoplatform.forum.ext.activity;
 
+import org.apache.commons.lang.StringUtils;
+
+import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -61,6 +64,23 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
       //censoring status or not approved yet, hidden post's comment in stream
       if (ctx.getPost().getIsWaiting() || !ctx.getPost().getIsApproved()) {
         comment.isHidden(true);
+      }
+
+      String parentPostId = ctx.getPost().getQuotedPostId();
+      if(StringUtils.isNotBlank(parentPostId)) {
+        ForumService forumService = ForumActivityUtils.getForumService();
+        String parentCommentId = forumService.getCommentIdForOwnerId(parentPostId);
+        if (parentCommentId != null) {
+          ExoSocialActivity parentCommentActivity =
+                                                  ForumActivityUtils.getActivityManager()
+                                                                    .getActivity(parentCommentId);
+          if (parentCommentActivity != null) {
+            if (parentCommentActivity.getParentCommentId() != null) {
+              parentCommentId = parentCommentActivity.getParentCommentId();
+            }
+            comment.setParentCommentId(parentCommentId);
+          }
+        }
       }
 
       return processTitle(comment);
@@ -162,7 +182,7 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
         ActivityManager am = ForumActivityUtils.getActivityManager();
         
         //Get comment corresponding to this post, null if don't exist
-        ExoSocialActivity comment = ForumActivityUtils.getCommentOfPost(ctx);
+        ExoSocialActivity comment = ForumActivityUtils.getCommentOfPost(ctx.getPost().getPath());
         
         boolean isCommentExist = false;
         if (comment != null)

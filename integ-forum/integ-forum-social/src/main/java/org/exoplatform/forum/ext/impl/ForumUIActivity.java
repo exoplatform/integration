@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+
+import org.exoplatform.commons.utils.HTMLSanitizer;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
@@ -199,7 +201,7 @@ public class ForumUIActivity extends BaseKSActivity {
       post.setModifiedBy(requestContext.getRemoteUser());
       //
       message = message.replace("<p>", "").replace("</p>", "\n");
-      post.setMessage(TransformHTML.enCodeHTMLContent(message));
+      post.setMessage(message);
 
       getApplicationComponent(DataStorage.class).savePost(topic.getCategoryId(), topic.getForumId(), topic.getId(), post, true, new MessageBuilder());
 
@@ -222,14 +224,24 @@ public class ForumUIActivity extends BaseKSActivity {
         super.execute(event);
         return;
       }
-      
+      String commentId = event.getRequestContext().getRequestParameter(OBJECTID);
+      commentId = StringUtils.isBlank(commentId) ? null : commentId;
       WebuiRequestContext requestContext = event.getRequestContext();
       UIFormTextAreaInput uiFormComment = uiActivity.getChild(UIFormTextAreaInput.class);
       String message = uiFormComment.getValue();
       uiFormComment.reset();
-      
+
       //
-      Post post = uiActivity.createPost(message, requestContext);
+      String postMessage = message;
+      if (StringUtils.isNotBlank(commentId)) {
+        ExoSocialActivity parentActivity = ForumActivityUtils.getActivityManager().getActivity(commentId);
+        Post parentPost = ForumActivityUtils.getPost(parentActivity);
+        String parentPostUserFullName = ForumActivityUtils.getForumService().getScreenName(parentPost.getOwner());
+        postMessage = parentPost.getMessage().replaceAll("<br/>((\\r)?(\\n)?( )*(\\&nbsp;)*)*<br/>", "");
+        postMessage = "[QUOTE=" + parentPostUserFullName + "]" + HTMLSanitizer.sanitize(postMessage) + "[/QUOTE]" + message;
+      }
+      //
+      Post post = uiActivity.createPost(postMessage, requestContext);
         boolean isMigratedActivity = false;
 
          //Case of migrate activity, post will be null
@@ -237,13 +249,14 @@ public class ForumUIActivity extends BaseKSActivity {
             post = new Post();
             isMigratedActivity = true;
           }
-      //
       post.setMessage(message);
-      uiActivity.saveComment(post, isMigratedActivity);
+      ExoSocialActivity newComment = uiActivity.saveComment(post, commentId, isMigratedActivity);
 
       uiActivity.setCommentFormFocused(true);
       requestContext.addUIComponentToUpdateByAjax(uiActivity);
 
+      uiActivity.getAndSetUpdatedCommentId(commentId);
+      uiActivity.focusToComment(newComment.getId());
       uiActivity.getParent().broadcast(event, event.getExecutionPhase());
     }
   }
@@ -251,8 +264,9 @@ public class ForumUIActivity extends BaseKSActivity {
   /**
    * Create comment from post
    * @param post
+   * @param commentId 
    */
-  private void saveComment(Post post, boolean isMigratedActivity) {
+  private ExoSocialActivity saveComment(Post post, String commentId, boolean isMigratedActivity) {
       ExoSocialActivity comment = new ExoSocialActivityImpl();
 
       if (isMigratedActivity == false) {
@@ -262,12 +276,14 @@ public class ForumUIActivity extends BaseKSActivity {
     comment.setUserId(org.exoplatform.social.webui.Utils.getViewerIdentity().getId());
     comment.setTitle(post.getMessage());
     comment.setBody(post.getMessage());
+    comment.setParentCommentId(commentId);
     ForumActivityUtils.getActivityManager().saveComment(getActivity(), comment);
       //Never save comment's id to a post when comment on a activity that is not applied activity-type specification
           if (isMigratedActivity == false) {
               ForumActivityUtils.takeCommentBack(post, comment);
              }
     refresh();
+    return comment;
   }
   
   @Override
