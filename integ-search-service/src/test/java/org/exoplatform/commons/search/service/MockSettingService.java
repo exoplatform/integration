@@ -21,7 +21,9 @@ import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
 import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -72,26 +74,48 @@ public class MockSettingService implements SettingService{
 
   @Override
   public void remove(Context context, Scope scope, String key) {
-    // TODO Auto-generated method stub
-    
   }
 
   @Override
   public void remove(Context context, Scope scope) {
-    // TODO Auto-generated method stub
-    
   }
 
   @Override
   public void remove(Context context) {
-    // TODO Auto-generated method stub
-    
   }
 
   @Override
   public SettingValue<?> get(Context context, Scope scope, String key) {   
     KeySetting sKey = new KeySetting(context.toString(), scope.toString(), key);    
     return mymap.get(sKey.toString());
+  }
+
+  @Override
+  public Map<Scope, Map<String, SettingValue<String>>> getSettingsByContext(Context context) {
+    return null;
+  }
+
+  @Override
+  public List<Context> getContextsByTypeAndScopeAndSettingName(String contextType,
+                                                               String scopeType,
+                                                               String scopeName,
+                                                               String settingName,
+                                                               int offset,
+                                                               int limit) {
+    return null;
+  }
+
+  @Override
+  public Set<String> getEmptyContextsByScopeAndContextType(String contextType,
+                                                           String scopeType,
+                                                           String scopeName,
+                                                           int offset,
+                                                           int limit) {
+    return null;
+  }
+
+  @Override
+  public void save(Context context) {
   }
     
 

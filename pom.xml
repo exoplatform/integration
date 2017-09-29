@@ -56,6 +56,8 @@
     <org.powermock.version>1.6.5</org.powermock.version>
     <!-- GateIn Project Dependencies -->
     <org.apache.shindig.version>2.5.2</org.apache.shindig.version>
+      <!-- Workaround for hsqldb bug using version 2.3.3 -->
+    <org.hsqldb.version>2.3.4</org.hsqldb.version>
     <!-- For surefire and failsafe to be compatible with jacoco -->
     <argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
   </properties>
@@ -274,6 +276,13 @@
         <groupId>org.exoplatform.doc</groupId>
         <artifactId>doc-style</artifactId>
         <version>${org.exoplatform.doc.doc-style.version}</version>
+      </dependency>
+      <!-- Workaround for hsqldb bug using version 2.3.3 -->
+      <dependency>
+        <groupId>org.hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <version>${org.hsqldb.version}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
