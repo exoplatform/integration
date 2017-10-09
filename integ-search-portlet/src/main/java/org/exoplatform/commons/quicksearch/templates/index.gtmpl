@@ -10,7 +10,7 @@
 	<input type="hidden" id="noResultsQuickSearch" name="noResults" value="&{quicksearch.noResults.label}"/>
 	<input type="hidden" id="searchingQuickSearch" name="searching" value="&{quicksearch.searching.label}"/>
 	<input id="adminkeyword-${portletId}" name="adminkeyword" value="&{quicksearch.input.label}" type="text" style="display: none;"/>
-	<a href="#" id="adminSearchLink-${portletId}" class="dropdown-toggle">
+	<a id="adminSearchLink-${portletId}" class="dropdown-toggle">
     	<i class="uiIconPLF24x24Search"></i>
 	</a>
 	<div id="quickSearchResult-${portletId}" class="uiQuickSearchResult" ></div>

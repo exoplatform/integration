@@ -185,14 +185,10 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
     function setWaitingStatus(status) {
     	if (status){
     		window['isSearching'] = true;
-            $(txtQuickSearchQuery_id).addClass("loadding");
-            if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
-            	$(quickSearchResult_id).show();              
-            }else{
-            	var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
-            	$(quickSearchResult_id).width(width);
-            	$(quickSearchResult_id).show();                      	
-            }            
+          $(txtQuickSearchQuery_id).addClass("loadding");
+          var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
+          $(quickSearchResult_id).width(width);
+          $(quickSearchResult_id).show();
     	}else {
     		window['isSearching'] = false;
     	}    	    
@@ -224,7 +220,7 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
         index = 0;
         $.each(SEARCH_TYPES, function(i, searchType){          
           var results = resultMap[searchType]; //get all results of this type
-          if(results && 0!=$(results).size()) { //show the type with result only        	 
+          if(results && 0!=$(results).length) { //show the type with result only
             //results.map(function(result){result.type = searchType;}); //assign type for each result
             results = results.sort(function(a,b){
                 return byRelevancyDESC(a,b);
@@ -242,13 +238,9 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
                         
         var messageRow = rows.length==0 ? QUICKSEARCH_NO_RESULT.replace(/%{query}/, XSSUtils.sanitizeString(query)) : QUICKSEARCH_SEE_ALL;
         $(quickSearchResult_id).html(QUICKSEARCH_TABLE_TEMPLATE.replace(/%{resultRows}/, rows.join("")).replace(/%{messageRow}/g, messageRow));
-        if ($.browser.msie  && parseInt($.browser.version, 10) == 8) {
-        	$(quickSearchResult_id).show();              
-        }else{
-        	var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
-        	$(quickSearchResult_id).width(width);
-        	$(quickSearchResult_id).show();                      	
-        }              
+        var width = Math.min($(quickSearchResult_id).width(), $(window).width() - $(txtQuickSearchQuery_id).offset().left - 20);
+        $(quickSearchResult_id).width(width);
+        $(quickSearchResult_id).show();
         $(txtQuickSearchQuery_id).removeClass("loadding");
         setWaitingStatus(false);
         
@@ -538,20 +530,23 @@ window.initQuickSearchSetting = function(allMsg,alertOk,alertNotOk){
 
     // Call REST service to save the setting
     $("#btnSave").click(function(){
-      var jqxhr = $.post("/rest/search/setting/quicksearch", {
-        resultsPerPage: $("#resultsPerPage").val(),
-        searchTypes: getSelectedTypes(),
-        searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked")
-      });
-
-      jqxhr.complete(function(data) {
-        alert("ok"==data.responseText?alertOk:alertNotOk+data.responseText);
+      $.ajax({
+        url: '/rest/search/setting/quicksearch',
+        method: 'POST',
+        data: {
+          resultsPerPage: $("#resultsPerPage").val(),
+          searchTypes: getSelectedTypes(),
+          searchCurrentSiteOnly: $("#searchCurrentSiteOnly").is(":checked")
+        },
+        complete: function (data) {
+          alert("ok"==data.responseText?alertOk:alertNotOk+data.responseText);
+        }
       });
     });
 
 
     // Handler for the checkboxes
-    $(":checkbox[name='searchInOption']").live("click", function(){
+    $('body').on('click', ':checkbox[name="searchInOption"]', function() {
       if("all"==this.value){ //All checked
         if($(this).is(":checked")) { // check/uncheck all
           $(":checkbox[name='searchInOption']").attr('checked', true);
