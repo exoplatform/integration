@@ -236,9 +236,11 @@ public class ForumUIActivity extends BaseKSActivity {
       if (StringUtils.isNotBlank(commentId)) {
         ExoSocialActivity parentActivity = ForumActivityUtils.getActivityManager().getActivity(commentId);
         Post parentPost = ForumActivityUtils.getPost(parentActivity);
-        String parentPostUserFullName = ForumActivityUtils.getForumService().getScreenName(parentPost.getOwner());
-        postMessage = parentPost.getMessage().replaceAll("<br/>((\\r)?(\\n)?( )*(\\&nbsp;)*)*<br/>", "");
-        postMessage = "[QUOTE=" + parentPostUserFullName + "]" + HTMLSanitizer.sanitize(postMessage) + "[/QUOTE]" + message;
+        if(parentPost != null) {
+          String parentPostUserFullName = ForumActivityUtils.getForumService().getScreenName(parentPost.getOwner());
+          postMessage = parentPost.getMessage().replaceAll("<br/>((\\r)?(\\n)?( )*(\\&nbsp;)*)*<br/>", "");
+          postMessage = "[QUOTE=" + parentPostUserFullName + "]" + HTMLSanitizer.sanitize(postMessage) + "[/QUOTE]" + message;
+        }
       }
       //
       Post post = uiActivity.createPost(postMessage, requestContext);
