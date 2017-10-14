@@ -311,7 +311,7 @@ public class ForumUIActivity extends BaseKSActivity {
     return activity;
   }
 
-  protected String getSpaceGroupId() {
+  public String getSpaceGroupId() {
     return getActivityParamValue(SPACE_GROUP_ID);
   }
 }

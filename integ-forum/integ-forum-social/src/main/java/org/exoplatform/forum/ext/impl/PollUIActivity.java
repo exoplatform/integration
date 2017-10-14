@@ -159,7 +159,7 @@ public class PollUIActivity extends BaseKSActivity {
     return BuildLinkUtils.buildLink(getSpaceGroupId(), pollId, PORTLET_INFO.POLL);
   }
 
-  private String getSpaceGroupId() {
+  public String getSpaceGroupId() {
     return getActivityParamValue(PollSpaceActivityPublisher.SPACE_GROUP_ID);
   }
   

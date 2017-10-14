@@ -156,7 +156,7 @@ public class WikiUIActivity extends BaseUIActivity {
     return sb.toString();
   }
   
-  private String getSpaceGroupId(){
+  public String getSpaceGroupId(){
     String spaceGroupId = "";
     String pageOwnerKey = getActivityParamValue(WikiSpaceActivityPublisher.PAGE_OWNER_KEY);
     boolean isASpace = pageOwnerKey.contains(SPACE_TYPE);
