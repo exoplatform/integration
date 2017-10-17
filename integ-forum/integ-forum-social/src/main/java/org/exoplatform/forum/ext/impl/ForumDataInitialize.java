@@ -22,6 +22,7 @@ import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.DataStorage;
 import org.exoplatform.forum.service.Forum;
+import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -34,6 +35,9 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
 import org.jboss.util.Strings;
 
+import static org.exoplatform.forum.service.Utils.CATEGORY_SPACE_ID_PREFIX;
+import static org.exoplatform.forum.service.Utils.FORUM_SPACE_ID_PREFIX;
+
 /**
  * Created by The eXo Platform SAS
  * Author : eXoPlatform
@@ -45,9 +49,12 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
   private static final Log LOG = ExoLogger.getLogger(ForumDataInitialize.class);
   
   private final InitParams params;
+
+  private ForumService forumService;
   
-  public ForumDataInitialize(InitParams params) {
+  public ForumDataInitialize(InitParams params, ForumService forumService) {
     this.params = params;
+    this.forumService = forumService;
   }
   
   @Override
@@ -91,7 +98,7 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         category.setDescription("All forums from spaces");
         storage.saveCategory(category, true);
       }
-      String forumId = Utils.FORUM_SPACE_ID_PREFIX + group.getGroupName();
+      String forumId = FORUM_SPACE_ID_PREFIX + group.getGroupName();
         String groupId = space.getGroupId();
       if (storage.getForum(categorySpId, forumId) == null) {
           String[] roles = new String[] { groupId };
@@ -108,9 +115,9 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
         forum.setPoster(roles);
         forum.setViewer(roles);
         storage.saveForum(categorySpId, forum, true);
-          storage.saveUserPrivateOfCategory(categorySpId, groupId);
+        storage.saveUserPrivateOfCategory(categorySpId, groupId);
       }
-    } catch (Exception e) { //ForumService      
+    } catch (Exception e) {
       if(LOG.isDebugEnabled()) {
         LOG.debug("Failed to add forum space. " + e.getMessage());
       }
@@ -157,7 +164,19 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
   }
 
   @Override
-  public void spaceRenamed(SpaceLifeCycleEvent event) {}
+  public void spaceRenamed(SpaceLifeCycleEvent event) {
+    Space space = event.getSpace();
+    String groupName = space.getGroupId().replace(SpaceUtils.SPACE_GROUP+"/","");
+    Forum forum = forumService.getForum(CATEGORY_SPACE_ID_PREFIX,FORUM_SPACE_ID_PREFIX + groupName);
+    if(forum != null) {
+      forum.setForumName(space.getDisplayName());
+      try {
+        forumService.saveForum(CATEGORY_SPACE_ID_PREFIX, forum, false);
+      } catch (Exception e) {
+        LOG.error("Can not rename forum of space {}", space, e);
+      }
+    }
+  }
 
   @Override
   public void spaceDescriptionEdited(SpaceLifeCycleEvent event) {}
