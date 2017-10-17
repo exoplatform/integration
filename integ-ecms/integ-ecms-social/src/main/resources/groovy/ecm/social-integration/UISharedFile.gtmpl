@@ -99,6 +99,7 @@
   def labelCancel = _ctx.appRes("UIActivity.label.Cancel");
   def labelLike = _ctx.appRes("UIActivity.label.Like");
   def labelUnlike = _ctx.appRes("UIActivity.label.Unlike");
+  def labelViewAllReplies = _ctx.appRes("UIActivity.label.ViewAllReplies");
   def labelSource = _ctx.appRes("UIActivity.label.Source");
   def inputWriteAComment = _ctx.appRes("UIActivity.input.Add_your_comment").replace("'", "\\'");
   def labelShowAllComments = _ctx.appRes("UIActivity.label.Show_All_Comments");
@@ -133,9 +134,10 @@
   def allComments = uicomponent.getAllCommentSize();
   def commentCount = 0;
   def commentHidden = 0;
+  def parentCommentsSize = uicomponent.getParentCommentsSize(commentList);
   if (allComments > 0) {
     commentCount = allComments;
-    commentHidden = commentCount-commentList.size();
+    commentHidden = commentCount-parentCommentsSize;
     labelShowAllComments = labelShowAllComments.replace("{0}", allComments + "");
     labelHideAllComments = labelHideAllComments.replace("{0}", allComments + "");
   }
@@ -473,7 +475,7 @@
 				 <% if (activityCommentAndLikable) { %>
 					<ul class="pull-right statusAction">
 						<li>
-							<a class="$commentLink"  id="CommentLink${activity.id}" href="javascript:void(0);">
+                            <a class="$commentLink"  id="CommentLink${activity.id}" data-activity="${activity.id}" href="javascript:void(0);">
 								<i class="uiIconComment uiIconLightGray"></i>&nbsp;$commentCount
 							</a>
 						</li>
@@ -562,6 +564,11 @@
             def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
             def first = true, commentContentClass;
             def commentCounter = 0;
+            def subCommentSize = 0;
+            def subCommentIndex = 0;
+            def subCommentClass = "";
+            def hideSubComments = true;
+            def updatedCommentId = uicomponent.getAndSetUpdatedCommentId(null);
             commentList.each({
               commentCounter++;
               if (first & !uicomponent.commentListToggleable()) {
@@ -573,6 +580,28 @@
               def commentId = Utils.getIdentityManager().getIdentity(it.userId);
               commenterFullName = StringEscapeUtils.escapeHtml(commentId.profile.fullName);
               commenterProfileUri = LinkProvider.getUserProfileUri(commentId.getRemoteId());
+              def commentParentClass = it.parentCommentId == null ? "CommentBlock" : (subCommentClass + " subCommentBlock");
+              if(it.parentCommentId == null) {
+                subCommentSize = uicomponent.getSubCommentsSize(commentList, it.id);
+                subCommentIndex = 0;
+                hideSubComments = subCommentSize > 2 && (updatedCommentId == null || !updatedCommentId.equals(it.id));
+                if(hideSubComments) {
+                    subCommentClass = "hidden";
+                } else {
+                    subCommentClass = "";
+                }
+              } else {
+                   subCommentIndex++;
+                   if(hideSubComments && subCommentIndex == subCommentSize) {
+                       %>
+                      <div class="commentItem clearfix subCommentBlock subCommentShowAll" id="SubCommentShowAll_$it.parentCommentId">
+                        <a href="javascript:void(0)" class="subCommentShowAllLink" data-parent-comment="$it.parentCommentId">
+                         <%=labelViewAllReplies.replace("{0}", String.valueOf(subCommentSize))%>
+                        </a>
+                      </div> 
+                       <%
+                   }
+              }
 
 
 
@@ -616,12 +645,13 @@
               commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
               commenterAvatarImgSrc = commentId.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
+              def commentActivityId = it.parentCommentId == null ? it.id : it.parentCommentId;
               %>
-             <div id="commentContainer${it.id}">
+              <div id="commentContainer${it.id}" data-comment-id="$commentActivityId" data-parent-comment="$it.parentCommentId" class="$commentParentClass">
               <% if (commentCounter == commentList.size()) {%>
                 <div id="CommentBlock${activity.id}${commentCounter}" class="commentItem commentItemLast">
               <% } else { %>
-                <div id="CommentBlock${activity.id}${commentCounter}" class="commentItem">
+                <div id="CommentBlock${it.id}" class="commentItem">
               <% } %>
               <div class="commmentLeft">
                 <a class="avatarXSmall" href="$commenterProfileUri" >
@@ -636,6 +666,8 @@
               <div class="contentComment">$commentMessage</div>
               <%
                   _ctx.put(TEMPLATE_PARAM_COMMENT, it);
+                  _ctx.put("authorName", commentId.remoteId);
+                  _ctx.put("authorFullName", commenterFullName);
                   def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
                   _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
               %>
@@ -656,7 +688,7 @@
              </div>
           <% }) %>
           </div> <!--end commentlist-->
-          <div class="commentList inputContainer" id="InputContainer${activity.id}">
+          <div class="inputContainer" id="InputContainer${activity.id}">
           <%
             def currentCommenterIdentity = uicomponent.getCommenterIdentity();
             def currentCommenterUri = LinkProvider.getUserProfileUri(currentCommenterIdentity.getRemoteId());
@@ -677,7 +709,7 @@
 						<div class="commentRight">
 							<div class="commentInputBox ">
 								<div class="commentInput"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
-								<button class="btn pull-left btn-primary" onclick="<%= uicomponent.event("PostComment") %>"  rel="tooltip" data-placement="bottom" title="$labelComment" id="CommentButton${activity.id}" disabled>$labelComment</button>
+                                <button class="btn pull-left btn-primary" data-comment-button="${activity.id}" data-click="<%= uicomponent.event("PostComment", "COMMENTID") %>" id="CommentButton${activity.id}" disabled>$labelComment</button>
 								<button class="btn visible-phone" id="CancelButton${activity.id}">$labelCancel</button>
 							</div>
 						</div><!--end commentRight-->
@@ -914,7 +946,7 @@
              </div>
           <% }) %>
           </div> <!--end commentlist-->
-          <div class="commentList inputContainer" id="InputContainer${activity.id}">
+          <div class="inputContainer" id="InputContainer${activity.id}">
           <%
             def currentCommenterIdentity = uicomponent.getCommenterIdentity();
             def currentCommenterUri = LinkProvider.getUserProfileUri(currentCommenterIdentity.getRemoteId());
@@ -935,7 +967,7 @@
 						<div class="commentRight">
 							<div class="commentInputBox ">
 								<div class="commentInput"><% uicomponent.renderChild(UIFormTextAreaInput.class); %></div>
-									<button class="btn pull-left btn-primary" onclick="<%= uicomponent.event("PostComment") %>"  rel="tooltip" data-placement="bottom" title="$labelComment" id="CommentButton${activity.id}" disabled>$labelComment</button>
+									<button class="btn pull-left btn-primary" data-comment-button="${activity.id}" data-click="<%= uicomponent.event("PostComment", "COMMENTID") %>"  rel="tooltip" data-placement="bottom" title="$labelComment" id="CommentButton${activity.id}" disabled>$labelComment</button>
 									<button class="btn visible-phone" id="CancelButton${activity.id}">$labelCancel</button>
 							</div>
 						</div><!--end commentRight-->

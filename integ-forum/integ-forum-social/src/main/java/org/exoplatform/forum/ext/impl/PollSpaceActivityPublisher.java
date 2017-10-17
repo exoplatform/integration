@@ -171,7 +171,7 @@ public class PollSpaceActivityPublisher extends PollEventListener{
         
         comment.setType("ks-forum:spaces");
         comment.setTitle(title);
-        I18NActivityUtils.addResourceKey(comment, titleId, null);
+        I18NActivityUtils.addResourceKey(comment, titleId);
         getManager().saveComment(topicActivity, comment);
       }
     }

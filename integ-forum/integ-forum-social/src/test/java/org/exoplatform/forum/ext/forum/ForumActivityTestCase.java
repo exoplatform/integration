@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.forum.service.Forum;
@@ -29,13 +32,11 @@ import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.service.impl.model.PostFilter;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class ForumActivityTestCase extends BaseForumActivityTestCase {
@@ -410,7 +411,66 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     comments = getActivityManager().getCommentsWithListAccess(activity1).loadAsList(0, 10);
     assertEquals(1, comments.size());
   }
-  
+
+  public void testQuotePost() throws Exception {
+    Topic topic = forumService.getTopic(categoryId, forumId, topicId, "");
+
+    //Create new topic with special characters
+    topic.setTopicName("Topic name");
+    topic.setDescription("Topic description");
+    forumService.saveTopic(categoryId, forumId, topic, true, false, new MessageBuilder());
+
+    //Create some post with special characters
+    Post post1 = createdPost("Post comment 1", "Post comment content 1");
+    forumService.savePost(categoryId, forumId, topicId, post1, true, new MessageBuilder());
+
+    Post post2 = createdPost("Post reply to comment 1 - 1", "Post reply to comment content 1 - 1");
+    post2.setQuotedPostId(post1.getId());
+    forumService.savePost(categoryId, forumId, topicId, post2, true, new MessageBuilder());
+
+    Post post3 = createdPost("Post reply to comment 1 - 2", "Post reply to comment content 1 - 2");
+    post3.setQuotedPostId(post1.getId());
+    forumService.savePost(categoryId, forumId, topicId, post3, true, new MessageBuilder());
+
+    Post post4 = createdPost("Post comment 2", "Post comment content 2");
+    forumService.savePost(categoryId, forumId, topicId, post4, true, new MessageBuilder());
+
+    assertEquals(5, forumService.getPosts(new PostFilter(topic.getPath())).getSize());
+
+    String activityId1 = forumService.getActivityIdForOwnerPath(topic.getPath());
+    ExoSocialActivity activity1 = getActivityManager().getActivity(activityId1);
+    assertNotNull(activity1);
+    assertEquals(topic.getTopicName(), activity1.getTitle());
+    assertEquals(topic.getDescription(), activity1.getBody());
+
+    end();
+    begin();
+
+    ListAccess<ExoSocialActivity> list1 = getActivityManager().getCommentsWithListAccess(activity1, true);
+    assertEquals(2, list1.getSize());
+    ExoSocialActivity[] comments = list1.load(0, -1);
+
+    assertEquals(4, comments.length);
+
+    assertEquals(post1.getMessage(), comments[0].getTitle());
+    assertEquals(post1.getMessage(), comments[0].getBody());
+    assertNull(comments[0].getParentCommentId());
+
+    assertEquals(post2.getMessage(), comments[1].getTitle());
+    assertEquals(post2.getMessage(), comments[1].getBody());
+    assertNotNull(comments[1].getParentCommentId());
+    assertEquals(comments[0].getId(), comments[1].getParentCommentId());
+
+    assertEquals(post3.getMessage(), comments[2].getTitle());
+    assertEquals(post3.getMessage(), comments[2].getBody());
+    assertNotNull(comments[2].getParentCommentId());
+    assertEquals(comments[0].getId(), comments[2].getParentCommentId());
+
+    assertEquals(post4.getMessage(), comments[3].getTitle());
+    assertEquals(post4.getMessage(), comments[3].getBody());
+    assertNull(comments[3].getParentCommentId());
+  }
+
   private ActivityManager getActivityManager() {
     return (ActivityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ActivityManager.class);
   }
@@ -419,4 +479,16 @@ public class ForumActivityTestCase extends BaseForumActivityTestCase {
     return (IdentityManager) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(IdentityManager.class);
   }
 
+  private ExoSocialActivity createComment(ExoSocialActivity existingActivity,
+                                          String posterIdentity,
+                                          String commentTitle,
+                                          String commentMessage,
+                                          String parentCommentId) {
+    ExoSocialActivity comment = new ExoSocialActivityImpl();
+    comment.setTitle(commentTitle);
+    comment.setBody(commentMessage);
+    comment.setParentCommentId(parentCommentId);
+    comment.setUserId(posterIdentity);
+    return comment;
+  }
 }

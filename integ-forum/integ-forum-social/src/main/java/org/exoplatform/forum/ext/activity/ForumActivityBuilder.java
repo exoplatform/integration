@@ -18,14 +18,17 @@ package org.exoplatform.forum.ext.activity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
+
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
+import org.exoplatform.social.core.identity.model.Identity;
 
 /**
  * Created by The eXo Platform SAS
@@ -71,11 +74,13 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivityComment(Post post, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    String title = processContent(post.getMessage(), 3);
+    String message = post.getMessage();
+    message = getMessageWithoutQuotedPost(post, post.getModifiedBy() != null);
+    String title = processContent(message, 3);
 
     //activity.setUserId(post.getOwner());
     activity.setTitle(title);
-    activity.setBody(post.getMessage());
+    activity.setBody(message);
     activity.isComment(true);
     activity.setType(FORUM_ACTIVITY_TYPE);
     
@@ -95,7 +100,58 @@ public class ForumActivityBuilder {
     activity.setTemplateParams(templateParams);
     return activity;
   }
-  
+
+  private static String getMessageWithoutQuotedPost(Post post, boolean edit) {
+    String parentCommentId = post.getQuotedPostId();
+    String parentMessage;
+    String fullName;
+    try {
+      if (edit) {
+        ExoSocialActivity postCommentActivity = ForumActivityUtils.getCommentOfPost(post.getPath());
+        if (postCommentActivity != null && postCommentActivity.getParentCommentId() != null) {
+          ExoSocialActivity parentActivity = ForumActivityUtils.getActivityManager()
+                                                               .getActivity(postCommentActivity.getParentCommentId());
+          if (parentActivity != null) {
+            parentMessage = parentActivity.getBody();
+            Identity posterIdentity = ForumActivityUtils.getIdentityManager().getIdentity(parentActivity.getPosterId(), true);
+            fullName = posterIdentity.getProfile().getFullName();
+          } else {
+            parentMessage = null;
+            fullName = null;
+          }
+        } else {
+          parentMessage = null;
+          fullName = null;
+        }
+      } else if (parentCommentId != null) {
+        Post parentPost = ForumActivityUtils.getForumService().getPost(post.getCategoryId(),
+                                                                       post.getForumId(),
+                                                                       post.getTopicId(),
+                                                                       parentCommentId);
+        fullName = ForumActivityUtils.getForumService().getScreenName(parentPost.getOwner());
+        parentMessage = parentPost.getMessage();
+      } else {
+        parentMessage = null;
+        fullName = null;
+      }
+    } catch (Exception e) {
+      parentMessage = null;
+      fullName = null;
+    }
+
+    String message = post.getMessage();
+    if (parentMessage != null && fullName != null) {
+      parentMessage = CommonUtils.decodeSpecialCharToHTMLnumber(parentMessage);
+      parentMessage = CommonUtils.processBBCode(parentMessage);
+      parentMessage = TransformHTML.cleanHtmlCode(StringEscapeUtils.unescapeHtml(TransformHTML.getPlainText(parentMessage)), null);
+
+      message = TransformHTML.cleanHtmlCode(StringEscapeUtils.unescapeHtml(TransformHTML.getPlainText(post.getMessage())), null);
+      message = message.replaceFirst(fullName + ":((\\r)?(\\n)?( )*)*" + parentMessage + "((\\r)?(\\n)?( )*)*", "").trim();
+      message = message.replaceAll("((\\r|\\n)+( )*)+", "<br/>");
+    }
+    return message;
+  }
+
   public static ExoSocialActivity createActivityComment(Topic topic, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     String body = processContent(topic.getDescription(), 4);

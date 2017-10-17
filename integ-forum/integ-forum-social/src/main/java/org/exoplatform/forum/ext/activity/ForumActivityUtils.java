@@ -18,6 +18,8 @@ package org.exoplatform.forum.ext.activity;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.forum.common.CommonUtils;
@@ -256,15 +258,17 @@ public class ForumActivityUtils {
     return ctx;
   }
   
+
   /**
    * Gets activity's comment from existing post in Context.
    * If is NULL, create new Activity for Topic.
-   * @param ctx
+   * 
+   * @param postPath
    * @return
    */
-  public static ExoSocialActivity getCommentOfPost(ForumActivityContext ctx) {
+  public static ExoSocialActivity getCommentOfPost(String postPath) {
     ForumService fs = getForumService();
-    String activityId = fs.getActivityIdForOwnerPath(ctx.getPost().getPath());
+    String activityId = fs.getActivityIdForOwnerPath(postPath);
 
     ActivityManager am = ForumActivityUtils.getActivityManager();
 
