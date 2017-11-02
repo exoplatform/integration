@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ-wiki</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>5.0.x-SNAPSHOT</version>
+    <version>5.0.0-M29</version>
   </parent>
   <artifactId>integ-wiki-social</artifactId>
   <packaging>jar</packaging>
