@@ -25,10 +25,12 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -64,6 +66,7 @@ import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.Group;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.services.security.ConversationState;
@@ -73,7 +76,10 @@ import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.jpa.updater.utils.IdentityUtil;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.service.LinkProvider;
+import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
@@ -114,6 +120,8 @@ import org.exoplatform.webui.ext.UIExtensionManager;
                 @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)}),
 })
 public class FileUIActivity extends BaseUIActivity{
+
+  public static final String[] EMPTY_ARRAY = new String[0];
 
   public static final String SEPARATOR_REGEX      = "\\|@\\|";
 
@@ -157,7 +165,7 @@ public class FileUIActivity extends BaseUIActivity{
 
   private String              message;
 
-  private Map<String, String> folderPathWithLinks;
+  private LinkedHashMap<String, String>[] folderPathWithLinks;
 
   private String              activityStatus;
 
@@ -169,15 +177,19 @@ public class FileUIActivity extends BaseUIActivity{
 
   private DocumentService     documentService;
 
+  private SpaceService        spaceService;
+
+  private OrganizationService organizationService;
+
   private TrashService         trashService;
 
   List<ActivityFileAttachment> activityFileAttachments = new ArrayList<>();
 
   public FileUIActivity() throws Exception {
     super();
-    documentService = CommonsUtils.getService(DocumentService.class);
-    trashService = CommonsUtils.getService(TrashService.class);
-    addChild(UIPopupContainer.class, null, "UIDocViewerPopupContainer");
+    if(WebuiRequestContext.getCurrentInstance() != null) {
+      addChild(UIPopupContainer.class, null, "UIDocViewerPopupContainer");
+    }
   }
 
   public String getActivityTitle() {
@@ -216,7 +228,19 @@ public class FileUIActivity extends BaseUIActivity{
       return null;
     }
     ActivityFileAttachment activityFileAttachment = activityFileAttachments.get(i);
-    return activityFileAttachment.getContentName();
+    String contentName = null;
+    // Retrieve name from JCR Node instead of activity parameter
+    // To get real file name instead
+    try {
+      contentName = (activityFileAttachment == null
+          || activityFileAttachment.getContentNode() == null) ? null : activityFileAttachment.getContentNode().getName();
+    } catch (RepositoryException e) {
+      LOG.debug("Can't retrieve file name of attachment with path " + activityFileAttachment.getDocPath(), e);
+    }
+    if(StringUtils.isBlank(contentName)) {
+      contentName = activityFileAttachment.getContentName();
+    }
+    return contentName;
   }
 
   public void setContentName(String contentName, int i) {
@@ -476,11 +500,8 @@ public class FileUIActivity extends BaseUIActivity{
     }
 
     // if the requested user if not the connected user, fetch it from the organization service
-    ExoContainer container = ExoContainerContext.getCurrentContainer();
-    OrganizationService organizationService = container.getComponentInstanceOfType(OrganizationService.class);
-
     try {
-      User user = organizationService.getUserHandler().findUserByName(userId);
+      User user = getOrganizationService().getUserHandler().findUserByName(userId);
       if(user != null) {
         return user.getDisplayName();
       }
@@ -517,6 +538,9 @@ public class FileUIActivity extends BaseUIActivity{
   protected double getFileSize(Node node) {
     double fileSize = 0;    
     try {
+      if(node.isNodeType(NodetypeConstant.EXO_SYMLINK)) {
+        node = Utils.getNodeSymLink(node);
+      }
       if (node.hasNode(Utils.JCR_CONTENT)) {
         Node contentNode = node.getNode(Utils.JCR_CONTENT);
         if (contentNode.hasProperty(Utils.JCR_DATA)) {
@@ -535,6 +559,9 @@ public class FileUIActivity extends BaseUIActivity{
 
   	int imageWidth = 0;
   	try {
+      if(node.isNodeType(NodetypeConstant.EXO_SYMLINK)) {
+        node = Utils.getNodeSymLink(node);
+      }
   		if(node.hasNode(NodetypeConstant.JCR_CONTENT)) node = node.getNode(NodetypeConstant.JCR_CONTENT);
     	ImageReader reader = ImageIO.getImageReadersByMIMEType(activityFileAttachment.getMimeType()).next();
     	ImageInputStream iis = ImageIO.createImageInputStream(node.getProperty("jcr:data").getStream());
@@ -564,6 +591,9 @@ public class FileUIActivity extends BaseUIActivity{
 
   	int imageHeight = 0;
   	try {
+      if(node.isNodeType(NodetypeConstant.EXO_SYMLINK)) {
+        node = Utils.getNodeSymLink(node);
+      }
   		if(node.hasNode(NodetypeConstant.JCR_CONTENT)) node = node.getNode(NodetypeConstant.JCR_CONTENT);
     	ImageReader reader = ImageIO.getImageReadersByMIMEType(activityFileAttachment.getMimeType()).next();
     	ImageInputStream iis = ImageIO.createImageInputStream(node.getProperty("jcr:data").getStream());
@@ -650,7 +680,7 @@ public class FileUIActivity extends BaseUIActivity{
   public String getSpaceAvatarImageSource(String spaceIdentityId) {
     try {
       String spaceId = getOwnerIdentity().getRemoteId();
-      SpaceService spaceService = getApplicationComponent(SpaceService.class);
+      SpaceService spaceService = getSpaceService();
       Space space = spaceService.getSpaceById(spaceId);
       if (space != null) {
         return space.getAvatarUrl();
@@ -659,6 +689,13 @@ public class FileUIActivity extends BaseUIActivity{
       LOG.warn("Failed to getSpaceById: " + spaceIdentityId, e);
     }
     return null;
+  }
+
+  private SpaceService getSpaceService() {
+    if (spaceService == null) {
+      spaceService = getApplicationComponent(SpaceService.class);
+    }
+    return spaceService;
   }
 
   public String getActivityStatus() {
@@ -709,13 +746,14 @@ public class FileUIActivity extends BaseUIActivity{
       ActivityFileAttachment fileAttachment = new ActivityFileAttachment();
       String repositoryName = (String) getValueFromArray(i, repositories);
       String workspaceName = (String) getValueFromArray(i, workspaces);
-      ManageableRepository repository = WCMCoreUtils.getRepository();
 
       if(StringUtils.isBlank(repositoryName)) {
+        ManageableRepository repository = WCMCoreUtils.getRepository();
         repositoryName = repository == null ? null : repository.getConfiguration().getName();
       }
 
       if(StringUtils.isBlank(workspaceName)) {
+        ManageableRepository repository = WCMCoreUtils.getRepository();
         workspaceName =  repository == null ? null : repository.getConfiguration().getDefaultWorkspaceName();
       }
 
@@ -739,7 +777,7 @@ public class FileUIActivity extends BaseUIActivity{
       Node contentNode = NodeLocation.getNodeByLocation(fileAttachment.getNodeLocation());
       if (contentNode != null) {
         try {
-          if (!trashService.isInTrash(contentNode)) {
+          if (!getTrashService().isInTrash(contentNode)) {
             activityFileAttachments.add(fileAttachment);
           }
         } catch (RepositoryException e) {
@@ -830,7 +868,8 @@ public class FileUIActivity extends BaseUIActivity{
     NodeLocation nodeLocation = activityFileAttachment.getNodeLocation();
     if (nodeLocation != null) {
       try {
-        activityFileAttachment.setDocDrive(documentService.getDriveOfNode(nodeLocation.getPath(), null, Utils.getMemberships()));
+        String userId = ConversationState.getCurrent().getIdentity().getUserId();
+        activityFileAttachment.setDocDrive(documentService.getDriveOfNode(nodeLocation.getPath(), "placeholder_user_name", Utils.getMemberships()));
       } catch (Exception e) {
         LOG.error("Cannot get drive of node " + nodeLocation.getPath() + " : " + e.getMessage(), e);
       }
@@ -838,17 +877,105 @@ public class FileUIActivity extends BaseUIActivity{
     return activityFileAttachment.getDocDrive();
   }
 
-  public Map<String, String> getDocFolderRelativePathWithLinks(int i) {
+  public String getDefaultIconClass(int i) {
+    String iconClass = "uiBgdFile";
+    String contentName = getContentName(i);
+    if (StringUtils.isNotBlank(contentName)) {
+      if (contentName.toLowerCase().contains(".pdf")) {
+        iconClass = "uiBgdFilePDF";
+      } else if (contentName.toLowerCase().contains(".doc")) {
+          iconClass = "uiBgdFileWord";
+      } else if (contentName.toLowerCase().contains(".xls")) {
+          iconClass = "uiBgdFileExcel";
+      } else if (contentName.toLowerCase().contains(".ppt")) {
+          iconClass = "uiBgdFilePPT";
+      }
+    }
+    return iconClass;
+  }
+
+  public String getDocFileBreadCrumb(int i) {
+    LinkedHashMap<String, String> docFolderBreadCrumb = getDocFolderRelativePathWithLinks(i);
+    String breadCrumbContent = "";
+    if (docFolderBreadCrumb != null) {
+      int breadCrumbSize = docFolderBreadCrumb.size();
+      int folderIndex = 0;
+      for (String folderName : docFolderBreadCrumb.keySet()) {
+        String folderPath = docFolderBreadCrumb.get(folderName);
+        folderName = folderName.replaceAll("_" + (breadCrumbSize - folderIndex - 1) + "$", "");
+        if (folderIndex < (breadCrumbSize - 1)) {
+          if (folderIndex > 0) {
+            breadCrumbContent += ",";
+          }
+          breadCrumbContent += "'" + folderName + "': '" + folderPath + "'";
+          breadCrumbContent = breadCrumbContent.replace("%27", "\\'");
+        }
+        folderIndex++;
+      }
+    }
+    return breadCrumbContent;
+  }
+  
+  public String getDocFilePath(int i) {
+    LinkedHashMap<String, String> folderRelativePathWithLinks = getDocFolderRelativePathWithLinks(i);
+    if(folderRelativePathWithLinks != null && !folderRelativePathWithLinks.isEmpty()) {
+      String[] nodeNames = folderRelativePathWithLinks.values().toArray(EMPTY_ARRAY);
+      return nodeNames[nodeNames.length - 1];
+    }
+    return null;
+  }
+
+  public LinkedHashMap<String, String> getDocFolderRelativePathWithLinks(int i) {
     if ((i + 1) > activityFileAttachments.size()) {
       return null;
     }
     if(folderPathWithLinks == null) {
-      folderPathWithLinks = new LinkedHashMap<>();
-      Map<String, String> reversedFolderPathWithLinks = new LinkedHashMap<>();
+      folderPathWithLinks = new LinkedHashMap[filesCount];
+    }
+    if(folderPathWithLinks[i] == null) {
+      folderPathWithLinks[i] = new LinkedHashMap<>();
+      LinkedHashMap<String, String> reversedFolderPathWithLinks = new LinkedHashMap<>();
 
       DriveData drive = getDocDrive(i);
       if (drive != null) {
         try {
+          Map<String, String> parameters = drive.getParameters();
+          String driveName = drive.getName();
+          if (parameters != null) {
+            if (parameters.containsKey("groupId")) {
+              String groupId = parameters.get("groupId");
+              if (StringUtils.isNotBlank(groupId)) {
+                try {
+                  groupId = groupId.replaceAll("\\.", "/");
+                  if (groupId.startsWith(SpaceUtils.SPACE_GROUP)) {
+                    SpaceService spaceService = getSpaceService();
+                    Space space = spaceService.getSpaceByGroupId(groupId);
+                    if (space != null) {
+                      driveName = space.getDisplayName();
+                    }
+                  } else {
+                    Group group = getOrganizationService().getGroupHandler().findGroupById(groupId);
+                    driveName = group == null ? driveName : group.getLabel();
+                  }
+                } catch (Exception e) {
+                  LOG.warn("Can't get drive name for group with id '" + groupId + "'", e);
+                }
+              }
+            } else if (parameters.containsKey("userId")) {
+              String userId = parameters.get("userId");
+              if (StringUtils.isNotBlank(userId)) {
+                try {
+                  userId = userId.indexOf("/") >= 0 ? userId.substring(userId.lastIndexOf("/") + 1) : userId;
+                  User user = getOrganizationService().getUserHandler().findUserByName(userId);
+                  if (user != null) {
+                    driveName = user.getDisplayName();
+                  }
+                } catch (Exception e) {
+                  LOG.warn("Can't get drive name for user with id '" + userId + "'", e);
+                }
+              }
+            }
+          }
           String driveHomePath = drive.getResolvedHomePath();
 
           // if the drive is the Personal Documents drive, we must handle the special case of the Public symlink
@@ -858,13 +985,16 @@ public class FileUIActivity extends BaseUIActivity{
           }
 
           // calculate the relative path to the drive by browsing up the content node path
-          Node parentContentNode = getContentNode(i).getParent();
+          Node parentContentNode = getContentNode(i);
           while (parentContentNode != null) {
             String parentPath = parentContentNode.getPath();
             // exit condition is check here instead of in the while condition to avoid
             // retrieving the path several times and because there is some logic to handle
-            if (parentContentNode.getPath().equals("/") || parentPath.equals(driveHomePath)) {
-              // we are at the root of the workspace or at the root of the drive
+            if (!parentPath.contains(driveHomePath)) {
+              // The parent path is outside drive
+              break;
+            } else if (!driveHomePath.equals("/") && parentPath.equals("/")) {
+              // we are at the root of the workspace
               break;
             } else if (drivePublicFolderHomePath != null && parentPath.equals(drivePublicFolderHomePath)) {
               // this is a special case : the root of the Public folder of the Personal Documents drive
@@ -873,16 +1003,22 @@ public class FileUIActivity extends BaseUIActivity{
               break;
             }
 
-            String folderName;
+            String nodeName;
             // title is used if it exists, otherwise the name is used
-            if (parentContentNode.hasProperty("exo:title")) {
-              folderName = parentContentNode.getProperty("exo:title").getString();
+            if (parentPath.equals(driveHomePath)) {
+              nodeName = driveName;
+            } else if (parentContentNode.hasProperty("exo:title")) {
+              nodeName = parentContentNode.getProperty("exo:title").getString();
             } else {
-              folderName = parentContentNode.getName();
+              nodeName = parentContentNode.getName();
             }
-            reversedFolderPathWithLinks.put(folderName, getDocOpenUri(parentPath, i));
+            reversedFolderPathWithLinks.put(nodeName + "_" + reversedFolderPathWithLinks.size(), getDocOpenUri(parentPath, i));
 
-            parentContentNode = parentContentNode.getParent();
+            if (parentPath.equals("/")) {
+              break;
+            } else {
+              parentContentNode = parentContentNode.getParent();
+            }
           }
         } catch (AccessDeniedException e) {
           LOG.debug(e.getMessage());
@@ -896,21 +1032,53 @@ public class FileUIActivity extends BaseUIActivity{
         List<Map.Entry<String, String>> entries = new ArrayList<>(reversedFolderPathWithLinks.entrySet());
         for(int j = entries.size()-1; j >= 0; j--) {
           Map.Entry<String, String> entry = entries.get(j);
-          folderPathWithLinks.put(entry.getKey(), entry.getValue());
+          folderPathWithLinks[i].put(entry.getKey(), entry.getValue());
         }
       } else {
-        folderPathWithLinks = reversedFolderPathWithLinks;
+        folderPathWithLinks[i] = reversedFolderPathWithLinks;
       }
     }
 
-    return folderPathWithLinks;
+    return folderPathWithLinks[i];
+  }
+
+  private OrganizationService getOrganizationService() {
+    if (organizationService == null) {
+      organizationService = getApplicationComponent(OrganizationService.class);
+    }
+    return organizationService;
+  }
+
+  private DocumentService getDocumentService() {
+    if (documentService == null) {
+      documentService = getApplicationComponent(DocumentService.class);
+    }
+    return documentService;
+  }
+  
+  private TrashService getTrashService() {
+    if (trashService == null) {
+      trashService = getApplicationComponent(TrashService.class);
+    }
+    return trashService;
   }
 
   public String getDocFolderRelativePath(int i) {
     StringBuilder folderRelativePath = new StringBuilder();
 
-    for(String folderName : getDocFolderRelativePathWithLinks(i).keySet()) {
-      folderRelativePath.append(folderName).append("/");
+    Set<String> relativePaths = getDocFolderRelativePathWithLinks(i).keySet();
+    int pathSize = relativePaths.size();
+    Iterator<String> relativePathIterator = relativePaths.iterator();
+    int folderIndex = 0;
+    while (relativePathIterator.hasNext()) {
+      String folderName = relativePathIterator.next();
+
+      // Delete file from parent Path
+      if(relativePathIterator.hasNext()) {
+        folderName = folderName.replaceAll("_" + (pathSize - folderIndex -1) + "$", "");
+        folderRelativePath.append(folderName).append("/");
+      }
+      folderIndex++;
     }
 
     if(folderRelativePath.length() > 1) {
@@ -940,7 +1108,10 @@ public class FileUIActivity extends BaseUIActivity{
 
     if(nodePath != null) {
       try {
-        uri = documentService.getLinkInDocumentsApp(nodePath, getDocDrive(i));
+        if (nodePath.endsWith("/")) {
+          nodePath = nodePath.replaceAll("/$", "");
+        }
+        uri = getDocumentService().getLinkInDocumentsApp(nodePath, getDocDrive(i));
       } catch(Exception e) {
         LOG.error("Cannot get document open URI of node " + nodePath + " : " + e.getMessage(), e);
         uri = "";
