@@ -139,6 +139,7 @@ public void addActivityTimeLine(String ownerName, String ownerUri, String ownerA
     def commentFormDisplayed = uicomponent.isCommentFormDisplayed();
     def likesDisplayed = uicomponent.isAllLoaded();
     def spaceURL = uicomponent.getSpaceURL();
+    def spaceGroupId = uicomponent.getSpaceGroupId();
     def placeholder = _ctx.appRes("UIActivity.comment.placeholder").replace("'", "\\'");
 
     def LikePopupTitleLabel = _ctx.appRes("UIActivity.title.PopupCommentLikers");
@@ -165,6 +166,7 @@ public void addActivityTimeLine(String ownerName, String ownerUri, String ownerA
       commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
       commentFormDisplayed: '$commentFormDisplayed',
       spaceURL:'$spaceURL',
+      spaceGroupId: '$spaceGroupId',
       allCommentSize: '${allComments.size()}',
       commentFormFocused: '${uicomponent.isCommentFormFocused()}',
       labels: $labels

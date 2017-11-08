@@ -114,12 +114,14 @@
     RemoveConnection: '$RemoveConnectionLabel',
     Ignore: '$IgnoreLabel'
   }"""
+  def spaceGroupId = uicomponent.getSpaceGroupId();
 
   //params for init UIActivity javascript object
   def params = """ {
     activityId: '${activity.id}',
     placeholderComment: '${placeholder}',
     inputWriteAComment: '$inputWriteAComment',
+    spaceGroupId: '$spaceGroupId',
     commentMinCharactersAllowed: '${uicomponent.getCommentMinCharactersAllowed()}',
     commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
     commentFormDisplayed: '$commentFormDisplayed',
@@ -172,7 +174,6 @@
   activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
 
   def ownerIdentity = uicomponent.ownerIdentity;
-  def spaceGroupId = uicomponent.getSpaceGroupId();
   if (uicomponent.isUserActivity()) {
     ownerUri = LinkProvider.getUserProfileUri(ownerIdentity.getRemoteId());
     ownerAvatar = ownerIdentity.profile.avatarUrl;

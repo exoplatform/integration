@@ -183,6 +183,7 @@
   def docOpenUri = uicomponent.getCurrentDocOpenUri();
   def escapedOwnerName = ownerName.replace("'", "\\'").replace("&#39;", "\\&#39;");
   def spaceURL = uicomponent.getSpaceURL();
+  def spaceGroupId = uicomponent.getSpaceGroupId();
   def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'").replace("&#39;", "\\&#39;");
   def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;").replace("\n", "").replace("\r", "")) : "";
   def docPreviewUri = "javascript:require(['SHARED/documentPreview'], function(documentPreview) {documentPreview.init({doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', openUrl:'" + docOpenUri + "', isWebContent: true}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + escapedOwnerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "', status: '" + escapedActivityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + ", spaceURL: '" + spaceURL + "'}})})";
@@ -216,6 +217,7 @@
     commentMaxCharactersAllowed: '${uicomponent.getCommentMaxCharactersAllowed()}',
     commentFormDisplayed: '$commentFormDisplayed',
     spaceURL:'$spaceURL',
+    spaceGroupId: '$spaceGroupId',
     allCommentSize: '${allComments.size()}',
     commentFormFocused: '${uicomponent.isCommentFormFocused()}',
     labels: $labels

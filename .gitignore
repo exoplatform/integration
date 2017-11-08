@@ -37,3 +37,5 @@ pom.xml.versionsBackup
 # Misc
 *.swp
 transaction.log
+rebel.xml
+.rebel.xml.bak
