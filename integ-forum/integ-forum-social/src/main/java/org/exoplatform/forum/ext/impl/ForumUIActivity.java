@@ -9,15 +9,14 @@ import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.commons.utils.HTMLSanitizer;
 import org.exoplatform.forum.common.CommonUtils;
-import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils.PORTLET_INFO;
 import org.exoplatform.forum.ext.activity.ForumActivityBuilder;
 import org.exoplatform.forum.ext.activity.ForumActivityContext;
 import org.exoplatform.forum.ext.activity.ForumActivityUtils;
-import org.exoplatform.forum.service.DataStorage;
 import org.exoplatform.forum.service.Forum;
+import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
@@ -203,7 +202,7 @@ public class ForumUIActivity extends BaseKSActivity {
       message = message.replace("<p>", "").replace("</p>", "\n");
       post.setMessage(message);
 
-      getApplicationComponent(DataStorage.class).savePost(topic.getCategoryId(), topic.getForumId(), topic.getId(), post, true, new MessageBuilder());
+      getApplicationComponent(ForumService.class).savePost(topic.getCategoryId(), topic.getForumId(), topic.getId(), post, true, new MessageBuilder());
 
       //
       ExoSocialActivity activity = getActivity();
