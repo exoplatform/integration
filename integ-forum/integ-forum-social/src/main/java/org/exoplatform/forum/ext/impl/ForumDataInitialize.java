@@ -197,4 +197,9 @@ public class ForumDataInitialize extends SpaceListenerPlugin {
   public void addPendingUser(SpaceLifeCycleEvent event) {
   }
 
+  @Override
+  public void spaceBannerEdited(SpaceLifeCycleEvent event) {
+
+  }
+
 }
