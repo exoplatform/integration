@@ -353,6 +353,20 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
     def escapedActivityPostedTime = activityPostedTime.replace("'", "\\'").replace("&#39;", "\\&#39;");
     def escapedActivityStatus = activityStatus != null ? StringEscapeUtils.escapeHtml(activityStatus.replace("'", "\\'").replace("&#39;", "\\&#39;").replace("\n", "").replace("\r", "")) : "";
     def size = uicomponent.getSize(currentNode);
+    def docFolderRelativePath = uicomponent.getDocFolderRelativePath(index);
+    docFolderRelativePath = docFolderRelativePath.replaceAll("/", " > ");
+    docFolderRelativePath = docFolderRelativePath.replaceAll("%27", "'");
+    def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks(index);
+    def fileSize = uicomponent.getFileSize(currentNode);
+    def description = ContentReader.simpleEscapeHtml(uicomponent.getSummary(currentNode));
+    def filePath = uicomponent.getDocFilePath(index);
+
+    def folderIndex = 0;
+    def breadCrumbContent = uicomponent.getDocFileBreadCrumb(index);
+    def breadCrumbSize = docFolderBreadCrumb == null ? 0 : docFolderBreadCrumb.size();
+
+    def fileInfo = _ctx.appRes("SocialIntegration.messages.updatedOn") + " " + uicomponent.getDocUpdateDate(currentNode) + " " + _ctx.appRes("SocialIntegration.messages.updatedBy") + " " + StringEscapeUtils.escapeHtml(uicomponent.getDocAuthor(currentNode)) + " " + (StringUtils.isBlank(size) ? "" : (" - " + size));
+
     def docPreviewUri = "javascript:require(['SHARED/documentPreview'], \
                            function(documentPreview) { \
                                     documentPreview.init({ \
@@ -368,7 +382,9 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
                                                                 remoteEditTitle :'" + remoteEditTitle + "', \
                                                                 remoteEditClass :'" + remoteEditClass + "', \
                                                                 size:'" + size + "', \
-                                                                cssIcon : '" + classIconName + "' \
+                                                                cssIcon : '" + classIconName + "' , \
+                                                                fileInfo : '" + fileInfo + "' , \
+                                                                breadCrumb : { " + breadCrumbContent + " } \
                                                             }, \
                                                             author: { \
                                                                 username:'" + ownerIdentity.getRemoteId() + "', \
@@ -385,15 +401,12 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
                                                                 spaceURL: '" + spaceURL + "',  \
                                                                 next: " + ((index + 1 < uicomponent.getFilesCount()) ? ("'#Preview${activity.id}-" + (index + 1) + "'") : "null") + ",  \
                                                                 previous: " + ((index - 1 >= 0) ? ("'#Preview${activity.id}-" + (index - 1) + "'") : "null") + " \
-                                                            } \
+                                                            }, \
+                                                            version: { \
+                                                                number : "+ version +" \
+                                                            }, \
                                                         }) \
                              })";
-    def docFolderRelativePath = uicomponent.getDocFolderRelativePath(index);
-    def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks(index);
-    def fileSize = uicomponent.getFileSize(currentNode);
-    def description = uicomponent.getSummary(currentNode);
-    description = ContentReader.simpleEscapeHtml(description);
-
     // END ECMS
 %>
 
@@ -412,17 +425,18 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
 			        String thumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/origin/" + repository + "/" + preferenceWS + encodedPath;
 			        if(mimeType.indexOf("icon") >=0) thumbnailImage = binarySrc;
     %>
-        <img src="$thumbnailImage" onerror="document.getElementById('MediaContent${activity.id}-$index').parentElement.removeChild(document.getElementById('MediaContent${activity.id}-$index'));" />
+        <img src="$thumbnailImage" onerror="document.getElementById('MediaContent${activity.id}-$index').className += ' NoPreview uiBgdFileImage';document.getElementById('MediaContent${activity.id}-$index').removeChild(this);" />
     </div>
                                  <%
                 } else if(org.exoplatform.services.cms.impl.Utils.isSupportThumbnailView(mimeType)){%>
-   <div id="MediaContent${activity.id}-$index" class="mediaContent docTypeContent">
+   <div id="MediaContent${activity.id}-$index" class="mediaContent docTypeContent hovereffect">
    <%
+                    def iconClass = uicomponent.getDefaultIconClass(index);
 	                def encodedPath = URLEncoder.encode(currentNode.getPath(), "utf-8");
 	                encodedPath = encodedPath.replaceAll ("%2F", "/");
 			        String pdfThumbnailImage = "/" + portalName + "/" + restContextName + "/thumbnailImage/custom/900x900/" + repository + "/" + preferenceWS + encodedPath+ "?version="+ version+"&lastModified="+ lastModified.hashCode();
    %>
-        <img src="$pdfThumbnailImage" onerror="document.getElementById('MediaContent${activity.id}-$index').parentElement.removeChild(document.getElementById('MediaContent${activity.id}-$index'));" />
+        <img src="$pdfThumbnailImage" onerror="document.getElementById('MediaContent${activity.id}-$index').className += ' NoPreview $iconClass';document.getElementById('MediaContent${activity.id}-$index').removeChild(this);" />
     </div>
     <%
                 } else if(fileComponent != null) { %>
@@ -430,23 +444,75 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
         <% uicontentpresentation.renderUIComponent(fileComponent);%>
      </div>
     <%
+                } else { %>
+     <div id="MediaContent${activity.id}-$index" class="mediaContent uiBgdFile NoPreview">
+     </div>
+    <%
                 } %>
 
             <% }
 
 			   if (index == 2 && uicomponent.getFilesCount() > 3) { %>
-			             <div id="LoadMore${activity.id}-$index" class="MediaName LoadMore">
-			            <%=_ctx.appRes("SocialIntegration.messages.loadMoreFiles").replace("{0}", String.valueOf(uicomponent.getFilesCount() - maxToDisplay + 1))%>
-			             </div>
+			             <a id="LoadMore${activity.id}-$index" class="MediaName LoadMore" href="javascript:void(0)">
+    			            <%=_ctx.appRes("SocialIntegration.messages.loadMoreFiles").replace("{0}", String.valueOf(uicomponent.getFilesCount() - maxToDisplay + 1))%>
+			             </a>
 			         </div>
 			<%        continue;
 			    } else { %>
 
-		    <div id="MediaName${activity.id}$index" class="MediaName" rel="tooltip" data-placement="top" title="$contentName">
-		        <div>
-			        <i class="$classIconName"></i>
-			        <span>$contentName</span>
-                </div>
+		    <div id="MediaName${activity.id}$index" class="MediaName">
+                <h4 class="fileName">
+                    <div class="fileTitle content">
+	                    <div class="fileNameParentLink" data-container="body" rel="tooltip" data-placement="top" data-original-title="$contentName">
+	                       <a href="$filePath" class="ellipsis"
+                              onclick="event.stopPropagation();window.location.href=this.href">
+	                           $contentName
+	                       </a>
+	                    </div>
+	                    <% if(version > 0) {
+	                        def fileVersionURL = filePath + "&versions=true"
+	                        %>
+                            <div class="label primary fileVersion" onclick="event.stopPropagation();window.location.href='$fileVersionURL'">V$version</div>
+	                    <% } %>
+                    </div>
+                    <div class="borderTop"></div>
+                </h4>
+	            <div class="fileBreadCrumbContent ellipsis-reverse">
+	                <div class="ellipsis-reverse-content hidden">...</div>
+	                <div class="ellipsis-reverse-apply" title="$docFolderRelativePath" data-container="body" rel="tooltip" data-placement="top">
+		                <div class="fileBreadCrumbWrapper ellipsis-reverse-apply-content">
+		                    <%
+		                        if(docFolderBreadCrumb != null) {
+							        folderIndex = 0;
+							        for (String folderName : docFolderBreadCrumb.keySet()) {
+							            // Last element is path of file name
+						                if(folderIndex == (breadCrumbSize - 1)) {
+						                    continue;
+						                }
+	                                    if(folderIndex > 0) { %>
+	                                       <i class="uiIconArrowRight"></i>
+	                                 <% }
+								        def folderPath = docFolderBreadCrumb.get(folderName);
+								        folderName = folderName.replaceAll("_" + (breadCrumbSize - folderIndex - 1) + "\$", "");
+	                                    folderName = folderName.replace("%27", "'"); %>
+			                            <a href="$folderPath" 
+			                               onclick="event.stopPropagation();window.location.href=this.href">
+			                               $folderName
+			                            </a>
+		                            <%
+			                            folderIndex++;
+				                    }
+                                }
+                            %>
+			            </div>
+			        </div>
+	            </div>
+	            <div class="infoFile">
+	                <div class="borderTop"></div>
+	                <span title="$fileInfo" class="ellipsis content" data-container="body" rel="tooltip" data-placement="top">
+	                   $fileInfo
+	                </span>
+	            </div>
 		    </div>
 
             <% } %>

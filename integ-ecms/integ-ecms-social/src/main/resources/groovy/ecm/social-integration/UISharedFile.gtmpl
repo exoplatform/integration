@@ -301,6 +301,7 @@
 		def docPreviewUri = "javascript:require(['SHARED/documentPreview'], function(documentPreview) {documentPreview.init({doc: {id:'" + currentNode.getUUID() + "', repository:'" + repository + "', workspace:'" + preferenceWS + "', path:'" + currentNode.getPath() + "', title:'" + currentNode.getName() + "', downloadUrl:'" + docDownloadUrl + "', openUrl:'" + docOpenUri + "'}, author: {username:'" + ownerIdentity.getRemoteId() + "', fullname:'" + escapedOwnerName + "', avatarUrl:'" + ownerAvatar + "', profileUrl:'" + ownerUri + "'}, activity: {id: '" + activity.id + "', postTime:'" + escapedActivityPostedTime + "', status: '" + escapedActivityStatus + "', liked: " + uicomponent.isLiked() + ", likes: " + identityLikesNum + ", spaceURL: '" + spaceURL + "'}})})";
 		def docFolderRelativePath = uicomponent.getDocFolderRelativePath(0);
 		def docFolderBreadCrumb = uicomponent.getDocFolderRelativePathWithLinks(0);
+        def breadCrumbSize = docFolderBreadCrumb == null ? 0 : docFolderBreadCrumb.size();
 		def size = uicomponent.getSize(currentNode);
 	  def fileSize = uicomponent.getFileSize(currentNode);
 	  def description = uicomponent.getSummary(currentNode);
@@ -362,7 +363,6 @@
 				<div class="uiBox roundedBottom introBox fileShare">
 					<div class="clearfix isPreviewable">
 				<%if (mimeType != null && mimeType.length() > 0 && fileSize > 0){%>
-
 		        <%   if( (mimeType.startsWith("image") || mimeType.indexOf("icon") >=0)  && currentNode != null){%>
 		               <div id="MediaContent${activity.id}" class=" pull-left mediaContent " onclick="$docPreviewUri" rel="tooltip" data-placement="bottom" data-original-title="$activityContentTitle">
 		           	     <%
@@ -434,11 +434,14 @@
 									<%
 										def folderIndex = 0;
 										for (String folderName : docFolderBreadCrumb.keySet()) {
+										    def folderPath = docFolderBreadCrumb.get(folderName);
+							                folderName = folderName.replaceAll("_" + (breadCrumbSize - folderIndex - 1) + "\$", "");
+
 											if(folderIndex++ > 0) {
 									%>
 										<i class="uiIconArrowRight"></i>
 									<% 	} %>
-										<a href="<%=docFolderBreadCrumb.get(folderName)%>">$folderName</a>
+										<a href="$folderPath">$folderName</a>
 									<% } %>
 											</div>
 										</span>
