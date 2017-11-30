@@ -46,6 +46,8 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public static final int    WAITING               = 5;
   public static final int    HIDDEN                = 9;
 
+  public static final ThreadLocal<Boolean> ACTIVITY_COMMENT_CREATED = new ThreadLocal<>();
+
   @Override
   public void saveCategory(Category category) {
   }
@@ -53,11 +55,20 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   @Override
   public void saveForum(Forum forum) {
   }
-  
- 
-  
+
+  public void setIsActivityCommentCreated(boolean commentAlreadyCreated) {
+    ACTIVITY_COMMENT_CREATED.set(commentAlreadyCreated);
+  }
+
+  public boolean isActivityCommentCreated() {
+    return ACTIVITY_COMMENT_CREATED.get() != null && ACTIVITY_COMMENT_CREATED.get();
+  }
+
   @Override
   public void addPost(Post post) {
+    if (isActivityCommentCreated()) {
+      return;
+    }
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     PostActivityTask task = PostActivityTask.ADD_POST;
     //

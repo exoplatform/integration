@@ -181,7 +181,7 @@ public class ForumUIActivity extends BaseKSActivity {
     return false;
   }
   
-  public Post createPost(String message, WebuiRequestContext requestContext) {
+  public Post createPost(String message, Post parentPost, WebuiRequestContext requestContext) {
     try {
       Topic topic = getTopic();
       //
@@ -230,11 +230,13 @@ public class ForumUIActivity extends BaseKSActivity {
       String message = uiFormComment.getValue();
       uiFormComment.reset();
 
+      Post parentPost = null;
+
       //
       String postMessage = message;
       if (StringUtils.isNotBlank(commentId)) {
         ExoSocialActivity parentActivity = ForumActivityUtils.getActivityManager().getActivity(commentId);
-        Post parentPost = ForumActivityUtils.getPost(parentActivity);
+        parentPost = ForumActivityUtils.getPost(parentActivity);
         if(parentPost != null) {
           String parentPostUserFullName = ForumActivityUtils.getForumService().getScreenName(parentPost.getOwner());
           postMessage = parentPost.getMessage().replaceAll("<br/>((\\r)?(\\n)?( )*(\\&nbsp;)*)*<br/>", "");
@@ -242,14 +244,14 @@ public class ForumUIActivity extends BaseKSActivity {
         }
       }
       //
-      Post post = uiActivity.createPost(postMessage, requestContext);
-        boolean isMigratedActivity = false;
+      Post post = uiActivity.createPost(postMessage, parentPost, requestContext);
+      boolean isMigratedActivity = false;
 
-         //Case of migrate activity, post will be null
-           if (post == null) {
-            post = new Post();
-            isMigratedActivity = true;
-          }
+      //Case of migrate activity, post will be null
+      if (post == null) {
+        post = new Post();
+        isMigratedActivity = true;
+      }
       post.setMessage(message);
       ExoSocialActivity newComment = uiActivity.saveComment(post, commentId, isMigratedActivity);
 

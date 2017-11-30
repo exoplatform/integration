@@ -50,7 +50,26 @@ public class PostActivityTest extends AbstractActivityTypeTest {
     ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(post, ctx);
     assertPostTitle(comment, postContent);
   }
-  
+
+  public void testTriggerAddPostTwice() throws Exception {
+    Topic topic = createdTopic("demo");
+    ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);
+    ExoSocialActivity topicActivity = ForumActivityBuilder.createActivity(topic, ctx);
+    Post post = createdPost(topic);
+
+    //
+    ctx = ForumActivityContext.makeContextForAddPost(post);
+    PostActivityTask task = PostActivityTask.ADD_POST;
+
+    ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(post, ctx);
+    ctx.setTopic(topic);
+    topicActivity = task.processActivity(ctx, topicActivity);
+    comment = task.processComment(ctx, comment);
+    comment = task.processComment(ctx, comment);
+
+    assertNumberOfReplies(topicActivity, 1);
+  }
+
   public void testAddTopicWithJob() throws Exception {
     Topic topic = createdTopic("demo");
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);

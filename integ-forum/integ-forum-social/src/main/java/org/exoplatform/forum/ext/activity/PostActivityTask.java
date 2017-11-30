@@ -60,7 +60,6 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
     
     @Override
     protected ExoSocialActivity processComment(ForumActivityContext ctx, ExoSocialActivity comment) {
-      
       //censoring status or not approved yet, hidden post's comment in stream
       if (ctx.getPost().getIsWaiting() || !ctx.getPost().getIsApproved()) {
         comment.isHidden(true);
@@ -97,6 +96,16 @@ public abstract class PostActivityTask implements ActivityTask<ForumActivityCont
     @Override
     public ExoSocialActivity execute(ForumActivityContext ctx) {
       try {
+        String postActivityId = ForumActivityUtils.getForumService().getActivityIdForOwnerPath(ctx.getPost().getPath());
+        if (StringUtils.isNotBlank(postActivityId)) {
+          ExoSocialActivity commentOfPost = ForumActivityUtils.getCommentOfPost(ctx.getPost().getPath());
+          if (commentOfPost == null) {
+            return null;
+          } else {
+            return commentOfPost;
+          }
+        }
+
         Topic topic = ForumActivityUtils.getTopic(ctx);
         ctx.setTopic(topic);
         
