@@ -111,6 +111,11 @@ public class UnifiedSearchSocialSpaceListener extends SpaceListenerPlugin {
   }
 
   @Override
+  public void spaceBannerEdited(SpaceLifeCycleEvent event) {
+
+  }
+
+  @Override
   public void spaceAccessEdited(SpaceLifeCycleEvent spaceLifeCycleEvent) {
     spaceUpdated(spaceLifeCycleEvent);
   }
