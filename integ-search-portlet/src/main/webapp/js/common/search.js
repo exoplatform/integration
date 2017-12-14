@@ -261,7 +261,7 @@ window.initSearch = function initSearch() {
           avatar = TASK_IN_TASKS_AVATAR_TEMPLATE.replace(/%{done}/g, doneClass);
           break;
         case "file":
-            var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64" + type}).join(" ");
+            var cssClasses = "uiIcon64x64" + result.fileType.replace(/[\/\.]/g, '');
             if (result.imageUrl == null || result.imageUrl == ""){
             	avatar = DOC_CSS_AVATAR_TEMPLATE.replace(/%{cssClass}/g, cssClasses);
             }else{

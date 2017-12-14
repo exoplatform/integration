@@ -45,10 +45,14 @@
         <description>eXo WCM documents</description>      
         <init-params>
           <properties-param>
-             <name>constructor.params</name>
-             <property name="searchType" value="file"/>
-             <property name="displayName" value="Files"/>
-             <property name="enable" value="${exo.unified-search.connector.file.enable:true}"/>
+            <name>constructor.params</name>
+            <property name="searchType" value="file"/>
+            <property name="displayName" value="Files"/>
+            <property name="index" value="file_alias"/>
+            <property name="type" value="file"/>
+            <property name="enable" value="${exo.unified-search.connector.file.enable:true}"/>
+            <property name="titleField" value="title"/>
+            <property name="searchFields" value="name,title,attachment.content"/>
           </properties-param>
         </init-params>      
       </component-plugin>
