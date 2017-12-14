@@ -105,6 +105,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   private static final String SHARE_PERMISSION_MODIFY      = "modify";
   private static final String SPACE_PREFIX1 = "space::";
   private static final String SPACE_PREFIX2 = "*:/spaces/";
+  private static final String LOGIN_INITIALURI = "/login?initialURI=/";
 
   private String permission = SHARE_PERMISSION_VIEW;
   private boolean permDropDown = false;
@@ -263,10 +264,12 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                 isShared = true;
               } else {
                 service.publishDocumentToUser(entry, node, message, perm);
+                String oldSharedURL = documentService.getDocumentUrlInPersonalDocuments(node, entry);
+                String newSharedURL = getPortalLoginRedirectURL() + oldSharedURL.replace(CommonsUtils.getCurrentDomain() + "/", "");
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToUserPlugin.NODE, node)
                     .append(ShareFileToUserPlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToUserPlugin.NODEID, node.getUUID())
-                    .append(ShareFileToUserPlugin.URL, documentService.getDocumentUrlInPersonalDocuments(node, entry))
+                    .append(ShareFileToUserPlugin.URL, newSharedURL)
                     .append(ShareFileToUserPlugin.RECEIVER, entry)
                     .append(ShareFileToUserPlugin.PERM, perm)
                     .append(ShareFileToUserPlugin.ICON, uiform.getDefaultThumbnail(node))
@@ -291,6 +294,11 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
             ApplicationMessage.WARNING));
       }
     }
+  }
+
+  public static String getPortalLoginRedirectURL() {
+    String portal = PortalContainer.getCurrentPortalContainerName();
+    return new StringBuffer(CommonsUtils.getCurrentDomain()).append("/").append(portal).append(LOGIN_INITIALURI).append(portal).append("/").toString();
   }
 
   public static class AddActionListener extends EventListener<UIShareDocuments> {
