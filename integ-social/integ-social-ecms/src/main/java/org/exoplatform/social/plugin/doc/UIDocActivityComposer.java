@@ -226,13 +226,13 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
         Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
         //
         activity = saveActivity(activityParams, identityManager, spaceIdentity);
-
-        for (ComposerFileItem composerFileItem : selectedFileItemsList) {
-          UIAbstractSelectFileComposer uiSelectFileComposer = getResolver(composerFileItem.getResolverType());
-          uiSelectFileComposer.postActivitySave(composerFileItem, postContext, activity);
-        }
       } else if (postContext == UIComposer.PostContext.USER) {
         activity = postActivityToUser(activityParams);
+      }
+
+      for (ComposerFileItem composerFileItem : selectedFileItemsList) {
+        UIAbstractSelectFileComposer uiSelectFileComposer = getResolver(composerFileItem.getResolverType());
+        uiSelectFileComposer.postActivitySave(composerFileItem, postContext, activity);
       }
     }
     resetValues();
