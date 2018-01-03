@@ -310,7 +310,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
     public void execute(Event<UIShareDocuments> event) throws Exception {
       UIShareDocuments uicomponent = event.getSource();
       List<String> entries = uicomponent.entries;
-      UIFormStringInput input = uicomponent.getUIStringInput(USER);
+      UIFormStringInput input = uicomponent.getUIStringInput(USER_SUGGESTER);
       String value = input.getValue();
       input.setValue(null);
       if (value == null || value.trim().isEmpty()) {
@@ -410,13 +410,13 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   List<String> entries = new ArrayList<String>();
   public String comment = "";
   private NodeLocation node;
-  private static final String USER = "user";
+  private static final String USER_SUGGESTER = "userSuggester";
   private Map<String, String> permissions;
 
   public UIShareDocuments(){ }
 
   public String getValue() {
-    return getUIStringInput(USER).getValue();
+    return getUIStringInput(USER_SUGGESTER).getValue();
   }
 
   public void init() {
@@ -437,7 +437,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       }else{
         setPermissionDropDown(false);
       }
-      addUIFormInput(new UIFormStringInput(USER, null, null));
+      addUIFormInput(new UIFormStringInput(USER_SUGGESTER, null, null));
       permissions = getAllPermissions();
     } catch (Exception e) {
       if(LOG.isErrorEnabled())

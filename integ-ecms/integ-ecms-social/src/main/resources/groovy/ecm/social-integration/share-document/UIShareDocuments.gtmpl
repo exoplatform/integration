@@ -28,7 +28,7 @@ String SHARE_PERMISSION_MODIFY      = "modify";
     <div class="addInvite">
 	  <div class="uiUserInvitation">
         <div class="mention-input pull-left">
-            <% uiform.renderField("user"); %>
+            <% uiform.renderField("userSuggester"); %>
         </div>
         <div class="sharePermission pull-left">
           <% if(uicomponent.getPermission().equals(SHARE_PERMISSION_VIEW)) { %>
@@ -76,7 +76,7 @@ String SHARE_PERMISSION_MODIFY      = "modify";
         </div>
         <%
         requireJs.require("SHARED/userInvitation", "invite");
-        requireJs.addScripts("invite.build('user', '$restUrl', '$placeholder');");
+        requireJs.addScripts("invite.build('userSuggester', '$restUrl', '$placeholder');");
         %>
 	</div>
   </div>
