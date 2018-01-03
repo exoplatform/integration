@@ -649,7 +649,7 @@ window.initSearch = function initSearch() {
             sortByIcon = 'uiIconSortDown';
             break;
           case "date":
-            sortByIcon = 'uiIconSortUp';
+            sortByIcon = 'uiIconSortDown';
             break;
           case "title":
             sortByIcon = 'uiIconSortUp';
