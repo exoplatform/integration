@@ -26,6 +26,7 @@ import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.workspace.UIPortalApplication;
 import org.exoplatform.resolver.ResourceResolver;
+import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.cms.templates.TemplateService;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.core.ManageableRepository;
@@ -35,6 +36,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.plugin.doc.UIDocViewer;
 import org.exoplatform.web.ControllerContext;
@@ -68,9 +70,12 @@ public class ContentViewerRESTService implements ResourceContainer {
 
   private RepositoryService repositoryService;
 
-  public ContentViewerRESTService(WebAppController webAppController, RepositoryService repositoryService) throws Exception {
+  private LinkManager linkManager;
+
+  public ContentViewerRESTService(WebAppController webAppController, RepositoryService repositoryService, LinkManager linkManager) throws Exception {
     this.webAppController = webAppController;
     this.repositoryService = repositoryService;
+    this.linkManager = linkManager;
   }
 
   /**
@@ -95,6 +100,10 @@ public class ContentViewerRESTService implements ResourceContainer {
       ManageableRepository repository = repositoryService.getCurrentRepository();
       Session session = getSystemProvider().getSession(workspaceName, repository);
       Node contentNode = session.getNodeByUUID(uuid);
+
+      if(contentNode != null && contentNode.isNodeType(NodetypeConstant.EXO_SYMLINK)) {
+        contentNode = linkManager.getTarget(contentNode);
+      }
 
       StringWriter writer = new StringWriter();
 
