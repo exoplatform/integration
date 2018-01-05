@@ -30,7 +30,6 @@
   import org.exoplatform.social.core.service.LinkProvider;
   import org.apache.commons.lang.StringUtils;
   import org.apache.commons.lang.StringEscapeUtils;
-  import org.exoplatform.wcm.webui.reader.ContentReader;
   //ECMS import BEGIN
   import org.exoplatform.wcm.ext.component.activity.ContentPresentation;
   import org.exoplatform.services.jcr.util.Text;
@@ -507,7 +506,6 @@
                   commentMessage = commentBuffer.toString();
               } else {
                 commentMessage = it.title;
-                commentMessage = ContentReader.simpleEscapeHtml(commentMessage);
               }
 
               commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
