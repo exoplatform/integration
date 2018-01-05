@@ -9,10 +9,13 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.commons.utils.HTMLSanitizer;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.social.core.storage.SpaceStorageException;
@@ -22,9 +25,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.lifecycle.WebuiBindingContext;
-import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.resolver.PageResolver;
-import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.utils.Utils;
 
 @ComponentConfig (
     lifecycle = UIFormLifecycle.class,
@@ -64,7 +65,10 @@ public class WikiUIActivity extends BaseUIActivity {
   
   public static final String SPACE_TYPE = "/spaces/";
 
+  public final ResourceBundleService resourceBundleService;
+
   public WikiUIActivity() {
+    resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
   }
 
   public String getUriOfAuthor() {   
@@ -121,9 +125,16 @@ public class WikiUIActivity extends BaseUIActivity {
   String getActivityMessage(WebuiBindingContext _ctx) throws Exception {
     return _ctx.appRes("WikiUIActivity.label.page-create");
   }
-  
-  String getPageName() {
-    return getActivityParamValue(WikiSpaceActivityPublisher.PAGE_TITLE_KEY);
+
+  String getPageName() throws Exception {
+    String pageName = HTMLSanitizer.sanitize(getActivityParamValue(WikiSpaceActivityPublisher.PAGE_TITLE_KEY));
+
+    if (StringUtils.isBlank(pageName)) {
+      WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
+      ResourceBundle res = resourceBundleService.getResourceBundle(Utils.WIKI_RESOUCE_BUNDLE_NAME, context.getLocale());
+      return res.getString("Page.Untitled");
+    }
+    return pageName;
   }
 
   String getPageURL() {
@@ -258,8 +269,9 @@ public class WikiUIActivity extends BaseUIActivity {
    * @param activityParams
    * @param title
    * @return
+   * @throws Exception 
    */
-  public String getSystemCommentMessage(Map<String, String> activityParams, String title) {
+  public String getSystemCommentMessage(Map<String, String> activityParams, String title) throws Exception {
     // Get Comment Type
     CommentType commentType = CommentType.USER;
     if (activityParams != null && activityParams.containsKey(COMMENT_TYPE)) {
@@ -282,7 +294,7 @@ public class WikiUIActivity extends BaseUIActivity {
         break;
     }
     
-    return commentMessage;
+    return HTMLSanitizer.sanitize(commentMessage);
   }
   
   String getWikiActivityType(){
