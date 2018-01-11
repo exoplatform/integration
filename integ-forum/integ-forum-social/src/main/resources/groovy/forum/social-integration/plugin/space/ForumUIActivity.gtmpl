@@ -456,7 +456,7 @@
                                <%
                            }
                       }
-					  commentMessage = it.title;
+					  commentMessage = StringEscapeUtils.unescapeHtml(it.title);
 					  commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
 					  commenterAvatarImgSrc = id.profile.avatarUrl;
 					  if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
