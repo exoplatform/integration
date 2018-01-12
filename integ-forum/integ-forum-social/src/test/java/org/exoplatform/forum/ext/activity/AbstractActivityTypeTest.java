@@ -220,6 +220,7 @@ public abstract class AbstractActivityTypeTest extends BaseExoTestCase {
     post.setIsHidden(false);
     post.setIsWaiting(false);
     post.setPath("forumCategory123/forum123/topic123/" + post.getId());
+    post.setLink("http://localhost:8080/portal/intranet/forum/topic123/" + post.getId());
     topic.setPostCount(topic.getPostCount() + 1);
     return post;
   }
