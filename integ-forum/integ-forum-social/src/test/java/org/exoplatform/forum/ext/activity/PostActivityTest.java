@@ -22,6 +22,8 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
+import static org.exoplatform.forum.ext.activity.ForumActivityBuilder.POST_LINK_KEY;
+
 /**
  * Created by The eXo Platform SAS
  * Author : thanh_vucong
@@ -49,6 +51,7 @@ public class PostActivityTest extends AbstractActivityTypeTest {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(post, ctx);
     assertPostTitle(comment, postContent);
+    assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
   }
 
   public void testTriggerAddPostTwice() throws Exception {
@@ -85,6 +88,7 @@ public class PostActivityTest extends AbstractActivityTypeTest {
     comment = task.processComment(ctx, comment);
     assertPostTitle(comment, postContent);
     assertNumberOfReplies(topicActivity, 1);
+    assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
   }
   
   public void testUpdateTopic() throws Exception {
@@ -95,6 +99,7 @@ public class PostActivityTest extends AbstractActivityTypeTest {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(post, ctx);
     assertPostTitle(comment, postContent);
+    assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
   }
   
   public void testUpdateTopicWithJob() throws Exception {
@@ -112,11 +117,13 @@ public class PostActivityTest extends AbstractActivityTypeTest {
     //Comment associated with this post exist --> update
     comment = task.processComment(ctx, comment);
     assertPostTitle(comment, "Edited his reply to: edited post content");
-    
+    assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
+
     //Comment associated with this post has been deleted --> add new
     comment = task.processComment(ctx, null);
     assertPostTitle(comment, "Edited his reply to: edited post content");
-    
+    assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
+
     //Case of post with multi-lines, 3 firsts lines will be used
     updatePostContent(post, "edited post content1\n2\n3\n4\n5");
     
@@ -129,9 +136,11 @@ public class PostActivityTest extends AbstractActivityTypeTest {
     //Comment associated with this post exist --> update
     comment = task.processComment(ctx, comment);
     assertPostTitle(comment, "Edited his reply to: edited post content1<br/>2<br/>3...");
+    assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
     
     //Comment associated with this post has been deleted --> add new
     comment = task.processComment(ctx, null);
     assertPostTitle(comment, "Edited his reply to: edited post content1<br/>2<br/>3...");
+    assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
   }
 }

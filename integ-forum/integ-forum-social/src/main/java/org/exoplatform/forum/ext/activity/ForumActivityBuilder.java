@@ -90,7 +90,7 @@ public class ForumActivityBuilder {
     Map<String, String> templateParams = new HashMap<String, String>();
     
     templateParams.put(POST_ID_KEY, post.getId());
-    templateParams.put(POST_LINK_KEY, post.getLink() + "/" + post.getId());
+    templateParams.put(POST_LINK_KEY, post.getLink());
     templateParams.put(POST_NAME_KEY, post.getName());
     templateParams.put(POST_OWNER_KEY, post.getOwner());
     //
