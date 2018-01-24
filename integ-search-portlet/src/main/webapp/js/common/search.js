@@ -16,7 +16,7 @@ window.initSearch = function initSearch() {
         %{avatar} \
         <div class=\"content\"> \
           <h6><a href=\"%{url}\">%{title}</a>%{rating}</h6> \
-          %{space} \
+          %{breadcrumb} \
           <div class=\"detail\" style='margin:10px'>%{detail}</div> \
           <p class=\"excerpt\">%{excerpt}</p> \
         </div> \
@@ -47,6 +47,15 @@ window.initSearch = function initSearch() {
         <i class=\"%{cssClass} main\" style='position:relative'></i> \
         <div class='preview'><i class='uiIconWhite uiIconSearch' style='color:white'></i></div> \
       </span> \
+    ";
+
+    var BREADCRUMB_TEMPLATE = " \
+      <div class=\"breadcrumb_container\" style=\"white-space:nowrap\"> \
+        <div class=\"breadcrumb_ellipsis\" style=\"float:left;display:none\">...</div> \
+        <div class=\"breadcrumb_placeholder_container\" style=\"white-space: nowrap;overflow:hidden;\"> \
+          <div class=\"breadcrumb_placeholder\" style=\"float:left;padding-right:20px\">%{breadcrumb}</div> \
+        </div> \
+      </div> \
     ";
 
     var EVENT_AVATAR_TEMPLATE = " \
@@ -222,14 +231,9 @@ window.initSearch = function initSearch() {
       var query = $("#txtQuery").val();
       var terms = query.split(/\s+/g);
       var avatar = "";
+      var breadcrumb = "";
       var rating = "";
-      var count = searchCount ++;
-      var space ="<div id='space_search_result_breadcrumb_container_" + count +"' style='white-space:nowrap'>" +
-                      "<div id='space_ellipsis_" + count +"' style='float:left;display:none'>...</div>" +
-                      "<div id='space_place_holder_container_" + count +"' style='white-space: nowrap;overflow:hidden;'>" +
-                          "<div id='space_place_holder_" + count +"' style='float:left;padding-right:20px'/>" +
-                      "</div>" +
-                  "</div>";
+
 
       switch(result.type) {
         case "event":
@@ -272,7 +276,52 @@ window.initSearch = function initSearch() {
               previewUrl = result.url;
             }
             avatar = '<a href="javascript:void(0)" onclick="'+previewUrl+'">' + avatar + '</a>';
-            
+
+            // build breadcrumb
+            var breadcrumbHtml = "<div>";
+
+            var spaceName = getSpaceName(result.nodePath);
+            if (spaceName) {
+                $.ajax({
+                    dataType: "json",
+                    async: false,
+                    url: "/" + eXo.env.portal.rest + "/private/" + eXo.env.portal.containerName + "/social/spaces/spaceInfo/?spaceName=" + spaceName
+                }).done(function(data) {
+                    var sName = data.displayName;
+                    var imgSrc = data.imageSource;
+                    var sUri = data.url;
+
+                    breadcrumbHtml += "<a class='spaceName' rel='tooltip' data-placement='bottom' title='" + sName + "' href='" + sUri + "' style='color:black'>" +
+                    "<img title='' alt='' src='" + imgSrc + "' class='spaceIcon avatarMini' /><strong>&nbsp;" + sName + "</strong>" +
+                    "</a>";
+                }).fail(function () {
+                    console.log("Can not get space info!");
+                });
+            }
+
+            if(result.breadcrumb) {
+                var keys = [];
+                $.each(result.breadcrumb, function (key, value) {
+                    keys.push(key);
+                });
+                keys.sort();
+
+                breadcrumbHtml += "<span>";
+                for (var i = 0; i < keys.length - 1; i++) {
+                    var key = keys[i];
+                    var value = result.breadcrumb[key];
+                    if (i > 0 || spaceName) {
+                        breadcrumbHtml += "<icon class='uiIconArrowRight' style='margin:5px'></icon>";
+                    }
+                    breadcrumbHtml += "<a href='" + value[1] + "' style='color:black'><strong>" + value[0] + "</strong></a>";
+                }
+                breadcrumbHtml += "</span>";
+            }
+
+            breadcrumbHtml += "</div>";
+
+            breadcrumb = BREADCRUMB_TEMPLATE.replace(/%{breadcrumb}/g, breadcrumbHtml);
+
             break;
         case "document":
           var cssClasses = $.map(result.fileType.split(/\s+/g), function(type){return "uiIcon64x64Template" + type}).join(" ");
@@ -325,64 +374,23 @@ window.initSearch = function initSearch() {
         replace(/%{detail}/g, (result.detail||"").highlight(terms)).
         replace(/%{avatar}/g, avatar).
         replace(/%{rating}/g, rating).
-        replace(/%{space}/g, space);
+        replace(/%{breadcrumb}/g, breadcrumb);
 
       $("#result").append(html);
-      if (result.type == "file") {
-          var spaceName = getSpaceName(result.nodePath);
-          if (spaceName) {
-            $.ajax({
-              dataType: "json",
-              url: "/" + eXo.env.portal.rest + "/private/" + eXo.env.portal.containerName + "/social/spaces/spaceInfo/?spaceName=" + spaceName
-            }).done(function(data) {
-              var sName = data.displayName;
-              var imgSrc = data.imageSource;
-              var sUri = data.url;
-              spaceHtml =  "<div>" +
-                             "<a class='spaceName' rel='tooltip' data-placement='bottom' title='" + sName + "' href='" + sUri + "' style='color:black'>" +
-                               "<img title='' alt='' src='" + imgSrc + "' class='spaceIcon avatarMini' /><strong>&nbsp;" + sName + "</strong>" +
-                             "</a>" +
-                             "<span id='file_path_place_holder" + count + "'></span>" + 
-                           "</div>";
-              $("#space_place_holder_" + count).html(spaceHtml);
-              $.ajax({
-                dataType: "json",
-                url: "/" + eXo.env.portal.rest + "/document/docOpenUri?nodePath=" + result.nodePath  
-              }).done(function(data) {
-                  var nodePathsHtml = "";
-                  var keys = [];
-                  $.each(data, function(key, value) {
-                    keys.push(key);
-                  });
-                  keys.sort();
-                  for (var i = 1; i < keys.length - 1; i++) {
-                      var key = keys[i];
-                      var value = data[key];
-                      nodePathsHtml += "<icon class='uiIconArrowRight' style='margin:5px'></icon>" +
-                      "<a href='" + value[1] + "' style='color:black'><strong>" + value[0] + "</strong></a>";
-                  }
-                  //console.log(nodePathsHtml);
-                  $("#file_path_place_holder" + count).html(nodePathsHtml);
-                  console.log(count);
-                  var spaceEllipsis = $("#space_ellipsis_" + count);
-                  var breadcrumbContainer = $("#space_search_result_breadcrumb_container_" + count);
-                  var placeHolderContainer = $("#space_place_holder_container_" + count);
-                  var placeHolder = $("#space_place_holder_" + count);
-                  
-                  if (placeHolder.width() > placeHolderContainer.width()) {
-                      placeHolder.removeAttr("style");
-                      placeHolder.addClass("pull-right");
-                      placeHolder.attr('style', 'padding-right:20px');
-                      spaceEllipsis.show();
-                  }
-              }).fail(function () {
-                  console.log("Can not get document open uri!");
-              });
-            }).fail(function () {
-              console.log("Can not get space info!");
-            });
+
+      // show ellipsis if necessary
+      $(".breadcrumb_container").each(function(index, breadcrumb) {
+          var spaceEllipsis = $(breadcrumb).find(".breadcrumb_ellipsis");
+          var placeHolderContainer = $(breadcrumb).find(".breadcrumb_placeholder_container");
+          var placeHolder = $(breadcrumb).find(".breadcrumb_placeholder");
+
+          if (placeHolder.width() > placeHolderContainer.width()) {
+              placeHolder.removeAttr("style");
+              placeHolder.addClass("pull-right");
+              placeHolder.attr('style', 'padding-right:20px');
+              spaceEllipsis.show();
           }
-      }
+      });
     }
 
     function clearResultPage(){
