@@ -172,8 +172,7 @@ link
             <% if (images != null && images.size() > 0) { %>
 			      <span class="uiCheckbox"><input id="ThumbnailCheckbox" type="checkbox" class="checkbox" /><span>$noThumbnail</span></span>
 			      <% } %>
-          </div>
-			</div>
+		  </div>
 		<%
       }
     %>
