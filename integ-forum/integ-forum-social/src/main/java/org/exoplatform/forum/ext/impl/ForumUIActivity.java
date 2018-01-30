@@ -230,30 +230,39 @@ public class ForumUIActivity extends BaseKSActivity {
       String message = uiFormComment.getValue();
       uiFormComment.reset();
 
-      Post parentPost = null;
+      //Have activity comment processed first
+      ExoSocialActivity newComment = uiActivity.saveComment(commentId, message);
 
       //
-      String postMessage = message;
+      Post parentPost = null;
+      String postMessage = newComment.getBody();
       if (StringUtils.isNotBlank(commentId)) {
         ExoSocialActivity parentActivity = ForumActivityUtils.getActivityManager().getActivity(commentId);
         parentPost = ForumActivityUtils.getPost(parentActivity);
         if(parentPost != null) {
           String parentPostUserFullName = ForumActivityUtils.getForumService().getScreenName(parentPost.getOwner());
           postMessage = parentPost.getMessage().replaceAll("<br/>((\\r)?(\\n)?( )*(\\&nbsp;)*)*<br/>", "");
-          postMessage = "[QUOTE=" + parentPostUserFullName + "]" + HTMLSanitizer.sanitize(postMessage) + "[/QUOTE]" + message;
+          postMessage = "[QUOTE=" + parentPostUserFullName + "]" + HTMLSanitizer.sanitize(postMessage) + "[/QUOTE]" + newComment.getBody();
         }
       }
       //
+      ForumSpaceActivityPublisher.ACTIVITY_COMMENT_CREATED.set(true);
       Post post = uiActivity.createPost(postMessage, parentPost, requestContext);
-      boolean isMigratedActivity = false;
 
-      //Case of migrate activity, post will be null
-      if (post == null) {
-        post = new Post();
-        isMigratedActivity = true;
+      //add forum post related info to activity
+      if (post != null) {
+        post.setMessage(newComment.getBody());
+
+        ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
+        newComment = ForumActivityBuilder.updateActivityComment(newComment, ctx.getPost(), ctx);
+        newComment.setTitle(post.getMessage());
+        newComment.setBody(post.getMessage());
+
+        ForumActivityUtils.updateActivities(newComment);
+        ForumActivityUtils.takeCommentBack(post, newComment);
+
+        uiActivity.refresh();
       }
-      post.setMessage(message);
-      ExoSocialActivity newComment = uiActivity.saveComment(post, commentId, isMigratedActivity);
 
       uiActivity.setCommentFormFocused(true);
       requestContext.addUIComponentToUpdateByAjax(uiActivity);
@@ -265,27 +274,17 @@ public class ForumUIActivity extends BaseKSActivity {
   }
   
   /**
-   * Create comment from post
-   * @param post
-   * @param commentId 
+   * Create comment
    */
-  private ExoSocialActivity saveComment(Post post, String commentId, boolean isMigratedActivity) {
-      ExoSocialActivity comment = new ExoSocialActivityImpl();
+  private ExoSocialActivity saveComment(String parentId, String message) {
+    ExoSocialActivity comment = new ExoSocialActivityImpl();
 
-      if (isMigratedActivity == false) {
-      ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
-     comment = ForumActivityBuilder.createActivityComment(ctx.getPost(), ctx);
-     }
     comment.setUserId(org.exoplatform.social.webui.Utils.getViewerIdentity().getId());
-    comment.setTitle(post.getMessage());
-    comment.setBody(post.getMessage());
-    comment.setParentCommentId(commentId);
+    comment.setTitle(message);
+    comment.setBody(message);
+    comment.setParentCommentId(parentId);
     ForumActivityUtils.getActivityManager().saveComment(getActivity(), comment);
-      //Never save comment's id to a post when comment on a activity that is not applied activity-type specification
-          if (isMigratedActivity == false) {
-              ForumActivityUtils.takeCommentBack(post, comment);
-             }
-    refresh();
+
     return comment;
   }
   

@@ -74,6 +74,10 @@ public class ForumActivityBuilder {
   
   public static ExoSocialActivity createActivityComment(Post post, ForumActivityContext ctx) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
+    return updateActivityComment(activity, post, ctx);
+  }
+
+  public static ExoSocialActivity updateActivityComment(ExoSocialActivity activity, Post post, ForumActivityContext ctx) {
     String message = post.getMessage();
     message = getMessageWithoutQuotedPost(post, post.getModifiedBy() != null);
     String title = processContent(message, 3);
@@ -83,12 +87,12 @@ public class ForumActivityBuilder {
     activity.setBody(message);
     activity.isComment(true);
     activity.setType(FORUM_ACTIVITY_TYPE);
-    
+
     //activity.setTitleId(title); => Resource Bundle Key
-    
+
     //
     Map<String, String> templateParams = new HashMap<String, String>();
-    
+
     templateParams.put(POST_ID_KEY, post.getId());
     templateParams.put(POST_LINK_KEY, post.getLink());
     templateParams.put(POST_NAME_KEY, post.getName());
