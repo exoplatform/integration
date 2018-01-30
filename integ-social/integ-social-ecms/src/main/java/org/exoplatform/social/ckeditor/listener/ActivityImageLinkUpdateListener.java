@@ -19,9 +19,7 @@
 package org.exoplatform.social.ckeditor.listener;
 
 import java.time.YearMonth;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -195,17 +193,24 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
     String title = activity.getTitle();
     boolean storeActivity = false;
 
+    Map<String, String> urlToReplaces = new HashMap<>();
     if (StringUtils.isNotBlank(body) && body.contains(UPLOAD_ID_PARAMETER)) {
-      body = getModifiedLink(activity, body);
-      if (!StringUtils.equals(body, activity.getBody())) {
+      Map<String, String> urls = getModifiedLink(activity, body);
+      if (!urls.isEmpty()) {
+        urlToReplaces.putAll(urls);
+
+        body = replaceUrl(body, urlToReplaces);
         activity.setBody(body);
         storeActivity = true;
       }
     }
 
     if (StringUtils.isNotBlank(title) && title.contains(UPLOAD_ID_PARAMETER)) {
-      title = getModifiedLink(activity, title);
-      if (!StringUtils.equals(title, activity.getTitle())) {
+      Map<String, String> urls = getModifiedLink(activity, title);
+      urlToReplaces.putAll(urls);
+
+      if (!urlToReplaces.isEmpty()) {
+        title = replaceUrl(title, urlToReplaces);
         activity.setTitle(title);
         storeActivity = true;
       }
@@ -216,11 +221,24 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
     }
   }
 
-  private String getModifiedLink(ExoSocialActivity activity, String body) throws Exception, RepositoryException {
+  private String replaceUrl(String body, Map<String, String> urlToReplaces) {
+    // don't use replaceAll because this method is using regex
+    // we will iterate on all occurrences until it's replace
+    // in all body
+    for (String url : urlToReplaces.keySet()) {
+      while (body.contains(url)) {
+        body = body.replace(url, UriEncoder.encode(urlToReplaces.get(url)));
+      }
+    }
+    return body;
+  }
+
+  private Map<String, String> getModifiedLink(ExoSocialActivity activity, String body) throws Exception, RepositoryException {
     Set<String> processedUploads = new HashSet<>();
+    Map<String, String> urlToReplaces = new HashMap<>();
     Matcher matcher = UPLOAD_ID_PATTERN.matcher(body);
     if (!matcher.find()) {
-      return body;
+      return urlToReplaces;
     }
 
     String posterId = activity.getPosterId();
@@ -247,7 +265,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
       List<DriveData> personalDrives = driveService.getPersonalDrives(userName);
       if (personalDrives == null || personalDrives.isEmpty()) {
         LOG.warn("The user {} hasn't personal drives, thus the uploaded files will be deleted from teporary folder", userName);
-        return body;
+        return urlToReplaces;
       }
       for (DriveData driveData : personalDrives) {
         if (personalDriveName.equals(driveData.getName())) {
@@ -271,6 +289,9 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
       if (!processedUploads.contains(uploadId)) {
 
         UploadResource uploadedResource = uploadService.getUploadResource(uploadId);
+        if (uploadedResource == null) {
+          continue;
+        }
         String fileName = uploadedResource.getFileName();
 
         Node parentForlderNode = getNode(selectedDriveData, currentFolder, userName);
@@ -323,17 +344,12 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
         String fileURI = CommonsUtils.getCurrentDomain() + getJcrURI(parentForlderNode, fileName);
         if (StringUtils.isNotBlank(urlToReplace)) {
-          // don't use replaceAll because this method is using regex
-          // we will iterate on all occurrences until it's replace
-          // in all body
-          while (body.contains(urlToReplace)) {
-            body = body.replace(urlToReplace, UriEncoder.encode(fileURI));
-          }
+          urlToReplaces.put(urlToReplace, fileURI);
           processedUploads.add(uploadId);
         }
       }
     } while (matcher.find());
-    return body;
+    return urlToReplaces;
   }
 
   private String getJcrURI(Node parentForlderNode, String fileName) throws RepositoryException {
