@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.webui.WebUIUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils;
 import org.exoplatform.forum.ext.activity.BuildLinkUtils.PORTLET_INFO;
@@ -68,7 +68,7 @@ public class PollUIActivity extends BaseKSActivity {
       List<String> values = new LinkedList<String>();
       values.add(buildPercentVote(votes[i]));
       values.add(getStringFromNumberOfVotes(votesValues[i]));
-      info.put(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(options[i]), values);
+      info.put(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(options[i]), values);
     }
     return info;
   }
