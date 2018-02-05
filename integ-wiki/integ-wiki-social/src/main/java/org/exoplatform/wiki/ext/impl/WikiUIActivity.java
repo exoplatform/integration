@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.commons.utils.HTMLSanitizer;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -127,14 +127,14 @@ public class WikiUIActivity extends BaseUIActivity {
   }
 
   String getPageName() throws Exception {
-    String pageName = HTMLSanitizer.sanitize(getActivityParamValue(WikiSpaceActivityPublisher.PAGE_TITLE_KEY));
+    String pageName = getActivityParamValue(WikiSpaceActivityPublisher.PAGE_TITLE_KEY);
 
     if (StringUtils.isBlank(pageName)) {
       WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
       ResourceBundle res = resourceBundleService.getResourceBundle(Utils.WIKI_RESOUCE_BUNDLE_NAME, context.getLocale());
       return res.getString("Page.Untitled");
     }
-    return pageName;
+    return StringCommonUtils.encodeSpecialCharForSimpleInput(pageName);
   }
 
   String getPageURL() {
@@ -294,7 +294,7 @@ public class WikiUIActivity extends BaseUIActivity {
         break;
     }
     
-    return HTMLSanitizer.sanitize(commentMessage);
+    return StringCommonUtils.encodeSpecialCharForSimpleInput(commentMessage);
   }
   
   String getWikiActivityType(){

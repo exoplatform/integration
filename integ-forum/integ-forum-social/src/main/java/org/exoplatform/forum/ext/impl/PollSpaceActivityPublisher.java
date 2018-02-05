@@ -19,6 +19,7 @@ package org.exoplatform.forum.ext.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.poll.service.Poll;
@@ -55,7 +56,7 @@ public class PollSpaceActivityPublisher extends PollEventListener{
   private ExoSocialActivity activity(Identity author, String title, String body, Map<String, String> templateParams) throws Exception {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setUserId(author.getId());
-    activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(title));
+    activity.setTitle(StringCommonUtils.decodeSpecialCharToHTMLnumber(title));
     activity.setBody(body);
     activity.setType(POLL_APP_ID);
     activity.setTemplateParams(templateParams);
@@ -94,7 +95,7 @@ public class PollSpaceActivityPublisher extends PollEventListener{
           
           //update activity's content
           activity.setBody(Utils.getInfoVote(poll));
-          activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(poll.getQuestion()));
+          activity.setTitle(StringCommonUtils.decodeSpecialCharToHTMLnumber(poll.getQuestion()));
           getManager().updateActivity(activity);
           
           if (! isVote) {

@@ -18,10 +18,10 @@ package org.exoplatform.forum.ext.activity;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
 import org.exoplatform.forum.service.Post;
@@ -145,7 +145,7 @@ public class ForumActivityBuilder {
 
     String message = post.getMessage();
     if (parentMessage != null && fullName != null) {
-      parentMessage = CommonUtils.decodeSpecialCharToHTMLnumber(parentMessage);
+      parentMessage = StringCommonUtils.decodeSpecialCharToHTMLnumber(parentMessage);
       parentMessage = CommonUtils.processBBCode(parentMessage);
       parentMessage = TransformHTML.cleanHtmlCode(StringEscapeUtils.unescapeHtml(TransformHTML.getPlainText(parentMessage)), null);
 
@@ -161,7 +161,7 @@ public class ForumActivityBuilder {
     String body = processContent(topic.getDescription(), 4);
     
     //activity.setUserId(topic.getOwner());
-    String title = CommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName());
+    String title = StringCommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName());
     activity.setTitle(title);
     activity.setBody(body);
     activity.isComment(true);
@@ -171,7 +171,7 @@ public class ForumActivityBuilder {
   }
   
   public static String decodeHTMLInput(String message) {
-    message = CommonUtils.decodeSpecialCharToHTMLnumber(message);
+    message = StringCommonUtils.decodeSpecialCharToHTMLnumber(message);
     String[] tab = TransformHTML.getPlainText(message).replaceAll("(?m)^\\s*$[\n\r]{1,}", "").split("\\r?\\n");
     StringBuilder sb = new StringBuilder();
     for (int i=0; i<tab.length; i++) {
@@ -253,7 +253,7 @@ public class ForumActivityBuilder {
     //processing in execute of task.
     //avoid get Identity here to write UT
     //activity.setUserId(topic.getOwner());
-    activity.setTitle(CommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName()));
+    activity.setTitle(StringCommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName()));
     activity.setBody(body);
     activity.isComment(false);
     activity.isHidden(!topic.getIsApproved());

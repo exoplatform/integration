@@ -18,10 +18,9 @@ package org.exoplatform.forum.ext.activity;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.ext.impl.PollSpaceActivityPublisher;
 import org.exoplatform.forum.service.Category;
@@ -245,13 +244,13 @@ public class ForumActivityUtils {
     Post post = ctx.getPost();
     if (topic != null) {
       String description = topic.getDescription();
-      description = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(description));
+      description = CommonUtils.processBBCode(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(description));
       topic.setDescription(description);
       ctx.setTopic(topic);
     }
     if (post != null) {
       String message = post.getMessage();
-      message = CommonUtils.processBBCode(CommonUtils.decodeSpecialCharToHTMLnumberIgnore(message));
+      message = CommonUtils.processBBCode(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(message));
       post.setMessage(message);
       ctx.setPost(post);
     }
