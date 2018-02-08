@@ -16,29 +16,32 @@
  */
 package org.exoplatform.wcm.ext.component.activity.listener;
 
-import org.exoplatform.services.cms.CmsService;
+import org.apache.commons.chain.Context;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
+import org.exoplatform.services.ext.action.InvocationContext;
+import org.exoplatform.services.jcr.dataflow.persistent.PersistedPropertyData;
+import org.exoplatform.services.jcr.datamodel.ValueData;
+import org.exoplatform.services.jcr.impl.core.AuditPropertyImpl;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
-import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.Value;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
  * 15, 2011
  */
-public class FileUpdateActivityListener extends Listener<Node, String> {
+public class FileUpdateActivityListener extends Listener<Context, String> {
 
   private static final Log LOG = ExoLogger.getLogger(FileUpdateActivityListener.class);
 
@@ -70,21 +73,19 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
   }
 
   @Override
-  public void onEvent(Event<Node, String> event) throws Exception {
-  	CmsService cmsService = WCMCoreUtils.getService(CmsService.class);
-  	Map<String, Object> properties = cmsService.getPreProperties(); 
-    Node currentNode = event.getSource();
-    String nodeUUID = "";
-    if(currentNode.isNodeType(NodetypeConstant.MIX_REFERENCEABLE)) nodeUUID = currentNode.getUUID();
-    else nodeUUID = currentNode.getName();
+  public void onEvent(Event<Context, String> event) throws Exception {
+    Context context = event.getSource();
+    Property currentProperty = (Property) context.get(InvocationContext.CURRENT_ITEM);
+    Property previousProperty = (Property) context.get(InvocationContext.PREVIOUS_ITEM);
     String propertyName = event.getData();
     StringBuilder oldValueBuilder = new StringBuilder();
     StringBuilder newValueBuilder = new StringBuilder();
     StringBuilder commentValueBuilder = new StringBuilder();
+    Node currentNode = currentProperty.getParent();
     try {
     	if(!propertyName.equals(NodetypeConstant.JCR_DATA)) {
-	    	if(currentNode.getProperty(propertyName).getDefinition().isMultiple()){
-	    		Value[] values = currentNode.getProperty(propertyName).getValues();
+	    	if(currentProperty.getDefinition().isMultiple()){
+	    		Value[] values = currentProperty.getValues();
 	    		if(values != null && values.length > 0) {
 	    			for (Value value : values) {
               newValueBuilder.append(value.getString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR);
@@ -96,20 +97,20 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
 	    			if(commentValueBuilder.length() >=2) 
 	    			  commentValueBuilder.delete(commentValueBuilder.length() - 2, commentValueBuilder.length());
 	    		}
-	    		values = (Value[]) properties.get(nodeUUID + "_" + propertyName);
-	    		if(values != null && values.length > 0) {
-	    			for (Value value : values) {
-	    				oldValueBuilder.append(value.getString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR);
+			List<ValueData> valueList = ((PersistedPropertyData) ((AuditPropertyImpl) previousProperty).getData()).getValues();
+	    		if(valueList != null) {
+	    			for (ValueData value : valueList) {
+	    				oldValueBuilder.append(value.toString()).append(ActivityCommonService.METADATA_VALUE_SEPERATOR);
 						}
 	    			if(oldValueBuilder.length() >= ActivityCommonService.METADATA_VALUE_SEPERATOR.length()) 
 	    				oldValueBuilder.delete(oldValueBuilder.length() - ActivityCommonService.METADATA_VALUE_SEPERATOR.length(),
 	    				                       oldValueBuilder.length());
 	    		}
 	    	} else {
-	    		newValueBuilder = new StringBuilder(currentNode.getProperty(propertyName).getString());
+	    		newValueBuilder = new StringBuilder(currentProperty.getString());
 	    		commentValueBuilder = newValueBuilder;
-	    		if(properties.containsKey(nodeUUID + "_" + propertyName)) 
-	    			oldValueBuilder = new StringBuilder(properties.get(nodeUUID + "_" + propertyName).toString());
+	    		if(previousProperty != null && previousProperty.getValue() != null)
+	    			oldValueBuilder = new StringBuilder(previousProperty.getValue().getString());
 	    	}
     	}
     }catch (Exception e) {
@@ -269,12 +270,13 @@ public class FileUpdateActivityListener extends Listener<Node, String> {
     	} catch(Exception ex) {
             LOG.info("Cannot get propertyName");
     	}
-    	if(newValue.length() > 0) resourceBundle = "SocialIntegration.messages.updateMetadata";
-    	else resourceBundle = "SocialIntegration.messages.removeMetadata";    	
-    	resourceBundle = portletRequestContext.getApplicationResourceBundle().getString(resourceBundle);
-    	resourceBundle = resourceBundle.replace("{0}", dcProperty);
-    	resourceBundle = resourceBundle.replace("{1}", commentValue);
-    	Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue, "");
+      if (newValue.length() > 0) {
+        resourceBundle = "SocialIntegration.messages.updateMetadata";
+      } else {
+        resourceBundle = "SocialIntegration.messages.removeMetadata";
+      }
+      commentValue = dcProperty + ActivityCommonService.METADATA_VALUE_SEPERATOR + commentValue;
+      Utils.postFileActivity(currentNode, resourceBundle, false, true, commentValue, "");
     }
   }
 }
