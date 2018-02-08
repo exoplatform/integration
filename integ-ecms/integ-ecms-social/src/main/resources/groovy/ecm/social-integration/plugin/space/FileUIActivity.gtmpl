@@ -687,6 +687,9 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
                           if (systemComment.length>0) {
                             for (def count=0; count<systemComment.length; count++) {
                               commentMessage = _ctx.appRes(systemComment[count]);
+                              if(StringUtils.isBlank(commentMessage)){
+                                commentMessage = systemComment[count];
+                              }
                               if (systemCommentTitle!=null) {
                                 if (systemCommentTitle.length>count) {
                                   def titles = systemCommentTitle[count].split(ActivityCommonService.METADATA_VALUE_SEPERATOR);
