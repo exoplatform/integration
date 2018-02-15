@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.cms.BasePath;
+import org.exoplatform.services.cms.impl.Utils;
 import org.exoplatform.services.cms.jcrext.activity.ActivityCommonService;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.core.ManageableRepository;
@@ -247,16 +248,17 @@ public class UIComposerMultiUploadSelector extends UIAbstractSelectFileComposer 
     }
 
     Node parentUploadNode = parentNode.getNode(FOLDER_UPLOAD_PARENT_NAME);
-    Node node = parentUploadNode.addNode(fileItem.getName(), NodetypeConstant.NT_FILE);
+    Node node = parentUploadNode.addNode(Utils.cleanName(fileItem.getName()), NodetypeConstant.NT_FILE);
+    node.setProperty(NodetypeConstant.EXO_TITLE, fileItem.getName());
     activityService.setCreating(node, true);
-    Node resourceNode = node.addNode("jcr:content", NodetypeConstant.NT_RESOURCE);
-    resourceNode.setProperty("jcr:mimeType", fileItem.getMimeType());
-    resourceNode.setProperty("jcr:lastModified", Calendar.getInstance());
+    Node resourceNode = node.addNode(NodetypeConstant.JCR_CONTENT, NodetypeConstant.NT_RESOURCE);
+    resourceNode.setProperty(NodetypeConstant.JCR_MIMETYPE, fileItem.getMimeType());
+    resourceNode.setProperty(NodetypeConstant.JCR_LAST_MODIFIED, Calendar.getInstance());
     String fileDiskLocation = uploadedResource.getStoreLocation();
     InputStream inputStream = null;
     try {
       inputStream = new FileInputStream(fileDiskLocation);
-      resourceNode.setProperty("jcr:data", inputStream);
+      resourceNode.setProperty(NodetypeConstant.JCR_DATA, inputStream);
       session.save();
       node = (Node) session.getItem(node.getPath());
     } finally {
