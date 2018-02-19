@@ -702,7 +702,7 @@ public class FileUIActivity extends BaseUIActivity{
     if (message == null) {
       return activityStatus;
     } else {
-      return null;
+      return message;
     }
   }
 
