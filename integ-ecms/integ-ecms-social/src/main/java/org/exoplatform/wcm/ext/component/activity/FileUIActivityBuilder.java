@@ -45,7 +45,8 @@ public class FileUIActivityBuilder extends BaseUIActivityBuilder {
     if (activity.getTemplateParams() != null) {
     	fileActivity.setUIActivityData(activity.getTemplateParams());
     }
-    
+    fileActivity.setMessage(activity.getTitle());
+
     //get node data
     RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
     ManageableRepository manageRepo = null;

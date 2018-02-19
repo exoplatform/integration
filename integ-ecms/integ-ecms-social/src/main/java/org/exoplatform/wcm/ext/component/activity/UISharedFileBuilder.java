@@ -52,6 +52,7 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       nodeUUID = activity.getTemplateParams().get(ContentUIActivity.NODE_UUID);
       workspaceName = activity.getTemplateParams().get(ContentUIActivity.WORKSPACE);
     }
+    fileActivity.setMessage(activity.getTitle());
     //get node data
     try {
       ManageableRepository manageRepo = WCMCoreUtils.getRepository();
