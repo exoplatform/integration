@@ -589,8 +589,8 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
                       personLikeAvatarImageSource = id.profile.avatarUrl;
                       if (!personLikeAvatarImageSource) personLikeAvatarImageSource = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
                       %>
-                        <a class="avatarXSmall" rel="tooltip" data-placement="bottom"  title="$personLikeFullName" href="$personLikeProfileUri">
-                          <img src="$personLikeAvatarImageSource" alt="$personLikeFullName" title="$personLikeFullName" />
+                        <a class="avatarXSmall" title="$personLikeFullName" href="$personLikeProfileUri">
+                          <img src="$personLikeAvatarImageSource" alt="$personLikeFullName" />
             </a>
                      <% })%>
                        <button onclick="$loadLikesAction" class="btn">...</button>
@@ -729,7 +729,7 @@ def commentActivityId = it.parentCommentId == null ? it.id : it.parentCommentId;
     <div id="CommentBlock${it.id}" class="commentItem">
     <% } %>
 <div class="commmentLeft">
-<a class="avatarXSmall" href="$commenterProfileUri" rel="tooltip" data-placement="bottom" title="$commenterFullName" >
+<a class="avatarXSmall" href="$commenterProfileUri" title="$commenterFullName" >
 <img alt="$commenterFullName" src="$commenterAvatarImgSrc" />
 </a>
             </div><!--end commentLeft-->
@@ -774,7 +774,7 @@ def commentActivityId = it.parentCommentId == null ? it.id : it.parentCommentId;
                       <div class="commentItem commentFormBox" id="CommentFormBlock${activity.id}">
                     <% } %>
                       <div class="commmentLeft">
-                            <a class="avatarXSmall" rel="tooltip" data-placement="bottom" title="$currentCommenterName" href="$currentCommenterUri">
+                            <a class="avatarXSmall" title="$currentCommenterName" href="$currentCommenterUri">
                                 <img src="$currentCommenterAvatar" alt="$currentCommenterName"/>
 </a>
                         </div><!--end commentLeft-->
