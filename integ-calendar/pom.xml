@@ -4,7 +4,7 @@
   <parent>
     <artifactId>integ</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>5.0.x-SNAPSHOT</version>
+    <version>5.0.0-RC11</version>
   </parent>
   <artifactId>integ-calendar</artifactId>
   <packaging>pom</packaging>
