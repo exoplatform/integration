@@ -2,70 +2,70 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>Buksan Basahin lamang</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Buksan Dokumento</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
     <titles>
-      <fileSize>File Size</fileSize>
+      <fileSize>Laki ng File</fileSize>
     </titles>
     <messages>
-      <createdBy>was created by</createdBy>
-      <editedBy>was edited by</editedBy>
-      <system>the system</system>
-      <readmore>...Read More.</readmore>
-      <editTitle>Title has been updated to: {0}</editTitle>
-      <editName>Name has been updated to: {0}</editName>
-      <editDescription>Description has been updated to: {0}</editDescription>
-      <singleCreator>Creator is {0}</singleCreator>
-      <multiCreator>Creators are {0}</multiCreator>
-      <addSource>File source: {0} has been added</addSource>
-      <addMultiSource>File sources: {0} have been added</addMultiSource>
-      <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
-      <editSummary>Summary has been updated to: {0}</editSummary>
-      <editLanguage>Language has been updated to: {0}</editLanguage>
-      <editContent>Content has been updated.</editContent>
-      <editFile>File has been updated.</editFile>
-      <emptyTitle>The title has been removed.</emptyTitle>
-      <emptySummary>The summary has been removed.</emptySummary>
-      <emptyContent>The content has been removed.</emptyContent>
-      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} has been removed.</removeMetadata>
-      <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Name has been removed.</removeName>
-      <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>Description has been removed.</removeDescription>
-      <removeCreator>Creator: {0} has been removed.</removeCreator>
-      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
-      <removeLanguage>Language has been removed.</removeLanguage>
-      <removeContent>Content has been removed.</removeContent>
-      <attachmentAdded>File(s) has been attached.</attachmentAdded>
-      <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
-      <categoryAdded>Category: {0} has been added.</categoryAdded>
-      <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
-      <tagAdded>Tag: {0} has been added.</tagAdded>
-      <tagsAdded>Tags: {0} have been added.</tagsAdded>
-      <tagRemoved>Tag: {0} has been removed.</tagRemoved>
-      <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
+      <createdBy>ay nilikha ng</createdBy>
+      <editedBy>ay na edit by</editedBy>
+      <system>ang sistema</system>
+      <readmore>...Magbasa ng marami.</readmore>
+      <editTitle>Titulo ay na update sa: {0}</editTitle>
+      <editName>Ang pangalan ay na update sa: {0}</editName>
+      <editDescription>Ang paglalarawan ay na update na: {0}</editDescription>
+      <singleCreator>Ang likha ay {0}</singleCreator>
+      <multiCreator>Mga tagapaglikha ay {0}</multiCreator>
+      <addSource>Pinagmulan: {0} ay dinagdag</addSource>
+      <addMultiSource>Pinagmulan: {0} ay nadagdag</addMultiSource>
+      <removeSource>Pinagmulan: {0} ay inalis</removeSource>
+      <removeMultiSource>Pinagmulan: {0} ay naging inalis</removeMultiSource>
+      <editSummary>Ang buod ay na update sa: {0}</editSummary>
+      <editLanguage>Ang linggwahe ay na update na sa: {0}</editLanguage>
+      <editContent>Ang ang content ay na update na.</editContent>
+      <editFile>Ang helera ay updated na.</editFile>
+      <emptyTitle>Ang titulo ay naalis.</emptyTitle>
+      <emptySummary>Ang buod ay naalis na.</emptySummary>
+      <emptyContent>Ang nilalaman ay naalis na.</emptyContent>
+      <updateMetadata>Ang metal na datos {0} ay na update sa: {1}</updateMetadata>
+      <removeMetadata>Ang metal na datos {0} ay naalis na.</removeMetadata>
+      <removeTitle>Ang titulo ay naalis na.</removeTitle>
+      <removeName>Ang pangalan ay na tanggal na.</removeName>
+      <removeSummary>Ang buod ay na tanggal na.</removeSummary>
+      <removeDescription>Ang paglalarawan ay na tanggal na.</removeDescription>
+      <removeCreator>Lumikha: {0} ay na tanggal na.</removeCreator>
+      <removeMultiCreator>Ang mga lumikha: {0} ay na alisna.</removeMultiCreator>
+      <removeLanguage>Ang lingwahe ay naalis na.</removeLanguage>
+      <removeContent>Ang laman ay naalis na.</removeContent>
+      <attachmentAdded>Ang mga hanay(s) ay na kabit na.</attachmentAdded>
+      <attachmentRemoved>Ang mga hanay(s) ay naalis na.</attachmentRemoved>
+      <categoryAdded>Kategorya: {0} ay na dagdag na.</categoryAdded>
+      <categoryRemoved>Kategorya: {0} ay na tanggal na.</categoryRemoved>
+      <tagAdded>Tag: {0} ay nadagdag na.</tagAdded>
+      <tagsAdded>Mga Tag: {0} ay naidagdag na.</tagsAdded>
+      <tagRemoved>Tag: {0} ay natanggal na.</tagRemoved>
+      <tagsRemoved>Mga Tags: {0} ay natanggal na.</tagsRemoved>
       <stateChange>
-        <pending>Publication status is now pending.</pending>
-        <approved>Document has been approved.</approved>
-        <staged>Publication has been staged.</staged>
-        <published>Document has been published.</published>
+        <pending>Papapahayag ng stado ngayon ay nabibitin.</pending>
+        <approved>Dokumento ay aprobado na.</approved>
+        <staged>Ang paghahayag sa publiko.</staged>
+        <published>Ang dokumento ay ipupubliko na.</published>
       </stateChange>
-      <contentMoved>Publication has been moved to: {0}</contentMoved>
-      <fileMoved>File has been moved to: {0}</fileMoved>
-      <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
-      <version>Version: {0}</version>
-      <updatedOn>Updated on</updatedOn>
-      <updatedBy>by</updatedBy>
+      <contentMoved>Ang paglalathala ay na ilipat sa: {0}</contentMoved>
+      <fileMoved>Ang helera ay nailipat sa: {0}</fileMoved>
+      <revisionChanged>Ang paglalathala ay na ibalik sa version nito: {0}</revisionChanged>
+      <version>Bersyon: {0}</version>
+      <updatedOn>Binago na</updatedOn>
+      <updatedBy>ni</updatedBy>
       <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
@@ -74,7 +74,7 @@
       <unpublished>Unpublished</unpublished>
       <draft>Draft</draft>
       <pending>Pending</pending>
-      <approved>Approved</approved>
+      <approved>Inaprubahan</approved>
       <inreview>In Review</inreview>
       <staged>Staged</staged>
       <published>Published</published>
@@ -89,7 +89,7 @@
   <UIPopupWindow>
     <title>
       <DocViewer>Preview</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Buksan Dokumento</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -118,7 +118,7 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>Ang payl na ito ay ikinandado ng gumagamit na si {0}. Buksan at basahin lamang?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
   <ECMContextMenu>
@@ -136,14 +136,14 @@
     <label>
       <ShareButton>Share</ShareButton>
       <CancelButton>Cancel</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
+      <TextAreaInit>Magpadala ng mensahe kapag nagbabahagi...</TextAreaInit>
       <ShareWith>Share with</ShareWith>
-      <Access>Access</Access>
+      <Access>Ang Access</Access>
       <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Select a Space</SelectASpace>
       <SharedADocument>shared a document</SharedADocument>
       <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
+      <success>Ang dokumentong ito ay nabahagi nang matagumpay</success>
       <NoSpace>Please select at least one valid space or user</NoSpace>
       <NoPermission>You are not allowed to share this document</NoPermission>
       <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
@@ -160,15 +160,15 @@
         <modify>edit</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>Maglagay ng mga user o mga pangalan ng space...</placeholder>
       </invite>
-      <owner>Owner</owner>
+      <owner>Ang May-ari</owner>
     </label>
   </UIShareDocuments>
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>I-Share</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>
