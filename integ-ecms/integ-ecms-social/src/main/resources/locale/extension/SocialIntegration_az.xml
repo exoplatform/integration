@@ -16,53 +16,53 @@
       <fileSize>File Size</fileSize>
     </titles>
     <messages>
-      <createdBy>diciptakan oleh</createdBy>
-      <editedBy>diedit oleh</editedBy>
+      <createdBy>was created by</createdBy>
+      <editedBy>was edited by</editedBy>
       <system>the system</system>
       <readmore>...Read More.</readmore>
-      <editTitle>Judul ini telah diperbarui untuk: {0}</editTitle>
-      <editName>Nama ini telah diperbarui untuk: {0}</editName>
-      <editDescription>Keterangan ini telah diperbarui untuk: {0}</editDescription>
+      <editTitle>Title has been updated to: {0}</editTitle>
+      <editName>Name has been updated to: {0}</editName>
+      <editDescription>Description has been updated to: {0}</editDescription>
       <singleCreator>Creator is {0}</singleCreator>
       <multiCreator>Creators are {0}</multiCreator>
       <addSource>File source: {0} has been added</addSource>
       <addMultiSource>File sources: {0} have been added</addMultiSource>
       <removeSource>File source: {0} has been removed</removeSource>
-      <removeMultiSource>Sumber file: {0} sudah dihapus</removeMultiSource>
-      <editSummary>Rangkuman sudah diperbarui untuk: {0}</editSummary>
-      <editLanguage>Bahasa sudah diperbarui untuk: {0}</editLanguage>
-      <editContent>Konten sudah diperbarui.</editContent>
-      <editFile>File sudah diperbarui.</editFile>
-      <emptyTitle>Judul sudah dihapus.</emptyTitle>
-      <emptySummary>Rangkuman sudah dihapus.</emptySummary>
-      <emptyContent>Konten sudah dihapus.</emptyContent>
-      <updateMetadata>Metadata {0} sudah diperbarui untuk: {1}</updateMetadata>
-      <removeMetadata>Metadata {0} sudah dihapus.</removeMetadata>
+      <removeMultiSource>File sources: {0} have been removed</removeMultiSource>
+      <editSummary>Summary has been updated to: {0}</editSummary>
+      <editLanguage>Language has been updated to: {0}</editLanguage>
+      <editContent>Content has been updated.</editContent>
+      <editFile>File has been updated.</editFile>
+      <emptyTitle>The title has been removed.</emptyTitle>
+      <emptySummary>The summary has been removed.</emptySummary>
+      <emptyContent>The content has been removed.</emptyContent>
+      <updateMetadata>Metadata {0} has been updated to: {1}</updateMetadata>
+      <removeMetadata>Metadata {0} has been removed.</removeMetadata>
       <removeTitle>Title has been removed.</removeTitle>
-      <removeName>Nama sudah dihapus.</removeName>
-      <removeSummary>Rangkuman sudah dihapus.</removeSummary>
-      <removeDescription>Deskripsi sudah dihapus.</removeDescription>
-      <removeCreator>Pencipta: {0} sudah dihapus.</removeCreator>
-      <removeMultiCreator>Pembuat konten: {0} sudah dihapus.</removeMultiCreator>
-      <removeLanguage>Bahasa sudah dihapus.</removeLanguage>
-      <removeContent>Konten sudah dihapus.</removeContent>
+      <removeName>Name has been removed.</removeName>
+      <removeSummary>Summary has been removed.</removeSummary>
+      <removeDescription>Description has been removed.</removeDescription>
+      <removeCreator>Creator: {0} has been removed.</removeCreator>
+      <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
+      <removeLanguage>Language has been removed.</removeLanguage>
+      <removeContent>Content has been removed.</removeContent>
       <attachmentAdded>File(s) has been attached.</attachmentAdded>
-      <attachmentRemoved>File(s) sudah dihapus.</attachmentRemoved>
-      <categoryAdded>Kategori: {0} sudah ditambahkan.</categoryAdded>
+      <attachmentRemoved>File(s) has been removed.</attachmentRemoved>
+      <categoryAdded>Category: {0} has been added.</categoryAdded>
       <categoryRemoved>Category: {0} has been removed.</categoryRemoved>
       <tagAdded>Tag: {0} has been added.</tagAdded>
       <tagsAdded>Tags: {0} have been added.</tagsAdded>
       <tagRemoved>Tag: {0} has been removed.</tagRemoved>
       <tagsRemoved>Tags: {0} have been removed.</tagsRemoved>
       <stateChange>
-        <pending>Status publikasi sekarang tertunda.</pending>
-        <approved>Dokumen ini telah disetujui.</approved>
+        <pending>Publication status is now pending.</pending>
+        <approved>Document has been approved.</approved>
         <staged>Publication has been staged.</staged>
         <published>Document has been published.</published>
       </stateChange>
       <contentMoved>Publication has been moved to: {0}</contentMoved>
       <fileMoved>File has been moved to: {0}</fileMoved>
-      <revisionChanged>Publikasi telah dikembalikan ke versi: {0}</revisionChanged>
+      <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
       <version>Version: {0}</version>
       <updatedOn>Updated on</updatedOn>
       <updatedBy>by</updatedBy>
@@ -123,36 +123,36 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Bagikan</ShareDocuments>
+      <ShareDocuments>Share</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Bagikan Dokumen</UIShareDocuments>
-      <Share>Bagikan</Share>
+      <UIShareDocuments>Share Document</UIShareDocuments>
+      <Share>Share</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Bagikan</ShareButton>
-      <CancelButton>Batalkan</CancelButton>
-      <TextAreaInit>Kirim pesan setelah berbagi...</TextAreaInit>
-      <ShareWith>Berbagi dengan</ShareWith>
+      <ShareButton>Share</ShareButton>
+      <CancelButton>Ləğv Et</CancelButton>
+      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
+      <ShareWith>Share with</ShareWith>
       <Access>Access</Access>
       <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Select a Space</SelectASpace>
       <SharedADocument>shared a document</SharedADocument>
       <WhoHasAccess>Who has access</WhoHasAccess>
       <success>The document was shared successfully</success>
-      <NoSpace>Silahkan pilih setidaknya satu ruang atau pengguna yang sah</NoSpace>
-      <NoPermission>Anda tidak diizinkan untuk membagikan dokumen ini</NoPermission>
-      <NoPermissionDelete>Anda tidak dapat menghapus izin ini</NoPermissionDelete>
-      <InvalidDeletion>Anda tidak dapat menghapus izin Anda sendiri</InvalidDeletion>
-      <InvalidEntry>Izin ini tidak dapat diedit</InvalidEntry>
-      <InvalidOwner>Anda tidak dapat mengubah izin pemilik</InvalidOwner>
-      <Invalid>Maaf, kita tidak bisa mengenali '{0}' sebagai pengguna atau nama ruang sah</Invalid>
+      <NoSpace>Please select at least one valid space or user</NoSpace>
+      <NoPermission>You are not allowed to share this document</NoPermission>
+      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
+      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
+      <InvalidEntry>This permission can't be edited</InvalidEntry>
+      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
+      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
       <option>
-        <read>Dapat melihat</read>
+        <read>Can view</read>
         <modify>Can edit</modify>
       </option>
       <notification>
