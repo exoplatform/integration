@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.commons.utils.HTMLSanitizer;
 import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
@@ -294,7 +295,7 @@ public class WikiUIActivity extends BaseUIActivity {
         break;
     }
     
-    return StringCommonUtils.encodeSpecialCharForSimpleInput(commentMessage);
+    return HTMLSanitizer.sanitize(commentMessage);
   }
   
   String getWikiActivityType(){
