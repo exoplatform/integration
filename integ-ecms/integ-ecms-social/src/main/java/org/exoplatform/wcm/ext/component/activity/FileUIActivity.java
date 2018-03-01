@@ -717,7 +717,7 @@ public class FileUIActivity extends BaseUIActivity{
     this.activityStatus =  activityParams.get(FileUIActivity.ACTIVITY_STATUS);
 
     String[] nodeUUIDs = getParameterValues(activityParams, FileUIActivity.ID);
-    this.filesCount = nodeUUIDs.length;
+    this.filesCount = nodeUUIDs == null ? 0 : nodeUUIDs.length;
 
     String[] repositories = getParameterValues(activityParams,UIDocActivity.REPOSITORY);
     String[] workspaces = getParameterValues(activityParams,UIDocActivity.WORKSPACE);

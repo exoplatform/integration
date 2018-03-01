@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -25,10 +26,34 @@ import org.exoplatform.services.cms.drives.DriveData;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.wcm.core.NodeLocation;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(NodeLocation.class)
 public class FileUIActivityTest {
+
+  @Test
+  public void testActivityMessageToDisplay() throws Exception {
+    String activityTitle = "Test tile";
+
+    FileUIActivityBuilder activityBuilder = new FileUIActivityBuilder();
+    FileUIActivity fileUIActivity = new FileUIActivity();
+    ExoSocialActivity activity = new ExoSocialActivityImpl();
+    activity.setTitle(activityTitle);
+
+    Map<String, String> activityParameters = new HashMap<>();
+
+    activity.setTemplateParams(activityParameters);
+    activityBuilder.extendUIActivity(fileUIActivity, activity);
+
+    assertTrue(StringUtils.isBlank(fileUIActivity.getMessage()));
+
+    activityParameters.put(FileUIActivity.ACTIVITY_STATUS, activityTitle);
+    activityBuilder.extendUIActivity(fileUIActivity, activity);
+
+    assertEquals(activityTitle, fileUIActivity.getMessage());
+  }
 
   @Test
   public void getDocFolderRelativePathWithLinks() throws Exception {
