@@ -564,7 +564,7 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
 							    jsManager.require("SHARED/openDocumentInOffice", "od")
 							            .addScripts("gj(document).ready(function(){od.OpenDocumentInOffice.updateLabel('" + preferenceWS + ":" + currentNode.getPath().replaceAll("'", "\\\\'") + "', '" + activity.id + "'); }); ");
                     %>
-                        <li style="display:none;" ><a href="<%=uicomponent.event("OpenFile")%>"><i class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_$activity.id $remoteEditClass" ></i>&nbsp;$remoteEditTitle</a></li>
+                        <li class="hidden-tabletL" style="display:none;" ><a href="<%=uicomponent.event("OpenFile")%>"><i class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_$activity.id $remoteEditClass" ></i>&nbsp;$remoteEditTitle</a></li>
                         <%  } %>
                         <li><a href="$downloadAllUrl"><i class="uiIconDownload uiIconLightGray"></i>&nbsp;<%=_ctx.appRes("SocialIntegration.download");%></a></li>
                     <% } else if(uicomponent.getFilesCount() > 1) { %>
