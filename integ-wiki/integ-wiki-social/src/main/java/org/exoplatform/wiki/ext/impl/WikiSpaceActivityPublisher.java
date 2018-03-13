@@ -33,6 +33,9 @@ import org.exoplatform.wiki.utils.WikiConstants;
 import org.xwiki.rendering.syntax.Syntax;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WikiSpaceActivityPublisher extends PageWikiListener {
   
@@ -202,20 +205,29 @@ public class WikiSpaceActivityPublisher extends PageWikiListener {
   }
   
   private String validateExcerpt(String excerpt) {
-    String[] lines = excerpt.split("\n");
-    for (int i = 0; i < lines.length; i++) {
-      if (lines[i].length() > EXCERPT_LENGTH) {
-        lines[i] = lines[i].substring(0, EXCERPT_LENGTH) + "...";
-      }
-    }
-    
+    List<String> lines = Stream.of(excerpt.split("\n"))
+            .filter(line -> !line.trim().isEmpty()).collect(Collectors.toList());
+
+    Stream<String> sLines = lines.stream();
     StringBuffer result = new StringBuffer();
-    for (int i = 0; i < Math.min(lines.length, 4); i++) {
-      result.append(lines[i]);
-      result.append("\n");
-    }
-    
-    if (lines.length > 4) {
+
+    //
+    sLines
+      .map(new Function<String, String>() {  
+        @Override
+        public String apply(String line) {
+          if (line.length() > EXCERPT_LENGTH) {
+            line = line.substring(0, EXCERPT_LENGTH) + "...";
+          }
+          return line;
+        }      
+    }).limit(4).forEach(line -> {
+      result.append("<p>");
+      result.append(line);
+      result.append("</p>");
+    });
+
+    if (lines.size() > 4) {
       result.append("...");
     }
     return result.toString();
