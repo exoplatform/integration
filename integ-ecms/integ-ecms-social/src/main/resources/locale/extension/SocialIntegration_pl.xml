@@ -64,9 +64,9 @@
       <fileMoved>Plik został przeniesiony do: {0}</fileMoved>
       <revisionChanged>Publikacja została przywrócona do wersji: {0}</revisionChanged>
       <version>Wersja: {0}</version>
-      <updatedOn>Updated on</updatedOn>
+      <updatedOn>Zaktualizowane w</updatedOn>
       <updatedBy>przez</updatedBy>
-      <loadMoreFiles>+{0} more</loadMoreFiles>
+      <loadMoreFiles>+{0} więcej</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Zarchiwizowane</archived>
@@ -83,7 +83,7 @@
     <view>Zobacz</view>
     <edit>Edytuj</edit>
     <download>Pobierz</download>
-    <downloadAll>Download All</downloadAll>
+    <downloadAll>Pobierz wszystko</downloadAll>
     <preview>Podgląd</preview>
   </SocialIntegration>
   <UIPopupWindow>
@@ -136,31 +136,31 @@
     <label>
       <ShareButton>Udostępnij</ShareButton>
       <CancelButton>Anuluj</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
+      <TextAreaInit>Wyślij wiadomość po udostępnieniu...</TextAreaInit>
+      <ShareWith>Udostępnij z</ShareWith>
       <Access>Dostęp</Access>
       <SpaceMember>Członek przestrzeni</SpaceMember>
       <SelectASpace>Wybierz obszar</SelectASpace>
       <SharedADocument>dokument udostępniony</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <WhoHasAccess>Kto ma dostęp</WhoHasAccess>
+      <success>Dokument został pomyślnie udostępniony</success>
+      <NoSpace>Wybierz przynajmniej jeden obszar lub użytkownika</NoSpace>
+      <NoPermission>Nie masz uprawnień do udostępnienia tego dokumentu</NoPermission>
+      <NoPermissionDelete>Nie możesz usunąć tego pozwolenia</NoPermissionDelete>
+      <InvalidDeletion>Nie możesz usunąć własnego pozwolenia</InvalidDeletion>
+      <InvalidEntry>To pozwolenie nie może być edytowane</InvalidEntry>
+      <InvalidOwner>Nie możesz zmienić uprawnień właściciela</InvalidOwner>
+      <Invalid>Przepraszamy, nie mogliśmy rozpoznać '{0}' jako prawidłowego użytkownika lub nazwy przestrzeni</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>Można oglądnąć</read>
+        <modify>Można edytować</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>czytaj</read>
+        <modify>edytuj</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>Wpisz nazwy użytkowników lub przestrzeni...</placeholder>
       </invite>
       <owner>Właściciel</owner>
     </label>

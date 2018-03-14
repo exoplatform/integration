@@ -123,18 +123,18 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Paylaş</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
       <UIShareDocuments>Share Document</UIShareDocuments>
-      <Share>Share</Share>
+      <Share>Paylaş</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Share</ShareButton>
+      <ShareButton>Paylaş</ShareButton>
       <CancelButton>Ləğv Et</CancelButton>
       <TextAreaInit>Send a message upon sharing...</TextAreaInit>
       <ShareWith>Share with</ShareWith>
@@ -162,13 +162,13 @@
       <invite>
         <placeholder>Enter users or spaces names...</placeholder>
       </invite>
-      <owner>Owner</owner>
+      <owner>Sahib</owner>
     </label>
   </UIShareDocuments>
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Paylaş</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

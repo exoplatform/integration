@@ -66,43 +66,43 @@
       <version>Bersyon: {0}</version>
       <updatedOn>Binago na</updatedOn>
       <updatedBy>ni</updatedBy>
-      <loadMoreFiles>+{0} more</loadMoreFiles>
+      <loadMoreFiles>+{0} Parami</loadMoreFiles>
     </messages>
     <publicationStates>
-      <archived>Archived</archived>
-      <obsolete>Obsolete</obsolete>
-      <unpublished>Unpublished</unpublished>
-      <draft>Draft</draft>
-      <pending>Pending</pending>
+      <archived>Na archived</archived>
+      <obsolete>Lipas na</obsolete>
+      <unpublished>Hindi naisapubliko</unpublished>
+      <draft>Banghay</draft>
+      <pending>Nakabitin</pending>
       <approved>Inaprubahan</approved>
-      <inreview>In Review</inreview>
-      <staged>Staged</staged>
-      <published>Published</published>
-      <live>Published</live>
+      <inreview>Ang pagsusuri</inreview>
+      <staged>Larangan</staged>
+      <published>Nailathala na</published>
+      <live>Nailathala na</live>
     </publicationStates>
-    <view>View</view>
-    <edit>Edit</edit>
-    <download>Download</download>
-    <downloadAll>Download All</downloadAll>
-    <preview>Preview</preview>
+    <view>Tignan</view>
+    <edit>I-edit</edit>
+    <download>I-download</download>
+    <downloadAll>Kopyahin lahat</downloadAll>
+    <preview>Ang Prebyu</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>Preview</DocViewer>
+      <DocViewer>Ang Prebyu</DocViewer>
       <UIReadOnlyFileConfirmMessage>Buksan Dokumento</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
     <dialog>
       <label>
-        <resourceType>Resource Type</resourceType>
+        <resourceType>Uri ng Resource</resourceType>
       </label>
     </dialog>
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <commentTextAreaPreview>Magdagdag ng iyong komento...</commentTextAreaPreview>
+      <no-comment-yet>Uri ng Resource</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -123,41 +123,41 @@
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Ibahagi</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Share Document</UIShareDocuments>
-      <Share>Share</Share>
+      <UIShareDocuments>Ibahagi ang Dokumento</UIShareDocuments>
+      <Share>Ibahagi</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Share</ShareButton>
-      <CancelButton>Cancel</CancelButton>
+      <ShareButton>Ibahagi</ShareButton>
+      <CancelButton>Kanselahin</CancelButton>
       <TextAreaInit>Magpadala ng mensahe kapag nagbabahagi...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
+      <ShareWith>Ibahagi kay</ShareWith>
       <Access>Ang Access</Access>
-      <SpaceMember>Space Members</SpaceMember>
-      <SelectASpace>Select a Space</SelectASpace>
-      <SharedADocument>shared a document</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
+      <SpaceMember>Mga Miyembro ng Space</SpaceMember>
+      <SelectASpace>Pumili ng isang Space</SelectASpace>
+      <SharedADocument>nagbahagi ng isang dokumento</SharedADocument>
+      <WhoHasAccess>Sino ang may access</WhoHasAccess>
       <success>Ang dokumentong ito ay nabahagi nang matagumpay</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <NoSpace>Mangyaring pumili ng kahit isang balidong space o gumagamit</NoSpace>
+      <NoPermission>Hindi ka pinapayagan na ibahagi ang dokumentong ito</NoPermission>
+      <NoPermissionDelete>Hindi mo mabubura ang pahintulot na ito</NoPermissionDelete>
+      <InvalidDeletion>Hindi mo mabubura ang iyong sariling pahintulot</InvalidDeletion>
+      <InvalidEntry>Ang pahintulot na ito ay hindi ma-edit</InvalidEntry>
+      <InvalidOwner>Hindi mo maaaring baguhin ang mga pahintulot ng may-ari</InvalidOwner>
+      <Invalid>Paumanhin, hindi namin matukoy ang '{0}' bilang isang balidong user o pangalan ng space</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>Maaaring tingnan</read>
+        <modify>Maaaring mag-edit</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>basahin</read>
+        <modify>i-edit</modify>
       </notification>
       <invite>
         <placeholder>Maglagay ng mga user o mga pangalan ng space...</placeholder>
