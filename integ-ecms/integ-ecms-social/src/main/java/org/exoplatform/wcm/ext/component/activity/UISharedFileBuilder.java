@@ -27,6 +27,7 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.BaseUIActivityBuilder;
+import org.exoplatform.wcm.notification.plugin.ShareFileToSpacePlugin;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -52,7 +53,13 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       nodeUUID = activity.getTemplateParams().get(ContentUIActivity.NODE_UUID);
       workspaceName = activity.getTemplateParams().get(ContentUIActivity.WORKSPACE);
     }
-    fileActivity.setMessage(activity.getTitle());
+    if (activity.getTemplateParams() != null
+        && StringUtils.isNotBlank(activity.getTemplateParams().get(ShareFileToSpacePlugin.COMMENT))) {
+      fileActivity.setMessage(activity.getTitle());
+      fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
+    } else {
+      fileActivity.setMessage(null);
+    }
     //get node data
     try {
       ManageableRepository manageRepo = WCMCoreUtils.getRepository();
@@ -63,7 +70,6 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       if(trashService.isInTrash(currentNode)) {
         org.exoplatform.wcm.ext.component.activity.listener.Utils.deleteFileActivity(currentNode);
       }
-      fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
       fileActivity.setContentNode(currentNode, 0);
     } catch (ItemNotFoundException infe){
       LOG.error("Item not found. Activity will be deleted ", infe);
