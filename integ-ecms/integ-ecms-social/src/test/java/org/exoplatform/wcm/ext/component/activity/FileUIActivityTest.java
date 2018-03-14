@@ -43,6 +43,7 @@ public class FileUIActivityTest {
     activity.setTitle(activityTitle);
 
     Map<String, String> activityParameters = new HashMap<>();
+    activityParameters.put(FileUIActivity.MESSAGE, "message test");
 
     activity.setTemplateParams(activityParameters);
     activityBuilder.extendUIActivity(fileUIActivity, activity);

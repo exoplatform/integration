@@ -55,6 +55,8 @@ public class FileUIActivityBuilder extends BaseUIActivityBuilder {
     if (activity.getTemplateParams() != null
         && StringUtils.isNotBlank(activity.getTemplateParams().get(FileUIActivity.ACTIVITY_STATUS))) {
       fileActivity.setMessage(activity.getTitle());
+    } else {
+      fileActivity.setMessage(null);
     }
 
     if (fileActivity.getFilesCount() > 0) {
