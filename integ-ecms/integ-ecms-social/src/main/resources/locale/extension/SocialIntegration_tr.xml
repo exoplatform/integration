@@ -66,7 +66,7 @@
       <version>Sürüm: {0}</version>
       <updatedOn>Şu tarihte güncellendi:</updatedOn>
       <updatedBy>tarafından</updatedBy>
-      <loadMoreFiles>+{0} more</loadMoreFiles>
+      <loadMoreFiles>+{0} fazla</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Arşivlenmiş</archived>
@@ -83,7 +83,7 @@
     <view>Görünüm</view>
     <edit>Düzenle</edit>
     <download>İndir</download>
-    <downloadAll>Download All</downloadAll>
+    <downloadAll>Tümünü İndir</downloadAll>
     <preview>Önizleme</preview>
   </SocialIntegration>
   <UIPopupWindow>

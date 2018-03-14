@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>Otevřít pouze pro čtení</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Otevřít dokument</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -64,9 +64,9 @@
       <fileMoved>Soubor byl přesunut do: {0}</fileMoved>
       <revisionChanged>Vydání bylo obnoveno na verzi: {0}</revisionChanged>
       <version>Verze: {0}</version>
-      <updatedOn>Updated on</updatedOn>
+      <updatedOn>Aktualizováno</updatedOn>
       <updatedBy>od</updatedBy>
-      <loadMoreFiles>+{0} more</loadMoreFiles>
+      <loadMoreFiles>+{0} víc</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Archivováno</archived>
@@ -83,13 +83,13 @@
     <view>Zobrazit</view>
     <edit>Upravit</edit>
     <download>Stáhnout</download>
-    <downloadAll>Download All</downloadAll>
+    <downloadAll>Stáhnout vše</downloadAll>
     <preview>Náhled</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
       <DocViewer>Náhled</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Otevřít dokument</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -102,7 +102,7 @@
   <UIPreviewCommentArea>
     <label>
       <commentTextAreaPreview>Přidejte svůj komentář...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <no-comment-yet>Dosud žádné komentáře</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -118,49 +118,49 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>Tento soubor je uzamčen uživatelem {0}. Otevřít pouze pro čtení?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Sdílet</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Share Document</UIShareDocuments>
-      <Share>Share</Share>
+      <UIShareDocuments>Sdílet</UIShareDocuments>
+      <Share>Sdílet</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
       <ShareButton>Sdílet</ShareButton>
-      <CancelButton>Cancel</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
+      <CancelButton>Zrušit</CancelButton>
+      <TextAreaInit>Odeslat zprávu po dokončení sdílení...</TextAreaInit>
+      <ShareWith>Sdílet s</ShareWith>
       <Access>Přístupové právo</Access>
-      <SpaceMember>Space Members</SpaceMember>
-      <SelectASpace>Select a Space</SelectASpace>
-      <SharedADocument>shared a document</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <SpaceMember>Členové skupiny</SpaceMember>
+      <SelectASpace>Zvolte místnost</SelectASpace>
+      <SharedADocument>sdílel dokument</SharedADocument>
+      <WhoHasAccess>Kdo má přístup</WhoHasAccess>
+      <success>Dokument byl úspěšně sdílen</success>
+      <NoSpace>Zvolte alespoň jednu platnou místnost nebo uživatele</NoSpace>
+      <NoPermission>Nemáte oprávnění sdílet tento dokument</NoPermission>
+      <NoPermissionDelete>Nemůžete odstranit toto oprávnění</NoPermissionDelete>
+      <InvalidDeletion>Nemůžete smazat vlastní oprávnění</InvalidDeletion>
+      <InvalidEntry>Toto oprávnění nelze upravit</InvalidEntry>
+      <InvalidOwner>Nemůžete změnit oprávnění vlastníka</InvalidOwner>
+      <Invalid>Je nám to líto, ale '{0}' nebylo možné rozpoznat jako platné jméno uživatele nebo místnosti</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>Může zobrazit</read>
+        <modify>Může upravit</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>přečíst</read>
+        <modify>upravit</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>Zadejte názvy uživatelů nebo místností...</placeholder>
       </invite>
       <owner>Vlastník</owner>
     </label>
@@ -168,7 +168,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Sdílet</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

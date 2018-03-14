@@ -2,13 +2,13 @@
 <bundle>
   <UIConfirmMessage>
     <label>
-      <ReadOnly>Open Read-only</ReadOnly>
+      <ReadOnly>Deschide ca Read-only</ReadOnly>
     </label>
   </UIConfirmMessage>
 
   <UISocialPopupWindow>
     <title>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Deschide document</UIReadOnlyFileConfirmMessage>
     </title>
   </UISocialPopupWindow>
   <SocialIntegration>
@@ -64,9 +64,9 @@
       <fileMoved>Fișierul a fost mutat la: {0}</fileMoved>
       <revisionChanged>Publicarea a fost restaurată la versiunea: {0}</revisionChanged>
       <version>Versiunea {0}</version>
-      <updatedOn>Updated on</updatedOn>
+      <updatedOn>Actualizat la</updatedOn>
       <updatedBy>de</updatedBy>
-      <loadMoreFiles>+{0} more</loadMoreFiles>
+      <loadMoreFiles>Încă +{0}</loadMoreFiles>
     </messages>
     <publicationStates>
       <archived>Arhivată</archived>
@@ -83,13 +83,13 @@
     <view>Afișare</view>
     <edit>Modifică</edit>
     <download>Descarcă</download>
-    <downloadAll>Download All</downloadAll>
+    <downloadAll>Descarcă tot</downloadAll>
     <preview>Previzualizare</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
       <DocViewer>Previzualizare</DocViewer>
-      <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
+      <UIReadOnlyFileConfirmMessage>Deschide document</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
   <ElementSet>
@@ -101,8 +101,8 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
-      <no-comment-yet>No comment yet</no-comment-yet>
+      <commentTextAreaPreview>Adaugă comentariul tău...</commentTextAreaPreview>
+      <no-comment-yet>Niciun comentariu</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
 
@@ -118,49 +118,49 @@
 
   <UIPopupMenu>
     <msg>
-      <lock-node-read-only>This file is locked by user {0}. Open read only?</lock-node-read-only>
+      <lock-node-read-only>Fișierul este protejat de către {0}. Deschidere în mod read only?</lock-node-read-only>
     </msg>
   </UIPopupMenu>
   <ECMContextMenu>
     <event>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Distribuie</ShareDocuments>
     </event>
   </ECMContextMenu>
   <UIPopupWindow>
     <title>
-      <UIShareDocuments>Share Document</UIShareDocuments>
-      <Share>Share</Share>
+      <UIShareDocuments>Distribuie</UIShareDocuments>
+      <Share>Distribuie</Share>
     </title>
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
       <ShareButton>Distribuie</ShareButton>
-      <CancelButton>Cancel</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
-      <Access>Access</Access>
-      <SpaceMember>Space Members</SpaceMember>
-      <SelectASpace>Select a Space</SelectASpace>
-      <SharedADocument>shared a document</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
-      <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
+      <CancelButton>Renunță</CancelButton>
+      <TextAreaInit>Trimite un mesaj înainte să distribui...</TextAreaInit>
+      <ShareWith>Distribuie cu</ShareWith>
+      <Access>Editare acces</Access>
+      <SpaceMember>Membri Spațiu</SpaceMember>
+      <SelectASpace>Selectează un spațiu</SelectASpace>
+      <SharedADocument>a distribuit un document</SharedADocument>
+      <WhoHasAccess>Cine are acces</WhoHasAccess>
+      <success>Documentul a fost distribuit cu success</success>
+      <NoSpace>Va rugăm selectați cel puțin un spațiu valid sau utilizator</NoSpace>
+      <NoPermission>Nu ai permisiunea să distribui acest document</NoPermission>
+      <NoPermissionDelete>Nu poți șterge această permisiune</NoPermissionDelete>
+      <InvalidDeletion>Nu-ți poți șterge permisiunile</InvalidDeletion>
+      <InvalidEntry>Permisiunea nu poate fi editată</InvalidEntry>
+      <InvalidOwner>Nu poți schimba permisiunile proprietarului</InvalidOwner>
+      <Invalid>Ne pare rău, nu am putut să-l recunoaștem pe '{0}' ca un utilizator sau nume de spațiu</Invalid>
       <option>
-        <read>Can view</read>
-        <modify>Can edit</modify>
+        <read>Poți vedea</read>
+        <modify>Poți edita</modify>
       </option>
       <notification>
-        <read>read</read>
-        <modify>edit</modify>
+        <read>citește</read>
+        <modify>editează</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>Introdu utilizatori sau nume de spații...</placeholder>
       </invite>
       <owner>Proprietar</owner>
     </label>
@@ -168,7 +168,7 @@
 
   <UIActionBar>
     <tooltip>
-      <ShareDocuments>Share</ShareDocuments>
+      <ShareDocuments>Distribuie</ShareDocuments>
     </tooltip>
   </UIActionBar>
 </bundle>

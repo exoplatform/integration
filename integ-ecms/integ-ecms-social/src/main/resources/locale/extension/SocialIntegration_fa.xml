@@ -136,20 +136,20 @@
     <label>
       <ShareButton>اشتراک</ShareButton>
       <CancelButton>انصراف</CancelButton>
-      <TextAreaInit>Send a message upon sharing...</TextAreaInit>
-      <ShareWith>Share with</ShareWith>
-      <Access>Access</Access>
+      <TextAreaInit>رسال یک پیام پس از به اشتراک گذاری...</TextAreaInit>
+      <ShareWith>ه اشتراک گذاری با</ShareWith>
+      <Access>دسترسی و ویرایش</Access>
       <SpaceMember>اعضای فضا</SpaceMember>
-      <SelectASpace>Select a Space</SelectASpace>
-      <SharedADocument>shared a document</SharedADocument>
-      <WhoHasAccess>Who has access</WhoHasAccess>
-      <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
-      <NoPermission>You are not allowed to share this document</NoPermission>
-      <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
-      <InvalidDeletion>You can't delete your own permission</InvalidDeletion>
-      <InvalidEntry>This permission can't be edited</InvalidEntry>
-      <InvalidOwner>You can't change owner's permissions</InvalidOwner>
+      <SelectASpace>را انتخاب کنید یک فضای</SelectASpace>
+      <SharedADocument>ه اشتراک گذاشته یک سند</SharedADocument>
+      <WhoHasAccess>که دسترسی</WhoHasAccess>
+      <success>سند به اشتراک گذاشته شده با موفقیت</success>
+      <NoSpace>طفا انتخاب کنید حداقل یک مدرک معتبر فضا و یا کاربر</NoSpace>
+      <NoPermission>شما مجاز به به اشتراک گذاری این سند</NoPermission>
+      <NoPermissionDelete>شما نمی توانید حذف این اجازه</NoPermissionDelete>
+      <InvalidDeletion>شما نمی توانید حذف خود اجازه</InvalidDeletion>
+      <InvalidEntry>ین اجازه را نمی توان ویرایش کرد</InvalidEntry>
+      <InvalidOwner>شما نمی توانید تغییر صاحب مجوز</InvalidOwner>
       <Invalid>Sorry, we couldn't recognise '{0}' as a valid user or space name</Invalid>
       <option>
         <read>Can view</read>
@@ -160,7 +160,7 @@
         <modify>edit</modify>
       </notification>
       <invite>
-        <placeholder>Enter users or spaces names...</placeholder>
+        <placeholder>ورود کاربران و یا فضاهای نام...</placeholder>
       </invite>
       <owner>صاحب</owner>
     </label>
