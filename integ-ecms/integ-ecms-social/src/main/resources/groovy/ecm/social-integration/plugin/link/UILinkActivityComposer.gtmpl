@@ -173,9 +173,10 @@ link
 			      <span class="uiCheckbox"><input id="ThumbnailCheckbox" type="checkbox" class="checkbox" /><span>$noThumbnail</span></span>
 			      <% } %>
 		  </div>
-		<%
-      }
-    %>
+      <% if (embedHtml == null) { %>
+        </div>
+      <% } %>
+    <% } %>
   </div>
 <% } else { 
       def formDisplay = uicomponent.isDisplayed() ? "block" : "none"; %>
