@@ -81,7 +81,7 @@
       <live>Published</live>
     </publicationStates>
     <view>View</view>
-    <edit>Sunting</edit>
+    <edit>Edit</edit>
     <download>Download</download>
     <downloadAll>Download All</downloadAll>
     <preview>Preview</preview>
@@ -162,7 +162,7 @@
       <invite>
         <placeholder>Enter users or spaces names...</placeholder>
       </invite>
-      <owner>Pemilik</owner>
+      <owner>Owner</owner>
     </label>
   </UIShareDocuments>
 
