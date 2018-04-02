@@ -365,7 +365,7 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
     def breadCrumbContent = uicomponent.getDocFileBreadCrumb(index);
     def breadCrumbSize = docFolderBreadCrumb == null ? 0 : docFolderBreadCrumb.size();
 
-    def fileInfo = _ctx.appRes("SocialIntegration.messages.updatedOn") + " " + uicomponent.getDocUpdateDate(currentNode) + " " + _ctx.appRes("SocialIntegration.messages.updatedBy") + " " + StringEscapeUtils.escapeHtml(uicomponent.getDocAuthor(currentNode)) + " " + (StringUtils.isBlank(size) ? "" : (" - " + size));
+    def fileInfo = _ctx.appRes("SocialIntegration.messages.updatedOn") + " " + uicomponent.getDocUpdateDate(currentNode) + " " + _ctx.appRes("SocialIntegration.messages.updatedBy") + " " + StringEscapeUtils.escapeHtml(uicomponent.getDocLastModifier(currentNode)) + " " + (StringUtils.isBlank(size) ? "" : (" - " + size));
 
     def docPreviewUri = "javascript:require(['SHARED/documentPreview'], \
                            function(documentPreview) { \
