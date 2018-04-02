@@ -47,7 +47,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.ibm.icu.util.Calendar;
 
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
@@ -76,9 +75,7 @@ import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.friendly.FriendlyService;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.social.core.jpa.updater.utils.IdentityUtil;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -636,17 +633,21 @@ public class FileUIActivity extends BaseUIActivity{
     return dateTimeFormatter;
   }
 
-  protected String getDocAuthor(Node node) {
-    String docAuthor = "";
+  protected String getDocLastModifier(Node node) {
+    String docLastModifier = "";
     try {
-      if(node != null && node.hasProperty("exo:owner")) {
-        String docAuthorUsername = node.getProperty("exo:owner").getString();
-        docAuthor = getUserFullName(docAuthorUsername);
+      if (node.isNodeType("exo:symlink")){
+        String uuid = node.getProperty("exo:uuid").getString();
+        node = node.getSession().getNodeByUUID(uuid);
+      }
+      if(node != null && node.hasProperty("exo:lastModifier")) {
+        String docLastModifierUsername = node.getProperty("exo:lastModifier").getString();
+        docLastModifier = getUserFullName(docLastModifierUsername);
       }
     } catch (RepositoryException e) {
-      LOG.error("Cannot get document author : " + e.getMessage(), e);
+      LOG.error("Cannot get document last modifier : " + e.getMessage(), e);
     }
-    return docAuthor;
+    return docLastModifier;
   }
 
   protected int getVersion(Node node) {
