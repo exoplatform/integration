@@ -468,17 +468,21 @@ public class FileUIActivity extends BaseUIActivity{
     return dateTimeFormatter;
   }
 
-  protected String getDocAuthor(Node node) {
-    String docAuthor = "";
+  protected String getDocLastModifier(Node node) {
+    String docLastModifier = "";
     try {
-      if(contentNode != null && contentNode.hasProperty("exo:owner")) {
-        String docAuthorUsername = contentNode.getProperty("exo:owner").getString();
-        docAuthor = getUserFullName(docAuthorUsername);
+      if (node.isNodeType("exo:symlink")){
+        String uuid = node.getProperty("exo:uuid").getString();
+        node = node.getSession().getNodeByUUID(uuid);
+      }
+      if(node != null && node.hasProperty("exo:lastModifier")) {
+        String docLastModifierUsername = node.getProperty("exo:lastModifier").getString();
+        docLastModifier = getUserFullName(docLastModifierUsername);
       }
     } catch (RepositoryException e) {
-      LOG.error("Cannot get document author : " + e.getMessage(), e);
+      LOG.error("Cannot get document last modifier : " + e.getMessage(), e);
     }
-    return docAuthor;
+    return docLastModifier;
   }
 
   protected int getVersion(Node node) {

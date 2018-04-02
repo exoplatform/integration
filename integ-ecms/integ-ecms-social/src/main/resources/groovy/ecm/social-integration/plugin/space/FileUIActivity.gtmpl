@@ -445,7 +445,7 @@ String viewActivityTip = _ctx.appRes("UIActivity.msg.ViewActivity");
 									<%=_ctx.appRes("SocialIntegration.messages.updatedOn")%>
 									<%=uicomponent.getDocUpdateDate(currentNode)%>
 									<%=_ctx.appRes("SocialIntegration.messages.updatedBy")%>
-									<%=StringEscapeUtils.escapeHtml(uicomponent.getDocAuthor(currentNode))%>
+									<%=StringEscapeUtils.escapeHtml(uicomponent.getDocLastModifier(currentNode))%>
 									<%
 									if(size.length() > 0) {
 									%>
