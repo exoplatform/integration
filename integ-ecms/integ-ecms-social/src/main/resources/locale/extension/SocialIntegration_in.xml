@@ -144,7 +144,6 @@
       <SharedADocument>bagikan dokumen</SharedADocument>
       <WhoHasAccess>Siapa yang punya akses</WhoHasAccess>
       <success>Dokumennya berhasil dibagikan</success>
-      <NoSpace>Silahkan pilih setidaknya satu ruang atau pengguna yang valid</NoSpace>
       <NoPermission>Anda tidak diizinkan untuk membagikan dokumen ini</NoPermission>
       <NoPermissionDelete>Anda tidak dapat menghapus izin ini</NoPermissionDelete>
       <InvalidDeletion>Anda tidak dapat menghapus izin Anda sendiri</InvalidDeletion>

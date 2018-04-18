@@ -144,7 +144,6 @@
       <SharedADocument>bir belge paylaş</SharedADocument>
       <WhoHasAccess>Erişimi olanlar</WhoHasAccess>
       <success>Belge başarıyla paylaşıldı</success>
-      <NoSpace>Lütfen en az bir geçerli alan veya kullanıcı seçin</NoSpace>
       <NoPermission>Bu belgeyi paylaşmaya izniniz yok</NoPermission>
       <NoPermissionDelete>Bu izni silemezsiniz</NoPermissionDelete>
       <InvalidDeletion>Kendi izninizi silemezsiniz</InvalidDeletion>

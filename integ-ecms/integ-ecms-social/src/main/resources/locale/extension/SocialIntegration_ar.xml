@@ -144,7 +144,6 @@
       <SharedADocument>مشاركة وثيقة</SharedADocument>
       <WhoHasAccess>من لديه حق الوصول</WhoHasAccess>
       <success>لقد تم مشاركة الوثيقة بنجاح</success>
-      <NoSpace>الرجاء اختيار على الأقل فضاء واحد أو مستخدم</NoSpace>
       <NoPermission>غير مسموح لك بمشاركة هذا الملف.</NoPermission>
       <NoPermissionDelete>لا يمكنُك حذف هذه الصّلاحيّة</NoPermissionDelete>
       <InvalidDeletion>لا يمكنك حذف الصلاحيّات الخاصّة بك</InvalidDeletion>

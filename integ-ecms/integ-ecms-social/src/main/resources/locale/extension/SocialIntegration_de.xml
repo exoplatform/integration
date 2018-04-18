@@ -144,7 +144,6 @@
       <SharedADocument>hat ein Dokument geteilt</SharedADocument>
       <WhoHasAccess>Wer hat Zugriff</WhoHasAccess>
       <success>Das Dokument wurde erfolgreich freigegeben</success>
-      <NoSpace>Bitte wählen Sie mindestens einen gültigen Bereich oder Benutzer aus</NoSpace>
       <NoPermission>Sie dürfen dieses Dokument nicht freigeben</NoPermission>
       <NoPermissionDelete>Sie können diese Berechtigung nicht löschen</NoPermissionDelete>
       <InvalidDeletion>Sie können Ihre eigene Berechtigung nicht löschen</InvalidDeletion>

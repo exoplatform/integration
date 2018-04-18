@@ -144,7 +144,6 @@
       <SharedADocument>dokument udostępniony</SharedADocument>
       <WhoHasAccess>Kto ma dostęp</WhoHasAccess>
       <success>Dokument został pomyślnie udostępniony</success>
-      <NoSpace>Wybierz przynajmniej jeden obszar lub użytkownika</NoSpace>
       <NoPermission>Nie masz uprawnień do udostępnienia tego dokumentu</NoPermission>
       <NoPermissionDelete>Nie możesz usunąć tego pozwolenia</NoPermissionDelete>
       <InvalidDeletion>Nie możesz usunąć własnego pozwolenia</InvalidDeletion>

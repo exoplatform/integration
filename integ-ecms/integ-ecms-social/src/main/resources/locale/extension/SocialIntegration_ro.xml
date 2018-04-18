@@ -144,7 +144,6 @@
       <SharedADocument>a distribuit un document</SharedADocument>
       <WhoHasAccess>Cine are acces</WhoHasAccess>
       <success>Documentul a fost distribuit cu success</success>
-      <NoSpace>Va rugăm selectați cel puțin un spațiu valid sau utilizator</NoSpace>
       <NoPermission>Nu ai permisiunea să distribui acest document</NoPermission>
       <NoPermissionDelete>Nu poți șterge această permisiune</NoPermissionDelete>
       <InvalidDeletion>Nu-ți poți șterge permisiunile</InvalidDeletion>

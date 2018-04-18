@@ -144,7 +144,6 @@
       <SharedADocument>sdílel dokument</SharedADocument>
       <WhoHasAccess>Kdo má přístup</WhoHasAccess>
       <success>Dokument byl úspěšně sdílen</success>
-      <NoSpace>Zvolte alespoň jednu platnou místnost nebo uživatele</NoSpace>
       <NoPermission>Nemáte oprávnění sdílet tento dokument</NoPermission>
       <NoPermissionDelete>Nemůžete odstranit toto oprávnění</NoPermissionDelete>
       <InvalidDeletion>Nemůžete smazat vlastní oprávnění</InvalidDeletion>

@@ -52,7 +52,6 @@ String displayed = null;
               <div data-toggle="dropdown" id=$idModify class="uiActionWithLabel">
                 <a>
                   <i class="uiIconEdit uiIconBlue"></i>
-                  <a class="responsivePerm"> $SHARE_OPTION_CANMODIFY</a>
                 </a>
                 <i class="uiIconMiniArrowDown uiIconBlue"></i>
               </div>
@@ -64,7 +63,6 @@ String displayed = null;
               <div data-toggle="dropdown" id=$idView class="uiActionWithLabel">
                 <a>
                   <i class="uiIconWatch uiIconBlue"></i>
-                  <a class="responsivePerm"> $SHARE_OPTION_CANVEW</a>
                 </a>
                 <i class="uiIconMiniArrowDown uiIconBlue"></i>
               </div>

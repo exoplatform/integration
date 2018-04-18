@@ -144,7 +144,6 @@
       <SharedADocument>compartit un document</SharedADocument>
       <WhoHasAccess>Qui té accés</WhoHasAccess>
       <success>El document s'ha compartit amb èxit</success>
-      <NoSpace>Si us plau, selecciona almenys un espai o usuari</NoSpace>
       <NoPermission>No tens permís per compartir aquest document</NoPermission>
       <NoPermissionDelete>No pot suprimir aquest permís</NoPermissionDelete>
       <InvalidDeletion>No pot suprimir el seu propi permís</InvalidDeletion>
