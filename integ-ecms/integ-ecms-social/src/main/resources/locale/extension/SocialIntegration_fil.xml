@@ -144,7 +144,6 @@
       <SharedADocument>nagbahagi ng isang dokumento</SharedADocument>
       <WhoHasAccess>Sino ang may access</WhoHasAccess>
       <success>Ang dokumentong ito ay nabahagi nang matagumpay</success>
-      <NoSpace>Mangyaring pumili ng kahit isang balidong space o gumagamit</NoSpace>
       <NoPermission>Hindi ka pinapayagan na ibahagi ang dokumentong ito</NoPermission>
       <NoPermissionDelete>Hindi mo mabubura ang pahintulot na ito</NoPermissionDelete>
       <InvalidDeletion>Hindi mo mabubura ang iyong sariling pahintulot</InvalidDeletion>

@@ -144,7 +144,6 @@
       <SharedADocument>je dal(a) dokument v skupno rabo</SharedADocument>
       <WhoHasAccess>Kdo ima dostop</WhoHasAccess>
       <success>Dokument je uspešno dan v skupno rabo</success>
-      <NoSpace>Prosimo, izberite vsaj en veljaven prostor ali uporabnika</NoSpace>
       <NoPermission>Nimate dovoljenja, da bi dali ta dokument v skupno rabo</NoPermission>
       <NoPermissionDelete>Tega dovoljenja ne morete izbrisati</NoPermissionDelete>
       <InvalidDeletion>Ne morete izbrisati lastnega dovoljenja</InvalidDeletion>

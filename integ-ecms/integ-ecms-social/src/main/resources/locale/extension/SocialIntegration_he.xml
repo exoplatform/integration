@@ -137,7 +137,6 @@
       <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Select a Space</SelectASpace>
       <SharedADocument>shared a document</SharedADocument>
-      <NoSpace>Please select at least one space to share</NoSpace>
       <option>
         <read>Can View</read>
         <modify>Can Edit</modify>

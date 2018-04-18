@@ -52,6 +52,7 @@ import org.exoplatform.wcm.notification.plugin.ShareFileToSpacePlugin;
 import org.exoplatform.wcm.notification.plugin.ShareFileToUserPlugin;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.web.application.RequestContext;
+import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIApplication;
@@ -91,7 +92,6 @@ import static org.exoplatform.wcm.notification.plugin.FileActivityChildPlugin.IC
         @EventConfig(listeners = UIShareDocuments.CancelActionListener.class),
         @EventConfig(listeners = UIShareDocuments.TextChangeActionListener.class),
         @EventConfig(listeners = UIShareDocuments.ChangeActionListener.class),
-        @EventConfig(listeners = UIShareDocuments.AddActionListener.class),
         @EventConfig(listeners = UIShareDocuments.ChangePermissionActionListener.class)
     }
 )
@@ -182,6 +182,32 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       IShareDocumentService service = WCMCoreUtils.getService(IShareDocumentService.class);
       SpaceService spaceService = WCMCoreUtils.getService(SpaceService.class);
       DocumentService documentService = WCMCoreUtils.getService(DocumentService.class);
+
+      UIApplication uiApp = uiform.getAncestorOfType(UIApplication.class);
+
+      try {
+        uiform.addPermission();
+      } catch (PermissionException ex) {
+        switch (ex.getError()) {
+          case INVALID_OWNER:
+            uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.InvalidOwner", null,
+                    ApplicationMessage.WARNING));
+            break;
+          case NOT_FOUND:
+            uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.Invalid", new String[]{ex.getData()
+                    .replace("[","").replace("]","")}, ApplicationMessage.WARNING));
+            break;
+          case NO_PERMISSION:
+            uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermission", null,
+                    ApplicationMessage.WARNING));
+            break;
+          default:
+            uiApp.addMessage(new ApplicationMessage("Error during add permission", null,
+                    ApplicationMessage.WARNING));
+        }
+        return;
+      }
+
       List<String> entries = uiform.entries;
       Map<String,String> permissions = uiform.permissions;
       Set<String> accessList = uiform.getWhoHasAccess();
@@ -239,7 +265,6 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
               service.unpublishDocumentToSpace(groupId, (ExtendedNode) node);
             }
           } catch (RepositoryException e) {
-            UIApplication uiApp = uiform.getAncestorOfType(UIApplication.class);
             uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.InvalidEntry", null,
                 ApplicationMessage.WARNING));
           }
@@ -286,13 +311,11 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
           }
         }
         if (isShared) {
-          UIApplication uiApp = uiform.getAncestorOfType(UIApplication.class);
           uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.success", null,
               ApplicationMessage.INFO));
         }
         uiform.getAncestorOfType(UIJCRExplorer.class).cancelAction();
       } else {
-        UIApplication uiApp = uiform.getAncestorOfType(UIApplication.class);
         uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermission", null,
             ApplicationMessage.WARNING));
       }
@@ -304,65 +327,78 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
     return new StringBuffer(CommonsUtils.getCurrentDomain()).append("/").append(portal).append(LOGIN_INITIALURI).append(portal).append("/").toString();
   }
 
-  public static class AddActionListener extends EventListener<UIShareDocuments> {
+  public void addPermission() throws Exception {
+    List<String> entries = this.entries;
+    UIFormStringInput input = this.getUIStringInput(USER_SUGGESTER);
+    String value = input.getValue();
 
-    @Override
-    public void execute(Event<UIShareDocuments> event) throws Exception {
-      UIShareDocuments uicomponent = event.getSource();
-      List<String> entries = uicomponent.entries;
-      UIFormStringInput input = uicomponent.getUIStringInput(USER_SUGGESTER);
-      String value = input.getValue();
+    if (value != null && !value.trim().isEmpty()) {
       input.setValue(null);
-      if (value == null || value.trim().isEmpty()) {
-        UIApplication uiApp = uicomponent.getAncestorOfType(UIApplication.class);
-        uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoSpace", null,
-            ApplicationMessage.WARNING)) ;
-      }
-      if (value != null) {
-        String[] selectedIdentities = value.split(",");
-        String name = null;
-        Identity identity = ConversationState.getCurrent().getIdentity();
-        if (uicomponent.hasPermissionDropDown() && (uicomponent.canEdit(identity) || uicomponent.isOwner(identity.getUserId()))) {
-          String permission = uicomponent.getPermission();
-          List<String> notFound = new LinkedList<String>();
-          int i=0;
-          if (selectedIdentities != null) {
-            for (int idx = 0; idx < selectedIdentities.length; idx++) {
-              name = selectedIdentities[idx].trim();
-              if (name.length() > 0) {
-                if (isExisting(name) && !uicomponent.isOwner(name)) {
-                  if (name.startsWith(SPACE_PREFIX1)) name = name.replace(SPACE_PREFIX1, SPACE_PREFIX2);
-                  if (!uicomponent.hasPermission(name, permission)) {
-                    uicomponent.updatePermission(name, permission);
-                    uicomponent.getChild(UIWhoHasAccess.class).update(name, permission);
-                    if (!entries.contains(name)) entries.add(name);
-                  }
-                } else if (uicomponent.isOwner(name)) {
-                  UIApplication uiApp = uicomponent.getAncestorOfType(UIApplication.class);
-                  uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.InvalidOwner", null,
-                          ApplicationMessage.WARNING)) ;
-                } else {
-                  notFound.add(name);
+
+      String[] selectedIdentities = value.split(",");
+      String name = null;
+      Identity identity = ConversationState.getCurrent().getIdentity();
+      if (this.hasPermissionDropDown() && (this.canEdit(identity) || this.isOwner(identity.getUserId()))) {
+        String permission = this.getPermission();
+        List<String> notFound = new LinkedList<String>();
+        int i=0;
+        if (selectedIdentities != null) {
+          for (int idx = 0; idx < selectedIdentities.length; idx++) {
+            name = selectedIdentities[idx].trim();
+            if (name.length() > 0) {
+              if (isExisting(name) && !this.isOwner(name)) {
+                if (name.startsWith(SPACE_PREFIX1)) name = name.replace(SPACE_PREFIX1, SPACE_PREFIX2);
+                if (!this.hasPermission(name, permission)) {
+                  this.updatePermission(name, permission);
+                  this.getChild(UIWhoHasAccess.class).update(name, permission);
+                  if (!entries.contains(name)) entries.add(name);
                 }
+              } else if (this.isOwner(name)) {
+                throw new PermissionException(PermissionException.Code.INVALID_OWNER);
+              } else {
+                notFound.add(name);
               }
             }
           }
-          if (notFound.size() > 0) {
-            UIApplication uiApp = uicomponent.getAncestorOfType(UIApplication.class);
-            uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.Invalid", new String[]{notFound.toString()
-                .replace("[","").replace("]","")},
-                ApplicationMessage.WARNING)) ;
-          }
-          event.getRequestContext().addUIComponentToUpdateByAjax(uicomponent);
-          event.getRequestContext().getJavascriptManager()
-              .require("SHARED/share-content", "shareContent")
-              .addScripts("eXo.ecm.ShareContent.checkSelectedEntry('" + entries + "');");
-        } else {
-          UIApplication uiApp = uicomponent.getAncestorOfType(UIApplication.class);
-          uiApp.addMessage(new ApplicationMessage("UIShareDocuments.label.NoPermission", null,
-              ApplicationMessage.WARNING));
         }
+        WebuiRequestContext requestContext = WebuiRequestContext.getCurrentInstance();
+        requestContext.addUIComponentToUpdateByAjax(this);
+        requestContext.getJavascriptManager()
+                .require("SHARED/share-content", "shareContent")
+                .addScripts("eXo.ecm.ShareContent.checkSelectedEntry('" + entries + "');");
+        if (notFound.size() > 0) {
+          throw new PermissionException(PermissionException.Code.NOT_FOUND, notFound.toString());
+        }
+      } else {
+        throw new PermissionException(PermissionException.Code.NO_PERMISSION);
       }
+    }
+  }
+
+  public static class PermissionException extends Exception {
+    public enum Code {
+      NOT_FOUND, NO_PERMISSION, INVALID_OWNER
+    }
+
+    private Code error;
+
+    private String data;
+
+    public PermissionException(Code error) {
+      this(error, null);
+    }
+
+    public PermissionException(Code error, String data) {
+      this.error = error;
+      this.data = data;
+    }
+
+    public Code getError() {
+      return error;
+    }
+
+    public String getData() {
+      return data;
     }
   }
 
@@ -374,9 +410,10 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
       if (uicomponent.getPermission().equals(SHARE_PERMISSION_MODIFY)) uicomponent.setPermission(SHARE_PERMISSION_VIEW);
       else uicomponent.setPermission(SHARE_PERMISSION_MODIFY);
       event.getRequestContext().addUIComponentToUpdateByAjax(uicomponent);
+
       event.getRequestContext().getJavascriptManager()
-          .require("SHARED/share-content", "shareContent")
-          .addScripts("eXo.ecm.ShareContent.checkSelectedEntry();");
+              .require("SHARED/share-content", "shareContent")
+              .addScripts("eXo.ecm.ShareContent.checkSelectedEntry('" + uicomponent.entries + "');");
     }
   }
 

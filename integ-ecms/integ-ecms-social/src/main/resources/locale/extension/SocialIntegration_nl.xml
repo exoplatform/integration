@@ -144,7 +144,6 @@
       <SharedADocument>deelde een document</SharedADocument>
       <WhoHasAccess>Wie heeft toegang?</WhoHasAccess>
       <success>Het document werd met succes gedeeld</success>
-      <NoSpace>Selecteer tenminste één geldige ruimte of gebruiker</NoSpace>
       <NoPermission>U bent niet gemachtigd om dit document te delen</NoPermission>
       <NoPermissionDelete>U kunt deze toestemming niet verwijderen</NoPermissionDelete>
       <InvalidDeletion>U kunt uw eigen toestemming niet verwijderen</InvalidDeletion>

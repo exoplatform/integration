@@ -144,7 +144,6 @@
       <SharedADocument>ha compartido un documento</SharedADocument>
       <WhoHasAccess>Quién tiene acceso</WhoHasAccess>
       <success>El documento se ha compartido correctamente</success>
-      <NoSpace>Por favor, seleccione al menos un usuario o espacio válido</NoSpace>
       <NoPermission>No tiene permisos para compartir este documento</NoPermission>
       <NoPermissionDelete>No puede eliminar este permiso</NoPermissionDelete>
       <InvalidDeletion>No puede eliminar su propio permiso</InvalidDeletion>

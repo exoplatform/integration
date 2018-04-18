@@ -144,7 +144,6 @@
       <SharedADocument>надав доступ до документа</SharedADocument>
       <WhoHasAccess>Хто має доступ</WhoHasAccess>
       <success>Цей документ був успішно поділений</success>
-      <NoSpace>Будь ласка, виберіть хоча б один дійсний простір або користувача</NoSpace>
       <NoPermission>Вам не дозволено поширювати цей документ</NoPermission>
       <NoPermissionDelete>Ви не можете видалити цей дозвіл</NoPermissionDelete>
       <InvalidDeletion>Ви не можете видалити свій дозвіл</InvalidDeletion>

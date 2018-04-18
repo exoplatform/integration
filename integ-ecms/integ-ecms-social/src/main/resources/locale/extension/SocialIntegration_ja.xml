@@ -144,7 +144,6 @@
       <SharedADocument>ドキュメントを共有</SharedADocument>
       <WhoHasAccess>アクセスできる人</WhoHasAccess>
       <success>文書が正常に共有されました</success>
-      <NoSpace>少なくとも1つの有効なスペースまたはユーザーを選択してください</NoSpace>
       <NoPermission>あなたはこの文書を共有することが許可されていません</NoPermission>
       <NoPermissionDelete>あなたはこの権限を削除することはできません</NoPermissionDelete>
       <InvalidDeletion>あなたはあなた自身の許可を削除することはできません</InvalidDeletion>

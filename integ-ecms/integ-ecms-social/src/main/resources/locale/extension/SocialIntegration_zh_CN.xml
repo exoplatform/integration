@@ -144,7 +144,6 @@
       <SharedADocument>共享一文档</SharedADocument>
       <WhoHasAccess>Who has access</WhoHasAccess>
       <success>The document was shared successfully</success>
-      <NoSpace>Please select at least one valid space or user</NoSpace>
       <NoPermission>You are not allowed to share this document</NoPermission>
       <NoPermissionDelete>You can't delete this permission</NoPermissionDelete>
       <InvalidDeletion>You can't delete your own permission</InvalidDeletion>

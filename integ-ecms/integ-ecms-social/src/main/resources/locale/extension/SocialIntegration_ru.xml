@@ -144,7 +144,6 @@
       <SharedADocument>поделился документом</SharedADocument>
       <WhoHasAccess>Кто имеет доступ</WhoHasAccess>
       <success>Этот документ был успешно поделён</success>
-      <NoSpace>Пожалуйста, выберите хотя бы одну допустимую область или пользователя</NoSpace>
       <NoPermission>Вам не разрешено делиться этим документом</NoPermission>
       <NoPermissionDelete>Вы не можете удалить это разрешение</NoPermissionDelete>
       <InvalidDeletion>Вы не можете удалить своё разрешение</InvalidDeletion>
