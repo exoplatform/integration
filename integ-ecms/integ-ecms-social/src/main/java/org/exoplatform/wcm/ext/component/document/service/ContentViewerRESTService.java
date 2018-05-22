@@ -89,12 +89,13 @@ public class ContentViewerRESTService implements ResourceContainer {
    * @anchor PDFViewerRESTService.getPDFFile
    */
   @GET
-  @Path("/{repoName}/{workspaceName}/{uuid}/")
+  @Path("/{repoName}/{workspaceName}/{uuid}/{lang}")
     public Response getContent(@Context HttpServletRequest request,
                                @Context HttpServletResponse response,
                              @PathParam("repoName") String repoName,
                              @PathParam("workspaceName") String workspaceName,
-                             @PathParam("uuid") String uuid) throws Exception {
+                             @PathParam("uuid") String uuid,
+                             @PathParam("lang") String language) throws Exception {
     String content = null;
     try {
       ManageableRepository repository = repositoryService.getCurrentRepository();
@@ -116,12 +117,13 @@ public class ContentViewerRESTService implements ResourceContainer {
 
       ControllerContext controllerContext = new ControllerContext(webAppController, webAppController.getRouter(), request, response, null);
       PortalApplication application = webAppController.getApplication(PortalApplication.PORTAL_APPLICATION_ID);
-      PortalRequestContext requestContext = new PortalRequestContext(application, controllerContext, org.exoplatform.portal.mop.SiteType.PORTAL.toString(), "", "", request.getLocale());
+      PortalRequestContext requestContext = new PortalRequestContext(application, controllerContext, org.exoplatform.portal.mop.SiteType.PORTAL.toString(), "", "", null);
       WebuiRequestContext.setCurrentInstance(requestContext);
       UIPortalApplication uiApplication = new UIPortalApplication();
       uiApplication.setCurrentSite(new UIPortal());
       requestContext.setUIApplication(uiApplication);
       requestContext.setWriter(writer);
+      requestContext.setLocale(new Locale(language));
 
       uiDocViewer.processRender(requestContext);
 
