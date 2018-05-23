@@ -1592,14 +1592,20 @@
         </object-param>
       </init-params>
     </component-plugin>
-
-
-
     <component-plugin>
       <name>dms.new.user.event.listener</name>
       <set-method>addListenerPlugin</set-method>
       <type>org.exoplatform.services.jcr.ext.hierarchy.impl.NewUserListener</type>
       <description>description</description>
+    </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator</target-component>
+    <component-plugin>
+      <name>addUserPaths</name>
+      <set-method>addPlugin</set-method>
+      <type>org.exoplatform.services.jcr.ext.hierarchy.impl.UserAddPathPlugin</type>
       <init-params>
         <object-param>
           <name>configuration</name>
@@ -1819,10 +1825,20 @@
                 </value>
               </collection>
             </field>
+            <field name="jcrLinks">
+              <collection type="java.util.ArrayList">
+                <value>
+                  <object type="org.exoplatform.services.jcr.ext.hierarchy.impl.HierarchyConfig$JcrLink">                 
+                    <field name="sourcePath"><string>Public</string></field>
+                    <field name="targetPath"><string>Private/Public</string></field>
+                  </object>
+                </value>
+             </collection>
+            </field>
           </object>
         </object-param>
       </init-params>
-    </component-plugin>
+     </component-plugin>
   </external-component-plugins>
 
   <external-component-plugins>

@@ -32,11 +32,10 @@ import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.wcm.ext.component.activity.listener.Utils;
-import org.picocontainer.Startable;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import javax.jcr.*;
+
+import org.picocontainer.Startable;
 
 
 /**
@@ -128,22 +127,19 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
    */
   @Override
   public void publishDocumentToUser(String user, Node currentNode, String comment,String perm) {
-    Node rootUser = null;
+    Node userPrivateNode = null;
     Node shared = null;
     try {
       SessionProvider sessionProvider = sessionProviderService.getSystemSessionProvider(null);
       ManageableRepository repository = repoService.getCurrentRepository();
       Session session = sessionProvider.getSession(repository.getConfiguration().getDefaultWorkspaceName(), repository);
       //add symlink to destination user
-      NodeHierarchyCreator nodeCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
-      nodeCreator.getJcrPath(BasePath.CMS_USERS_PATH);
-
-      rootUser = (Node) session.getItem(nodeCreator.getJcrPath(BasePath.CMS_USERS_PATH) + getPrivatePath(user));
-      rootUser = rootUser.getNode("Documents");
-      if(!rootUser.hasNode("Shared")){
-        shared = rootUser.addNode("Shared");
+      userPrivateNode = getPrivateUserNode(sessionProvider, user);
+      userPrivateNode = userPrivateNode.getNode("Documents");
+      if(!userPrivateNode.hasNode("Shared")){
+        shared = userPrivateNode.addNode("Shared");
       }else{
-        shared = rootUser.getNode("Shared");
+        shared = userPrivateNode.getNode("Shared");
       }
       if(currentNode.isNodeType(NodetypeConstant.EXO_SYMLINK)) currentNode = linkManager.getTarget(currentNode);
       //Update permission
@@ -159,7 +155,7 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       }
       currentNode.getSession().save();
       Node link = linkManager.createLink(shared, currentNode);
-      rootUser.save();
+      userPrivateNode.save();
     } catch (RepositoryException e) {
       if(LOG.isErrorEnabled())
         LOG.error(e.getMessage(), e);
@@ -169,29 +165,34 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
     }
   }
 
+  private Node getPrivateUserNode(SessionProvider sessionProvider, String user) throws Exception,
+                                                                                PathNotFoundException,
+                                                                                RepositoryException {
+    NodeHierarchyCreator nodeCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
+    String privateRelativePath = nodeCreator.getJcrPath("userPrivate");
+    Node userNode = nodeCreator.getUserNode(sessionProvider, user);
+    return userNode.getNode(privateRelativePath);
+  }
+
   /* (non-Javadoc)
    * @see org.exoplatform.ecm.webui.component.explorer.popup.service.IShareDocumentService#unpublishDocumentToUser(java.lang.String, javax.jcr.ExtendedNode)
    */
   @Override
   public void unpublishDocumentToUser(String user, ExtendedNode node) {
-    Node rootUser = null;
+    Node userPrivateNode = null;
     Node sharedNode = null;
     try {
       SessionProvider sessionProvider = sessionProviderService.getSystemSessionProvider(null);
-      ManageableRepository repository = repoService.getCurrentRepository();
-      Session session = sessionProvider.getSession(repository.getConfiguration().getDefaultWorkspaceName(), repository);
       //remove symlink from destination user
-      NodeHierarchyCreator nodeCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
-
-      rootUser = (Node) session.getItem(nodeCreator.getJcrPath(BasePath.CMS_USERS_PATH) + getPrivatePath(user));
-      rootUser = rootUser.getNode("Documents");
-      sharedNode = rootUser.getNode("Shared");
+      userPrivateNode = getPrivateUserNode(sessionProvider, user);
+      userPrivateNode = userPrivateNode.getNode("Documents");
+      sharedNode = userPrivateNode.getNode("Shared");
       sharedNode.getNode(node.getName()).remove();
 
       removeUserPermission(node, user);
 
       node.getSession().save();
-      rootUser.save();
+      userPrivateNode.save();
 
       }  catch (RepositoryException e) {
       if (LOG.isErrorEnabled())
@@ -253,10 +254,6 @@ public class ShareDocumentService implements IShareDocumentService, Startable{
       if(LOG.isErrorEnabled())
         LOG.error(e.getMessage(), e);
     }
-  }
-
-  private String getPrivatePath(String user) {
-    return "/" + user.substring(0, 1) + "___/" + user.substring(0, 2) + "___/" + user.substring(0, 3) + "___/" + user + "/Private";
   }
 
   private String getMimeType(Node node) {

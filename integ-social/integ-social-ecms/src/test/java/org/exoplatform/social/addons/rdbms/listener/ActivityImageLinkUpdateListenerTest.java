@@ -115,10 +115,10 @@ public class ActivityImageLinkUpdateListenerTest extends BaseCommonsTestCase {
 
     ExoSocialActivity activity = createActivityWithBody(body, uploadId);
 
-    assertEquals("<img src='http://localhost:8080"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Private/Public/Activity Stream Documents/Pictures/"
+    assertEquals("<img src='http://localhost:8080"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
         + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"'>", activity.getBody());
     activity = activityManager.getActivity(activity.getId());
-    assertEquals("<img src='http://localhost:8080"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Private/Public/Activity Stream Documents/Pictures/"
+    assertEquals("<img src='http://localhost:8080"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
         + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"'>", activity.getBody());
     assertEquals(0, uploadService.getUploadResources().size());
 
@@ -127,10 +127,10 @@ public class ActivityImageLinkUpdateListenerTest extends BaseCommonsTestCase {
 
     activity = createActivityWithBody(body, uploadId);
 
-    assertEquals("<img src='http://localhost:8080"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Private/Public/Activity Stream Documents/Pictures/"
+    assertEquals("<img src='http://localhost:8080"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
         + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName(1).xml")+"'>", activity.getBody());
     activity = activityManager.getActivity(activity.getId());
-    assertEquals("<img src='http://localhost:8080"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Private/Public/Activity Stream Documents/Pictures/"
+    assertEquals("<img src='http://localhost:8080"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
         + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName(1)") + ".xml'>", activity.getBody());
     assertEquals(0, uploadService.getUploadResources().size());
   }
