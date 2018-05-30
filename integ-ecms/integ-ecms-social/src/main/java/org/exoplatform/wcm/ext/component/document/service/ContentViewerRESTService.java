@@ -52,8 +52,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Locale;
@@ -89,14 +91,15 @@ public class ContentViewerRESTService implements ResourceContainer {
    * @anchor PDFViewerRESTService.getPDFFile
    */
   @GET
-  @Path("/{repoName}/{workspaceName}/{uuid}/{lang}")
+  @Path("/{repoName}/{workspaceName}/{uuid}")
     public Response getContent(@Context HttpServletRequest request,
                                @Context HttpServletResponse response,
                              @PathParam("repoName") String repoName,
                              @PathParam("workspaceName") String workspaceName,
                              @PathParam("uuid") String uuid,
-                             @PathParam("lang") String language) throws Exception {
+                             @QueryParam("lang") String language) throws Exception {
     String content = null;
+    Locale local = language==null ? Locale.ENGLISH: new Locale(language);
     try {
       ManageableRepository repository = repositoryService.getCurrentRepository();
       Session session = getSystemProvider().getSession(workspaceName, repository);
@@ -123,7 +126,7 @@ public class ContentViewerRESTService implements ResourceContainer {
       uiApplication.setCurrentSite(new UIPortal());
       requestContext.setUIApplication(uiApplication);
       requestContext.setWriter(writer);
-      requestContext.setLocale(new Locale(language));
+      requestContext.setLocale(local);
 
       uiDocViewer.processRender(requestContext);
 
