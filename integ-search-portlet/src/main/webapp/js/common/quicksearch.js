@@ -458,6 +458,15 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
      // $(this).css('color', '#000');
       isDefault = false;
     });
+
+     //change icon search in toolbar to icon close input search
+    $("#ToolBarSearch .uiIconPLF24x24Search").on('click', function(){
+      $(this).toggleClass('uiIconCloseSearchBox')
+             .parents('#ToolBarSearch').find('input[type="text"]').toggleClass("showInputSearch").removeClass('loadding').focus()
+             .parents('#ToolBarSearch').find('.uiQuickSearchResult').hide()
+             .parents('#PlatformAdminToolbarContainer').toggleClass('activeInputSearch')
+             .parents('body').toggleClass('quickSearchDisplay');
+    });
     
 
     //collapse the input search field when clicking outside the search box
