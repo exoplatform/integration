@@ -355,7 +355,7 @@
 							<string>sharefiles:spaces</string>
 						</field>
 						<field name="component">
-							<string>org.exoplatform.wcm.ext.component.activity.SharedFileUIActivity</string>
+							<string>org.exoplatform.wcm.ext.component.activity.FileUIActivity</string>
 						</field>
 						<field name="activityBuiderClass">
 							<string>org.exoplatform.wcm.ext.component.activity.UISharedFileBuilder</string>

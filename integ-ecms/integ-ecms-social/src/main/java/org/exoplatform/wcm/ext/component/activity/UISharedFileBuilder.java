@@ -44,7 +44,7 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
 
   @Override
   protected void extendUIActivity(BaseUIActivity uiActivity, ExoSocialActivity activity) {
-    SharedFileUIActivity fileActivity = (SharedFileUIActivity) uiActivity;
+    FileUIActivity fileActivity = (FileUIActivity) uiActivity;
     String nodeUUID = "";
     String workspaceName = "";
     //set data into the UI component of activity

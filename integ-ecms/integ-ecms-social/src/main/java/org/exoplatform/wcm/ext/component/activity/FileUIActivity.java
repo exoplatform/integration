@@ -1188,7 +1188,11 @@ public class FileUIActivity extends BaseUIActivity{
 
   public String getDownloadLink(int i) {
     try {
-      return org.exoplatform.wcm.webui.Utils.getDownloadLink(getContentNode(i));
+      Node contentNode = getContentNode(i);
+      if(contentNode.isNodeType(NodetypeConstant.EXO_SYMLINK)) {
+        contentNode = Utils.getNodeSymLink(contentNode);
+      }
+      return org.exoplatform.wcm.webui.Utils.getDownloadLink(contentNode);
     }catch (Exception e) {
       return "";
     }
