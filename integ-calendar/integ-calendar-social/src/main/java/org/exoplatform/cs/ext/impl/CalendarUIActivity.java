@@ -38,7 +38,9 @@ import java.util.regex.Pattern;
     @EventConfig(listeners = CalendarUIActivity.AcceptEventActionListener.class),
     @EventConfig(listeners = CalendarUIActivity.AssignTaskActionListener.class),
     @EventConfig(listeners = CalendarUIActivity.SetTaskStatusActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)}
+    @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.EditActivityActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.EditCommentActionListener.class)}
 
 )
 public class CalendarUIActivity extends BaseUIActivity {
