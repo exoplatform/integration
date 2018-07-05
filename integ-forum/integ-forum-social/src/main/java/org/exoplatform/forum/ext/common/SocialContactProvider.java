@@ -24,6 +24,8 @@ import org.exoplatform.forum.common.user.CommonContact;
 import org.exoplatform.forum.common.user.ContactProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.UserProfile;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -39,6 +41,12 @@ import org.exoplatform.social.core.service.LinkProvider;
 public class SocialContactProvider implements ContactProvider {
 
   private static final Log LOG = ExoLogger.getLogger(SocialContactProvider.class);
+  
+  private OrganizationService organizationService;
+
+  public SocialContactProvider(OrganizationService organizationService) {
+    this.organizationService = organizationService;
+  }
 
   @SuppressWarnings("unchecked")
   @Override
@@ -51,6 +59,12 @@ public class SocialContactProvider implements ContactProvider {
       if (userIdentity != null) {
         contact = new CommonContact();
         Profile profile = userIdentity.getProfile();
+        UserProfile userProfile = null;
+        try {
+          userProfile = organizationService.getUserProfileHandler().findUserProfileByName(userId);
+        } catch (Exception e) {
+          LOG.error("Could not retrieve user profile for " + userId + ": ", e);
+        }
 
         contact.setEmailAddress(profile.getEmail());
         contact.setFullName(profile.getFullName());
@@ -64,6 +78,9 @@ public class SocialContactProvider implements ContactProvider {
         }
         if (profile.contains(Profile.GENDER)) {
           contact.setGender(profile.getProperty(Profile.GENDER).toString());
+        }
+        if (userProfile != null && userProfile.getUserInfoMap() != null) {
+          contact.setBirthday(userProfile.getAttribute("user.bdate"));
         }
         if (profile.contains(Profile.CONTACT_PHONES)) {
           List<Map<String, String>> profiles = (List<Map<String, String>>) profile.getProperty(Profile.CONTACT_PHONES);
