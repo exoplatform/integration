@@ -126,6 +126,12 @@
     <type>org.exoplatform.forum.rendering.MarkupRenderingService</type>
   </component>
   
+  <component>
+  	<key>org.exoplatform.forum.common.user.ContactProvider</key>
+  	<!-- <type>org.exoplatform.forum.common.user.DefaultContactProvider</type> -->
+  	<type>org.exoplatform.forum.ext.common.SocialContactProvider</type>
+  </component>
+  
   <external-component-plugins>
     <target-component>org.exoplatform.forum.rendering.MarkupRenderingService</target-component>
     <component-plugin>

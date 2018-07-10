@@ -16,8 +16,12 @@
  */
 package org.exoplatform.forum.ext.common;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.forum.common.user.CommonContact;
@@ -82,15 +86,18 @@ public class SocialContactProvider implements ContactProvider {
         if (userProfile != null && userProfile.getUserInfoMap() != null) {
           contact.setBirthday(userProfile.getAttribute("user.bdate"));
         }
-        if (profile.contains(Profile.CONTACT_PHONES)) {
-          List<Map<String, String>> profiles = (List<Map<String, String>>) profile.getProperty(Profile.CONTACT_PHONES);
-          if (profiles != null) {
-            for (Map<String, String> mapInfo : profiles) {
-              contact.setWorkPhone(getValueByKey(mapInfo, "Work", contact.getWorkPhone()));
-              contact.setHomePhone(getValueByKey(mapInfo, "Home", contact.getHomePhone()));
-            }
-          }
-        }
+        if (userProfile != null && userProfile.getUserInfoMap() != null) {
+          String uTelMobWorkNumber = userProfile.getAttribute("user.business-info.telecom.mobile.number");
+          String uTelWorkNumber = userProfile.getAttribute("user.business-info.telecom.telephone.number");
+          String uTelMobHomeNumber = userProfile.getAttribute("user.home-info.telecom.mobile.number");
+          String uTelHomeNumber = userProfile.getAttribute("user.home-info.telecom.telephone.number");
+          
+          String workPhone = Arrays.asList(uTelWorkNumber, uTelMobWorkNumber).stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(", "));
+          String homePhone = Arrays.asList(uTelHomeNumber, uTelMobHomeNumber).stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(", "));
+     
+          contact.setWorkPhone(workPhone);
+          contact.setHomePhone(homePhone);
+        } 
         if (profile.contains(Profile.CONTACT_URLS)) {
           List<Map<String, String>> profiles = (List<Map<String, String>>) profile.getProperty(Profile.CONTACT_URLS);
           if (profiles != null) {
