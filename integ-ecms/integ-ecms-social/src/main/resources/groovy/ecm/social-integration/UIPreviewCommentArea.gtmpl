@@ -126,6 +126,9 @@ def isLiked = uicomponent.isLiked();
                         <div class="clearfix"></div>
                         <%
                             _ctx.put(TEMPLATE_PARAM_COMMENT, it);
+                            _ctx.put("activityID", activity.id);
+                            _ctx.put("commentPostedTime", commentPostedTime);
+                            _ctx.put("commentEditedTime", commentEditedTime);
                             def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
                             _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
                          %>
