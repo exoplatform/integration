@@ -30,13 +30,16 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+import org.gatein.api.PortalRequest;
+
 import org.exoplatform.calendar.service.CalendarEvent;
 import org.exoplatform.calendar.service.CalendarService;
 import org.exoplatform.calendar.service.CalendarSetting;
 import org.exoplatform.calendar.service.Utils;
 import org.exoplatform.calendar.service.impl.CalendarEventListener;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.config.UserPortalConfigService;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -157,17 +160,22 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
    * </ul>
    * The format is used to utilize the invitation email feature implemented before.
    * <br>
-   * <strong>[NOTE]</strong>
-   * Keep in mind that this function calls {@link PortalRequestContext} which is in webui layer while this function is usually invoked in the service layer. Need to be improved in the future for ensuring the system design convention.
    * 
    * @param event have to be not null
    * @return empty string if the process is failed.
    */
   private String makeEventLink(CalendarEvent event) {
     StringBuffer sb = new StringBuffer("");    
-    PortalRequestContext requestContext = Util.getPortalRequestContext();
-    sb.append(requestContext.getPortalURI())
-    .append(requestContext.getNodePath())
+    PortalContainer instance = PortalContainer.getInstance();
+    String portalURI = instance.getName();
+    UserPortalConfigService portalConfigService = instance.getComponentInstanceOfType(UserPortalConfigService.class);
+
+    sb.append('/')
+    .append(portalURI)
+    .append('/')
+    .append(portalConfigService.getDefaultPortal())
+    .append('/')
+    .append("calendar")
     .append(INVITATION_DETAIL)
     .append(ConversationState.getCurrent().getIdentity().getUserId())
     .append("/").append(event.getId())
