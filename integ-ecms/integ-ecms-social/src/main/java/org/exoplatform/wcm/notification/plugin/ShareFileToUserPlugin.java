@@ -73,7 +73,7 @@ public class ShareFileToUserPlugin extends BaseNotificationPlugin {
           .with(NODE_ID, ctx.value(NODEID))
           .with(FIRSTNAME, capitalizeFirstLetter(receiver))
           .with(DOCUMENT_URL, ctx.value(URL))
-          .with(DOCUMENT_NAME, node.getName())
+          .with(DOCUMENT_NAME, org.exoplatform.ecm.webui.utils.Utils.getTitle(node))
           .with(DOCUMENT_ICON, ctx.value(ICON))
           .with(PERMISSION, ctx.value(PERM))
           .with(COMMENT, ctx.value(MESSAGE))

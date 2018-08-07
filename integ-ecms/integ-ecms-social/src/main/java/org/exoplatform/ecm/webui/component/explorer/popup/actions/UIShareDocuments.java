@@ -443,7 +443,7 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
     return false;
   }
 
-  private String nodePath;
+  private String nodeTitle;
   List<String> entries = new ArrayList<String>();
   public String comment = "";
   private NodeLocation node;
@@ -483,9 +483,8 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
   }
 
 
-  public String getDocumentName(){
-    String[] arr = nodePath.split("/");
-    return arr[arr.length - 1];
+  public String getDocumentName() throws Exception {
+    return nodeTitle;
   }
 
   public ExtendedNode getNode(){
@@ -510,9 +509,9 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
     }
     return null;
   }
-  public void setSelectedNode(NodeLocation node) {
+  public void setSelectedNode(NodeLocation node) throws Exception {
     this.node = node;
-    this.nodePath = node.getPath();
+    this.nodeTitle = org.exoplatform.ecm.webui.utils.Utils.getTitle(getNode());
   }
 
   public Set<String> getWhoHasAccess() {
