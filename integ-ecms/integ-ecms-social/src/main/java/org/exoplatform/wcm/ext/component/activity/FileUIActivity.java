@@ -796,6 +796,9 @@ public class FileUIActivity extends BaseUIActivity{
   private String[] getParameterValues(Map<String, String> activityParams, String paramName) {
     String[] values = null;
     String value = activityParams.get(paramName);
+    if(value == null) {
+      value = activityParams.get(paramName.toLowerCase());
+    }
     if(value != null) {
       values = value.split(SEPARATOR_REGEX);
     }
