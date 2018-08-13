@@ -446,7 +446,7 @@
 	<!-- template channel register -->
 	<external-component-plugins>
 		<target-component>org.exoplatform.commons.api.notification.channel.ChannelManager</target-component>
-		<component-plugin>
+		<component-plugin profiles="all">
 			<name>mail.channel.share.template</name>
 			<set-method>registerTemplateProvider</set-method>
 			<type>org.exoplatform.wcm.notification.plugin.MailTemplateProvider</type>
@@ -457,7 +457,7 @@
 				</value-param>
 			</init-params>
 		</component-plugin>
-		<component-plugin>
+		<component-plugin profiles="all">
 			<name>web.channel.share.template</name>
 			<set-method>registerTemplateProvider</set-method>
 			<type>org.exoplatform.wcm.notification.plugin.WebTemplateProvider</type>
