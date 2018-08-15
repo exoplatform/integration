@@ -50,9 +50,9 @@ public class JcrSearchDriver extends SearchService {
             try {
               String connectorQuery = null;
               if(connector instanceof ElasticSearchServiceConnector) {
-                connectorQuery = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s" + esFuzzySyntax, terms.get("single"), " "); //add an ES fuzzySyntax after each single term (for fuzzy search)
+                connectorQuery = repeat("\\\"%s\\\"", terms.get("quoted"), " ") + " " + repeat("%s" + esFuzzySyntax, terms.get("single"), " "); //add an ES fuzzySyntax after each single term (for fuzzy search)
               } else {
-                connectorQuery = repeat("\"%s\"", terms.get("quoted"), " ") + " " + repeat("%s" + fuzzySyntax, terms.get("single"), " "); //add a fuzzySyntax after each single term (for fuzzy search)
+                connectorQuery = repeat("\\\"%s\\\"", terms.get("quoted"), " ") + " " + repeat("%s" + fuzzySyntax, terms.get("single"), " "); //add a fuzzySyntax after each single term (for fuzzy search)
               }
               results.put(connector.getSearchType(), connector.search(context, connectorQuery, sites, offset, limit, sort, order));
             } catch (Exception e) {
