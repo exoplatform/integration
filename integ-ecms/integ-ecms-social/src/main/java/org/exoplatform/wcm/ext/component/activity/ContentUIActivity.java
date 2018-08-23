@@ -304,7 +304,7 @@ public class ContentUIActivity extends BaseUIActivity {
   
   public String getTitle(Node node) throws Exception {
     return org.exoplatform.ecm.webui.utils.Utils.getTitle(node);
-  } 
+  }
 
   public void setContentNode(Node contentNode) {
     this.nodeLocation = NodeLocation.getNodeLocationByNode(contentNode);
