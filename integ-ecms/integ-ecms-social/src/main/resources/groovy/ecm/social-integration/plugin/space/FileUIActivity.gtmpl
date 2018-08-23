@@ -375,7 +375,7 @@ for(def index = 0; index < uicomponent.getFilesCount(); index ++) {
                                                                 repository:'" + repository + "', \
                                                                 workspace:'" + preferenceWS + "', \
                                                                 path:'" + currentNode.getPath().replace("'", "\\'") + "', \
-                                                                title:'" + currentNode.getName().replace("'", "\\'") + "', \
+                                                                title:'" + activityContentTitle.replace("'", "\\'") + "', \
                                                                 openUrl: '" + docOpenUri + "', \
                                                                 downloadUrl:'" + docDownloadUrl + "', \
                                                                 remoteEditURL:'" + remoteEditURL.replaceAll("'", "\\\\'") + "', \
