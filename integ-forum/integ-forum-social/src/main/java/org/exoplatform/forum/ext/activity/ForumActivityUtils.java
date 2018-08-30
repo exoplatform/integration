@@ -239,24 +239,6 @@ public class ForumActivityUtils {
     return got;
   }
   
-  public static ForumActivityContext processBBCode(ForumActivityContext ctx) {
-    Topic topic = ctx.getTopic();
-    Post post = ctx.getPost();
-    if (topic != null) {
-      String description = topic.getDescription();
-      description = CommonUtils.processBBCode(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(description));
-      topic.setDescription(description);
-      ctx.setTopic(topic);
-    }
-    if (post != null) {
-      String message = post.getMessage();
-      message = CommonUtils.processBBCode(StringCommonUtils.decodeSpecialCharToHTMLnumberIgnore(message));
-      post.setMessage(message);
-      ctx.setPost(post);
-    }
-    return ctx;
-  }
-  
 
   /**
    * Gets activity's comment from existing post in Context.

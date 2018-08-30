@@ -310,7 +310,7 @@
 						  <%
 			          def href = "<a class='textBold linkTitle' href=\"%s\">%s</a>";
 			          def activityContentTitle = uicomponent.getActivityContentTitle(_ctx, href);
-			          def activityBody = StringEscapeUtils.unescapeHtml(activity.getBody()).trim();
+			          def activityBody = activity.getBody().trim();
 			        %>
 							$activityContentTitle
 						</div>
@@ -456,7 +456,7 @@
                                <%
                            }
                       }
-					  commentMessage = StringEscapeUtils.unescapeHtml(it.title);
+					  commentMessage = it.title;
 					  commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
 					  commenterAvatarImgSrc = id.profile.avatarUrl;
 					  if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;

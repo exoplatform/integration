@@ -143,4 +143,41 @@ public class PostActivityTest extends AbstractActivityTypeTest {
     assertPostTitle(comment, "Edited his reply to: edited post content1<br/>2<br/>3...");
     assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
   }
+
+  public void testCreateTopicWithBBCode() {
+    Topic topic = createdTopic("demo");
+    topic.setDescription("Topic content with link bb code [url]http://google.com[/url]");
+
+    ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);
+    ExoSocialActivity activity = ForumActivityBuilder.createActivity(topic, ctx);
+
+    assertPostTitle(activity, topicTitle);
+    assertTopicContent(activity, "Topic content with link bb code <a target=\"_blank\" href=\"http://google.com\">http://google.com</a>");
+  }
+
+  public void testCreatePostWithBBCode() {
+    Topic topic = createdTopic("demo");
+    Post post = createdPost(topic);
+    updatePostContent(post, "post content with link bb code [url]http://google.com[/url]");
+
+    //
+    ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
+    ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(post, ctx);
+    assertPostTitle(comment, "post content with link bb code <a target=\"_blank\" href=\"http://google.com\">http://google.com</a>");
+    assertTopicContent(comment, "post content with link bb code <a target=\"_blank\" href=\"http://google.com\">http://google.com</a>");
+    assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
+  }
+
+  public void testCreatePostWithCutBBCode() {
+    Topic topic = createdTopic("demo");
+    Post post = createdPost(topic);
+    updatePostContent(post, "[I]post content with link bb code[/I] [u]1\n2\n3\n4\n5[/u]");
+
+    //
+    ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
+    ExoSocialActivity comment = ForumActivityBuilder.createActivityComment(post, ctx);
+    assertPostTitle(comment, "<i>post content with link bb code</i> 1<br/>2<br/>3...");
+    assertTopicContent(comment, "<i>post content with link bb code</i> <u>1\n2\n3\n4\n5</u>");
+    assertEquals(comment.getTemplateParams().get(POST_LINK_KEY), post.getLink());
+  }
 }

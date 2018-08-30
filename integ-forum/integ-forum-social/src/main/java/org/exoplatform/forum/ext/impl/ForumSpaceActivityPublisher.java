@@ -72,8 +72,6 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddPost(post);
     PostActivityTask task = PostActivityTask.ADD_POST;
     //
-    ctx = ForumActivityUtils.processBBCode(ctx);
-    //
     Task<ForumActivityContext> task_ = new Task<ForumActivityContext>(ctx, task);
     CommonsUtils.getService(ForumTaskManager.class).addTask(task_);
   }
@@ -82,7 +80,6 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void updatePost(Post post) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForUpdatePost(post);
     PostActivityTask task = PostActivityTask.UPDATE_POST;
-    ctx = ForumActivityUtils.processBBCode(ctx);
     ActivityExecutor.execute(task, ctx);
   }
 
@@ -131,7 +128,6 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
   public void addTopic(Topic topic) {
     ForumActivityContext ctx = ForumActivityContext.makeContextForAddTopic(topic);
     TopicActivityTask task = TopicActivityTask.ADD_TOPIC;
-    ctx = ForumActivityUtils.processBBCode(ctx);
     //
     Task<ForumActivityContext> task_ = new Task<ForumActivityContext>(ctx, task);
     CommonsUtils.getService(ForumTaskManager.class).addTask(task_);
@@ -182,7 +178,6 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
       
       //1. executes task
       TopicActivityTask task = TopicActivityTask.UPDATE_TOPIC_PROPERTIES;
-      ctx = ForumActivityUtils.processBBCode(ctx);
       ActivityExecutor.execute(task, ctx);
       //2. remove events
       pcs.removePropertyChange(Topic.TOPIC_NAME);
@@ -257,7 +252,6 @@ public class ForumSpaceActivityPublisher extends ForumEventListener {
       got = TopicActivityTask.UPDATE_TOPIC_TITLE;
     } else if (Topic.TOPIC_CONTENT.equals(event.getPropertyName())) {
       got = TopicActivityTask.UPDATE_TOPIC_CONTENT;
-      ctx = ForumActivityUtils.processBBCode(ctx);
     } else if (Topic.TOPIC_RATING.equals(event.getPropertyName())) {
       got = TopicActivityTask.UPDATE_TOPIC_RATE;
     } else if (Topic.TOPIC_STATE_CLOSED.equals(event.getPropertyName())) {
