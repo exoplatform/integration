@@ -561,6 +561,7 @@ public class Utils {
           LOG.info("No activity is deleted, return no related activity");
         }
         if (exa != null && !commentFlag && isSystemComment) {
+          activity.setId(null);
           activityManager.saveComment(exa, activity);
           if (activityCommonService.isEditing(node)) {
             commentID = activity.getId();
