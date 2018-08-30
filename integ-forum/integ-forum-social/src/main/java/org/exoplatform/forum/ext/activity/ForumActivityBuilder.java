@@ -22,8 +22,12 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import org.exoplatform.commons.utils.StringCommonUtils;
+import org.exoplatform.forum.bbcode.api.BBCode;
+import org.exoplatform.forum.bbcode.core.BBCodeRenderer;
 import org.exoplatform.forum.common.CommonUtils;
 import org.exoplatform.forum.common.TransformHTML;
+import org.exoplatform.forum.rendering.MarkupRenderingService;
+import org.exoplatform.forum.rendering.core.SupportedSyntaxes;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -84,7 +88,7 @@ public class ForumActivityBuilder {
 
     //activity.setUserId(post.getOwner());
     activity.setTitle(title);
-    activity.setBody(message);
+    activity.setBody(CommonUtils.processBBCode(message));
     activity.isComment(true);
     activity.setType(FORUM_ACTIVITY_TYPE);
 
@@ -203,14 +207,15 @@ public class ForumActivityBuilder {
         sb.append("BR_");
       }
     }
-    String str = null;
-    if (sb.toString().contains("<a target=")) {
-      str = StringEscapeUtils.escapeHtml(sb.toString()).trim();
-    } else {
-      str = StringEscapeUtils.unescapeHtml(TransformHTML.cleanHtmlCode(sb.toString(), null)).trim();
-    }
-    //
-    return trunc(str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("BR_", "<br/>"), NUMBER_CHARS, tab.length > nbOfLines);
+    String str = TransformHTML.cleanHtmlCode(sb.toString(), null).trim();
+
+    str = trunc(str.replaceAll("BR_", "<br/>"), NUMBER_CHARS, tab.length > nbOfLines);
+    str = CommonUtils.processBBCode(str);
+
+    // The string could be truncated at middle of an BB Tag
+    // So there may be an incomplete BB code at string after process, we need to clean them
+    str = cleanupBBCode(str);
+    return str;
   }
   
   /**
@@ -243,6 +248,20 @@ public class ForumActivityBuilder {
     //
     buf.append(str.substring(0, head)).append("...");
     return buf.toString();
+  }
+
+  private static String cleanupBBCode(String str) {
+    MarkupRenderingService markupRenderingService = CommonUtils.getComponent(MarkupRenderingService.class);
+    BBCodeRenderer r = (BBCodeRenderer)markupRenderingService.getRenderer(SupportedSyntaxes.bbcode.name());
+    if (r != null) {
+      String tag = null;
+      for (BBCode bbcode : r.getBbcodes()) {
+        tag = bbcode.getTagName();
+        String pattern = "\\[" + tag + "[^\\]]*\\]";
+        str = str.replaceAll(pattern, "");
+      }
+    }
+    return str;
   }
   
   public static ExoSocialActivity createActivity(Topic topic, ForumActivityContext ctx) {
