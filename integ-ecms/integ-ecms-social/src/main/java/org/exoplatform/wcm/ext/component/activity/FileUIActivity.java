@@ -908,7 +908,7 @@ public class FileUIActivity extends BaseUIActivity{
           if (folderIndex > 0) {
             breadCrumbContent += ",";
           }
-          breadCrumbContent += "'" + folderName + "': '" + folderPath + "'";
+          breadCrumbContent += "'" + folderName.replace("'", "\\'") + "': '" + folderPath + "'";
           breadCrumbContent = breadCrumbContent.replace("%27", "\\'");
         }
         folderIndex++;
