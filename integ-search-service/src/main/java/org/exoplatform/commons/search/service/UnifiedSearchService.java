@@ -116,12 +116,14 @@ public class UnifiedSearchService implements ResourceContainer {
       @QueryParam("offset") @DefaultValue("0") String sOffset, 
       @QueryParam("limit") String sLimit, 
       @QueryParam("sort") @DefaultValue("relevancy") String sort, 
-      @QueryParam("order") @DefaultValue("desc") String order) 
+      @QueryParam("order") @DefaultValue("desc") String order,
+      @QueryParam("lang") @DefaultValue("en") String lang)
   {
     try {
       MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
       String siteName = queryParams.getFirst("searchContext[siteName]");
       SearchContext context = new SearchContext(this.router, siteName);
+      context.lang(lang);
       
       if(null==query || query.isEmpty()) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
   
