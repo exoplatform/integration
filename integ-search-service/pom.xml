@@ -9,6 +9,9 @@
   <artifactId>integ-search-service</artifactId>
   <packaging>jar</packaging>
   <name>eXo PLF:: Integration - Search - Service</name>
+  <properties>
+    <exo.test.coverage.ratio>0.10</exo.test.coverage.ratio>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.exoplatform.gatein.portal</groupId>

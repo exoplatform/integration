@@ -10,6 +10,9 @@
   <packaging>jar</packaging>
   <name>eXo PLF:: Social - Forum Activities</name>
   <description>Forum with Social activity</description>
+  <properties>
+    <exo.test.coverage.ratio>0.35</exo.test.coverage.ratio>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>
