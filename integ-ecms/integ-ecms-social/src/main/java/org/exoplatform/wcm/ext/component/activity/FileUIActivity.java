@@ -192,6 +192,13 @@ public class FileUIActivity extends BaseUIActivity{
     }
   }
 
+  @Override
+  protected void editActivity(String message) {
+    super.editActivity(message);
+    this.setMessage(message);
+    this.setActivityTitle(message.replace("</br></br>", ""));
+  }
+
   public String getActivityTitle() {
     return activityTitle;
   }

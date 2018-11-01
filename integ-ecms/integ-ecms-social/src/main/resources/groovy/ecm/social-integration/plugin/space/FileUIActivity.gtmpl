@@ -275,9 +275,9 @@ public void addActivityTimeLine(String ownerName, String ownerUri, String ownerA
                         </div>
                         <ul class="dropdown-menu pull-right" role="menu">
 							<% if(activityEditable) {%>
-                            <!--li>
+                            <li>
                                 <a id="EditActivitylink${activity.id}" class="" data-edit-activity="${activity.id}" data-placement="bottom" href="javascript:void(0)">${labelEdit}</a>
-                            </li-->
+                            </li>
                             <%
 							}
 							if (activityDeletable) {
