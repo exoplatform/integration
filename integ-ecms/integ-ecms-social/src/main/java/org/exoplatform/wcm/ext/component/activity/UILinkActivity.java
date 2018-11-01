@@ -16,7 +16,11 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
+import java.util.Date;
+
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.service.rest.Util;
+import org.exoplatform.social.webui.Utils;
 import org.exoplatform.social.webui.activity.BaseUIActivity;
 import org.exoplatform.social.webui.activity.UIActivitiesContainer;
 import org.exoplatform.social.webui.composer.PopupContainer;
@@ -89,6 +93,15 @@ public class UILinkActivity extends BaseUIActivity {
   }
   public void setEmbedHtml(String embedHtml) {
     this.embedHtml = embedHtml;
+  }
+
+  @Override
+  protected void editActivity(String message) {
+    ExoSocialActivity activity = getActivity();
+    activity.getTemplateParams().put(UILinkActivityComposer.COMMENT_PARAM, message);
+    getActivity().setUpdated(new Date());
+    this.setLinkComment(message);
+    Utils.getActivityManager().updateActivity(getActivity());
   }
 
   public static class ViewDocumentActionListener extends EventListener<UILinkActivity> {
