@@ -184,6 +184,10 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
   }
 
   @Override
+  public void updateComment(ActivityLifeCycleEvent event) {
+  }
+
+  @Override
   public void likeComment(ActivityLifeCycleEvent event) {
   }
 

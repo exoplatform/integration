@@ -42,7 +42,9 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
   @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
   @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
   @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class),
-  @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)})
+  @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class),
+  @EventConfig(listeners = BaseUIActivity.EditActivityActionListener.class),
+  @EventConfig(listeners = BaseUIActivity.EditCommentActionListener.class)})
 public class PollUIActivity extends BaseKSActivity {
   
   private String totalOfUsersVote;

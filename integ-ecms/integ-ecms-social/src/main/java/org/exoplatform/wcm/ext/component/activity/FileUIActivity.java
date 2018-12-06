@@ -114,7 +114,10 @@ import org.exoplatform.webui.ext.UIExtensionManager;
                 @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
                 @EventConfig(listeners = FileUIActivity.OpenFileActionListener.class),
                 @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class),
-                @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)}),
+                @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.EditActivityActionListener.class),
+                @EventConfig(listeners = BaseUIActivity.EditCommentActionListener.class)
+        }),
 })
 public class FileUIActivity extends BaseUIActivity{
 
@@ -187,6 +190,13 @@ public class FileUIActivity extends BaseUIActivity{
     if(WebuiRequestContext.getCurrentInstance() != null) {
       addChild(UIPopupContainer.class, null, "UIDocViewerPopupContainer");
     }
+  }
+
+  @Override
+  protected void editActivity(String message) {
+    super.editActivity(message);
+    this.setMessage(message);
+    this.setActivityTitle(message.replace("</br></br>", ""));
   }
 
   public String getActivityTitle() {

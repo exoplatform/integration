@@ -71,7 +71,9 @@ import java.util.Map;
     @EventConfig(listeners = BaseUIActivity.PostCommentActionListener.class),
     @EventConfig(listeners = BaseUIActivity.DeleteActivityActionListener.class),
     @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class),
-    @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class)})
+    @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.EditActivityActionListener.class),
+    @EventConfig(listeners = BaseUIActivity.EditCommentActionListener.class)})
 public class ContentUIActivity extends BaseUIActivity {
 
   private static final String NEW_DATE_FORMAT = "hh:mm:ss MMM d, yyyy";
