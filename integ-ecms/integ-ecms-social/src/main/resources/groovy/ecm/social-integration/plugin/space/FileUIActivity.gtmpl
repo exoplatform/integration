@@ -261,7 +261,7 @@ public void addActivityTimeLine(String ownerName, String ownerUri, String ownerA
     </div><!--end activityTimeLine-->
     <div class="boxContainer" id="boxContainer">
         <div id="ContextBox${activity.id}"class="uiBox contentBox">
-            <div id="ActivityContextBox${activity.id}" class="uiComposer">
+            <div id="ActivityContextBox${activity.id}">
                 <div class="heading">
                     <span class="arrowLeft"></span>
                 <!--div class="pull-right"-->
@@ -831,7 +831,7 @@ def commentActivityId = it.parentCommentId == null ? it.id : it.parentCommentId;
                                <% } %>
                            </ul>
                        </div>
-    +				<%}%>
+    				<%}%>
     </div><!--end commentItem-->
              </div>
     <% }) %>
