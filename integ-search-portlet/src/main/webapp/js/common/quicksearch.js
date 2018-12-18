@@ -308,9 +308,9 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
         replace(/%{type}/g, result.type).
         replace(/%{lineResult}/g, line).
         replace(/%{url}/g, result.url).
-        replace(/%{title}/g, (result.title||"").highlight(terms)).
-        replace(/%{excerpt}/g, (result.excerpt||"").highlight(terms)).
-        replace(/%{detail}/g, (result.detail||"").highlight(terms)).
+        replace(/%{title}/g, XSSUtils.escapeHtml(result.title||"").highlight(terms)).
+        replace(/%{excerpt}/g, XSSUtils.escapeHtml(result.excerpt||"").highlight(terms)).
+        replace(/%{detail}/g, XSSUtils.escapeHtml(result.detail||"").highlight(terms)).
         replace(/%{avatar}/g, avatar);
 
       return html;
