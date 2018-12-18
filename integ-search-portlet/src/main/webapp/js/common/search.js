@@ -117,10 +117,12 @@ window.initSearch = function initSearch() {
     };
 
     // Remove all HTML tags except <strong>, </strong> (for highlighting)
-    String.prototype.escapeHtml = function() {
-      return this.
-        replace(/<(\/?strong)>/g,"{\$1}"). //save <strong>, </strong> as {strong}, {/strong}
-        replace(/<.+?>/g,"").              //remove all HTML tags
+    String.prototype.sanitizeHtml = function() {
+      return XSSUtils.escapeHtml(
+          this.
+            replace(/<(\/?strong)>/g,"{\$1}"). //save <strong>, </strong> as {strong}, {/strong}
+            replace(/<.+?>/g,"") //remove all HTML tags
+        ).
         replace(/{(\/?strong)}/g,"<\$1>"); //restore {strong}, {/strong} back to <strong>, </strong>
     }
 
@@ -369,9 +371,9 @@ window.initSearch = function initSearch() {
       var html = SEARCH_RESULT_TEMPLATE.
         replace(/%{type}/g, result.type).
         replace(/%{url}/g, result.url).
-        replace(/%{title}/g, (result.title||"").highlight(terms)).
-        replace(/%{excerpt}/g, (result.excerpt||"").escapeHtml().highlight(terms)).
-        replace(/%{detail}/g, (result.detail||"").highlight(terms)).
+        replace(/%{title}/g, XSSUtils.escapeHtml(result.title||"").highlight(terms)).
+        replace(/%{excerpt}/g, (result.excerpt||"").sanitizeHtml().highlight(terms)).
+        replace(/%{detail}/g, XSSUtils.escapeHtml(result.detail||"").highlight(terms)).
         replace(/%{avatar}/g, avatar).
         replace(/%{rating}/g, rating).
         replace(/%{breadcrumb}/g, breadcrumb);
