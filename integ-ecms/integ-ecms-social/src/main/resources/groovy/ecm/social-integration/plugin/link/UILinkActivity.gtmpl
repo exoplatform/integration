@@ -172,7 +172,8 @@
   }
 
   activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
-  activityUpdatedTime =uicomponent.getPostedTimeString(_ctx,activity.updated.getTime());
+  activityUpdatedTime = uicomponent.getPostedTimeString(_ctx,activity.updated.getTime());
+  activityUpdatedTime = _ctx.appRes("UIActivity.label.EditedFrom").replace("{0}", activityUpdatedTime);
 
   def ownerIdentity = uicomponent.ownerIdentity;
   if (uicomponent.isUserActivity()) {
