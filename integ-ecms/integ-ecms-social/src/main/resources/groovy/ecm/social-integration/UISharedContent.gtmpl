@@ -365,7 +365,7 @@
                                     id="DeleteActivityButton${activity.id}"></a>
      						<%}%>
      					</div>
-                        <span class="dateTime"><i class="uiIconClock  uiIconLightGray"></i>&nbsp;<a id="EditActivityTime${activity.id}" rel="tooltip" data-placement="bottom" title="$activityPostedTime" href="<%=uicomponent.getActivityPermalink(activity.id)%>"><%=_ctx.appRes("UIActivity.label.EditedFrom").replace("{0}",activityUpdatedTime)%></a></span>
+                        <span class="dateTime"><i class="uiIconClock  uiIconLightGray"></i>&nbsp;<a id="EditActivityTime${activity.id}" rel="tooltip" data-placement="bottom" href="<%=uicomponent.getActivityPermalink(activity.id)%>" <% if(activity.postedTime != activity.updated.getTime() ){%> title="$postedTimeTooltip"> $activityUpdatedTime <%} else {%> >$activityPostedTime <%}%></a></span>
 					</div>
 				</div><!--end heading-->
         <% if (activityTitle != null) { %>
@@ -560,6 +560,7 @@
               }
               commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
               commentEditedTime = uicomponent.getPostedTimeString(_ctx, it.updated.getTime());
+              commentEditedTime = _ctx.appRes("UIActivity.label.EditedFrom").replace("{0}",commentEditedTime);
               commenterAvatarImgSrc = commentId.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
               def commentActivityId = it.parentCommentId == null ? it.id : it.parentCommentId;
@@ -577,8 +578,7 @@
             </div><!--end commentLeft-->
             <div class="commentRight">
               <div class="author">
-                <a href="$commenterProfileUri">$commenterFullName</a><a id="EditActivityTime${activity.id}" rel="tooltip" data-placement="bottom" title="$commentPostedTime" href="<%=uicomponent.getActivityPermalink(activity.id)%>"><%=_ctx.appRes("UIActivity.label.EditedFrom").replace("{0}",commentEditedTime)%></a>
-                <span class="dateTime">$commentPostedTime</span>
+                <a href="$commenterProfileUri">$commenterFullName</a>
               </div>
               <div class="contentComment">$commentMessage</div>
                     <div class="desktop-input clearfix">
