@@ -245,7 +245,7 @@
 					<span class="arrowLeft"></span>
                 <!--div class="pull-right"-->
 			    <%
-			  		if( activityDeletable) {
+			  		if(activityDeletable) {
 			    %>
                     <div id="dropDownEditActivity${activity.id}" class="btn-group uiDropdownWithIcon actLink hidden-phone hidden-tablet">
                         <div class="dropdown-toggle" data-toggle="dropdown">
