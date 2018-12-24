@@ -53,6 +53,7 @@
   def labelComment = _ctx.appRes("UIActivity.label.Comment");
   def labelCancel = _ctx.appRes("UIActivity.label.Cancel");
   def labelLike = _ctx.appRes("UIActivity.label.Like");
+  def labelView = _ctx.appRes("ForumUIActivity.label.view");
   def labelUpdate = _ctx.appRes("UIActivity.label.Update");
   def labelEdit = _ctx.appRes("UIActivity.label.Edit");
   def labelDelete = _ctx.appRes("UIActivity.label.Delete");
@@ -543,13 +544,9 @@
                             %>
 						</div><!--end commentRight-->
                         <div class="clearfix"></div>
-                        <% if(postLink != null && postLink.length() > 0) { %>
-					      <a class="viewComment" id="" href="$postLink"  ><i class="uiIconWatch uiIconLightGray"></i></a>
-					    <% } %>
 					  <%
 					    def commentEditable = uicomponent.isActivityEditable(it);
 					    def commentDeletable = uicomponent.isCommentDeletable(it.userId);
-						  if(commentEditable || commentDeletable) {
 					  %>
                         <div id="dropDownEditComment${it.id}" class="btn-group uiDropdownWithIcon actLink">
                             <div class="dropdown-toggle" data-toggle="dropdown">
@@ -557,6 +554,11 @@
                                 </i>
                             </div>
                             <ul class="dropdown-menu pull-right" role="menu">
+                                <% if(postLink != null && postLink.length() > 0) { %>
+                                  <li>
+                                    <a id="ViewComment${it.id}" href="$postLink">${labelView}</a>
+                                  </li>
+                                <% } %>
 								<% if(commentEditable) {%>
                                 <li>
 				                   <a id="CommentActivitylink${it.id}" data-edit-comment="${it.id}" class="" href="javascript:void(0)">${labelEdit}</a>
@@ -572,7 +574,6 @@
                                 <% } %>
                             </ul>
                         </div>
-				<%}%>
 					  </div><!--end commentItem-->
 					 </div>
 					<% }) %>				
