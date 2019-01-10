@@ -106,6 +106,14 @@ public class MockSettingService implements SettingService{
   }
 
   @Override
+  public Map<String, SettingValue> getSettingsByContextAndScope(String contextType,
+                                                                String contextName,
+                                                                String scopeType,
+                                                                String scopeName) {
+    return null;
+  }
+
+  @Override
   public Set<String> getEmptyContextsByTypeAndScopeAndSettingName(String contextType,
                                                                   String scopeType,
                                                                   String scopeName,
