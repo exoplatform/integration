@@ -516,6 +516,9 @@
                         _ctx.put(TEMPLATE_PARAM_COMMENT, it);
                         _ctx.put("authorName", id.remoteId);
                         _ctx.put("authorFullName", commenterFullName);
+                        _ctx.put("activityID", activity.id);
+                        _ctx.put("commentPostedTime", commentPostedTime);
+                        _ctx.put("commentEditedTime", commentEditedTime);
                         def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
                         _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
                     %>
