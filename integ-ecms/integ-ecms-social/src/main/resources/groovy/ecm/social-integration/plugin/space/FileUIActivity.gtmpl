@@ -321,9 +321,20 @@ public void addActivityTimeLine(String ownerName, String ownerUri, String ownerA
     </div>
                     </div>
     </div><!--end heading-->
-                <% if (activityStatus != null) { %>
-                <div class="description">$activityStatus</div><!--end description-->
+    <% if (activityStatus != null) { %>
+        <div class="description">$activityStatus</div><!--end description-->
     <% } %>
+        <div class="desktop-input clearfix">
+            <div class="blastInputPeople hideEffect">
+                <div>
+                    <% uicomponent.renderChild(uicomponent.COMPOSER_TEXT_AREA_EDIT_INPUT + activity.id); %>
+                    <div class="uiAction paddingAction">
+                        <button class="btn pull-left btn-primary" onclick="<%=uicomponent.event("EditActivity")%>" id="EditActivityButton${activity.id}">${labelUpdate}</button>&nbsp;
+                        <button href="javascript:void(0)" data-cancel-edit-comment-id="${activity.id}" class="btn pull-left" id="DeleteEditCommentButton${activity.id}">${labelCancel}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 <% if(uicomponent.getFilesCount() > 0) { %>
 
@@ -555,17 +566,7 @@ for(def index = 0; index < uicomponent.getFilesCount(); index++) {
                 </div><!--end fileShare-->
                 </div><!--end previews-->
 <% } %>
-            <div class="desktop-input clearfix">
-                <div class="blastInputPeople hideEffect">
-                        <div>
-                        <% uicomponent.renderChild(uicomponent.COMPOSER_TEXT_AREA_EDIT_INPUT + activity.id); %>
-                            <div class="uiAction paddingAction">
-                                <button class="btn pull-left btn-primary" onclick="<%=uicomponent.event("EditActivity")%>" id="EditActivityButton${activity.id}">${labelUpdate}</button>&nbsp;
-                                <button href="javascript:void(0)" data-cancel-edit-comment-id="${activity.id}" class="btn pull-left" id="DeleteEditCommentButton${activity.id}">${labelCancel}</button>
-                            </div>
-                        </div>
-                </div>
-            </div>
+
                 <div class="actionBar clearfix ContentActivityIcon">
                   <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
                      def commentLink = "";
