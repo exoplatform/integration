@@ -342,7 +342,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
           continue;
         }
 
-        String fileURI = CommonsUtils.getCurrentDomain() + getJcrURI(parentForlderNode, fileName);
+        String fileURI = getJcrURI(parentForlderNode, fileName);
         if (StringUtils.isNotBlank(urlToReplace)) {
           urlToReplaces.put(urlToReplace, fileURI);
           processedUploads.add(uploadId);
