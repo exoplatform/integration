@@ -216,7 +216,7 @@ public class UIComposerMultiUploadSelector extends UIAbstractSelectFileComposer 
     RepositoryService repoService = WCMCoreUtils.getService(RepositoryService.class);
     NodeHierarchyCreator nodeHierarchyCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
 
-    SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
+    SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
     ManageableRepository currentRepository = repoService.getCurrentRepository();
     String workspaceName = currentRepository.getConfiguration().getDefaultWorkspaceName();
     Session session = sessionProvider.getSession(workspaceName, currentRepository);
