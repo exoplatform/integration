@@ -5,7 +5,7 @@
 	
 	<external-component-plugins>
     <target-component>org.exoplatform.wiki.service.WikiService</target-component>
-    <component-plugin>
+    <component-plugin profiles="all">
       <name>Wiki listener for Social Space</name>
       <set-method>addComponentPlugin</set-method>
       <type>org.exoplatform.wiki.ext.impl.WikiSpaceActivityPublisher</type>
