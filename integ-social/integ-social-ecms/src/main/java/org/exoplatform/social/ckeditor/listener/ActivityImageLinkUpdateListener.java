@@ -197,6 +197,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
     String title = activity.getTitle();
     boolean storeActivity = false;
 
+    // update links in body
     Map<String, String> urlToReplaces = new HashMap<>();
     if (StringUtils.isNotBlank(body) && body.contains(UPLOAD_ID_PARAMETER)) {
       Map<String, String> urls = getModifiedLink(activity, body);
@@ -209,14 +210,33 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
       }
     }
 
+    // update links in title
     if (StringUtils.isNotBlank(title) && title.contains(UPLOAD_ID_PARAMETER)) {
       Map<String, String> urls = getModifiedLink(activity, title);
-      urlToReplaces.putAll(urls);
 
-      if (!urlToReplaces.isEmpty()) {
+      if (!urls.isEmpty()) {
+        urlToReplaces.putAll(urls);
         title = replaceUrl(title, urlToReplaces);
         activity.setTitle(title);
         storeActivity = true;
+      }
+    }
+
+    // update links in template params
+    Map<String, String> templateParams = activity.getTemplateParams();
+    if(templateParams != null) {
+      for (String param : templateParams.keySet()) {
+        String paramValue = templateParams.get(param);
+        if (StringUtils.isNotBlank(paramValue) && paramValue.contains(UPLOAD_ID_PARAMETER)) {
+          Map<String, String> urls = getModifiedLink(activity, paramValue);
+
+          if (!urls.isEmpty()) {
+            urlToReplaces.putAll(urls);
+            templateParams.put(param, replaceUrl(paramValue, urlToReplaces));
+            activity.setTemplateParams(templateParams);
+            storeActivity = true;
+          }
+        }
       }
     }
 

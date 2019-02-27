@@ -11,7 +11,7 @@
   <name>eXo PLF:: Social - Document composer</name>
   <description>Select document to public on activity</description>
   <properties>
-    <exo.test.coverage.ratio>0.10</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0.11</exo.test.coverage.ratio>
   </properties>
   <dependencies>
     <dependency>

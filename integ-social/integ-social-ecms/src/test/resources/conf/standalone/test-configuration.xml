@@ -312,6 +312,11 @@
   </component>
 
   <component>
+    <key>org.exoplatform.social.common.xmlprocessor.XMLProcessor</key>
+    <type>org.exoplatform.social.common.xmlprocessor.XMLProcessorImpl</type>
+  </component>
+
+  <component>
     <key>org.exoplatform.social.core.manager.ActivityManager</key>
     <type>org.exoplatform.social.core.manager.ActivityManagerImpl</type>
     <component-plugins>
@@ -1080,27 +1085,9 @@
                           <object type="org.exoplatform.services.jcr.ext.hierarchy.impl.HierarchyConfig$Permission">
                             <field name="identity"><string>*:/platform/administrators</string></field>
                             <field name="read"><string>true</string></field>
-                            <field name="addNode"><string>false</string></field>
-                            <field name="setProperty"><string>false</string></field>
-                            <field name="remove"><string>false</string></field>
-                          </object>
-                        </value>
-                        <value>
-                          <object type="org.exoplatform.services.jcr.ext.hierarchy.impl.HierarchyConfig$Permission">
-                            <field name="identity"><string>${exo.super.user:root}</string></field>
-                            <field name="read"><string>true</string></field>
                             <field name="addNode"><string>true</string></field>
                             <field name="setProperty"><string>true</string></field>
                             <field name="remove"><string>true</string></field>
-                          </object>
-                        </value>
-                        <value>
-                          <object type="org.exoplatform.services.jcr.ext.hierarchy.impl.HierarchyConfig$Permission">
-                            <field name="identity"><string>*:/platform/users</string></field>
-                            <field name="read"><string>true</string></field>
-                            <field name="addNode"><string>false</string></field>
-                            <field name="setProperty"><string>false</string></field>
-                            <field name="remove"><string>false</string></field>
                           </object>
                         </value>
                       </collection>
@@ -1116,15 +1103,6 @@
                         <value>
                           <object type="org.exoplatform.services.jcr.ext.hierarchy.impl.HierarchyConfig$Permission">
                             <field name="identity"><string>*:/platform/administrators</string></field>
-                            <field name="read"><string>true</string></field>
-                            <field name="addNode"><string>false</string></field>
-                            <field name="setProperty"><string>false</string></field>
-                            <field name="remove"><string>false</string></field>
-                          </object>
-                        </value>
-                        <value>
-                          <object type="org.exoplatform.services.jcr.ext.hierarchy.impl.HierarchyConfig$Permission">
-                            <field name="identity"><string>*:/platform/users</string></field>
                             <field name="read"><string>true</string></field>
                             <field name="addNode"><string>false</string></field>
                             <field name="setProperty"><string>false</string></field>

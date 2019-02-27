@@ -21,8 +21,7 @@ package org.exoplatform.social.addons.rdbms.listener;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.util.UriEncoder;
 
@@ -38,6 +37,7 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityRegistry;
+import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -71,6 +71,8 @@ public class ActivityImageLinkUpdateListenerTest extends BaseCommonsTestCase {
 
   @Override
   protected void beforeRunBare() {
+    setForceContainerReload(true);
+
     // This is used to make a workaround for embedded file path
     // see
     // org.exoplatform.services.cms.mimetype.DMSMimeTypeResolver.DMSMimeTypeResolver()
@@ -109,48 +111,70 @@ public class ActivityImageLinkUpdateListenerTest extends BaseCommonsTestCase {
     super.tearDown();
   }
 
-  public void testActivityCreateWithUploadedImage() {
+  public void testShouldUpdateImagesLinksWhenImageEmbeddedInBody() {
     String uploadId = String.valueOf((long) (Math.random() * 100000L));
-    String body = "<img src='http://localhost:8080/test?uploadId=" + uploadId + "'>";
+    String body = "<img src=\"http://localhost:8080/test?uploadId=" + uploadId + "\" />";
 
-    ExoSocialActivity activity = createActivityWithBody(body, uploadId);
+    ExoSocialActivity activity = createActivityWithEmbeddedImage(rootIdentity, body, uploadId, null);
 
-    assertEquals("<img src='"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"'>", activity.getBody());
+    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml") + "\" />", activity.getBody());
     activity = activityManager.getActivity(activity.getId());
-    assertEquals("<img src='"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"'>", activity.getBody());
-    assertEquals(0, uploadService.getUploadResources().size());
-
-    uploadId = String.valueOf((long) (Math.random() * 100000L));
-    body = "<img src='/test?uploadId=" + uploadId + "'>";
-
-    activity = createActivityWithBody(body, uploadId);
-
-    assertEquals("<img src='"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName(1).xml")+"'>", activity.getBody());
-    activity = activityManager.getActivity(activity.getId());
-    assertEquals("<img src='"+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName(1)") + ".xml'>", activity.getBody());
+    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml") + "\" />", activity.getBody());
     assertEquals(0, uploadService.getUploadResources().size());
   }
 
-  private ExoSocialActivity createActivityWithBody(String body, String uploadId) {
-    URL resource = getClass().getResource("/test.xml");
+  public void testShouldUpdateImagesLinksWhenImageEmbeddedWithoutDomainInBody() {
+    String uploadId = String.valueOf((long) (Math.random() * 100000L));
+    String body = "<img src=\"/test?uploadId=" + uploadId + "\" />";
 
-    try {
-      uploadService.createUploadResource(uploadId, resource.getPath(), "fileName.xml", "text/xml");
-    } catch (Exception e) {
-      fail("Error uploading file", e);
-    }
+    ExoSocialActivity activity = createActivityWithEmbeddedImage(rootIdentity, body, uploadId, null);
 
-    ExoSocialActivity activity = createActivity(rootIdentity, body);
-    end();
-    begin();
+    assertEquals("<img src=\""+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"\" />", activity.getBody());
+    activity = activityManager.getActivity(activity.getId());
+    assertEquals("<img src=\""+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName") + ".xml\" />", activity.getBody());
+    assertEquals(0, uploadService.getUploadResources().size());
+  }
 
-    assertNotNull(activity);
-    assertNotNull(activity.getId());
-    return activity;
+  public void testShouldUpdateImagesLinksWhenImageEmbeddedWithoutDomainInBodyAndFilesWithSameName() {
+    String uploadId1 = String.valueOf((long) (Math.random() * 100000L));
+    String body1 = "<img src=\"http://localhost:8080/test?uploadId=" + uploadId1 + "\" />";
+    ExoSocialActivity activity1 = createActivityWithEmbeddedImage(rootIdentity, body1, uploadId1, null);
+
+    String uploadId2 = String.valueOf((long) (Math.random() * 100000L));
+    String body2 = "<img src=\"http://localhost:8080/test?uploadId=" + uploadId2 + "\" />";
+    ExoSocialActivity activity2 = createActivityWithEmbeddedImage(rootIdentity, body2, uploadId2, null);
+
+    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml") + "\" />", activity1.getBody());
+    activity1 = activityManager.getActivity(activity1.getId());
+    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml") + "\" />", activity1.getBody());
+    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName") + "%281%29.xml\" />", activity2.getBody());
+    activity2 = activityManager.getActivity(activity2.getId());
+    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName") + "%281%29.xml\" />", activity2.getBody());
+    assertEquals(0, uploadService.getUploadResources().size());
+  }
+
+  public void testShouldUpdateImagesLinksWhenImageEmbeddedInTemplateParam() {
+    String uploadId = String.valueOf((long) (Math.random() * 100000L));
+    String body = "body";
+    Map<String, String> templateParams = new HashMap<>();
+    templateParams.put("comment", "<img src=\"http://localhost:8080/test?uploadId=" + uploadId + "\" />");
+
+    ExoSocialActivity activity = createActivityWithEmbeddedImage(rootIdentity, body, uploadId, templateParams);
+
+    assertEquals("<img src=\""+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"\" />", activity.getTemplateParams().get("comment"));
+    activity = activityManager.getActivity(activity.getId());
+    assertEquals("<img src=\""+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"\" />", activity.getTemplateParams().get("comment"));
+    assertEquals(0, uploadService.getUploadResources().size());
   }
 
   /**
@@ -159,17 +183,29 @@ public class ActivityImageLinkUpdateListenerTest extends BaseCommonsTestCase {
    * @param user
    * @return
    */
-  private ExoSocialActivity createActivity(Identity user, String body) {
+  private ExoSocialActivity createActivityWithEmbeddedImage(Identity user, String body, String uploadId, Map<String, String> templateParams) {
+    URL resource = getClass().getResource("/test.xml");
+
+    try {
+      uploadService.createUploadResource(uploadId, resource.getPath(), "fileName.xml", "text/xml");
+    } catch (Exception e) {
+      fail("Error uploading file", e);
+    }
+
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle("title");
     activity.setBody(body);
     activity.setPosterId(user.getId());
     activity.setUserId(user.getId());
+    activity.setTemplateParams(templateParams);
     try {
       activityManager.saveActivityNoReturn(user, activity);
       tearDownActivityList.add(activity);
     } catch (Exception e) {
-      LOG.error("can not save activity.", e);
+      fail("Error creating activity", e);
+    } finally {
+      end();
+      begin();
     }
     return activity;
   }
