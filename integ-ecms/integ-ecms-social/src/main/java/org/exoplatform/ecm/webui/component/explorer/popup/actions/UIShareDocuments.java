@@ -292,12 +292,10 @@ public class UIShareDocuments extends UIForm implements UIPopupComponent{
                 isShared = true;
               } else {
                 service.publishDocumentToUser(entry, node, message, perm);
-                String oldSharedURL = documentService.getDocumentUrlInPersonalDocuments(node, entry);
-                String newSharedURL = getPortalLoginRedirectURL() + oldSharedURL.replace(CommonsUtils.getCurrentDomain() + "/", "");
                 NotificationContext ctx = NotificationContextImpl.cloneInstance().append(ShareFileToUserPlugin.NODE, node)
                     .append(ShareFileToUserPlugin.SENDER, ConversationState.getCurrent().getIdentity().getUserId())
                     .append(ShareFileToUserPlugin.NODEID, node.getUUID())
-                    .append(ShareFileToUserPlugin.URL, newSharedURL)
+                    .append(ShareFileToUserPlugin.URL, documentService.getDocumentUrlInPersonalDocuments(node, entry))
                     .append(ShareFileToUserPlugin.RECEIVER, entry)
                     .append(ShareFileToUserPlugin.PERM, perm)
                     .append(ShareFileToUserPlugin.ICON, uiform.getDefaultThumbnail(node))
