@@ -683,27 +683,39 @@ for(def index = 0; index < uicomponent.getFilesCount(); index++) {
             def subCommentClass = "";
             def hideSubComments = true;
             def updatedCommentId = uicomponent.getAndSetUpdatedCommentId(null);
+            def showSubComments = false;
+            def updatedComment;
+            if (updatedCommentId) {
+              updatedComment = Utils.getActivityManager().getActivity(updatedCommentId);
+            }
             commentList.each({
               commentCounter++;
               if (first & !uicomponent.commentListToggleable()) {
-                commentContentClass = "commentContent";
-                first = false;
+                  commentContentClass = "commentContent";
+                  first = false;
               } else {
-                commentContentClass = "";
+                  commentContentClass = "";
               }
+
               def commentId = Utils.getIdentityManager().getIdentity(it.userId);
               commenterFullName = StringEscapeUtils.escapeHtml(commentId.profile.fullName);
               commenterProfileUri = LinkProvider.getUserProfileUri(commentId.getRemoteId());
-
               def commentParentClass = it.parentCommentId == null ? "CommentBlock" : (subCommentClass + " subCommentBlock");
               if(it.parentCommentId == null) {
                 subCommentSize = uicomponent.getSubCommentsSize(commentList, it.id);
                 subCommentIndex = 0;
-                hideSubComments = subCommentSize > 2 && (updatedCommentId == null || !updatedCommentId.equals(it.id));
-                if(hideSubComments) {
-                    subCommentClass = "hidden";
-                } else {
-                    subCommentClass = "";
+                if (updatedCommentId) {
+                  if(updatedComment.parentCommentId == it.id || updatedComment.id == it.id){
+                    showSubComments = true;
+                  } else{
+                    showSubComments = false;
+                  }
+                }
+                hideSubComments = subCommentSize > 2 && (updatedCommentId == null || !showSubComments);
+                if(hideSubComments){
+                  subCommentClass = "hidden";
+                } else{
+                  subCommentClass = "";
                 }
               } else {
                    subCommentIndex++;

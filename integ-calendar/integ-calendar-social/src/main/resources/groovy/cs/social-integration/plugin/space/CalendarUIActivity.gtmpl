@@ -35,12 +35,12 @@
   /* end block */
 
   import static org.exoplatform.social.webui.activity.BaseUIActivity.TEMPLATE_PARAM_COMMENT;
-	
+
   uicomponent.init();
   def pcontext = Util.getPortalRequestContext();
   def jsManager = pcontext.getJavascriptManager();
-  //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()     
-  
+  //jsManager.loadScriptResource("base"); //portal's problem, workaround for uicomponent.event()
+
   def locale = pcontext.getLocale();
   def labelActivityHasBeenDeleted = _ctx.appRes("UIActivity.label.Activity_Has_Been_Deleted");
   def activity = uicomponent.getActivity();
@@ -51,7 +51,7 @@
   def userTimeZone = CalendarSpaceActivityPublisher.getUserTimeZone();
 %>
 
-<% if (activity && event != null) { //process if not null   
+<% if (activity && event != null) { //process if not null
 
   def labelComment = _ctx.appRes("UIActivity.label.Comment");
   def labelCancel = _ctx.appRes("UIActivity.label.Cancel");
@@ -73,7 +73,7 @@
   def labelYouLikeThis = _ctx.appRes("UIActivity.label.You_Like_This");
   def labelYouAndOnePersonLikeThis = _ctx.appRes("UIActivity.label.You_And_One_Person_Like_This");
   def labelYouAndOthersLikeThis = _ctx.appRes("UIActivity.label.You_And_Others_Like_This");
-  
+
   def captionConfirmation=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.label.Confirmation"));
   def labelConfirmbutton=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.label.Confirm_Delete_Activity-Button"));
   def labelClosebutton=StringEscapeUtils.escapeHtml(_ctx.appRes("UIActivity.label.Cancel_Delete_Activity-Button"));
@@ -366,7 +366,7 @@
                         </div>
                     </div>
                 </div>
-            </div>		
+            </div>
 				<div class="actionBar clearfix $calendarIconClass">
 				  <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 					 def commentLink = "";
@@ -444,48 +444,59 @@
 					def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
 					def first = true, commentContentClass;
 					def commentCounter = 0;
-		            def subCommentSize = 0;
-		            def subCommentIndex = 0;
-		            def subCommentClass = "";
-		            def hideSubComments = true;
-		            def updatedCommentId = uicomponent.getAndSetUpdatedCommentId(null);
-					commentList.each({
-					  commentCounter++;
-					  if (first & !uicomponent.commentListToggleable()) {
-						commentContentClass = "commentContent";
-						first = false;
-					  } else {
-						commentContentClass = "";
-					  }
-
-					  def id = Utils.getIdentityManager().getIdentity(it.userId);
-					  commenterFullName = StringEscapeUtils.escapeHtml(id.profile.fullName);
-					  commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
-		              def commentParentClass = it.parentCommentId == null ? "CommentBlock" : (subCommentClass + " subCommentBlock");
-		              if(it.parentCommentId == null) {
-		                subCommentSize = uicomponent.getSubCommentsSize(commentList, it.id);
-		                subCommentIndex = 0;
-		                hideSubComments = subCommentSize > 2 && (updatedCommentId == null || !updatedCommentId.equals(it.id));
-		                if(hideSubComments) {
-		                    subCommentClass = "hidden";
-		                } else {
-		                    subCommentClass = "";
-		                }
-		              } else {
-		                   subCommentIndex++;
-		                   if(hideSubComments && subCommentIndex == subCommentSize) {
-		                       %>
-		                      <div class="commentItem clearfix subCommentBlock subCommentShowAll" id="SubCommentShowAll_$it.parentCommentId">
-		                        <div class="commentRight">
-	                                <a href="javascript:void(0)" class="subCommentShowAllLink" data-parent-comment="$it.parentCommentId">
-	                                  <%=labelViewAllReplies.replace("{0}", String.valueOf(subCommentSize))%>
-	                                </a>
-		                        </div>
-		                      </div> 
-		                       <%
-		                   }
-		              }
-					  commentMessage = CalendarSpaceActivityPublisher.buildComment(it, uicomponent.event, locale);
+          def subCommentSize = 0;
+          def subCommentIndex = 0;
+          def subCommentClass = "";
+          def hideSubComments = true;
+          def updatedCommentId = uicomponent.getAndSetUpdatedCommentId(null);
+			    def showSubComments = false;
+			    def updatedComment;
+			    if (updatedCommentId) {
+			      updatedComment = Utils.getActivityManager().getActivity(updatedCommentId);
+			    }
+			    commentList.each({
+			      commentCounter++;
+			      if (first & !uicomponent.commentListToggleable()) {
+              commentContentClass = "commentContent";
+              first = false;
+			      } else {
+				      commentContentClass = "";
+			      }
+			      def id = Utils.getIdentityManager().getIdentity(it.userId);
+			      commenterFullName = StringEscapeUtils.escapeHtml(id.profile.fullName);
+			      commenterProfileUri = LinkProvider.getUserProfileUri(id.getRemoteId());
+			      def commentParentClass = it.parentCommentId == null ? "CommentBlock" : (subCommentClass + " subCommentBlock");
+			      if(it.parentCommentId == null) {
+              subCommentSize = uicomponent.getSubCommentsSize(commentList, it.id);
+              subCommentIndex = 0;
+              if (updatedCommentId) {
+                if(updatedComment.parentCommentId == it.id || updatedComment.id == it.id){
+                  showSubComments = true;
+                } else{
+                  showSubComments = false;
+                }
+				      }
+              hideSubComments = subCommentSize > 2 && (updatedCommentId == null || !showSubComments);
+              if(hideSubComments){
+                subCommentClass = "hidden";
+              } else{
+                subCommentClass = "";
+              }
+				    } else {
+					    subCommentIndex++;
+					    if(hideSubComments && subCommentIndex == subCommentSize) {
+					       %>
+					      <div class="commentItem clearfix subCommentBlock subCommentShowAll" id="SubCommentShowAll_$it.parentCommentId">
+                  <div class="commentRight">
+                    <a href="javascript:void(0)" class="subCommentShowAllLink" data-parent-comment="$it.parentCommentId">
+                      <%=labelViewAllReplies.replace("{0}", String.valueOf(subCommentSize))%>
+                    </a>
+                  </div>
+					      </div> 
+					      <%
+					    }
+				    }
+					  commentMessage = CalendarSpaceActivityPublisher.buildComment(it, uicomponent.event);
 					  commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
 			    	  commentEditedTime = uicomponent.getPostedTimeString(_ctx, it.updated.getTime());
 			    	  commentEditedTime = _ctx.appRes("UIActivity.label.EditedFrom").replace("{0}",commentEditedTime);
