@@ -920,7 +920,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     StringBuilder sb = new StringBuilder(CalendarSpaceActivityPublisher.getDateString(locale,calendar,tz));
     sb.append(" ");
     
-    if(event != null && isAllDay(event)) {
+    if(event != null && isAllDayEvent(event)) {
       if(CalendarEvent.TYPE_EVENT.equals(event.getEventType())) {
         sb.append(rb.getString("CalendarUIActivity.label.allday"));
       }
@@ -955,16 +955,6 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
   }
   
   /**
-   * checks if an event is all day
-   * @param event
-   * @return true if given event is all day
-   */
-  private static Boolean isAllDay(CalendarEvent event) {
-    long diff = event.getToDateTime().getTime() - event.getFromDateTime().getTime() + 1;
-    return diff % (24 * 60 * 60 * 1000) == 0;
-  }
-  
-  /**
    * get label from resource bundle for CalendarUIActivity
    * @param label
    * @return
@@ -975,7 +965,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     ResourceBundle resourceBundle = requestContext.getApplicationResourceBundle();
     return resourceBundle.getString(CALENDAR_PREFIX_KEY + label);
   }
-  
+
   public static String getUICalendarLabel(String label, Locale locale) {
     ResourceBundle resourceBundle = PortletRequestContext.getCurrentInstance().getApplication().getResourceBundle(locale);
     return resourceBundle.getString(CALENDAR_PREFIX_KEY + label);
@@ -1007,7 +997,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     return calendar;
   }
 
-  private boolean isAllDayEvent(CalendarEvent eventCalendar) {
+  private static boolean isAllDayEvent(CalendarEvent eventCalendar) {
     try {
       TimeZone tz = getUserTimeZone() ;
       Calendar cal1 = new GregorianCalendar(tz) ;
