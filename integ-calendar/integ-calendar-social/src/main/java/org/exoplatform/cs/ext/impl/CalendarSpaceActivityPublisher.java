@@ -738,7 +738,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     StringBuilder sb = new StringBuilder(CalendarSpaceActivityPublisher.getDateString(locale,calendar,tz));
     sb.append(" ");
     
-    if(event != null && isAllDay(event)) {
+    if(event != null && isAllDayEvent(event)) {
       if(CalendarEvent.TYPE_EVENT.equals(event.getEventType())) {
         sb.append(rb.getString("CalendarUIActivity.label.allday"));
       }
@@ -770,16 +770,6 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     StringBuilder sb = new StringBuilder(str.substring(0,1).toUpperCase());
     sb.append(str.substring(1));
     return sb.toString();
-  }
-  
-  /**
-   * checks if an event is all day
-   * @param event
-   * @return true if given event is all day
-   */
-  private static Boolean isAllDay(CalendarEvent event) {
-    long diff = event.getToDateTime().getTime() - event.getFromDateTime().getTime() + 1;
-    return diff % (24 * 60 * 60 * 1000) == 0;
   }
   
   public static String getUICalendarLabel(String label, Locale locale) {
@@ -815,7 +805,7 @@ public class CalendarSpaceActivityPublisher extends CalendarEventListener {
     return calendar;
   }
 
-  private boolean isAllDayEvent(CalendarEvent eventCalendar) {
+  private static boolean isAllDayEvent(CalendarEvent eventCalendar) {
     try {
       TimeZone tz = getUserTimeZone() ;
       Calendar cal1 = new GregorianCalendar(tz) ;
