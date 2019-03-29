@@ -496,7 +496,7 @@
 					      <%
 					    }
 				    }
-					  commentMessage = CalendarSpaceActivityPublisher.buildComment(it, uicomponent.event);
+					  commentMessage = CalendarSpaceActivityPublisher.buildComment(it, uicomponent.event, locale);
 					  commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
 			    	  commentEditedTime = uicomponent.getPostedTimeString(_ctx, it.updated.getTime());
 			    	  commentEditedTime = _ctx.appRes("UIActivity.label.EditedFrom").replace("{0}",commentEditedTime);
