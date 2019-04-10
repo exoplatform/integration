@@ -17,7 +17,7 @@ window.initSearch = function initSearch() {
         <div class=\"content\"> \
           <h6><a href=\"%{url}\">%{title}</a>%{rating}</h6> \
           %{breadcrumb} \
-          <div class=\"detail\" style='margin:10px'>%{detail}</div> \
+          <div class=\"detail\">%{detail}</div> \
           <p class=\"excerpt\">%{excerpt}</p> \
         </div> \
       </div> \
