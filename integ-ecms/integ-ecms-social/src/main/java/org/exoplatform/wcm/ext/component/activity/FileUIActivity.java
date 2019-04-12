@@ -47,6 +47,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.ibm.icu.util.Calendar;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
@@ -1046,7 +1047,7 @@ public class FileUIActivity extends BaseUIActivity{
         List<Map.Entry<String, String>> entries = new ArrayList<>(reversedFolderPathWithLinks.entrySet());
         for(int j = entries.size()-1; j >= 0; j--) {
           Map.Entry<String, String> entry = entries.get(j);
-          folderPathWithLinks[i].put(entry.getKey(), entry.getValue());
+          folderPathWithLinks[i].put(StringEscapeUtils.escapeHtml4(entry.getKey()), entry.getValue());
         }
       } else {
         folderPathWithLinks[i] = reversedFolderPathWithLinks;
