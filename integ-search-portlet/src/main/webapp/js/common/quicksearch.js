@@ -42,90 +42,78 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
       </div> \
     ";*///<div class='Excerpt Ellipsis'>%{excerpt}</div> \
 
-    var QUICKSEARCH_RESULT_TEMPLATE= "\
-        <div class=\"quickSearchResult %{type}\" tabindex=\"%{index}\" id=\"quickSearchResult%{index}\" onkeydown=\"fireAEvent(event,this.id)\"> \
-        %{lineResult}\
-      </div>";//<div class='Excerpt Ellipsis'>%{excerpt}</div> \    
+    var QUICKSEARCH_RESULT_TEMPLATE=
+      "<div class=\"quickSearchResult %{type}\" tabindex=\"%{index}\" id=\"quickSearchResult%{index}\" onkeydown=\"fireAEvent(event,this.id)\">" +
+        "%{lineResult}" +
+      "</div>";
     
-    var LINE_RESULT_TEMPLATE = "\
-        <a href=\"%{url}\"> \
-     	<i class=\"%{cssClass}\"></i> %{title}\
-     	</a>";
+    var LINE_RESULT_TEMPLATE =
+        "<a href=\"%{url}\">" +
+     	"<i class=\"%{cssClass}\"></i> %{title}" +
+     	"</a>";
     
-    var OTHER_RESULT_TEMPLATE  = "\
-		<a href=\"%{url}\"><img src=\"%{imageSrc}\" class=\"avatarTiny\"/>%{title}</a>\
-		";
+    var OTHER_RESULT_TEMPLATE  = "<a href=\"%{url}\"><img src=\"%{imageSrc}\" class=\"avatarTiny\"/>%{title}</a>";
         
-    var QUICKSEARCH_TABLE_TEMPLATE=" \
-        <div class=\"result-container\">\
-          <table class=\"uiGrid table table-striped  rounded-corners\"> \
-            <col width=\"30%\"> \
-            <col width=\"70%\"> \
-            %{resultRows} \
-           </table>\
-        </div>\
-        %{messageRow} \
-        ";
+    var QUICKSEARCH_TABLE_TEMPLATE=
+        "<div class=\"result-container\">" +
+          "<table class=\"uiGrid table table-striped  rounded-corners\">" +
+            "<col width=\"30%\">" +
+            "<col width=\"70%\">" +
+            "%{resultRows}" +
+           "</table>" +
+        "</div>" +
+        "%{messageRow}";
 
-    var QUICKSEARCH_TABLE_ROW_TEMPLATE=" \
-          <tr> \
-            <th> \
-              %{type} \
-            </th> \
-            <td> \
-              %{results} \
-            </td> \
-          </tr> \
-        ";
+    var QUICKSEARCH_TABLE_ROW_TEMPLATE=
+          "<tr>" +
+            "<th>" +
+              "%{type}" +
+            "</th>" +
+            "<td>" +
+              "%{results}" +
+            "</td>" +
+          "</tr>";
 
-    var QUICKSEARCH_SEE_ALL=" \
-        <div class=\"seeAllmsg\"> \
-          <a id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+seeAllMsg+"</a> \
-        </div> \
-        ";
+    var QUICKSEARCH_SEE_ALL=
+        "<div class=\"seeAllmsg\">" +
+          "<a id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+seeAllMsg+"</a>" +
+        "</div>";
 
-    var QUICKSEARCH_NO_RESULT=" \
-        <tr> \
-          <td colspan=\"2\" class=\"noResult\"> \
-            <span id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+noResultMsg+" <strong>%{query}<strong></span> \
-          </td> \
-        </tr> \
-        ";
+    var QUICKSEARCH_NO_RESULT=
+        "<tr>" +
+          "<td colspan=\"2\" class=\"noResult\">" +
+            "<span id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+noResultMsg+" <strong>%{query}<strong></span>" +
+          "</td>" +
+        "</tr>";
 
-    var IMAGE_AVATAR_TEMPLATE = " \
-      <span class=\"avatar pull-left\"> \
-        <img src=\"%{imageSrc}\"> \
-      </span> \
-    ";
+    var IMAGE_AVATAR_TEMPLATE =
+      "<span class=\"avatar pull-left\">" +
+        "<img src=\"%{imageSrc}\">" +
+      "</span>";
 
-    var CSS_AVATAR_TEMPLATE = " \
-      <span class=\"avatar pull-left\"> \
-        <i class=\"%{cssClass}\"></i> \
-      </span> \
-    ";
+    var CSS_AVATAR_TEMPLATE =
+      "<span class=\"avatar pull-left\">" +
+        "<i class=\"%{cssClass}\"></i>" +
+      "</span>";
 
-    var EVENT_AVATAR_TEMPLATE = " \
-      <div class=\"calendarBox calendarBox-mini\"> \
-        <div class=\"heading\"> %{month} </div> \
-        <div class=\"content\" style=\"margin-left: 0px;\"> %{date} </div> \
-      </div> \
-    ";
+    var EVENT_AVATAR_TEMPLATE =
+      "<div class=\"calendarBox calendarBox-mini\">" +
+        "<div class=\"heading\"> %{month} </div>" +
+        "<div class=\"content\" style=\"margin-left: 0px;\"> %{date} </div>" +
+      "</div>";
 
-    var TASK_AVATAR_TEMPLATE = " \
-      <i class=\"uiIconStatus-20-%{taskStatus}\"></i> \
-    ";  
+    var TASK_AVATAR_TEMPLATE = "<i class=\"uiIconStatus-20-%{taskStatus}\"></i>";
     
-    var QUICKSEARCH_WAITING_TEMPLATE=" \
-        <table class=\"uiGrid table  table-hover table-striped  rounded-corners\"> \
-          <col width=\"30%\"> \
-          <col width=\"70%\"> \
-	        <tr> \
-	          <td colspan=\"2\" class=\"noResult\"> \
-	            <span id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+searching+" </span> \
-	          </td> \
-	        </tr> \
-        </table> \
-      ";       
+    var QUICKSEARCH_WAITING_TEMPLATE=
+        "<table class=\"uiGrid table  table-hover table-striped  rounded-corners\">" +
+          "<col width=\"30%\">" +
+          "<col width=\"70%\">" +
+	        "<tr>" +
+	          "<td colspan=\"2\" class=\"noResult\">" +
+	            "<span id=\"seeAll-" + portletId + "\" class=\"\" href=\"#\">"+searching+" </span>" +
+	          "</td>" +
+	        "</tr>" +
+        "</table>";
     
     searchTimeout = setTimeout(searchWhenNoKeypress, DELAY_SEARCH_TIME);
     
@@ -509,16 +497,15 @@ window.initQuickSearch = function initQuickSearch(portletId,seeAllMsg, noResultM
 window.initQuickSearchSetting = function(allMsg,alertOk,alertNotOk){  
   
     var CONNECTORS; //all registered SearchService connectors
-    var CHECKBOX_TEMPLATE = "\
-      <div class='control-group'> \
-        <div class='controls-full'> \
-          <span class='uiCheckbox'> \
-            <input type='checkbox' class='checkbox' name='%{name}' value='%{value}'> \
-            <span>%{text}</span> \
-          </span> \
-        </div> \
-      </div> \
-    ";
+    var CHECKBOX_TEMPLATE =
+      "<div class='control-group'>" +
+        "<div class='controls-full'>" +
+          "<span class='uiCheckbox'>" +
+            "<input type='checkbox' class='checkbox' name='%{name}' value='%{value}'>" +
+            "<span>%{text}</span>" +
+          "</span>" +
+        "</div>" +
+      "</div>";
 
 
     function getSelectedTypes() {

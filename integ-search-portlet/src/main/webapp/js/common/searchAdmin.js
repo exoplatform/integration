@@ -2,15 +2,14 @@
 function initSearchAdmin() {
   
     $.getJSON("/rest/search/registry", function(registry){
-      var row_template = " \
-        <tr> \
-          <td>%{displayName}</td> \
-          <td>%{description}</td> \
-          <td class='center'> \
-            <input type='button' class='btn btn-mini contentType' id='%{id}' name='Enable' value='%{key}'> \
-          </td> \
-        </tr> \
-      ";
+      var row_template =
+        "<tr>" +
+          "<td>%{displayName}</td>" +
+          "<td>%{description}</td>" +
+          "<td class='center'>" +
+            "<input type='button' class='btn btn-mini contentType' id='%{id}' name='Enable' value='%{key}'>" +
+          "</td>" +
+        "</tr>";
 
       var connectors = registry[0];
       var searchTypes = registry[1];

@@ -11,89 +11,78 @@ window.initSearch = function initSearch() {
     var formLoading;
     var searchCount = 0;
 
-    var SEARCH_RESULT_TEMPLATE = " \
-      <div class=\"resultBox clearfix %{type}\"> \
-        %{avatar} \
-        <div class=\"content\"> \
-          <h6><a href=\"%{url}\">%{title}</a>%{rating}</h6> \
-          %{breadcrumb} \
-          <div class=\"detail\">%{detail}</div> \
-          <p class=\"excerpt\">%{excerpt}</p> \
-        </div> \
-      </div> \
-    ";
+    var SEARCH_RESULT_TEMPLATE =
+      "<div class=\"resultBox clearfix %{type}\">" +
+        "%{avatar}" +
+        "<div class=\"content\">" +
+          "<h6><a href=\"%{url}\">%{title}</a>%{rating}</h6>" +
+          "%{breadcrumb}" +
+          "<div class=\"detail\">%{detail}</div>" +
+          "<p class=\"excerpt\">%{excerpt}</p>" +
+        "</div>" +
+      "</div>";
 
-    var IMAGE_AVATAR_TEMPLATE = " \
-      <span class=\"avatar pull-left %{userThumbnail}\"> \
-        <img src=\"%{imageSrc}\" onerror=\"onImgError(this, '%{errorClasses}')\"> \
-      </span> \
-    ";
+    var IMAGE_AVATAR_TEMPLATE =
+      "<span class=\"avatar pull-left %{userThumbnail}\">" +
+        "<img src=\"%{imageSrc}\" onerror=\"onImgError(this, '%{errorClasses}')\">" +
+      "</span>";
     
-    var CSS_AVATAR_TEMPLATE = " \
-      <span class=\"avatar pull-left\"> \
-        <i class=\"%{cssClass}\"'></i> \
-      </span> \
-    ";
+    var CSS_AVATAR_TEMPLATE =
+      "<span class=\"avatar pull-left\">" +
+        "<i class=\"%{cssClass}\"'></i>" +
+      "</span>";
 
-    var DOC_IMAGE_AVATAR_TEMPLATE = " \
-      <div class=\"avatar pull-left %{userThumbnail}\" style='position:relative'> \
-        <img class='main' src=\"%{imageSrc}\" onerror=\"onImgError(this, '%{errorClasses}')\" style='position:relative'> \
-        <div class='preview'><i class='uiIconWhite uiIconSearch' style='color:white'></i></div> \
-      </div> \
-    ";
+    var DOC_IMAGE_AVATAR_TEMPLATE =
+      "<div class=\"avatar pull-left %{userThumbnail}\" style='position:relative'>" +
+        "<img class='main' src=\"%{imageSrc}\" onerror=\"onImgError(this, '%{errorClasses}')\" style='position:relative'>" +
+        "<div class='preview'><i class='uiIconWhite uiIconSearch' style='color:white'></i></div>" +
+      "</div>";
 
-    var DOC_CSS_AVATAR_TEMPLATE = " \
-      <span class=\"avatar pull-left\" style='position:relative'> \
-        <i class=\"%{cssClass} main\" style='position:relative'></i> \
-        <div class='preview'><i class='uiIconWhite uiIconSearch' style='color:white'></i></div> \
-      </span> \
-    ";
+    var DOC_CSS_AVATAR_TEMPLATE =
+      "<span class=\"avatar pull-left\" style='position:relative'>" +
+        "<i class=\"%{cssClass} main\" style='position:relative'></i>" +
+        "<div class='preview'><i class='uiIconWhite uiIconSearch' style='color:white'></i></div>" +
+      "</span>";
 
-    var BREADCRUMB_TEMPLATE = " \
-      <div class=\"breadcrumb_container\" style=\"white-space:nowrap\"> \
-        <div class=\"breadcrumb_ellipsis\" style=\"float:left;display:none\">...</div> \
-        <div class=\"breadcrumb_placeholder_container\" style=\"white-space: nowrap;overflow:hidden;\"> \
-          <div class=\"breadcrumb_placeholder\" style=\"float:left;padding-right:20px\">%{breadcrumb}</div> \
-        </div> \
-      </div> \
-    ";
+    var BREADCRUMB_TEMPLATE =
+      "<div class=\"breadcrumb_container\" style=\"white-space:nowrap\">" +
+        "<div class=\"breadcrumb_ellipsis\" style=\"float:left;display:none\">...</div>" +
+        "<div class=\"breadcrumb_placeholder_container\" style=\"white-space: nowrap;overflow:hidden;\">" +
+          "<div class=\"breadcrumb_placeholder\" style=\"float:left;padding-right:20px\">%{breadcrumb}</div>" +
+        "</div>" +
+      "</div>";
 
-    var EVENT_AVATAR_TEMPLATE = " \
-      <div class=\"avatar pull-left\"> \
-        <div class=\"calendarBox\"> \
-          <div class=\"heading\"> %{month} </div> \
-          <div class=\"content\" style=\"margin-left: 0px;\"> %{date} </div> \
-        </div> \
-      </div> \
-    ";
+    var EVENT_AVATAR_TEMPLATE =
+      "<div class=\"avatar pull-left\">" +
+        "<div class=\"calendarBox\">" +
+          "<div class=\"heading\"> %{month} </div>" +
+          "<div class=\"content\" style=\"margin-left: 0px;\"> %{date} </div>" +
+        "</div>" +
+      "</div>";
 
-    var TASK_AVATAR_TEMPLATE = " \
-      <span class=\"avatar pull-left\"> \
-        <i class=\"uiIconApp64x64Task%{taskStatus}\"></i> \
-      </span> \
-    ";
+    var TASK_AVATAR_TEMPLATE =
+      "<span class=\"avatar pull-left\">" +
+        "<i class=\"uiIconApp64x64Task%{taskStatus}\"></i>" +
+      "</span>";
     
-    var TASK_IN_TASKS_AVATAR_TEMPLATE = " \
-      <span class=\"avatar pull-left\"> \
-        <i class=\"uiIcon40x40TickGray %{done}\"></i> \
-      </span> \
-    ";
+    var TASK_IN_TASKS_AVATAR_TEMPLATE =
+      "<span class=\"avatar pull-left\">" +
+        "<i class=\"uiIcon40x40TickGray %{done}\"></i>" +
+      "</span>";
     
-    var TASK_IN_TASKS_DETAIL_TEMPLATE = " \
-      <a href=\"#\"> \
-        <i class=\"uiIconFolder taskProjectIconSearchDetail\"></i> %{projectName} \
-      </a> \
-      <i class=\"uiIconColorPriority%{priority} taskPriorityIconSearchDetail\"></i>\
-      <span>%{dueDate}</span>\
-    ";
+    var TASK_IN_TASKS_DETAIL_TEMPLATE =
+      "<a href=\"#\">" +
+        "<i class=\"uiIconFolder taskProjectIconSearchDetail\"></i> %{projectName}" +
+      "</a>" +
+      "<i class=\"uiIconColorPriority%{priority} taskPriorityIconSearchDetail\"></i>" +
+      "<span>%{dueDate}</span>";
 
-    var RATING_TEMPLATE = " \
-      <div class=\"uiVote pull-right\"> \
-        <div class=\"avgRatingImages clearfix\"> \
-          %{rating} \
-        </div> \
-      </div> \
-    ";    
+    var RATING_TEMPLATE =
+      "<div class=\"uiVote pull-right\">" +
+        "<div class=\"avgRatingImages clearfix\">" +
+          "%{rating}" +
+        "</div>" +
+      "</div>";
       
     
     //*** Utility functions ***
@@ -762,16 +751,15 @@ window.initSearch = function initSearch() {
 window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk){
 
     var CONNECTORS; //all registered SearchService connectors
-    var CHECKBOX_TEMPLATE = "\
-      <div class='control-group'> \
-        <div class='controls-full'> \
-          <span class='uiCheckbox'> \
-            <input type='checkbox' class='checkbox' name='%{name}' value='%{value}'> \
-            <span>%{text}</span> \
-          </span> \
-        </div> \
-      </div> \
-    ";
+    var CHECKBOX_TEMPLATE =
+      "<div class='control-group'>" +
+        "<div class='controls-full'>" +
+          "<span class='uiCheckbox'>" +
+            "<input type='checkbox' class='checkbox' name='%{name}' value='%{value}'>" +
+            "<span>%{text}</span>" +
+          "</span>" +
+        "</div>" +
+      "</div>";
 
 
     function getSelectedTypes() {
