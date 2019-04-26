@@ -41,17 +41,17 @@
     <!-- Project Dependencies                     -->
     <!-- **************************************** -->
     <org.exoplatform.depmgt.version>14.2</org.exoplatform.depmgt.version>
-    <org.exoplatform.kernel.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.kernel.version>
-    <org.exoplatform.core.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.core.version>
-    <org.exoplatform.jcr.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.jcr.version>
-    <org.exoplatform.gatein.portal.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.gatein.portal.version>
-    <org.exoplatform.commons.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.commons.version>
-    <org.exoplatform.ecms.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.ecms.version>
-    <org.exoplatform.social.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.social.version>
-    <org.exoplatform.forum.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.forum.version>
-    <org.exoplatform.wiki.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.wiki.version>
-    <org.exoplatform.calendar.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.calendar.version>
-    <org.exoplatform.doc.doc-style.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.doc.doc-style.version>
+    <org.exoplatform.kernel.version>5.1.2-acc210-02</org.exoplatform.kernel.version>
+    <org.exoplatform.core.version>5.1.2-acc210-02</org.exoplatform.core.version>
+    <org.exoplatform.jcr.version>5.1.2-acc210-02</org.exoplatform.jcr.version>
+    <org.exoplatform.gatein.portal.version>5.1.2-acc210-02</org.exoplatform.gatein.portal.version>
+    <org.exoplatform.commons.version>5.1.2-acc210-02</org.exoplatform.commons.version>
+    <org.exoplatform.ecms.version>5.1.2-acc210-02</org.exoplatform.ecms.version>
+    <org.exoplatform.social.version>5.1.2-acc210-02</org.exoplatform.social.version>
+    <org.exoplatform.forum.version>5.1.2-acc210-02</org.exoplatform.forum.version>
+    <org.exoplatform.wiki.version>5.1.2-acc210-02</org.exoplatform.wiki.version>
+    <org.exoplatform.calendar.version>5.1.2-acc210-02</org.exoplatform.calendar.version>
+    <org.exoplatform.doc.doc-style.version>5.1.2-acc210-02</org.exoplatform.doc.doc-style.version>
     <!-- Platform Project 3rd party Dependencies -->
     <org.powermock.version>1.6.5</org.powermock.version>
     <!-- GateIn Project Dependencies -->
