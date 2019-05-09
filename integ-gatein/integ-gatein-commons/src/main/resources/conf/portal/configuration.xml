@@ -25,11 +25,6 @@
     <target-component>org.exoplatform.services.listener.ListenerService</target-component>
 
     <component-plugin>
-      <name>org.exoplatform.portal.mop.page.page_created</name>
-      <set-method>addListener</set-method>
-      <type>org.exoplatform.portal.jdbc.listener.PageESListenerImpl</type>
-    </component-plugin>
-    <component-plugin>
       <name>org.exoplatform.portal.mop.page.page_destroyed</name>
       <set-method>addListener</set-method>
       <type>org.exoplatform.portal.jdbc.listener.PageESListenerImpl</type>
@@ -39,22 +34,69 @@
       <set-method>addListener</set-method>
       <type>org.exoplatform.portal.jdbc.listener.PageESListenerImpl</type>
     </component-plugin>
+
+    <component-plugin>
+      <name>org.exoplatform.portal.mop.navigation.navigation_created</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.NavigationESListenerImpl</type>
+    </component-plugin>
+    <component-plugin>
+      <name>org.exoplatform.portal.mop.navigation.navigation_destroy</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.NavigationESListenerImpl</type>
+    </component-plugin>
+
+    <component-plugin>
+      <name>org.exoplatform.portal.mop.navigation.node_add</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.NavigationNodeESListenerImpl</type>
+    </component-plugin>
+    <component-plugin>
+      <name>org.exoplatform.portal.mop.navigation.node_create</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.NavigationNodeESListenerImpl</type>
+    </component-plugin>
+    <component-plugin>
+      <name>org.exoplatform.portal.mop.navigation.node_remove</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.NavigationNodeESListenerImpl</type>
+    </component-plugin>
+    <component-plugin>
+      <name>org.exoplatform.portal.mop.navigation.node_destroy</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.NavigationNodeESListenerImpl</type>
+    </component-plugin>
+    <component-plugin>
+      <name>org.exoplatform.portal.mop.navigation.node_rename</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.NavigationNodeESListenerImpl</type>
+    </component-plugin>
+    <component-plugin>
+      <name>org.exoplatform.portal.mop.navigation.node_update</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.NavigationNodeESListenerImpl</type>
+    </component-plugin>
+    <component-plugin>
+      <name>org.exoplatform.portal.mop.navigation.node_move</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.NavigationNodeESListenerImpl</type>
+    </component-plugin>
   </external-component-plugins>
 
   <external-component-plugins>
     <target-component>org.exoplatform.commons.search.index.IndexingOperationProcessor</target-component>
     <component-plugin profiles="all">
-      <name>PageIndexingServiceConnector</name>
+      <name>NavigationIndexingServiceConnector</name>
       <set-method>addConnector</set-method>
-      <type>org.exoplatform.portal.jdbc.service.PageIndexingServiceConnector</type>
-      <description>Page ElasticSearch Indexing Connector</description>
+      <type>org.exoplatform.portal.jdbc.service.NavigationIndexingServiceConnector</type>
+      <description>Navigation ElasticSearch Indexing Connector</description>
       <init-params>
         <properties-param>
           <name>constructor.params</name>
-          <property name="index_alias" value="page_alias"/>
-          <property name="index_previous" value="page"/>
-          <property name="index_current" value="page_v2"/>
-          <property name="type" value="page"/>
+          <property name="index_alias" value="navigation_alias"/>
+          <property name="index_previous" value="navigation"/>
+          <property name="index_current" value="navigation_v2"/>
+          <property name="type" value="navigation"/>
         </properties-param>
       </init-params>
     </component-plugin>
