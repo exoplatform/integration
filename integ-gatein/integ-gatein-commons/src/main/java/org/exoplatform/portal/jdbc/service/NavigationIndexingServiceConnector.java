@@ -63,6 +63,7 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
 
     Map<String, String> fields = new HashMap<>();
     fields.put("name", node.getName());
+    fields.put("nodeId", node.getId());
 
     Date createdDate = new Date();
 
@@ -121,6 +122,7 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
             .append("        }")
             .append("      }")
             .append("    },\n")
+            .append("    \"nodeId\" : {\"type\" : \"text\", \"index_options\": \"offsets\"},\n")
             .append("    \"pageRef\" : {\"type\" : \"text\", \"index_options\": \"offsets\"},\n")
             .append("    \"pageTitle\" : {\"type\" : \"text\", \"index_options\": \"offsets\"},\n")
             .append("    \"permissions\" : {\"type\" : \"keyword\"},\n")

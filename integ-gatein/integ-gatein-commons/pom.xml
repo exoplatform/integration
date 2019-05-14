@@ -39,6 +39,11 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.exoplatform.ecms</groupId>
+      <artifactId>ecms-core-services</artifactId>
+    </dependency>
+
     <!-- elastic searching dependencies -->
     <dependency>
       <groupId>org.exoplatform.commons</groupId>
