@@ -81,6 +81,17 @@
       <set-method>addListener</set-method>
       <type>org.exoplatform.portal.jdbc.listener.NavigationNodeESListenerImpl</type>
     </component-plugin>
+
+    <component-plugin>
+      <name>org.exoplatform.ecms.seo.save</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.SeoESListenerImpl</type>
+    </component-plugin>
+    <component-plugin>
+      <name>org.exoplatform.ecms.seo.remove</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.portal.jdbc.listener.SeoESListenerImpl</type>
+    </component-plugin>
   </external-component-plugins>
 
   <external-component-plugins>
