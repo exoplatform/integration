@@ -43,16 +43,8 @@ public class PageESListenerImpl extends Listener<PageService, PageKey> {
     String eventName = event.getEventName();
     PageKey pageKey = event.getData();
 
-    if (EventType.PAGE_UPDATED.equals(eventName)) {
+    if (EventType.PAGE_UPDATED.equals(eventName) || EventType.PAGE_DESTROYED.equals(eventName)) {
       reIndex(pageKey);
-    } else if (EventType.PAGE_DESTROYED.equals(eventName)) {
-      unIndex(pageKey);
-    }
-  }
-
-  private void unIndex(PageKey pageKey) {
-    for (String id : search(pageKey)) {
-      indexingService.unindex(NavigationIndexingServiceConnector.TYPE, id);
     }
   }
 
