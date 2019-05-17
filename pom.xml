@@ -140,6 +140,11 @@
         <artifactId>integ-wiki-social</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-gatein-commons</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <!-- Import versions from forum project -->
       <dependency>
         <groupId>org.exoplatform.forum</groupId>
