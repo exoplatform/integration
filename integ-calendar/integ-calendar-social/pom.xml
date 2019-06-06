@@ -68,10 +68,6 @@
       <artifactId>exo.portal.webui.portal</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.shindig</groupId>
-      <artifactId>shindig-social-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.exoplatform.commons</groupId>
       <artifactId>commons-webui-ext</artifactId>
       <scope>runtime</scope>

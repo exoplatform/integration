@@ -54,8 +54,6 @@
     <org.exoplatform.doc.doc-style.version>5.3.x-SNAPSHOT</org.exoplatform.doc.doc-style.version>
     <!-- Platform Project 3rd party Dependencies -->
     <org.powermock.version>1.6.5</org.powermock.version>
-    <!-- GateIn Project Dependencies -->
-    <org.apache.shindig.version>2.5.2</org.apache.shindig.version>
     <!-- For surefire and failsafe to be compatible with jacoco -->
     <argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
   </properties>
@@ -240,12 +238,6 @@
         <groupId>org.exoplatform.gatein.portal</groupId>
         <artifactId>exo.portal.webui.portlet</artifactId>
         <version>${org.exoplatform.gatein.portal.version}</version>
-      </dependency>
-      <!-- To be replaced by an import of GateIn Shinding parent POM -->
-      <dependency>
-        <groupId>org.apache.shindig</groupId>
-        <artifactId>shindig-social-api</artifactId>
-        <version>${org.apache.shindig.version}</version>
       </dependency>
       <!-- Import versions from jcr project -->
       <dependency>
