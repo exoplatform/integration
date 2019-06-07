@@ -139,7 +139,7 @@
       <TextAreaInit>Pošlji sporočilo o skupni rabi...</TextAreaInit>
       <ShareWith>Daj v skupno rabo z</ShareWith>
       <Access>Dostop</Access>
-      <SpaceMember>Člani prostora</SpaceMember>
+      <SpaceMember>Člani</SpaceMember>
       <SelectASpace>Izberi prostor</SelectASpace>
       <SharedADocument>je dal(a) dokument v skupno rabo</SharedADocument>
       <WhoHasAccess>Kdo ima dostop</WhoHasAccess>

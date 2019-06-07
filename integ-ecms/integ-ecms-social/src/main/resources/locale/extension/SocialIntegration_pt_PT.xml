@@ -139,7 +139,7 @@
       <TextAreaInit>Envie uma mensagem após a partilha...</TextAreaInit>
       <ShareWith>Partilhar com</ShareWith>
       <Access>Acessar</Access>
-      <SpaceMember>Membros do Espaço</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Selecione um espaço</SelectASpace>
       <SharedADocument>compartilhou um documento</SharedADocument>
       <WhoHasAccess>Quem tem acesso</WhoHasAccess>

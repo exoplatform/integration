@@ -139,7 +139,7 @@
       <TextAreaInit>Kirim pesan setelah berbagi...</TextAreaInit>
       <ShareWith>Berbagi dengan</ShareWith>
       <Access>Mengakses</Access>
-      <SpaceMember>Ruang Anggota</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Pilih sebuah ruang</SelectASpace>
       <SharedADocument>bagikan dokumen</SharedADocument>
       <WhoHasAccess>Siapa yang punya akses</WhoHasAccess>

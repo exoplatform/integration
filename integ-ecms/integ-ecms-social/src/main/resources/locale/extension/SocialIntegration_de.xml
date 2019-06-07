@@ -139,7 +139,7 @@
       <TextAreaInit>Senden Sie eine Nachricht über das Freigeben...</TextAreaInit>
       <ShareWith>Freigeben für</ShareWith>
       <Access>Zugriff</Access>
-      <SpaceMember>Raum-Mitglieder</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Wählen Sie einen Raum</SelectASpace>
       <SharedADocument>hat ein Dokument geteilt</SharedADocument>
       <WhoHasAccess>Wer hat Zugriff</WhoHasAccess>

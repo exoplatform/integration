@@ -139,7 +139,7 @@
       <TextAreaInit>Надіслати повідомлення на спільне використання...</TextAreaInit>
       <ShareWith>Поділитися з</ShareWith>
       <Access>Дозвіл на доступ</Access>
-      <SpaceMember>Члени області</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Виберіть простір</SelectASpace>
       <SharedADocument>надав доступ до документа</SharedADocument>
       <WhoHasAccess>Хто має доступ</WhoHasAccess>

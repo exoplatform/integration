@@ -139,7 +139,7 @@
       <TextAreaInit>Отправить сообщение на общее пользование...</TextAreaInit>
       <ShareWith>Поделиться с</ShareWith>
       <Access>Права доступа</Access>
-      <SpaceMember>Члены области</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Выбрать область</SelectASpace>
       <SharedADocument>поделился документом</SharedADocument>
       <WhoHasAccess>Кто имеет доступ</WhoHasAccess>

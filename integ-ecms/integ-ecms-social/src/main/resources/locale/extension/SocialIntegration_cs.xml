@@ -139,7 +139,7 @@
       <TextAreaInit>Odeslat zprávu po dokončení sdílení...</TextAreaInit>
       <ShareWith>Sdílet s</ShareWith>
       <Access>Přístupové právo</Access>
-      <SpaceMember>Členové skupiny</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Zvolte místnost</SelectASpace>
       <SharedADocument>sdílel dokument</SharedADocument>
       <WhoHasAccess>Kdo má přístup</WhoHasAccess>

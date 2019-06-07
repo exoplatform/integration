@@ -139,7 +139,7 @@
       <TextAreaInit>Paylaşıldığında bir mesaj gönder...</TextAreaInit>
       <ShareWith>Şununla paylaş:</ShareWith>
       <Access>Giriş</Access>
-      <SpaceMember>Alan Üyeleri</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Bir Alan Seç</SelectASpace>
       <SharedADocument>bir belge paylaş</SharedADocument>
       <WhoHasAccess>Erişimi olanlar</WhoHasAccess>

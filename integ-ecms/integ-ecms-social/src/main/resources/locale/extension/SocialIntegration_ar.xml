@@ -139,7 +139,7 @@
       <TextAreaInit>إرسال رسالة مع مشاركة...</TextAreaInit>
       <ShareWith>مشاركة مع</ShareWith>
       <Access>الوصول</Access>
-      <SpaceMember>أعضاء الفضاء</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>اختيار فضاء</SelectASpace>
       <SharedADocument>مشاركة وثيقة</SharedADocument>
       <WhoHasAccess>من لديه حق الوصول</WhoHasAccess>

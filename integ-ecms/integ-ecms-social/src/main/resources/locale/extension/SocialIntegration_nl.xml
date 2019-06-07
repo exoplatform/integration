@@ -139,7 +139,7 @@
       <TextAreaInit>Stuur een bericht over het delen ...</TextAreaInit>
       <ShareWith>Delen met...</ShareWith>
       <Access>Toegang</Access>
-      <SpaceMember>Ruimte leden</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Selecteer een ruimte</SelectASpace>
       <SharedADocument>deelde een document</SharedADocument>
       <WhoHasAccess>Wie heeft toegang?</WhoHasAccess>

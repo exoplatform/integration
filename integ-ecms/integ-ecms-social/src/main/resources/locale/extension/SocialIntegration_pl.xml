@@ -139,7 +139,7 @@
       <TextAreaInit>Wyślij wiadomość po udostępnieniu...</TextAreaInit>
       <ShareWith>Udostępnij z</ShareWith>
       <Access>Dostęp</Access>
-      <SpaceMember>Członek przestrzeni</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Wybierz obszar</SelectASpace>
       <SharedADocument>dokument udostępniony</SharedADocument>
       <WhoHasAccess>Kto ma dostęp</WhoHasAccess>

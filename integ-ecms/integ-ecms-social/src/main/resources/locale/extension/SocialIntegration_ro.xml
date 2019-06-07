@@ -139,7 +139,7 @@
       <TextAreaInit>Trimite un mesaj înainte să distribui...</TextAreaInit>
       <ShareWith>Distribuie cu</ShareWith>
       <Access>Editare acces</Access>
-      <SpaceMember>Membri Spațiu</SpaceMember>
+      <SpaceMember>Members</SpaceMember>
       <SelectASpace>Selectează un spațiu</SelectASpace>
       <SharedADocument>a distribuit un document</SharedADocument>
       <WhoHasAccess>Cine are acces</WhoHasAccess>
