@@ -442,6 +442,10 @@
     <type>org.exoplatform.commons.notification.impl.service.WebNotificationServiceImpl</type>
   </component>
 
+  <component>
+    <type>org.exoplatform.upload.UploadService</type>
+  </component>
+
   <!-- Bind datasource -->
   <external-component-plugins>
     <target-component>org.exoplatform.services.naming.InitialContextInitializer</target-component>
