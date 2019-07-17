@@ -729,10 +729,37 @@ public class FileUIActivity extends BaseUIActivity{
     this.activityStatus =  activityParams.get(FileUIActivity.ACTIVITY_STATUS);
 
     String[] nodeUUIDs = getParameterValues(activityParams, FileUIActivity.ID);
-    this.filesCount = nodeUUIDs == null ? 0 : nodeUUIDs.length;
-
     String[] repositories = getParameterValues(activityParams,UIDocActivity.REPOSITORY);
     String[] workspaces = getParameterValues(activityParams,UIDocActivity.WORKSPACE);
+    if (nodeUUIDs == null || nodeUUIDs.length == 0) {
+      String[] docPaths = getParameterValues(activityParams, UIDocActivity.DOCPATH);
+      if (docPaths != null && docPaths.length > 0) {
+        nodeUUIDs = new String[docPaths.length];
+        for (int i = 0; i < docPaths.length; i++)  {
+          String repository = "repository";
+          if (repositories != null && repositories.length == docPaths.length && StringUtils.isNotBlank(repositories[i])) {
+            repository = repositories[i];
+          }
+          String workspace = "collaboration";
+          if (workspaces != null && workspaces.length == docPaths.length && StringUtils.isNotBlank(workspaces[i])) {
+            workspace = workspaces[i];
+          }
+          String docPath = docPaths[i];
+
+          NodeLocation nodeLocation = new NodeLocation(repository, workspace, docPath);
+          Node node = NodeLocation.getNodeByLocation(nodeLocation);
+          if (node != null) {
+            try {
+              nodeUUIDs[i] = node.getUUID();
+            } catch (RepositoryException e) {
+              LOG.error("can not get UUID", e);
+            }
+          }
+        }
+      }
+    }
+    this.filesCount = nodeUUIDs == null ? 0 : nodeUUIDs.length;
+
     String[] contentLink = getParameterValues(activityParams,FileUIActivity.CONTENT_LINK);
     String[] state = getParameterValues(activityParams, FileUIActivity.STATE);
     String[] author = getParameterValues(activityParams, FileUIActivity.AUTHOR);
@@ -745,6 +772,7 @@ public class FileUIActivity extends BaseUIActivity{
     String[] docTitle =  getParameterValues(activityParams, FileUIActivity.DOCUMENT_TITLE);  
     String[] docVersion =  getParameterValues(activityParams, FileUIActivity.DOCUMENT_VERSION);
     String[] docSummary =  getParameterValues(activityParams, FileUIActivity.DOCUMENT_SUMMARY);
+    String[] docPath =  getParameterValues(activityParams, UIDocActivity.DOCPATH);
     Boolean[] isSymlink = null;
     String[] isSymlinkParams = getParameterValues(activityParams, UIDocActivity.IS_SYMLINK);
     if(isSymlinkParams != null) {
@@ -784,7 +812,8 @@ public class FileUIActivity extends BaseUIActivity{
                     .setDocTitle(getValueFromArray(i, docTitle))
                     .setDocVersion(getValueFromArray(i, docVersion))
                     .setDocSummary(getValueFromArray(i, docSummary))
-                    .setSymlink(getValueFromArray(i, isSymlink));
+                    .setSymlink(getValueFromArray(i, isSymlink))
+                    .setDocPath(getValueFromArray(i,docPath));
 
       Node contentNode = NodeLocation.getNodeByLocation(fileAttachment.getNodeLocation());
       if (contentNode != null) {

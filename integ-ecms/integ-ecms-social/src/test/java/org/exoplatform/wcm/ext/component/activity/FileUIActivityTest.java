@@ -141,4 +141,47 @@ public class FileUIActivityTest {
     assertEquals("FILE1_URI", fileUIActivity.getDocFilePath(0));
     assertEquals("'Managed Sites': 'SITES_URI','intranet': 'INTRANET_URI'", fileUIActivity.getDocFileBreadCrumb(0));
   }
+  
+  @Test
+  public void testSetUIActivityData() throws Exception {
+    ConversationState conversationState = new ConversationState(new Identity("root"));
+    ConversationState.setCurrent(conversationState);
+
+    Map<String, String> activityParameters = new HashMap<>();
+    activityParameters.put("REPOSITORY", "repository");
+    activityParameters.put("WORKSPACE", "collaboration");
+    activityParameters.put("DOCPATH", "/sites/intranet/web contents/site artifacts/announcements/test1.txt");
+    
+    NodeLocation nodeLocationWithoutUUID = new NodeLocation("repository", "collaboration","/sites/intranet/web contents/site artifacts/announcements/test1.txt",null );
+    NodeLocation nodeLocationWithUUID = new NodeLocation("repository", "collaboration","/sites/intranet/web contents/site artifacts/announcements/test1.txt","c036fb997f0001016364ca764f61b4d1" );
+
+    Node file1 = mock(Node.class);
+    Node intranetNode = mock(Node.class);
+    Node sitesNode = mock(Node.class);
+    Node rootNode = mock(Node.class);
+
+    when(file1.getName()).thenReturn("test1.txt");
+    when(file1.getPath()).thenReturn("/sites/intranet/web contents/site artifacts/announcements/test1.txt");
+    when(file1.getParent()).thenReturn(intranetNode);
+    when(file1.getUUID()).thenReturn("c036fb997f0001016364ca764f61b4d1");
+
+    PowerMockito.mockStatic(NodeLocation.class);
+    PowerMockito.when(NodeLocation.getNodeByLocation(nodeLocationWithoutUUID)).thenReturn(file1);
+    PowerMockito.when(NodeLocation.getNodeByLocation(nodeLocationWithUUID)).thenReturn(file1);
+
+    FileUIActivity fileUIActivity = Mockito.spy(new FileUIActivity());
+
+    DriveData driveData = new DriveData();
+    driveData.setWorkspace("collboration");
+
+    TrashService trashService = Mockito.mock(TrashService.class);
+    Mockito.doReturn(trashService).when(fileUIActivity).getApplicationComponent(Mockito.eq(TrashService.class));   
+    Mockito.doReturn(driveData).when(fileUIActivity).getDocDrive(0);
+    Mockito.when(trashService.isInTrash(file1)).thenReturn(false);
+
+    fileUIActivity.setUIActivityData(activityParameters);
+
+    assertEquals(1,fileUIActivity.getFilesCount());
+    
+  }
 }
