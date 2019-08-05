@@ -16,6 +16,9 @@
 *.sar
 *.class
 
+# Npm
+node_modules/
+
 # Maven 
 target/
 pom.xml.versionsBackup

@@ -21,6 +21,7 @@
     <module>integ-social</module>
     <module>integ-search-service</module>
     <module>integ-search-portlet</module>
+    <module>integ-news</module>
   </modules>
   <scm>
     <connection>scm:git:git://github.com/exoplatform/integration.git</connection>
@@ -113,6 +114,23 @@
       <dependency>
         <groupId>org.exoplatform.integration</groupId>
         <artifactId>integ-search-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-news-webapp</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-news-webapp</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-news-service</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
