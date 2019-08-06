@@ -690,8 +690,9 @@ window.initSearch = function initSearch() {
         if(0!=SEARCH_TYPES.join().length && 0!=SEARCH_SETTING.searchTypes.join().length) { //there're content types to show
           var types = getUrlParam("types"); //get the requested content types from url
           if(types) {
+          var typesArray = types.split(','); // create an Array of types and split them on comma
             $.each($(":checkbox[name='contentType']"), function(){
-              $(this).attr('checked', -1!=types.indexOf(this.value) || -1!=types.indexOf("all")); //check the according options
+              $(this).attr('checked', typesArray.includes(this.value) || typesArray.includes("all")); //check the according options
             });
           } else {
             $(":checkbox[name='contentType']").attr("checked", true); //check all types by default
