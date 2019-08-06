@@ -13,11 +13,15 @@ public class News {
 
   private String  author;
 
+  private String  updater;
+
   private String  uploadId;
 
   private byte[]  illustration;
 
   private Date    illustrationUpdateDate;
+
+  private String  illustrationURL;
 
   private Date    creationDate;
 
@@ -67,6 +71,14 @@ public class News {
     this.author = author;
   }
 
+  public String getUpdater() {
+    return updater;
+  }
+
+  public void setUpdater(String updater) {
+    this.updater = updater;
+  }
+
   public String getUploadId() {
     return uploadId;
   }
@@ -89,6 +101,14 @@ public class News {
 
   public void setIllustrationUpdateDate(Date illustrationUpdateDate) {
     this.illustrationUpdateDate = illustrationUpdateDate;
+  }
+
+  public String getIllustrationURL() {
+    return illustrationURL;
+  }
+
+  public void setIllustrationURL(String illustrationURL) {
+    this.illustrationURL = illustrationURL;
   }
 
   public Date getCreationDate() {

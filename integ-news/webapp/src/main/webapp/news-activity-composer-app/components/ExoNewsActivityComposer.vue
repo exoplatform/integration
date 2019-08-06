@@ -1,5 +1,5 @@
 <template>
-  <div id="newsActivityComposer" :class="newsFormExtendedClass" class="uiBox">
+  <div id="newsActivityComposer" :class="newsFormExtendedClass" class="uiBox newsComposer">
     <p v-show="extendedForm" class="createNews">{{ $t("activity.composer.news.createNews") }}</p>
     <form id="newsForm" :class="newsFormExtendedClass" class="newsForm" @submit.prevent="postNews">
 

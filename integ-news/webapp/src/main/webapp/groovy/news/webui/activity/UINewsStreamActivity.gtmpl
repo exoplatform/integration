@@ -21,7 +21,7 @@
   def streamOwner = activity.getStreamOwner();
 %>
 
-<% if (activity) { //process if not null
+<% if (activity && news) { //process if not null
 
   def jsManager = pcontext.getJavascriptManager().require("SHARED/uiForm");
 
@@ -39,7 +39,7 @@
   def labelHideAllComments = _ctx.appRes("UIActivity.label.Hide_All_Comments");
   def labelShowPreviousComments = _ctx.appRes("UIActivity.label.Show_Previous_Comments");
 
-  def labelReadMore = _ctx.appRes("UIActivity.label.ReadMore");
+  def labelReadMore = _ctx.appRes("activity.news.readMore");
 
   def labelOnePersonLikeThis=_ctx.appRes("UIActivity.label.One_Person_Like_This");
   def labelTwoPersonLikeThis=_ctx.appRes("UIActivity.label.Two_Person_Like_This");
