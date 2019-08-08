@@ -11,7 +11,7 @@
   <name>eXo PLF:: Integration - News service</name>
 
   <properties>
-    <exo.test.coverage.ratio>0.26</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0.36</exo.test.coverage.ratio>
   </properties>
 
   <dependencies>

@@ -88,6 +88,9 @@
     <depends>
       <module>extensionRegistry</module>
     </depends>
+    <depends>
+      <module>suggester</module>
+    </depends>
   </module>
 
 </gatein-resources>

@@ -1,4 +1,4 @@
-<%
+    <%
 def requestContext = _ctx.getRequestContext();
 def jsManager = requestContext.getJavascriptManager();
 if (uicomponent.isDisplayed()) {

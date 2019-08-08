@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show" class="modal-mask uiPopupWrapper">
+  <div v-show="show" ref="modal" class="modal-mask uiPopupWrapper">
     <div class="uiPopup modal-content">
       <div class="popupHeader">
         <a class="uiIconClose pull-right" @click="$emit('close')"></a>
@@ -28,6 +28,14 @@ export default {
   watch: {
     show() {
       if (this.show) {
+        const escapeKeyCode = 27;
+        document.onkeyup = evt => {
+          evt = evt || window.event;
+          if (evt.keyCode === escapeKeyCode) {
+            this.$emit('close');
+          }
+        };
+
         //this is workaround to fix chrome bug
         //popup is blurring when using translate() and the size is odd
         Vue.nextTick(function() {
