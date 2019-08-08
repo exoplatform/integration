@@ -116,6 +116,41 @@ public class NewsServiceImpl implements NewsService {
   }
 
   /**
+   * Update a news
+   * If the uploadId of the news is null, the illustration is not updated.
+   * If the uploadId of the news is empty, the illustration is removed (if any).
+   * @param news The new news
+   * @throws Exception
+   */
+  public void updateNews(News news) throws Exception {
+    SessionProvider sessionProvider = sessionProviderService.getSystemSessionProvider(null);
+    Session session = sessionProvider.getSession(repositoryService.getCurrentRepository().getConfiguration().getDefaultWorkspaceName(),
+            repositoryService.getCurrentRepository());
+
+    try {
+      Node newsNode = session.getNodeByUUID(news.getId());
+      if(newsNode != null) {
+        newsNode.setProperty("exo:title", news.getTitle());
+        newsNode.setProperty("exo:summary", news.getSummary());
+        newsNode.setProperty("exo:body", news.getBody());
+        newsNode.setProperty("exo:dateModified", Calendar.getInstance());
+
+        if(StringUtils.isNotEmpty(news.getUploadId())) {
+          attachIllustration(newsNode, news.getUploadId());
+        } else if("".equals(news.getUploadId())) {
+          removeIllustration(newsNode);
+        }
+
+        newsNode.save();
+      }
+    } finally {
+      if(session != null) {
+        session.logout();
+      }
+    }
+  }
+
+  /**
    * Create the exo:news node in CMS
    * @param news
    * @return
@@ -128,11 +163,14 @@ public class NewsServiceImpl implements NewsService {
 
     Node spaceNewsRootNode = getSpaceNewsRootNode(news, session);
 
-    Calendar creationCalendar = Calendar.getInstance();
+    Calendar now = Calendar.getInstance();
+    Calendar creationCalendar;
     if(news.getCreationDate() != null) {
+      creationCalendar = Calendar.getInstance();
       creationCalendar.setTime(news.getCreationDate());
     } else {
-      news.setCreationDate(creationCalendar.getTime());
+      creationCalendar = now;
+      news.setCreationDate(now.getTime());
     }
 
     Node newsFolderNode = dataDistributionType.getOrCreateDataNode(spaceNewsRootNode, getNodeRelativePath(creationCalendar));
@@ -143,10 +181,12 @@ public class NewsServiceImpl implements NewsService {
     newsNode.setProperty("exo:body", news.getBody());
     newsNode.setProperty("exo:author", news.getAuthor());
     newsNode.setProperty("exo:dateCreated", creationCalendar);
-    Calendar updateCalendar = Calendar.getInstance();
+    Calendar updateCalendar;
     if(news.getUpdateDate() != null) {
+      updateCalendar = Calendar.getInstance();
       updateCalendar.setTime(news.getUpdateDate());
     } else {
+      updateCalendar = now;
       news.setUpdateDate(updateCalendar.getTime());
     }
     newsNode.setProperty("exo:dateModified", updateCalendar);
@@ -193,9 +233,20 @@ public class NewsServiceImpl implements NewsService {
       throw new Exception("Cannot attach uploaded file " + uploadId + ", it may not exist");
     }
 
-    Node node = newsNode.addNode("illustration", "nt:file");
-    node.setProperty("exo:title", uploadedResource.getFileName());
-    Node resourceNode = node.addNode("jcr:content", "nt:resource");
+    boolean illustrationExists = newsNode.hasNode("illustration");
+    Node illustrationNode;
+    if(illustrationExists) {
+      illustrationNode = newsNode.getNode("illustration");
+    } else {
+      illustrationNode = newsNode.addNode("illustration", "nt:file");
+    }
+    illustrationNode.setProperty("exo:title", uploadedResource.getFileName());
+    Node resourceNode;
+    if(illustrationExists) {
+      resourceNode = illustrationNode.getNode("jcr:content");
+    } else {
+      resourceNode = illustrationNode.addNode("jcr:content", "nt:resource");
+    }
     resourceNode.setProperty("jcr:mimeType", uploadedResource.getMimeType());
     resourceNode.setProperty("jcr:lastModified", Calendar.getInstance());
     String fileDiskLocation = uploadedResource.getStoreLocation();
@@ -205,6 +256,13 @@ public class NewsServiceImpl implements NewsService {
     }
 
     uploadService.removeUploadResource(uploadId);
+  }
+
+  private void removeIllustration(Node newsNode) throws Exception {
+    if(newsNode.hasNode("illustration")) {
+      newsNode.getNode("illustration").remove();
+      newsNode.save();
+    }
   }
 
   private Node getSpaceNewsRootNode(News news, Session session) throws RepositoryException {
@@ -240,6 +298,10 @@ public class NewsServiceImpl implements NewsService {
     news.setTitle(node.getProperty("exo:title").getString());
     news.setSummary(node.getProperty("exo:summary").getString());
     news.setBody(node.getProperty("exo:body").getString());
+    news.setAuthor(node.getProperty("exo:author").getString());
+    news.setCreationDate(node.getProperty("exo:dateCreated").getDate().getTime());
+    news.setUpdater(node.getProperty("exo:lastModifier").getString());
+    news.setUpdateDate(node.getProperty("exo:dateModified").getDate().getTime());
     news.setPinned(node.getProperty("exo:pinned").getBoolean());
     news.setSpaceId(node.getProperty("exo:spaceId").getString());
 

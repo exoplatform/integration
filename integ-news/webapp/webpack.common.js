@@ -7,7 +7,8 @@ let config = {
   // can use multiple entry
   entry: {
     newsActivityComposer :'./src/main/webapp/news-activity-composer-app/main.js',
-    newsShareActivity :'./src/main/webapp/news-share-activity-app/main.js'
+    newsShareActivity :'./src/main/webapp/news-share-activity-app/main.js',
+    newsActivityEditComposer :'./src/main/webapp/news-activity-edit-composer-app/main.js'
   },
   module: {
     rules: [
