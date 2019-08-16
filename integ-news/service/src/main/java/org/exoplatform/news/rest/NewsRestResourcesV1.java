@@ -9,17 +9,27 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.news.NewsService;
 import org.exoplatform.news.model.News;
+import org.exoplatform.news.model.SharedNews;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
+import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.swagger.annotations.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Path("v1/news")
 @Api(tags = "v1/news", value = "v1/news", description = "Managing news")
@@ -33,10 +43,13 @@ public class NewsRestResourcesV1 implements ResourceContainer {
 
   private IdentityManager identityManager;
 
-  public NewsRestResourcesV1(NewsService newsService, SpaceService spaceService, IdentityManager identityManager) {
+  private ActivityManager activityManager;
+
+  public NewsRestResourcesV1(NewsService newsService, SpaceService spaceService, IdentityManager identityManager, ActivityManager activityManager) {
     this.newsService = newsService;
     this.spaceService = spaceService;
     this.identityManager = identityManager;
+    this.activityManager=activityManager;
   }
 
   @POST
@@ -160,6 +173,60 @@ public class NewsRestResourcesV1 implements ResourceContainer {
       return Response.ok().build();
     } catch (Exception e) {
       LOG.error("Error when getting the news " + id, e);
+      return Response.serverError().build();
+    }
+  }
+
+  @POST
+  @Path("{id}/share")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @ApiOperation(value = "share a news", httpMethod = "POST", response = Response.class, notes = "This shares a news to a list of spaces if the authenticated user is a member of these spaces or a spaces super manager.")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "News shared"),
+          @ApiResponse(code = 400, message = "Invalid query input"),
+          @ApiResponse(code = 401, message = "User not authorized to share the news"),
+          @ApiResponse (code = 404, message = "News not found"),
+          @ApiResponse(code = 500, message = "Internal server error") })
+  public Response shareNews(@Context HttpServletRequest request,
+                            @ApiParam(value = "News id", required = true) @PathParam("id") String id,
+                            @ApiParam(value = "Shared News", required = true) SharedNews sharedNews) {
+
+    try {
+      News news = newsService.getNews(id);
+      if (news == null) {
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+      sharedNews.setNewsId(id);
+
+      if(sharedNews == null || sharedNews.getSpacesNames() == null || sharedNews.getSpacesNames().isEmpty()) {
+        return Response.status(Response.Status.BAD_REQUEST).build();
+      }
+
+      String authenticatedUser = request.getRemoteUser();
+
+      List<Space> spaces = new ArrayList<>();
+
+      boolean superManager = spaceService.isSuperManager(authenticatedUser);
+      for(String spaceName : sharedNews.getSpacesNames()) {
+        Space space = spaceService.getSpaceByPrettyName(spaceName);
+        if (space == null) {
+          return Response.status(Response.Status.BAD_REQUEST).build();
+        } else {
+          if(!superManager && !spaceService.isMember(space, authenticatedUser)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+          } else {
+            spaces.add(space);
+          }
+        }
+      }
+
+      sharedNews.setPoster(authenticatedUser);
+
+      newsService.shareNews(sharedNews, spaces);
+
+      return Response.ok().build();
+    } catch (Exception e) {
+      LOG.error("Error when sharing the news " + id, e);
       return Response.serverError().build();
     }
   }

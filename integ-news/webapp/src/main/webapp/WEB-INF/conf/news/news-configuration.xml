@@ -81,6 +81,22 @@
         </object-param>
       </init-params>
     </component-plugin>
+    <component-plugin>
+      <name>add.action</name>
+      <set-method>registerUIExtensionPlugin</set-method>
+      <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+      <init-params>
+        <object-param>
+          <name>Shared News Activity</name>
+          <object type="org.exoplatform.social.webui.activity.UIActivityExtension">
+            <field name="type"><string>org.exoplatform.social.webui.activity.BaseUIActivity</string></field>
+            <field name="name"><string>shared_news</string></field>
+            <field name="component"><string>org.exoplatform.news.webui.activity.UISharedNewsActivity</string></field>
+            <field name="activityBuiderClass"><string>org.exoplatform.news.webui.activity.UINewsActivityBuilder</string></field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
   </external-component-plugins>
 
   <external-component-plugins>

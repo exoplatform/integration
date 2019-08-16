@@ -22,6 +22,7 @@
 %>
 
 <% if (activity && news) { //process if not null
+  def sharedActivityId = uicomponent.getSharedActivityId();
 
   def jsManager = pcontext.getJavascriptManager().require("SHARED/uiForm");
 
@@ -58,6 +59,7 @@
   def unlikeActivityAction = uicomponent.event("LikeActivity", "false");
 
   def activityLink = uicomponent.getActivityPermalink(activity.id);
+  def sharedActivityLink = uicomponent.getActivityPermalink(sharedActivityId);
 
   def commentList = uicomponent.getComments();
   int allCommentSize = uicomponent.getAllCommentSize();
@@ -227,7 +229,7 @@
   }
 %>
 
-<div class="activityStream uiNewsActivity" id="activityContainer${activity.id}">
+<div class="activityStream uiNewsActivity uiSharedNewsActivity" id="activityContainer${activity.id}">
   <% uiform.begin() %>
   <div class="activityTimeLine pull-left">
 	<div class="activityAvatar avatarCircle">
@@ -288,7 +290,7 @@
 					<%}%>
 				</div>
 				<div class="dataInfor">
-					<span class="dateTime"><i class="uiIconClock  uiIconLightGray"></i>&nbsp;<a id="EditActivityTime${activity.id}" rel="tooltip" data-placement="bottom" href="<%=uicomponent.getActivityPermalink(activity.id)%>" <% if(activity.postedTime != activity.updated.getTime() ){%> title="$postedTimeTooltip"> $activityUpdatedTime <%} else {%> >$activityPostedTime <%}%></a></span>
+					<span class="dateTime"><i class="uiIconClock  uiIconLightGray"></i>&nbsp;<a id="EditActivityTime${activity.id}" rel="tooltip" data-placement="bottom" href="$activityLink" <% if(activity.postedTime != activity.updated.getTime() ){%> title="$postedTimeTooltip"> $activityUpdatedTime <%} else {%> >$activityPostedTime <%}%></a></span>
 
 					<%
 					if( activityDeletable ) {
@@ -314,31 +316,33 @@
 
 				</div>
 			</div><!--end heading-->
-			<div class="description">
-                <img src="$illustrationURL" class="newsImage" alt="News"/>
-                <div class="newsDetails">
-                    <div class="newsTitle">
-                        <a href="$activityLink" id="titleId${activity.id}">$newsTitle</a>
-                    </div>
-                    <div class="newsBody">
-                         <%
-                           if (newsSummary){
-                         %>
-                            $newsSummary
-                         <%
-                          } else {
-                          %>
-                             $newsBody
-                          <%
-                             }
-                          %>
-                        <% if(newsBody.length() > 300) { %>
-                            <span class="readMore"><a href="$activityLink" id="seeMoreId${activity.id}">${labelReadMore}</a></span>
-                        <% } %>
-                    </div>
-                </div>
-		        <div class="newsRibbon"></div>
-            </div>
+      <div class="description">
+        <div class="sharedNewsTitle">${activity.title}</div>
+        <div class="sharedNewsDetails">
+          <img src="$illustrationURL" class="newsImage" alt="News"/>
+          <div class="newsDetails">
+              <div class="newsTitle">
+                  <a href="$sharedActivityLink" id="titleId${activity.id}">$newsTitle</a>
+              </div>
+              <div class="newsBody">
+                   <%
+                     if (newsSummary){
+                   %>
+                      $newsSummary
+                   <%
+                    } else {
+                    %>
+                       $newsBody
+                    <%
+                       }
+                    %>
+                  <% if(newsBody.length() > 300) { %>
+                      <span class="readMore"><a href="$sharedActivityLink" id="seeMoreId${activity.id}">${labelReadMore}</a></span>
+                  <% } %>
+              </div>
+          </div>
+        </div>
+      </div>
 			<div class="actionBar clearfix ">
 				 <% def toggleDisplayCommentAction = uicomponent.event('ToggleDisplayCommentForm', null, false);
 								 def commentLink = "";

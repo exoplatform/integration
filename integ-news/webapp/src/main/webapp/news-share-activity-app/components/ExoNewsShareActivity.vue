@@ -1,26 +1,32 @@
 <template>
   <div id="newsShareActivity">
+    <transition name="fade">
+      <div v-show="showMessage" :class="'alert-' + messageType" class="alert">
+        <i :class="messageIconClass"></i> <span v-html="message"></span>
+      </div>
+    </transition>
+
     <a id="newsShareButton" :data-original-title="$t('activity.news.shareNews.share')" class="btn"
        rel="tooltip"
        data-placement="bottom"
-       @click="showShareNews = true">
+       @click="showShareNewsPopup = true">
       <i class="uiIconShare"></i>
     </a>
-    <exo-modal :show="showShareNews" :title="$t('activity.news.shareNews.popupTitle')" @close="closeShareNews">
+    <exo-modal :show="showShareNewsPopup" :title="$t('activity.news.shareNews.popupTitle')" @close="closeShareNewsPopup">
       <div class="newsShareForm">
-        <label class="newsTitle"> {{ newsTitle }}</label>
+        <label class="newsTitle"> {{ newsTitleUnescaped }}</label>
         <div class="shareSpaces">
-          <label class="newsShareWith">{{ $t('activity.news.shareNews.sharewith') }} :</label>
+          <label class="newsShareWith">{{ $t('activity.news.shareNews.shareWith') }} :</label>
           <div class="control-group">
             <div class="controls">
-              <space-selector v-model="spaces" :source-providers="['exo:share-spaces']" />
+              <exo-suggester v-model="spaces" :options="suggesterOptions" :source-providers="[findSpaces]" />
             </div>
           </div>
         </div>
         <textarea v-model="description" :placeholder="$t('activity.news.shareNews.sharedActivityPlaceholder')" class="newsShareDescription"></textarea>
         <div class="shareButtons">
-          <button :disabled="shareDisabled" class="btn btn-primary">{{ $t('activity.news.shareNews.share') }}</button>
-          <button class="btn" @click="closeShareNews">{{ $t('activity.news.shareNews.cancel') }}</button>
+          <button :disabled="shareDisabled" class="btn btn-primary" @click="shareNews">{{ $t('activity.news.shareNews.share') }}</button>
+          <button class="btn" @click="closeShareNewsPopup">{{ $t('activity.news.shareNews.cancel') }}</button>
         </div>
       </div>
     </exo-modal>
@@ -28,40 +34,114 @@
 </template>
 
 <script>
-import ExoModal from './ExoModal.vue';
-import spaceSelector from './ExoShareNewsSpaceSelector.vue';
+import * as shareNewsServices from '../newsShareActivityServices.js';
 
 export default {
-  components: {
-    'exo-modal': ExoModal,
-    'space-selector': spaceSelector,
+  props: {
+    activityId: {
+      type: String,
+      required: true
+    },
+    newsId: {
+      type: String,
+      required: true
+    },
+    newsTitle: {
+      type: String,
+      required: true
+    }
   },
   data() {
+    const self = this;
     return {
-      showShareNews: false,
+      showShareNewsPopup: false,
       spaces: [],
+      spacesItems: [],
       description: '',
-      newsTitle: ''
+      message: '',
+      showMessage: false,
+      messageType: 'success',
+      messageDisplayTime: 5000,
+      suggesterOptions: {
+        valueField: 'value',
+        labelField: 'text',
+        searchField: ['text'],
+        renderMenuItem: function(item, escape) {
+          // workaround to keep spaces labels to display in the success message without fetching them on server
+          self.spacesItems[item.value] = item.text;
+
+          let avatar = item.avatarUrl;
+          if (avatar == null) {
+            avatar = '/eXoSkin/skin/images/system/SpaceAvtDefault.png';
+          }
+          if(!item.text) {
+            item.text = item.value;
+          }
+          return `<div class="optionItem" data-value="${item.text}"><div class="avatarSmall optionAvatar"><img src="${avatar}"></div><div class="optionName">${escape(item.text)}</div></div>`;
+        },
+      }
     };
   },
   computed:{
-    shareDisabled: function(){
+    newsTitleUnescaped: function() {
+      return this.newsTitle.replace(/&#39;/g, '\'');
+    },
+    shareDisabled: function() {
       return !this.spaces || this.spaces.filter(part => part !== '').length === 0;
+    },
+    messageIconClass: function() {
+      return `uiIcon${this.messageType.charAt(0).toUpperCase()}${this.messageType.slice(1)}`;
+    }
+  },
+  watch: {
+    showMessage(newValue) {
+      if(newValue) {
+        setTimeout(() => {this.showMessage = false;}, this.messageDisplayTime);
+      }
     }
   },
   mounted(){
-    this.initNewsTitle();
     $('[rel="tooltip"]').tooltip();
   },
   methods: {
-    closeShareNews: function(){
-      this.showShareNews = false;
+    shareNews: function() {
+      shareNewsServices.shareNews(this.newsId, this.activityId, this.description, this.spaces)
+        .then(() => {
+          const escapedNewsTitle = this.escapeHTML(this.newsTitleUnescaped);
+          let successMessage = this.$t('activity.news.shareNews.message.success').replace('{0}', `<b>${escapedNewsTitle}</b>`);
+          successMessage += '<ul>';
+          this.spaces.forEach(space => successMessage += `<li>${this.spacesItems[space]}</li>`);
+          successMessage += '</ul>';
+          this.message = successMessage;
+          this.messageType = 'success';
+          this.showMessage = true;
+        })
+        .then(() => this.closeShareNewsPopup())
+        .catch(() => {
+          const escapedNewsTitle = this.escapeHTML(this.newsTitleUnescaped);
+          this.message = this.$t('activity.news.shareNews.message.error').replace('{0}', `<b>${escapedNewsTitle}</b>`);
+          this.messageType = 'error';
+          this.showMessage = true;
+        });
+    },
+    findSpaces: function(query, callback) {
+      if (!query || !query.length) {
+        callback([]);
+      } else {
+        shareNewsServices.findUserSpaces(query).then(spaces => {
+          if(spaces) {
+            callback(spaces);
+          }
+        });
+      }
+    },
+    closeShareNewsPopup: function(){
+      this.showShareNewsPopup = false;
       this.spaces = [];
       this.description = '';
-
     },
-    initNewsTitle: function(){
-      this.newsTitle = $('.newsTitle a').text();
+    escapeHTML: function(html) {
+      return document.createElement('div').appendChild(document.createTextNode(html)).parentNode.innerHTML;
     }
   }
 };

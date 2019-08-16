@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
@@ -15,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.news.model.News;
+import org.exoplatform.news.model.SharedNews;
 import org.exoplatform.services.cms.BasePath;
 import org.exoplatform.services.cms.impl.Utils;
 import org.exoplatform.services.jcr.RepositoryService;
@@ -142,6 +144,49 @@ public class NewsServiceImpl implements NewsService {
         }
 
         newsNode.save();
+      }
+    } finally {
+      if(session != null) {
+        session.logout();
+      }
+    }
+  }
+
+  /**
+   * Share a news to a list of spaces
+   * @param sharedNews Data of the shared news
+   * @param spaces List of spaces to share the news with
+   */
+  public void shareNews(SharedNews sharedNews, List<Space> spaces) throws Exception {
+    SessionProvider sessionProvider = sessionProviderService.getSystemSessionProvider(null);
+    Session session = sessionProvider.getSession(repositoryService.getCurrentRepository().getConfiguration().getDefaultWorkspaceName(),
+            repositoryService.getCurrentRepository());
+
+    try {
+      Identity poster = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, sharedNews.getPoster(), false);
+      for (Space space : spaces) {
+        // update news node permissions
+        Node newsNode = session.getNodeByUUID(sharedNews.getNewsId());
+        if (newsNode != null) {
+          if (newsNode.canAddMixin("exo:privilegeable")) {
+            newsNode.addMixin("exo:privilegeable");
+          }
+          ((ExtendedNode) newsNode).setPermission("*:" + space.getGroupId(), PermissionType.ALL);
+          newsNode.save();
+        }
+
+        // create activity
+        Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
+        ExoSocialActivity activity = new ExoSocialActivityImpl();
+        activity.setTitle(sharedNews.getDescription());
+        activity.setBody("");
+        activity.setType("shared_news");
+        activity.setUserId(poster.getId());
+        Map<String, String> templateParams = new HashMap<>();
+        templateParams.put("newsId", sharedNews.getNewsId());
+        templateParams.put("sharedActivityId", sharedNews.getActivityId());
+        activity.setTemplateParams(templateParams);
+        activityManager.saveActivityNoReturn(spaceIdentity, activity);
       }
     } finally {
       if(session != null) {
