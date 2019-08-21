@@ -30,9 +30,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.util.UriEncoder;
-
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
@@ -251,7 +248,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
     // in all body
     for (String url : urlToReplaces.keySet()) {
       while (body.contains(url)) {
-        body = body.replace(url, UriEncoder.encode(urlToReplaces.get(url)));
+        body = body.replace(url, urlToReplaces.get(url));
       }
     }
     return body;

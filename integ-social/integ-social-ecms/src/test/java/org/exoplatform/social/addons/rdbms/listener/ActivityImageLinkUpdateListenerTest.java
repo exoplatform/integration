@@ -23,8 +23,6 @@ import java.text.DecimalFormat;
 import java.time.YearMonth;
 import java.util.*;
 
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.util.UriEncoder;
-
 import org.exoplatform.commons.testing.BaseCommonsTestCase;
 import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
@@ -37,7 +35,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityRegistry;
-import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -111,35 +108,35 @@ public class ActivityImageLinkUpdateListenerTest extends BaseCommonsTestCase {
     super.tearDown();
   }
 
-  public void testShouldUpdateImagesLinksWhenImageEmbeddedInBody() {
+  public void testShouldUpdateImagesLinksWhenImageEmbeddedInBody() throws Exception {
     String uploadId = String.valueOf((long) (Math.random() * 100000L));
     String body = "<img src=\"http://localhost:8080/test?uploadId=" + uploadId + "\" />";
 
     ExoSocialActivity activity = createActivityWithEmbeddedImage(rootIdentity, body, uploadId, null);
 
-    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml") + "\" />", activity.getBody());
+    assertEquals("<img src=\"" + "/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml" + "\" />", activity.getBody());
     activity = activityManager.getActivity(activity.getId());
-    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml") + "\" />", activity.getBody());
+    assertEquals("<img src=\"" + "/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml" + "\" />", activity.getBody());
     assertEquals(0, uploadService.getUploadResources().size());
   }
 
-  public void testShouldUpdateImagesLinksWhenImageEmbeddedWithoutDomainInBody() {
+  public void testShouldUpdateImagesLinksWhenImageEmbeddedWithoutDomainInBody() throws Exception {
     String uploadId = String.valueOf((long) (Math.random() * 100000L));
     String body = "<img src=\"/test?uploadId=" + uploadId + "\" />";
 
     ExoSocialActivity activity = createActivityWithEmbeddedImage(rootIdentity, body, uploadId, null);
 
-    assertEquals("<img src=\""+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"\" />", activity.getBody());
+    assertEquals("<img src=\""+"/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml"+"\" />", activity.getBody());
     activity = activityManager.getActivity(activity.getId());
-    assertEquals("<img src=\""+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName") + ".xml\" />", activity.getBody());
+    assertEquals("<img src=\""+"/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+        + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName" + ".xml\" />", activity.getBody());
     assertEquals(0, uploadService.getUploadResources().size());
   }
 
-  public void testShouldUpdateImagesLinksWhenImageEmbeddedWithoutDomainInBodyAndFilesWithSameName() {
+  public void testShouldUpdateImagesLinksWhenImageEmbeddedWithoutDomainInBodyAndFilesWithSameName() throws Exception {
     String uploadId1 = String.valueOf((long) (Math.random() * 100000L));
     String body1 = "<img src=\"http://localhost:8080/test?uploadId=" + uploadId1 + "\" />";
     ExoSocialActivity activity1 = createActivityWithEmbeddedImage(rootIdentity, body1, uploadId1, null);
@@ -148,20 +145,20 @@ public class ActivityImageLinkUpdateListenerTest extends BaseCommonsTestCase {
     String body2 = "<img src=\"http://localhost:8080/test?uploadId=" + uploadId2 + "\" />";
     ExoSocialActivity activity2 = createActivityWithEmbeddedImage(rootIdentity, body2, uploadId2, null);
 
-    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml") + "\" />", activity1.getBody());
+    assertEquals("<img src=\"" + "/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml" + "\" />", activity1.getBody());
     activity1 = activityManager.getActivity(activity1.getId());
-    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml") + "\" />", activity1.getBody());
-    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName") + "%281%29.xml\" />", activity2.getBody());
+    assertEquals("<img src=\"" + "/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml" + "\" />", activity1.getBody());
+    assertEquals("<img src=\"" + "/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName" + "%281%29.xml\" />", activity2.getBody());
     activity2 = activityManager.getActivity(activity2.getId());
-    assertEquals("<img src=\"" + UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName") + "%281%29.xml\" />", activity2.getBody());
+    assertEquals("<img src=\"" + "/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName" + "%281%29.xml\" />", activity2.getBody());
     assertEquals(0, uploadService.getUploadResources().size());
   }
 
-  public void testShouldUpdateImagesLinksWhenImageEmbeddedInTemplateParam() {
+  public void testShouldUpdateImagesLinksWhenImageEmbeddedInTemplateParam() throws Exception {
     String uploadId = String.valueOf((long) (Math.random() * 100000L));
     String body = "body";
     Map<String, String> templateParams = new HashMap<>();
@@ -169,11 +166,11 @@ public class ActivityImageLinkUpdateListenerTest extends BaseCommonsTestCase {
 
     ExoSocialActivity activity = createActivityWithEmbeddedImage(rootIdentity, body, uploadId, templateParams);
 
-    assertEquals("<img src=\""+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"\" />", activity.getTemplateParams().get("comment"));
+    assertEquals("<img src=\""+"/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml"+"\" />", activity.getTemplateParams().get("comment"));
     activity = activityManager.getActivity(activity.getId());
-    assertEquals("<img src=\""+UriEncoder.encode("/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
-            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml")+"\" />", activity.getTemplateParams().get("comment"));
+    assertEquals("<img src=\""+"/portal/rest/jcr/repository/portal-test/Users/r___/ro___/roo___/root/Public/Activity Stream Documents/Pictures/"
+            + YearMonth.now().getYear() + "/" + monthFormat.format(YearMonth.now().getMonthValue()) + "/fileName.xml"+"\" />", activity.getTemplateParams().get("comment"));
     assertEquals(0, uploadService.getUploadResources().size());
   }
 
