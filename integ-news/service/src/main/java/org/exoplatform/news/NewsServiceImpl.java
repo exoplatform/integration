@@ -28,6 +28,7 @@ import org.exoplatform.services.jcr.ext.distribution.DataDistributionManager;
 import org.exoplatform.services.jcr.ext.distribution.DataDistributionMode;
 import org.exoplatform.services.jcr.ext.distribution.DataDistributionType;
 import org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator;
+import org.exoplatform.social.ckeditor.HTMLUploadImageProcessor;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -63,10 +64,12 @@ public class NewsServiceImpl implements NewsService {
 
   private UploadService uploadService;
 
+  private HTMLUploadImageProcessor imageProcessor;
+
   public NewsServiceImpl(RepositoryService repositoryService, SessionProviderService sessionProviderService,
                          NodeHierarchyCreator nodeHierarchyCreator, DataDistributionManager dataDistributionManager,
                          SpaceService spaceService, ActivityManager activityManager, IdentityManager identityManager,
-                         UploadService uploadService) {
+                         UploadService uploadService, HTMLUploadImageProcessor imageProcessor) {
     this.repositoryService = repositoryService;
     this.sessionProviderService = sessionProviderService;
     this.nodeHierarchyCreator = nodeHierarchyCreator;
@@ -74,6 +77,7 @@ public class NewsServiceImpl implements NewsService {
     this.activityManager = activityManager;
     this.identityManager = identityManager;
     this.uploadService = uploadService;
+    this.imageProcessor = imageProcessor;
     this.dataDistributionType = dataDistributionManager.getDataDistributionType(DataDistributionMode.NONE);
   }
 
@@ -134,7 +138,7 @@ public class NewsServiceImpl implements NewsService {
       if(newsNode != null) {
         newsNode.setProperty("exo:title", news.getTitle());
         newsNode.setProperty("exo:summary", news.getSummary());
-        newsNode.setProperty("exo:body", news.getBody());
+        newsNode.setProperty("exo:body", imageProcessor.processImages(news.getBody(), newsNode, "images"));
         newsNode.setProperty("exo:dateModified", Calendar.getInstance());
 
         if(StringUtils.isNotEmpty(news.getUploadId())) {
@@ -239,6 +243,9 @@ public class NewsServiceImpl implements NewsService {
     newsNode.setProperty("exo:spaceId", news.getSpaceId());
 
     spaceNewsRootNode.save();
+
+    newsNode.setProperty("exo:body", imageProcessor.processImages(news.getBody(), newsNode, "images"));
+    newsNode.save();
 
     if(StringUtils.isNotEmpty(news.getUploadId())) {
       attachIllustration(newsNode, news.getUploadId());

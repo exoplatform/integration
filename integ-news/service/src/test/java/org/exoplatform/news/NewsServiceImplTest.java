@@ -13,6 +13,7 @@ import org.exoplatform.services.jcr.config.RepositoryEntry;
 import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.distribution.DataDistributionManager;
+import org.exoplatform.social.ckeditor.HTMLUploadImageProcessor;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -76,6 +77,9 @@ public class NewsServiceImplTest {
   @Mock
   UploadService           uploadService;
 
+  @Mock
+  HTMLUploadImageProcessor imageProcessor;
+
   @Test
   public void shouldGetNodeWhenNewsExists() throws Exception {
     // Given
@@ -86,7 +90,8 @@ public class NewsServiceImplTest {
                                                   spaceService,
                                                   activityManager,
                                                   identityManager,
-                                                  uploadService);
+                                                  uploadService,
+                                                  imageProcessor);
     Node node = mock(Node.class);
     Property property = mock(Property.class);
     when(sessionProviderService.getSystemSessionProvider(any())).thenReturn(sessionProvider);
@@ -116,7 +121,8 @@ public class NewsServiceImplTest {
                                                   spaceService,
                                                   activityManager,
                                                   identityManager,
-                                                  uploadService);
+                                                  uploadService,
+                                                  imageProcessor);
     when(sessionProviderService.getSystemSessionProvider(any())).thenReturn(sessionProvider);
     when(sessionProviderService.getSessionProvider(any())).thenReturn(sessionProvider);
     when(repositoryService.getCurrentRepository()).thenReturn(repository);
@@ -142,7 +148,8 @@ public class NewsServiceImplTest {
             spaceService,
             activityManager,
             identityManager,
-            uploadService);
+            uploadService,
+            imageProcessor);
     Node newsNode = mock(Node.class);
     Node illustrationNode = mock(Node.class);
     Property property = mock(Property.class);
@@ -157,6 +164,7 @@ public class NewsServiceImplTest {
     when(newsNode.getNode(eq("illustration"))).thenReturn(illustrationNode);
     when(newsNode.hasNode(eq("illustration"))).thenReturn(true);
     when(property.getDate()).thenReturn(Calendar.getInstance());
+    when(imageProcessor.processImages(anyString(), any(), anyString())).thenAnswer(i -> i.getArguments()[0]);
 
     News news = new News();
     news.setTitle("Updated title");
@@ -185,7 +193,8 @@ public class NewsServiceImplTest {
             spaceService,
             activityManager,
             identityManager,
-            uploadService);
+            uploadService,
+            imageProcessor);
     Node newsNode = mock(Node.class);
     Node illustrationNode = mock(Node.class);
     Property property = mock(Property.class);
@@ -200,6 +209,7 @@ public class NewsServiceImplTest {
     when(newsNode.getNode(eq("illustration"))).thenReturn(illustrationNode);
     when(newsNode.hasNode(eq("illustration"))).thenReturn(true);
     when(property.getDate()).thenReturn(Calendar.getInstance());
+    when(imageProcessor.processImages(anyString(), any(), anyString())).thenAnswer(i -> i.getArguments()[0]);
 
     News news = new News();
     news.setTitle("Updated title");
@@ -228,7 +238,8 @@ public class NewsServiceImplTest {
             spaceService,
             activityManager,
             identityManager,
-            uploadService);
+            uploadService,
+            imageProcessor);
     ExtendedNode newsNode = mock(ExtendedNode.class);
     Property property = mock(Property.class);
     when(sessionProviderService.getSystemSessionProvider(any())).thenReturn(sessionProvider);
