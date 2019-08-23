@@ -242,6 +242,9 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   private Node getNode(DriveData driveData, String userId) throws Exception {
     Session session = getSession(driveData.getWorkspace());
+    if(session == null) {
+      return null;
+    }
     String driveHomePath = driveData.getHomePath();
     String drivePath = driveHomePath;
     if (driveData.getName().equals(personalDriveName)) {
@@ -253,7 +256,13 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   private Session getSession(String workspaceName) throws Exception {
     SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
+    if(sessionProvider == null) {
+      return null;
+    }
     ManageableRepository manageableRepository = repositoryService.getCurrentRepository();
+    if(manageableRepository == null) {
+      manageableRepository = repositoryService.getDefaultRepository();
+    }
     return sessionProvider.getSession(workspaceName, manageableRepository);
   }
 }

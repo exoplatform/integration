@@ -66,8 +66,9 @@ public class HTMLUploadImageProcessor {
    * Process the given HTML content, extract temporary uploaded files, store them in a permanent location
    * and replace URLs in the HTML content with the permanent URLs
    * @param content The HTML content
-   * @param parentNode The parent node to store the images
-   * @param imagesSubFolderPath The subpath of the folder under parentNode to store the images
+   * @param parentNode The parent node to store the images. This node must exist.
+   * @param imagesSubFolderPath The subpath of the folder under parentNode to store the images. If the nodes of this
+   *                            path do not exist, they are automatically created, only if there are images to store.
    * @return The updated HTML content with the permanent images URLs
    * @throws Exception
    */
@@ -75,14 +76,16 @@ public class HTMLUploadImageProcessor {
     if(StringUtils.isBlank(content)) {
       return content;
     }
-    if(parentNode == null) {
-      throw new IllegalArgumentException("Container node for uploaded processed images in HTML content must not be null");
-    }
+
     Set<String> processedUploads = new HashSet<>();
     Map<String, String> urlToReplaces = new HashMap<>();
     Matcher matcher = UPLOAD_ID_PATTERN.matcher(content);
     if (!matcher.find()) {
       return content;
+    }
+
+    if(parentNode == null) {
+      throw new IllegalArgumentException("Container node for uploaded processed images in HTML content must not be null");
     }
 
     Node imagesFolderNode = parentNode;
@@ -139,7 +142,7 @@ public class HTMLUploadImageProcessor {
         String fileDiskLocation = uploadedResource.getStoreLocation();
         try(InputStream inputStream = new FileInputStream(fileDiskLocation)) {
           resourceNode.setProperty("jcr:data", inputStream);
-          parentNode.save();
+          parentNode.getSession().save();
         }
 
         uploadService.removeUploadResource(uploadId);
