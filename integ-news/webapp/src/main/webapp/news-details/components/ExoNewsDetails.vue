@@ -85,7 +85,7 @@ export default {
   },
   data() {
     return {
-      showUpdateInfo: false
+      showUpdateInfo: this.news.postedDate !== this.news.updatedDate
     };
   }
 };

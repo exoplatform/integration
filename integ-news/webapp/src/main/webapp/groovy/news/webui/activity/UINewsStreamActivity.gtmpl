@@ -18,6 +18,7 @@
   def news = uicomponent.getNews();
   def activityDeletable = uicomponent.isActivityDeletable();
   def activityCommentAndLikable = uicomponent.isActivityCommentAndLikable();
+  def canPinNews = uicomponent.canPinNews();
   def streamOwner = activity.getStreamOwner();
 %>
 
@@ -114,13 +115,15 @@
     spaceGroupId: '$spaceGroupId',
     allCommentSize: '${allCommentSize}',
     commentFormFocused: '${uicomponent.isCommentFormFocused()}',
-    labels: $labels
+    labels: $labels,
+    nodeNewsId: '${news.id}'
   } """
 
   jsManager.require("SHARED/jquery", "jq")
            .require("SHARED/bts_tooltip").addScripts("jq('*[rel=\"tooltip\"]').tooltip();")
            .require("SHARED/social-ui-activity", "activity").addScripts("activity.onLoad($params);")
-           .require("SHARED/social-ui-activity", "activity").addScripts("activity.clickOnNews($activity.id);");
+           .require("SHARED/social-ui-activity", "activity").addScripts("activity.clickOnNews($activity.id);")
+           .require("SHARED/NewsActivity", "newsActivity").addScripts("newsActivity.onLoad($params);");
 
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
@@ -225,9 +228,42 @@
   } else {
     illustrationURL.append("/rest/v1/news/").append(news.id).append("/illustration");
   }
+  
+  def newsSpace = Utils.getSpaceService().getSpaceById(news.getSpaceId());
+  def visibility = newsSpace.getVisibility();
+  def registration = newsSpace.getRegistration();
+  def labelPin = _ctx.appRes("activity.news.label.Pin");
+  def captionPin = StringEscapeUtils.escapeHtml(_ctx.appRes("activity.news.label.PinNews"));
+  def labelToPinThisActivity = _ctx.appRes("activity.news.label.PinMessage").replace("{0}", newsTitle);
+  def labelCancelbutton = _ctx.appRes("activity.edit.news.cancel");
+  def labelConfirmButn = _ctx.appRes("activity.news.confirm");
+  def labelVisibility = _ctx.appRes("activity.news.label.visibility").replace("{0}", visibility + "");
+  def labelMembership = _ctx.appRes("activity.news.label.membership").replace("{0}", registration + "");
+  def labelConfirmPin =  _ctx.appRes("activity.news.label.confirmPin");
+  def messageSuccessPin =  _ctx.appRes("activity.news.label.pin.success");
+  def messageErrorPin =  _ctx.appRes("activity.news.label.pin.error");
 %>
 
-<div class="activityStream uiNewsActivity" id="activityContainer${activity.id}">
+<div class="activityStream uiNewsActivity" id="activityContainer${activity.id}" style="position: relative;">
+
+    <div id="confirmationPin${activity.id}" style="display: none;" class="confirmPinMessage">
+        <transition name="fade">
+            <div  class="alert-success alert">
+                <i class="uiIconSuccess"></i>
+                <span>$messageSuccessPin</span>
+            </div>
+        </transition>
+    </div>
+
+    <div id="errorPin${activity.id}" style="display: none;" class="confirmPinMessage">
+        <transition name="fade">
+            <div  class="alert-error alert">
+                <i class="uiIconError"></i>
+                <span>$messageErrorPin</span>
+            </div>
+        </transition>
+    </div>
+
   <% uiform.begin() %>
   <div class="activityTimeLine pull-left">
 	<div class="activityAvatar avatarCircle">
@@ -243,21 +279,27 @@
 				<span class="arrowLeft"></span>
                 <!--div class="pull-right"-->
 			    <%
-			  		if(activityDeletable ){
+			  		if(activityDeletable || canPinNews){
 			    %>
                     <div id="dropDownEditActivity${activity.id}" class="btn-group uiDropdownWithIcon actLink hidden-phone hidden-tablet">
                         <div class="dropdown-toggle" data-toggle="dropdown">
                             <i class="uiIconActivityAction uiIconLightGray">
                             </i>
                         </div>
-                        <ul class="dropdown-menu pull-right" role="menu">
-                            <% if (activityDeletable) {
-                            %>
-                            <li>
-                                <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton"  data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="controllDelete" id="DeleteActivityButton${activity.id}">${labelDelete}</a>
 
+                        <ul class="dropdown-menu pull-right" role="menu">
+                          <% if (canPinNews) { %>
+                        	  <li>
+                              <a href="javascript:void(0)" data-confirm="<span>${labelToPinThisActivity}<br/><span>${labelVisibility}<br/>${labelMembership}<br/></span>${labelConfirmPin}</span>" data-caption="$captionPin" data-close="$labelCancelbutton" data-ok="$labelConfirmButn" class="controllPin" id="PinActivity${activity.id}"" data-newsId="${news.id}">${labelPin}</a>
                             </li>
-                            <%}%>
+                          <%
+                            }
+                            if (activityDeletable) {
+                          %>
+                            <li>
+                              <a href="javascript:void(0)" data-confirm="$labelToDeleteThisActivity" data-caption="$captionConfirmation" data-close="$labelClosebutton" data-ok="$labelConfirmbutton"  data-delete="<%=uicomponent.event("DeleteActivity", uicomponent.getId(), "");%>" class="controllDelete" id="DeleteActivityButton${activity.id}">${labelDelete}</a>
+                            </li>
+                          <% } %>
                         </ul>
                     </div>
 			    <%

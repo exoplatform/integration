@@ -34,6 +34,9 @@
       <module>jquery</module>
       <as>$</as>
     </depends>
+    <depends>
+      <module>suggester</module>
+    </depends>
   </module>
 
   <module>
@@ -116,6 +119,31 @@
     </depends>
     <depends>
       <module>modalComponent</module>
+    </depends>
+  </module>
+  
+  <module>
+    <name>NewsActivity</name>
+    <script>
+      <path>/js/webui/UINewsActivity.js</path>
+    </script>
+    <depends>
+      <module>socialUtil</module>
+    </depends>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
+    </depends>
+  </module>
+
+  <module>
+    <name>Carousel</name>
+    <script>
+      <path>/js/Carousel.js</path>
+    </script>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
     </depends>
   </module>
 

@@ -40,7 +40,6 @@ if (activity && news) {
   def newsPostedDate = postedDate.format(mediumDateFormat);
   def updatedDate = LocalDateTime.ofInstant(news.updateDate.toInstant(), TimeZone.getDefault().toZoneId());
   def newsUpdatedDate = updatedDate.format(mediumDateFormat);
-  def showUpdateInfo = !postedDate.equals(updatedDate);
 
   def labelReadMore = _ctx.appRes("activity.news.readMore");
   def labelWrittenBy = _ctx.appRes("activity.news.writtenBy");
@@ -59,10 +58,9 @@ if (activity && news) {
     illustrationURL.append("/rest/v1/news/").append(news.id).append("/illustration");
   }
 
-  def newsTitleEscaped = news.title.replaceAll("'", "\\\\'");
-  def newsTitle = StringEscapeUtils.escapeHtml(news.title);
-  def newsSummary = StringEscapeUtils.escapeHtml(news.summary);
-  def newsBody = news.body;
+  def newsTitle = news.title.replaceAll("'", "\\\\'").replaceAll("</script", "</scr\\\\ipt");
+  def newsSummary = news.summary.replaceAll("`", "\\\\`").replaceAll("</script", "</scr\\\\ipt");
+  def newsBody = news.body.replaceAll("`", "\\\\`");
 
   def showEditButton = uicomponent.canEditNews(activity);
 
@@ -71,16 +69,16 @@ if (activity && news) {
     activityId: '${activity.id}',
     newsId: '${news.id}',
     news: {
-      title: '${newsTitleEscaped}',
-      summary: '${news.summary}',
-      body: `${news.body}`,
+      title: '${newsTitle}',
+      summary: `${newsSummary}`,
+      body: `${newsBody}`,
       illustrationURL: '${illustrationURL}',
       authorFullName: '${authorFullName}',
       authorProfileURL: '${authorProfileURL}',
-      postedDate: '${postedDate}',
+      postedDate: '${newsPostedDate}',
       updaterFullName: '${updaterFullName}',
       updaterProfileURL: '${updaterProfileURL}',
-      updatedDate: '${updatedDate}',
+      updatedDate: '${newsUpdatedDate}',
       titleLink: '${activityLink}'
     },
     showEditButton:'$showEditButton',

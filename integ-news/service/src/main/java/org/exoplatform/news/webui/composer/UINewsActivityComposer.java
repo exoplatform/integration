@@ -47,6 +47,10 @@ public class UINewsActivityComposer extends UIActivityComposer {
   private static final String REDACTOR_MEMBERSHIP_NAME = "redactor";
 
   private static final String MANAGER_MEMBERSHIP_NAME = "manager";
+  
+  private final static String PUBLISHER_MEMBERSHIP_NAME = "publisher";
+  
+  private final static String PLATFORM_WEB_CONTRIBUTORS_GROUP = "/platform/web-contributors";
 
   private IdentityManager identityManager;
 
@@ -75,7 +79,9 @@ public class UINewsActivityComposer extends UIActivityComposer {
     }
 
     org.exoplatform.services.security.Identity ownerIdentity = ConversationState.getCurrent().getIdentity();
-    return ownerIdentity.isMemberOf(space.getGroupId(), REDACTOR_MEMBERSHIP_NAME) || ownerIdentity.isMemberOf(space.getGroupId(), MANAGER_MEMBERSHIP_NAME);
+    return ownerIdentity.isMemberOf(space.getGroupId(), REDACTOR_MEMBERSHIP_NAME)
+            || ownerIdentity.isMemberOf(space.getGroupId(), MANAGER_MEMBERSHIP_NAME)
+            || ownerIdentity.isMemberOf(PLATFORM_WEB_CONTRIBUTORS_GROUP, PUBLISHER_MEMBERSHIP_NAME);
   }
 
   @Override

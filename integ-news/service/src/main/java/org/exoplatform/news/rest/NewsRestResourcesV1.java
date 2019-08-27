@@ -1,12 +1,26 @@
 package org.exoplatform.news.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
-
 import org.exoplatform.news.NewsService;
 import org.exoplatform.news.model.News;
 import org.exoplatform.news.model.SharedNews;
@@ -14,28 +28,32 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.swagger.annotations.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @Path("v1/news")
 @Api(tags = "v1/news", value = "v1/news", description = "Managing news")
 public class NewsRestResourcesV1 implements ResourceContainer {
 
   private static final Log LOG = ExoLogger.getLogger(NewsRestResourcesV1.class);
+  
+  private static final String REDACTOR_MEMBERSHIP_NAME = "redactor";
+
+  private static final String MANAGER_MEMBERSHIP_NAME = "manager";
+
+  private static final String PUBLISHER_MEMBERSHIP_NAME = "publisher";
+
+  private final static String PLATFORM_WEB_CONTRIBUTORS_GROUP = "/platform/web-contributors";
 
   private NewsService newsService;
 
@@ -67,14 +85,14 @@ public class NewsRestResourcesV1 implements ResourceContainer {
           @ApiResponse (code = 500, message = "Internal server error")})
   public Response createNews(@ApiParam(value = "News", required = true) News news) {
     if (news == null || StringUtils.isEmpty(news.getSpaceId())) {
-      throw new WebApplicationException(Response.Status.BAD_REQUEST);
+      return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
 
     Space space = spaceService.getSpaceById(news.getSpaceId());
     if (space == null || (! spaceService.isMember(space, authenticatedUser) && ! spaceService.isSuperManager(authenticatedUser))) {
-      throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+      return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     try {
@@ -255,7 +273,7 @@ public class NewsRestResourcesV1 implements ResourceContainer {
 
       Space space = spaceService.getSpaceById(news.getSpaceId());
       if (space == null || (! spaceService.isMember(space, authenticatedUser) && ! spaceService.isSuperManager(authenticatedUser))) {
-        throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        return Response.status(Response.Status.UNAUTHORIZED).build();
       }
 
       EntityTag eTag = new EntityTag(String.valueOf(news.getIllustrationUpdateDate().getTime()));
@@ -311,6 +329,50 @@ public class NewsRestResourcesV1 implements ResourceContainer {
              currentUser.getId());
 
     return Response.status(Response.Status.OK).build();
+  }
+  
+  @PUT
+  @Path("{id}/pin")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @ApiOperation(value = "Pin a news", httpMethod = "PUT", response = Response.class, notes = "This pins a news by updating the isPinned attribute of a news")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "News pinned"),
+      @ApiResponse(code = 400, message = "Invalid query input"),
+      @ApiResponse(code = 401, message = "User not authorized to pin the news"),
+      @ApiResponse(code = 500, message = "Internal server error") })
+  public Response pinNews(@Context HttpServletRequest request,
+                          @ApiParam(value = "Node news id", required = true) @PathParam("id") String id) {
+
+    try {
+      News news = newsService.getNews(id);
+      if (news == null) {
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+
+      String authenticatedUser = request.getRemoteUser();
+      Space space = spaceService.getSpaceById(news.getSpaceId());
+      if (space == null) {
+        return Response.status(Response.Status.UNAUTHORIZED).build();
+      }
+
+      org.exoplatform.services.security.Identity currentIdentity = ConversationState.getCurrent().getIdentity();
+      boolean canPinNews = currentIdentity.isMemberOf(space.getGroupId(), REDACTOR_MEMBERSHIP_NAME)
+          || currentIdentity.isMemberOf(space.getGroupId(), MANAGER_MEMBERSHIP_NAME)
+          || currentIdentity.isMemberOf(PLATFORM_WEB_CONTRIBUTORS_GROUP, PUBLISHER_MEMBERSHIP_NAME)
+          || spaceService.isSuperManager(authenticatedUser);
+      if (!canPinNews) {
+        return Response.status(Response.Status.UNAUTHORIZED).build();
+      }
+
+      if (!news.isPinned()) {
+        newsService.pinNews(id);
+      }
+      return Response.ok().build();
+
+    } catch (Exception e) {
+      LOG.error("Error when trying to pin the news " + id, e);
+      return Response.serverError().build();
+    }
   }
 
 }

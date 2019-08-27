@@ -14,11 +14,11 @@ import javax.jcr.Session;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.exoplatform.news.model.News;
 import org.exoplatform.news.model.SharedNews;
 import org.exoplatform.services.cms.BasePath;
 import org.exoplatform.services.cms.impl.Utils;
+import org.exoplatform.services.cms.link.LinkManager;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
@@ -48,6 +48,10 @@ public class NewsServiceImpl implements NewsService {
 
   public static final String NEWS_NODES_FOLDER = "News";
 
+  public static final String PINNED_NEWS_NODES_FOLDER = "Pinned";
+
+  public static final String APPLICATION_DATA_PATH = "/Application Data";
+
   private RepositoryService repositoryService;
 
   private SessionProviderService sessionProviderService;
@@ -63,13 +67,15 @@ public class NewsServiceImpl implements NewsService {
   private IdentityManager identityManager;
 
   private UploadService uploadService;
+  
+  private LinkManager linkManager;
 
   private HTMLUploadImageProcessor imageProcessor;
 
   public NewsServiceImpl(RepositoryService repositoryService, SessionProviderService sessionProviderService,
                          NodeHierarchyCreator nodeHierarchyCreator, DataDistributionManager dataDistributionManager,
                          SpaceService spaceService, ActivityManager activityManager, IdentityManager identityManager,
-                         UploadService uploadService, HTMLUploadImageProcessor imageProcessor) {
+                         UploadService uploadService, HTMLUploadImageProcessor imageProcessor, LinkManager linkManager) {
     this.repositoryService = repositoryService;
     this.sessionProviderService = sessionProviderService;
     this.nodeHierarchyCreator = nodeHierarchyCreator;
@@ -78,6 +84,7 @@ public class NewsServiceImpl implements NewsService {
     this.identityManager = identityManager;
     this.uploadService = uploadService;
     this.imageProcessor = imageProcessor;
+    this.linkManager = linkManager;
     this.dataDistributionType = dataDistributionManager.getDataDistributionType(DataDistributionMode.NONE);
   }
 
@@ -140,7 +147,6 @@ public class NewsServiceImpl implements NewsService {
         newsNode.setProperty("exo:summary", news.getSummary());
         newsNode.setProperty("exo:body", imageProcessor.processImages(news.getBody(), newsNode, "images"));
         newsNode.setProperty("exo:dateModified", Calendar.getInstance());
-
         if(StringUtils.isNotEmpty(news.getUploadId())) {
           attachIllustration(newsNode, news.getUploadId());
         } else if("".equals(news.getUploadId())) {
@@ -154,6 +160,68 @@ public class NewsServiceImpl implements NewsService {
         session.logout();
       }
     }
+	}
+
+  /**
+   * Pin a news
+   * 
+   * @param newsId The id of the news to be pinned
+   * @throws Exception
+   */
+  public void pinNews(String newsId) throws Exception {
+    SessionProvider sessionProvider = sessionProviderService.getSystemSessionProvider(null);
+    Session session = sessionProvider.getSession(
+                                                 repositoryService.getCurrentRepository()
+                                                                  .getConfiguration()
+                                                                  .getDefaultWorkspaceName(),
+                                                 repositoryService.getCurrentRepository());
+    News news = getNews(newsId);
+    Node newsNode = session.getNodeByUUID(newsId);
+    newsNode.setProperty("exo:pinned", true);
+    newsNode.save();
+
+    Node pinnedRootNode = getPinnedNewsFolder();
+
+    Calendar newsCreationCalendar = Calendar.getInstance();
+    newsCreationCalendar.setTime(news.getCreationDate());
+    Node newsFolderNode = dataDistributionType.getOrCreateDataNode(pinnedRootNode, getNodeRelativePath(newsCreationCalendar));
+    if (newsNode.canAddMixin("exo:privilegeable")) {
+      newsNode.addMixin("exo:privilegeable");
+    }
+    ((ExtendedNode) newsNode).setPermission("*:/platform/users", new String[] { PermissionType.READ });
+    linkManager.createLink(newsFolderNode, Utils.EXO_SYMLINK, newsNode, null);
+  }
+
+  /**
+   * Get the root folder for pinned news
+   * 
+   * @return the pinned folder node
+   * @throws Exception
+   */
+  private Node getPinnedNewsFolder() throws Exception {
+    SessionProvider sessionProvider = sessionProviderService.getSystemSessionProvider(null);
+    Session session = sessionProvider.getSession(
+                                                 repositoryService.getCurrentRepository()
+                                                                  .getConfiguration()
+                                                                  .getDefaultWorkspaceName(),
+                                                 repositoryService.getCurrentRepository());
+    Node applicationDataNode = (Node) session.getItem(APPLICATION_DATA_PATH);
+    Node newsRootNode;
+    if (!applicationDataNode.hasNode(NEWS_NODES_FOLDER)) {
+      newsRootNode = applicationDataNode.addNode(NEWS_NODES_FOLDER, "nt:unstructured");
+      applicationDataNode.save();
+    } else {
+      newsRootNode = applicationDataNode.getNode(NEWS_NODES_FOLDER);
+    }
+    Node pinnedRootNode;
+    if (!newsRootNode.hasNode(PINNED_NEWS_NODES_FOLDER)) {
+      pinnedRootNode = newsRootNode.addNode(PINNED_NEWS_NODES_FOLDER, "nt:unstructured");
+      newsRootNode.save();
+    } else {
+      pinnedRootNode = newsRootNode.getNode(PINNED_NEWS_NODES_FOLDER);
+    }
+
+    return pinnedRootNode;
   }
 
   /**

@@ -12,7 +12,7 @@
        @click="showShareNewsPopup = true">
       <i class="uiIconShare"></i>
     </a>
-    <exo-modal :show="showShareNewsPopup" :title="$t('activity.news.shareNews.popupTitle')" @close="closeShareNewsPopup">
+    <exo-news-modal :show="showShareNewsPopup" :title="$t('activity.news.shareNews.popupTitle')" @close="closeShareNewsPopup">
       <div class="newsShareForm">
         <label class="newsTitle"> {{ newsTitleUnescaped }}</label>
         <div class="shareSpaces">
@@ -29,7 +29,7 @@
           <button class="btn" @click="closeShareNewsPopup">{{ $t('activity.news.shareNews.cancel') }}</button>
         </div>
       </div>
-    </exo-modal>
+    </exo-news-modal>
   </div>
 </template>
 

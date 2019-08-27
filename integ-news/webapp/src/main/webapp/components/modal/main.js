@@ -1,3 +1,3 @@
 import ExoModal from './ExoModal.vue';
 
-Vue.component('exo-modal', ExoModal);
+Vue.component('exo-news-modal', ExoModal);
