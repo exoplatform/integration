@@ -5,7 +5,7 @@ import { newsConstants } from '../js/newsConstants.js';
 const lang = typeof eXo !== 'undefined' ? eXo.env.portal.language : 'en';
 
 // should expose the locale ressources as REST API 
-const url = `${newsConstants.PORTAL}/${newsConstants.PORTAL_REST}/i18n/bundle/locale.portlet.news.NewsActivityComposer-${lang}.json`;
+const url = `${newsConstants.PORTAL}/${newsConstants.PORTAL_REST}/i18n/bundle/locale.portlet.news.News-${lang}.json`;
 
 // get overrided components if exists
 if (extensionRegistry) {

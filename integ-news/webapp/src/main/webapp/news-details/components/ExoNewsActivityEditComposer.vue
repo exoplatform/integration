@@ -29,7 +29,7 @@
             <div class="newsFormAttachement">
               <div class="control-group attachments">
                 <div class="controls">
-                  <filedrop v-model="news.illustration"/>
+                  <exo-file-drop v-model="news.illustration"/>
                 </div>
               </div>
             </div>
@@ -68,13 +68,9 @@
 </template>
 
 <script>
-import * as  newsActivityUpdateServices from '../newsActivityUpdateServices';
-import FileDrop from '../../news-activity-composer-app/components/ExoNewsFileDrop.vue';
+import * as  newsServices from '../newsServices';
 
 export default {
-  components: {
-    'filedrop': FileDrop
-  },
   props: {
     activityId: {
       type: String,
@@ -160,7 +156,7 @@ export default {
       this.showEditNews = true;
       document.querySelector('#newsShareActivity').style.display = 'none';
       document.querySelector('.newsDetails').style.display = 'none';
-      newsActivityUpdateServices.clickOnEditButton(this.news.id);
+      newsServices.clickOnEditButton(this.news.id);
     },
     updateNews: function () {
       this.doUpdateNews().then(() => {
@@ -180,7 +176,7 @@ export default {
           updateDate: new Date().getTime()
         };
 
-        return newsActivityUpdateServices.updateAndPostNewsActivity(activity);
+        return newsServices.updateAndPostNewsActivity(activity);
       }).then(() => {
         document.location.reload(true);
       });
@@ -200,7 +196,7 @@ export default {
         updatedNews.uploadId = '';
       }
 
-      return newsActivityUpdateServices.updateNews(updatedNews);
+      return newsServices.updateNews(updatedNews);
     },
     cancelEdit: function () {
       this.showEditNews = false;
@@ -211,11 +207,11 @@ export default {
     },
     importActivityDetails: function () {
       this.news.activityId = this.activityId;
-      newsActivityUpdateServices.getActivityById(this.news.activityId)
+      newsServices.getActivityById(this.news.activityId)
         .then(resp => resp.json())
         .then(data => {
           this.news.id = data.templateParams.newsId;
-          return newsActivityUpdateServices.getNewsById(this.news.id);
+          return newsServices.getNewsById(this.news.id);
         })
         .then(resp => resp.json())
         .then(newsData => {
@@ -224,7 +220,7 @@ export default {
           this.news.body = newsData.body;
           this.originalNews = JSON.parse(JSON.stringify(this.news));
           if(newsData.illustrationURL) {
-            newsActivityUpdateServices.importFileFromUrl(newsData.illustrationURL)
+            newsServices.importFileFromUrl(newsData.illustrationURL)
               .then(resp => resp.blob())
               .then(fileData => {
                 const illustrationFile = new File([fileData],`illustration${this.news.id}`);

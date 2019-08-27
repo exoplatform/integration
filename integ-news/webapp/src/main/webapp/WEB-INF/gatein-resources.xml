@@ -22,6 +22,50 @@
                   xmlns="http://www.exoplatform.org/xml/ns/gatein_resources_1_4">
 
   <module>
+    <name>suggesterComponent</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/suggesterComponent.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
+    </depends>
+  </module>
+
+  <module>
+    <name>modalComponent</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/modalComponent.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>fileDropComponent</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/fileDropComponent.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
+    </depends>
+    <depends>
+      <module>filedrop</module>
+    </depends>
+  </module>
+
+  <module>
     <name>NewsActivityComposer</name>
     <script>
       <minify>false</minify>
@@ -38,7 +82,7 @@
       <as>$</as>
     </depends>
     <depends>
-      <module>filedrop</module>
+      <module>fileDropComponent</module>
     </depends>
     <depends>
       <module>extensionRegistry</module>
@@ -46,34 +90,10 @@
   </module>
 
   <module>
-    <name>newsActivityEditComposer</name>
+    <name>newsDetails</name>
     <script>
       <minify>false</minify>
-      <path>/js/newsActivityEditComposer.bundle.js</path>
-    </script>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>filedrop</module>
-    </depends>
-    <depends>
-      <module>extensionRegistry</module>
-    </depends>
-  </module>
-
-  <module>
-    <name>NewsShareActivity</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/newsShareActivity.bundle.js</path>
+      <path>/js/newsDetails.bundle.js</path>
     </script>
     <depends>
       <module>vue</module>
@@ -89,7 +109,13 @@
       <module>extensionRegistry</module>
     </depends>
     <depends>
-      <module>suggester</module>
+      <module>fileDropComponent</module>
+    </depends>
+    <depends>
+      <module>suggesterComponent</module>
+    </depends>
+    <depends>
+      <module>modalComponent</module>
     </depends>
   </module>
 

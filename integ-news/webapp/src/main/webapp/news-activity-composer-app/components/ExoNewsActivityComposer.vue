@@ -22,7 +22,7 @@
           <div v-show="extendedForm" class="newsFormAttachement">
             <div class="control-group attachments">
               <div class="controls">
-                <filedrop v-model="newsActivity.illustration"/>
+                <exo-file-drop v-model="newsActivity.illustration"/>
               </div>
             </div>
           </div>
@@ -67,12 +67,8 @@
 
 <script>
 import * as  newsActivityComposerServices from '../newsActivityComposerServices';
-import FileDrop from './ExoNewsFileDrop.vue';
 
 export default {
-  components: {
-    'filedrop': FileDrop
-  },
   data() {
     return {
       newsActivity: {

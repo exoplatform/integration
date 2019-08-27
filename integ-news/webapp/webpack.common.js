@@ -6,9 +6,11 @@ let config = {
   // set the entry point of the application
   // can use multiple entry
   entry: {
+    suggesterComponent :'./src/main/webapp/components/suggester/main.js',
+    modalComponent :'./src/main/webapp/components/modal/main.js',
+    fileDropComponent :'./src/main/webapp/components/fileDrop/main.js',
     newsActivityComposer :'./src/main/webapp/news-activity-composer-app/main.js',
-    newsShareActivity :'./src/main/webapp/news-share-activity-app/main.js',
-    newsActivityEditComposer :'./src/main/webapp/news-activity-edit-composer-app/main.js'
+    newsDetails :'./src/main/webapp/news-details/main.js'
   },
   module: {
     rules: [

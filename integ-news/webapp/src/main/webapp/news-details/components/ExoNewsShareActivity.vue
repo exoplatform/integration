@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import * as shareNewsServices from '../newsShareActivityServices.js';
+import * as newsServices from '../newsServices.js';
 
 export default {
   props: {
@@ -84,7 +84,7 @@ export default {
   },
   computed:{
     newsTitleUnescaped: function() {
-      return this.newsTitle.replace(/&#39;/g, '\'');
+      return this.newsTitle ? this.newsTitle.replace(/&#39;/g, '\'') : this.newsTitle;
     },
     shareDisabled: function() {
       return !this.spaces || this.spaces.filter(part => part !== '').length === 0;
@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     shareNews: function() {
-      shareNewsServices.shareNews(this.newsId, this.activityId, this.description, this.spaces)
+      newsServices.shareNews(this.newsId, this.activityId, this.description, this.spaces)
         .then(() => {
           const escapedNewsTitle = this.escapeHTML(this.newsTitleUnescaped);
           let successMessage = this.$t('activity.news.shareNews.message.success').replace('{0}', `<b>${escapedNewsTitle}</b>`);
@@ -128,7 +128,7 @@ export default {
       if (!query || !query.length) {
         callback([]);
       } else {
-        shareNewsServices.findUserSpaces(query).then(spaces => {
+        newsServices.findUserSpaces(query).then(spaces => {
           if(spaces) {
             callback(spaces);
           }

@@ -64,11 +64,26 @@ if (activity && news) {
   def newsSummary = StringEscapeUtils.escapeHtml(news.summary);
   def newsBody = news.body;
 
+  def showEditButton = uicomponent.canEditNews(activity);
+
   //params for init UIActivity javascript object
   def params = """ {
     activityId: '${activity.id}',
     newsId: '${news.id}',
-    newsTitle: '${newsTitleEscaped}',
+    news: {
+      title: '${newsTitleEscaped}',
+      summary: '${news.summary}',
+      body: `${news.body}`,
+      illustrationURL: '${illustrationURL}',
+      authorFullName: '${authorFullName}',
+      authorProfileURL: '${authorProfileURL}',
+      postedDate: '${postedDate}',
+      updaterFullName: '${updaterFullName}',
+      updaterProfileURL: '${updaterProfileURL}',
+      updatedDate: '${updatedDate}',
+      titleLink: '${activityLink}'
+    },
+    showEditButton:'$showEditButton',
     spaceURL:'$spaceURL',
     spaceGroupId: '$spaceGroupId'
   } """
@@ -76,77 +91,19 @@ if (activity && news) {
   jsManager.require("SHARED/jquery", "jq")
            .require("SHARED/bts_tooltip").addScripts("jq('*[rel=\"tooltip\"]').tooltip();")
            .require("SHARED/social-ui-activity", "activity").addScripts("activity.onLoad($params);")
-           .require("SHARED/NewsShareActivity", "newsShareActivity").addScripts("newsShareActivity.init($params);")
-           .require("SHARED/newsActivityEditComposer", "newsActivityEditComposer").addScripts("newsActivityEditComposer.init($params);");
-
-  def showEditButton = uicomponent.canEditNews(activity);
+           .require("SHARED/newsDetails", "newsDetails").addScripts("newsDetails.init($params);");
 %>
 
 <div class="activityStream uiNewsActivity" id="activityContainer${activity.id}">
-  <% uiform.begin() %>
   <div class="boxContainer" id="boxContainer">
   <div id="ContextBox${activity.id}" class="uiBox contentBox">
     <div id="ActivityContextBox${activity.id}">
-      <div class="newsDetails-description">
-        <div class="newsDetails-header">
 
-          <div id="newsShareActivity"></div>
-          <% if (showEditButton) { %>
-            <div id="newsActivityEditComposer"></div>
-          <% } %>
+      <div id="newsDetails"></div>
 
-          <div class="newsDetails">
-            <img src="$illustrationURL" class="newsImage illustrationPicture" alt="News"/>
-
-            <div class="news-top-information">
-               <div class="news-header-content">
-                   <div id="titleNews" class="newsTitle">
-                       <a href="$activityLink" class="activityLinkColor newsTitleLink">$newsTitle</a>
-                   </div>
-                   <div id="informationNews" class="newsInformation">
-                     <div class="newsAuthor">
-                        <div>
-                          <span class="newsInformationLabel">${labelWrittenBy} :</span>
-                          <a href="$authorProfileURL" class="newsInformationValue newsAuthorName"> ${authorFullName}</a>
-                        </div>
-                        <div>
-                          <span class="newsInformationLabel"> ${labelPublicationDate} :</span>
-                          <span class="newsInformationValue newsPostedDate">$newsPostedDate</span>
-                        </div>
-                     </div>
-                      <% if (showUpdateInfo) { %>
-                        <div class="newsUpdater">
-                          <div>
-                            <span class="newsInformationLabel">${labelUpdatedBy} :</span>
-                            <a href="$updaterProfileURL" class="newsInformationValue newsUpdaterName">${updaterFullName}</a>
-                          </div>
-                          <div>
-                            <span class="newsInformationLabel">${labelUpdatedDate} :</span>
-                            <span class="newsInformationValue newsUpdatedDate">$newsUpdatedDate</span>
-                          </div>
-                        </div>
-                      <% } %>
-                    </div>
-               </div>
-            </div>
-
-            <% if (newsSummary != null) { %>
-               <div id="newsSummary" class="summary">
-                   <span>${newsSummary}</span>
-               </div>
-            <% } %>
-
-            <div id="newsBody" class="newsBody" class="fullDetailsBody">
-              ${newsBody}
-            </div>
-          </div>
-
-        </div>
-      </div>
     </div><!--end #ActivityContextBox${activity.id}-->
   </div> <!--end ContextBox${activity.id}-->
   </div> <!-- #boxContainer-->
-  <% uiform.end() %>
 </div><!--activityStream-->
 <% } else { %> <!-- activity deleted -->
 <% uiform.begin() %>
