@@ -12,24 +12,24 @@
        @click="showShareNewsPopup = true">
       <i class="uiIconShare"></i>
     </a>
-    <exo-modal :show="showShareNewsPopup" :title="$t('activity.news.shareNews.popupTitle')" @close="closeShareNewsPopup">
+    <exo-news-modal :show="showShareNewsPopup" :title="$t('activity.news.shareNews.popupTitle')" @close="closeShareNewsPopup">
       <div class="newsShareForm">
         <label class="newsTitle"> {{ newsTitleUnescaped }}</label>
         <div class="shareSpaces">
-          <label class="newsShareWith">{{ $t('activity.news.shareNews.shareWith') }} :</label>
-          <div class="control-group">
-            <div class="controls">
-              <exo-suggester v-model="spaces" :options="suggesterOptions" :source-providers="[findSpaces]" />
+          <label class="newsShareWith">{{ $t('activity.news.shareNews.shareWith') }}
+            <div class="control-group">
+              <div class="controls">
+                <exo-suggester v-model="spaces" :options="suggesterOptions" :source-providers="[findSpaces]" :placeholder="$t('activity.news.shareNews.spaces.placeholder')" />
+              </div>
             </div>
-          </div>
-        </div>
+        </label></div>
         <textarea v-model="description" :placeholder="$t('activity.news.shareNews.sharedActivityPlaceholder')" class="newsShareDescription"></textarea>
         <div class="shareButtons">
           <button :disabled="shareDisabled" class="btn btn-primary" @click="shareNews">{{ $t('activity.news.shareNews.share') }}</button>
           <button class="btn" @click="closeShareNewsPopup">{{ $t('activity.news.shareNews.cancel') }}</button>
         </div>
       </div>
-    </exo-modal>
+    </exo-news-modal>
   </div>
 </template>
 

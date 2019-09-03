@@ -1,18 +1,39 @@
 package org.exoplatform.news;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.Session;
 
+import org.exoplatform.news.model.News;
 import org.exoplatform.news.model.SharedNews;
+import org.exoplatform.services.cms.link.LinkManager;
+import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.config.RepositoryEntry;
 import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.core.ManageableRepository;
+import org.exoplatform.services.jcr.ext.app.SessionProviderService;
+import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.jcr.ext.distribution.DataDistributionManager;
+import org.exoplatform.services.jcr.ext.distribution.DataDistributionMode;
+import org.exoplatform.services.jcr.ext.distribution.DataDistributionType;
+import org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator;
 import org.exoplatform.social.ckeditor.HTMLUploadImageProcessor;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -21,22 +42,14 @@ import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.upload.UploadService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import org.exoplatform.news.model.News;
-import org.exoplatform.services.jcr.RepositoryService;
-import org.exoplatform.services.jcr.ext.app.SessionProviderService;
-import org.exoplatform.services.jcr.ext.common.SessionProvider;
-import org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator;
-import org.exoplatform.social.core.space.spi.SpaceService;
-import org.exoplatform.upload.UploadService;
-
-import java.util.Arrays;
-import java.util.Calendar;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewsServiceImplTest {
@@ -76,6 +89,9 @@ public class NewsServiceImplTest {
 
   @Mock
   UploadService           uploadService;
+  
+  @Mock
+  LinkManager             linkManager;
 
   @Mock
   HTMLUploadImageProcessor imageProcessor;
@@ -91,7 +107,8 @@ public class NewsServiceImplTest {
                                                   activityManager,
                                                   identityManager,
                                                   uploadService,
-                                                  imageProcessor);
+                                                  imageProcessor,
+                                                  linkManager);
     Node node = mock(Node.class);
     Property property = mock(Property.class);
     when(sessionProviderService.getSystemSessionProvider(any())).thenReturn(sessionProvider);
@@ -122,7 +139,8 @@ public class NewsServiceImplTest {
                                                   activityManager,
                                                   identityManager,
                                                   uploadService,
-                                                  imageProcessor);
+                                                  imageProcessor,
+                                                  linkManager);
     when(sessionProviderService.getSystemSessionProvider(any())).thenReturn(sessionProvider);
     when(sessionProviderService.getSessionProvider(any())).thenReturn(sessionProvider);
     when(repositoryService.getCurrentRepository()).thenReturn(repository);
@@ -149,7 +167,8 @@ public class NewsServiceImplTest {
             activityManager,
             identityManager,
             uploadService,
-            imageProcessor);
+            imageProcessor,
+            linkManager);
     Node newsNode = mock(Node.class);
     Node illustrationNode = mock(Node.class);
     Property property = mock(Property.class);
@@ -194,7 +213,8 @@ public class NewsServiceImplTest {
             activityManager,
             identityManager,
             uploadService,
-            imageProcessor);
+            imageProcessor,
+            linkManager);
     Node newsNode = mock(Node.class);
     Node illustrationNode = mock(Node.class);
     Property property = mock(Property.class);
@@ -239,7 +259,8 @@ public class NewsServiceImplTest {
             activityManager,
             identityManager,
             uploadService,
-            imageProcessor);
+            imageProcessor,
+            linkManager);
     ExtendedNode newsNode = mock(ExtendedNode.class);
     Property property = mock(Property.class);
     when(sessionProviderService.getSystemSessionProvider(any())).thenReturn(sessionProvider);
@@ -281,4 +302,67 @@ public class NewsServiceImplTest {
     assertEquals("1", activityCaptorValue.getTemplateParams().get("newsId"));
     assertEquals("2", activityCaptorValue.getTemplateParams().get("sharedActivityId"));
   }
+
+  @Test
+  public void shouldPinNews() throws Exception {
+    // Given
+
+    DataDistributionType dataDistributionType = mock(DataDistributionType.class);
+    when(dataDistributionManager.getDataDistributionType(DataDistributionMode.NONE)).thenReturn(dataDistributionType);
+
+    NewsServiceImpl newsService = new NewsServiceImpl(repositoryService,
+                                                      sessionProviderService,
+                                                      nodeHierarchyCreator,
+                                                      dataDistributionManager,
+                                                      spaceService,
+                                                      activityManager,
+                                                      identityManager,
+                                                      uploadService,
+                                                      imageProcessor,
+                                                      linkManager);
+
+    NewsServiceImpl newsServiceSpy = Mockito.spy(newsService);
+    ExtendedNode newsNode = mock(ExtendedNode.class);
+    Node pinnedRootNode = mock(Node.class);
+    Node newsFolderNode = mock(Node.class);
+    Node applicationDataNode = mock(Node.class);
+    Node newsRootNode = mock(Node.class);
+
+    News news = new News();
+    news.setTitle("pinned title");
+    news.setSummary("pinned summary");
+    news.setBody("pinned body");
+    news.setUploadId(null);
+    String sDate1 = "22/08/2019";
+    Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+    news.setCreationDate(date1);
+    news.setPinned(true);
+    news.setId("id123");
+
+    when(sessionProviderService.getSystemSessionProvider(any())).thenReturn(sessionProvider);
+    when(repositoryService.getCurrentRepository()).thenReturn(repository);
+    when(repository.getConfiguration()).thenReturn(repositoryEntry);
+    when(repositoryEntry.getDefaultWorkspaceName()).thenReturn("collaboration");
+    when(sessionProvider.getSession(any(), any())).thenReturn(session);
+    when(session.getNodeByUUID(anyString())).thenReturn(newsNode);
+    when(dataDistributionType.getOrCreateDataNode(any(Node.class), anyString())).thenReturn(newsFolderNode);
+    when(newsNode.canAddMixin(eq("exo:privilegeable"))).thenReturn(true);
+    Mockito.doReturn(news).when(newsServiceSpy).getNews("id123");
+    when(session.getItem(anyString())).thenReturn(applicationDataNode);
+    when(applicationDataNode.hasNode(eq("News"))).thenReturn(true);
+    when(applicationDataNode.getNode(eq("News"))).thenReturn(newsRootNode);
+    when(newsRootNode.hasNode(eq("Pinned"))).thenReturn(true);
+    when(newsRootNode.getNode(eq("Pinned"))).thenReturn(pinnedRootNode);
+
+    // When
+    newsServiceSpy.pinNews("id123");
+
+    // Then
+    verify(newsNode, times(1)).save();
+    verify(newsNode, times(1)).setProperty(eq("exo:pinned"), eq(true));
+    verify(newsNode, times(1)).addMixin(eq("exo:privilegeable"));
+    verify(linkManager, times(1)).createLink(newsFolderNode, "exo:symlink", newsNode, null);
+
+  }
+
 }
