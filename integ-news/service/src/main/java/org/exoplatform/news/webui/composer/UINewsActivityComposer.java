@@ -69,11 +69,8 @@ public class UINewsActivityComposer extends UIActivityComposer {
       return false;
     }
 
-    Space space = null;
-    UIContainer uiContainer = getActivityDisplay();
-    if (uiContainer instanceof UISpaceActivitiesDisplay) {
-      space = ((UISpaceActivitiesDisplay) uiContainer).getSpace();
-    }
+    Space space = getCurrentSpace();
+
     if (space == null) {
       return false;
     }
@@ -153,11 +150,7 @@ public class UINewsActivityComposer extends UIActivityComposer {
       }
     }
 
-    Space space = null;
-    UIContainer uiContainer = event.getSource().getActivityDisplay();
-    if (uiContainer instanceof UISpaceActivitiesDisplay) {
-      space = ((UISpaceActivitiesDisplay) uiContainer).getSpace();
-    }
+    Space space = getCurrentSpace();
 
     LOG.info("service=news operation=display_news_composer parameters=\"space_name:{},space_id:{},user_id:{}\"",
             space != null ? space.getPrettyName() : null,
@@ -166,4 +159,23 @@ public class UINewsActivityComposer extends UIActivityComposer {
 
     setReadyForPostingActivity(true);
   }
+
+  public boolean canPinNews() {
+    Space space = getCurrentSpace();
+    if (space == null) {
+      return false;
+    }
+    org.exoplatform.services.security.Identity currentIdentity = ConversationState.getCurrent().getIdentity();
+    return currentIdentity.isMemberOf(PLATFORM_WEB_CONTRIBUTORS_GROUP, PUBLISHER_MEMBERSHIP_NAME);
+  }
+
+  private Space getCurrentSpace() {
+    Space space = null;
+    UIContainer uiContainer = getActivityDisplay();
+    if (uiContainer instanceof UISpaceActivitiesDisplay) {
+      space = ((UISpaceActivitiesDisplay) uiContainer).getSpace();
+    }
+    return space;
+  }
+
 }

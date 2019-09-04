@@ -19,12 +19,17 @@ if (extensionRegistry) {
 
 let newsActivityComposerApp;
 // getting locale ressources
-export function init() {
+export function init(showPin) {
   exoi18n.loadLanguageAsync(lang, url).then(i18n => {
   // init Vue app when locale ressources are ready
     newsActivityComposerApp = new Vue({
       el: '#newsActivityComposer',
-      template: '<exo-news-activity-composer></exo-news-activity-composer>',
+      data: function() {
+        return {
+          showPinInput: showPin,
+        };
+      },
+      template: '<exo-news-activity-composer :show-pin-input="showPinInput"></exo-news-activity-composer>',
       i18n
     });
   });
