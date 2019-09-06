@@ -21,7 +21,6 @@
     <module>integ-social</module>
     <module>integ-search-service</module>
     <module>integ-search-portlet</module>
-    <module>integ-news</module>
   </modules>
   <scm>
     <connection>scm:git:git://github.com/exoplatform/integration.git</connection>
