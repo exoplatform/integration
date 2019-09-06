@@ -250,6 +250,7 @@ public class UIComposerMultiUploadSelector extends UIAbstractSelectFileComposer 
     Node parentUploadNode = parentNode.getNode(FOLDER_UPLOAD_PARENT_NAME);
     Node node = parentUploadNode.addNode(Utils.cleanName(fileItem.getName()), NodetypeConstant.NT_FILE);
     node.setProperty(NodetypeConstant.EXO_TITLE, fileItem.getName());
+    node.addMixin(NodetypeConstant.MIX_VERSIONABLE);
     activityService.setCreating(node, true);
     Node resourceNode = node.addNode(NodetypeConstant.JCR_CONTENT, NodetypeConstant.NT_RESOURCE);
     resourceNode.setProperty(NodetypeConstant.JCR_MIMETYPE, fileItem.getMimeType());
