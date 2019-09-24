@@ -99,7 +99,7 @@ public class UILinkActivity extends BaseUIActivity {
   protected void editActivity(String message) {
     ExoSocialActivity activity = getActivity();
     activity.getTemplateParams().put(UILinkActivityComposer.COMMENT_PARAM, message);
-    getActivity().setUpdated(new Date());
+    getActivity().setUpdated(new Date().getTime());
     this.setLinkComment(message);
     Utils.getActivityManager().updateActivity(getActivity());
   }
