@@ -32,6 +32,8 @@ public abstract class UIAbstractSelectFileComposer extends UIContainer {
 
   public static final String COMPOSER_SELECTION_TYPE = "FILE_ITEMS";
 
+  public static final String COMPOSER_DESTINATION_FOLDER = "DESTINATION_FOLDER";
+
   public abstract Set<ComposerFileItem> getSelectFiles();
 
   public abstract void resetSelection();

@@ -34,8 +34,9 @@
 			<input class="file" name="file" type='file' multiple="multiple" style="display:none"/>
 		</div>
 	</div>
-    <div class="selectUploadURL" style="display:none"><%=uicomponent.url('SelectUploadId')%></div>
-	<div class="createUploadURL" style="display:none"><%=uicomponent.url('CreateUploadId')%></div>
-	<div class="removeInputUrl" style="display: none;"><%=uicomponent.getAncestorOfType(org.exoplatform.social.plugin.doc.UIDocActivityComposer.class).url('RemoveDocument')%></div>
+  <div class="selectUploadURL" style="display:none" data-url="<%=uicomponent.url('SelectUploadId')%>"></div>
+	<div class="createUploadURL" style="display:none" data-url="<%=uicomponent.url('CreateUploadId')%>"></div>
+	<div class="removeInputUrl" style="display: none;" data-url="<%=uicomponent.getAncestorOfType(org.exoplatform.social.plugin.doc.UIDocActivityComposer.class).url('RemoveDocument')%>"></div>
+	<div class="selectFolderUrl" style="display: none;" data-url="<%=uicomponent.getAncestorOfType(org.exoplatform.social.plugin.doc.UIDocActivityComposer.class).url('SelectDestinationFolder')%>"></div>
 	<div class="limitMessage" style="display: none;"><%= _ctx.appRes("UIFormUploadInput.msg.limit"); %></div>
 </div>

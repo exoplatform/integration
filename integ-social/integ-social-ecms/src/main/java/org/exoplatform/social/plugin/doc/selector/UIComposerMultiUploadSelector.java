@@ -24,8 +24,7 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.jcr.Node;
-import javax.jcr.Session;
+import javax.jcr.*;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -39,6 +38,7 @@ import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.wcm.core.NodeLocation;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -73,7 +73,7 @@ public class UIComposerMultiUploadSelector extends UIAbstractSelectFileComposer 
 
   private static final Log    LOG                       = ExoLogger.getLogger(UIComposerMultiUploadSelector.class);
 
-  private static final String UPLOAD_RESOLVER_TYPE      = "UPLOAD";
+  public static final String  UPLOAD_RESOLVER_TYPE      = "UPLOAD";
 
   private final static String PUBLIC_ALIAS              = "userPublic";
 
@@ -211,44 +211,62 @@ public class UIComposerMultiUploadSelector extends UIAbstractSelectFileComposer 
     }
     ActivityCommonService activityService = WCMCoreUtils.getService(ActivityCommonService.class);
 
-    Node parentNode = null;
+    Node parentUploadNode = null;
+    Session session = null;
+    if (fileItem.getDestinationLocation() != null) {
+      parentUploadNode = fileItem.getDestinationLocation().getCurrentFolder();
+      session = parentUploadNode.getSession();
+    } else {
+      Node parentNode = null;
 
-    RepositoryService repoService = WCMCoreUtils.getService(RepositoryService.class);
-    NodeHierarchyCreator nodeHierarchyCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
+      RepositoryService repoService = WCMCoreUtils.getService(RepositoryService.class);
+      NodeHierarchyCreator nodeHierarchyCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
 
-    SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
-    ManageableRepository currentRepository = repoService.getCurrentRepository();
-    String workspaceName = currentRepository.getConfiguration().getDefaultWorkspaceName();
-    Session session = sessionProvider.getSession(workspaceName, currentRepository);
+      SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
+      ManageableRepository currentRepository = repoService.getCurrentRepository();
+      String workspaceName = currentRepository.getConfiguration().getDefaultWorkspaceName();
+      session = sessionProvider.getSession(workspaceName, currentRepository);
 
-    if (postContext.equals(PostContext.SPACE)) {
-      Space space = spaceService.getSpaceByUrl(SpaceUtils.getSpaceUrlByContext());
-      String groupPath = nodeHierarchyCreator.getJcrPath(BasePath.CMS_GROUPS_PATH);
-      String spaceParentPath = groupPath + space.getGroupId() + "/Documents";
-      if (!session.itemExists(spaceParentPath)) {
-        throw new IllegalStateException("Root node of space '" + spaceParentPath + "' doesn't exist");
+      if (postContext.equals(PostContext.SPACE)) {
+        Space space = spaceService.getSpaceByUrl(SpaceUtils.getSpaceUrlByContext());
+        String groupPath = nodeHierarchyCreator.getJcrPath(BasePath.CMS_GROUPS_PATH);
+        String spaceParentPath = groupPath + space.getGroupId() + "/Documents";
+        if (!session.itemExists(spaceParentPath)) {
+          throw new IllegalStateException("Root node of space '" + spaceParentPath + "' doesn't exist");
+        }
+        parentNode = (Node) session.getItem(spaceParentPath);
+      } else {
+        String remoteUser = Util.getPortalRequestContext().getRemoteUser();
+        if (StringUtils.isBlank(remoteUser)) {
+          throw new IllegalStateException("Remote user is empty");
+        }
+        Node userNode = nodeHierarchyCreator.getUserNode(sessionProvider, remoteUser);
+        String publicPath = nodeHierarchyCreator.getJcrPath(PUBLIC_ALIAS);
+        if (userNode == null || !userNode.hasNode(publicPath)) {
+          throw new IllegalStateException("User '" + remoteUser + "' hasn't public folder");
+        }
+        parentNode = userNode.getNode(publicPath);
       }
-      parentNode = (Node) session.getItem(spaceParentPath);
-    } else if (postContext.equals(PostContext.USER)) {
-      String remoteUser = Util.getPortalRequestContext().getRemoteUser();
-      if (StringUtils.isBlank(remoteUser)) {
-        throw new IllegalStateException("Remote user is empty");
+
+      if (!parentNode.hasNode(FOLDER_UPLOAD_PARENT_NAME)) {
+        parentNode.addNode(FOLDER_UPLOAD_PARENT_NAME);
+        session.save();
       }
-      Node userNode = nodeHierarchyCreator.getUserNode(sessionProvider, remoteUser);
-      String publicPath = nodeHierarchyCreator.getJcrPath(PUBLIC_ALIAS);
-      if (userNode == null || !userNode.hasNode(publicPath)) {
-        throw new IllegalStateException("User '" + remoteUser + "' hasn't public folder");
-      }
-      parentNode = userNode.getNode(publicPath);
+
+      parentUploadNode = parentNode.getNode(FOLDER_UPLOAD_PARENT_NAME);
     }
 
-    if (!parentNode.hasNode(FOLDER_UPLOAD_PARENT_NAME)) {
-      parentNode.addNode(FOLDER_UPLOAD_PARENT_NAME);
-      session.save();
+    String nodeName = Utils.cleanName(fileItem.getName());
+    if (!parentUploadNode.getDefinition().allowsSameNameSiblings()) {
+      nodeName = getFileName(parentUploadNode, nodeName, nodeName, 1);
     }
-
-    Node parentUploadNode = parentNode.getNode(FOLDER_UPLOAD_PARENT_NAME);
-    Node node = parentUploadNode.addNode(Utils.cleanName(fileItem.getName()), NodetypeConstant.NT_FILE);
+    Node node = null;
+    try {
+      node = parentUploadNode.addNode(nodeName, NodetypeConstant.NT_FILE);
+    } catch (ItemExistsException e) {
+      nodeName = getFileName(parentUploadNode, nodeName, nodeName, 1);
+      node = parentUploadNode.addNode(nodeName, NodetypeConstant.NT_FILE);
+    }
     node.setProperty(NodetypeConstant.EXO_TITLE, fileItem.getName());
     node.addMixin(NodetypeConstant.MIX_VERSIONABLE);
     activityService.setCreating(node, true);
@@ -270,6 +288,22 @@ public class UIComposerMultiUploadSelector extends UIAbstractSelectFileComposer 
     activityService.setCreating(node, false);
     fileItem.setPath(node.getPath());
     return node;
+  }
+
+  private String getFileName(Node parentUploadNode,
+                             String originalNodeName,
+                             String nodeName,
+                             int fileIndex) throws RepositoryException {
+    if (parentUploadNode.hasNode(nodeName)) {
+      int pointIndex = originalNodeName.lastIndexOf('.');
+      if (pointIndex > 0) {
+        nodeName = originalNodeName.substring(0, pointIndex) + "(" + fileIndex + ")" + originalNodeName.substring(pointIndex);
+      } else {
+        nodeName = originalNodeName + "(" + fileIndex + ")";
+      }
+      return getFileName(parentUploadNode, originalNodeName, nodeName, ++fileIndex);
+    }
+    return nodeName;
   }
 
   @Override

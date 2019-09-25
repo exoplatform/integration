@@ -43,7 +43,26 @@
     <div class="limitMessage">
     	<div class="sizeLimit pull-left">
 	    	<%=_ctx.appRes("UIDocActivityPopup.label.limitSizePerFile").replace("{0}", String.valueOf(uicomponent.getLimitFileSize()));%>
-		</div>
+  		</div>
+      <% 
+      String destinationFolderTitle = uicomponent.getDestinationTitle();
+      if (org.apache.commons.lang.StringUtils.isBlank(destinationFolderTitle)) { %>
+      <div class="selectFolder pull-right">
+        <a class="browseFile" href="<%= uicomponent.event("SelectDestinationFolder")%>" rel="tooltip" data-placement="bottom" title="<%=_ctx.appRes("UIDocActivityPopup.label.selectDestinationFolder")%>">
+          <i class="uiIconFolder uiIconLightGray" ></i>
+          <span><%=_ctx.appRes("UIDocActivityPopup.label.selectDestinationFolder")%></span>
+        </a>
+      </div>
+      <% } else { %>
+        <div class="selectFolder pull-right">
+          <a href="#" rel="tooltip" data-placement="top" title="<%= uicomponent.getDestinationBreadCrumb() %>">
+            <%= destinationFolderTitle %>
+          </a>
+          <a href="<%= uicomponent.event("RemoveDestinationFolder")%>" rel="tooltip" data-placement="top" title="<%=_ctx.appRes("UIDocActivityPopup.label.removeDestinationFolder")%>">
+            <i class="uiIconClose" ></i>
+          </a>
+        </div>
+      <% } %>
 	    <div class="countLimit pull-right">
 		    <%=_ctx.appRes("UIDocActivityPopup.label.limitCountFiles").replace("{0}", String.valueOf(uicomponent.getMaxUploadCount()));%>
 		</div>
@@ -69,6 +88,11 @@
 						<i class="uiIconDelete uiIconLightGray" ></i>
 					</a>
 				</div>
+        <div class="selectFolder pull-right">
+          <a href="#" class="actionIcon" rel="tooltip" data-placement="top" title="<%=_ctx.appRes("UIDocActivityPopup.label.selectDestinationFolder")%>">
+            <i class="uiIconFolder uiIconLightGray" ></i>
+          </a>
+        </div>
 			</div>
 		</script>
   <% def fileItems = uicomponent.getSelectedFileItems();
@@ -89,6 +113,26 @@
 					<i class="uiIconDelete uiIconLightGray" ></i>
 				</a>
 			</div>
+      <%
+        String title = fileItem.getDestinationTitle();
+        if (fileItem.isUploadedFile()) {
+          if (org.apache.commons.lang.StringUtils.isBlank(title)) { %>
+            <div class="selectFolder pull-right">
+              <a href="<%= uicomponent.event("SelectDestinationFolder", fileItem.getId())%>" class="actionIcon" rel="tooltip" data-placement="top" title="<%=_ctx.appRes("UIDocActivityPopup.label.selectDestinationFolder")%>">
+                <i class="uiIconFolder uiIconLightGray" ></i>
+              </a>
+            </div>
+          <% } else { %>
+            <div class="selectFolder pull-right">
+              <a href="#" rel="tooltip" data-placement="top" title="<%= fileItem.getDestinationBreadCrumb() %>">
+                <%= fileItem.getDestinationTitle() %>
+              </a>
+              <a href="<%= uicomponent.event("RemoveDestinationFolder", fileItem.getId())%>" rel="tooltip" data-placement="top" title="<%=_ctx.appRes("UIDocActivityPopup.label.removeDestinationFolder")%>">
+                <i class="uiIconClose" ></i>
+              </a>
+            </div>
+          <% }
+        } %>
 		 </div>
   <% } %>
 	 </div>
