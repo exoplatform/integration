@@ -53,6 +53,7 @@ import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.xml.PortalContainerInfo;
+import org.exoplatform.download.DownloadResource;
 import org.exoplatform.download.DownloadService;
 import org.exoplatform.ecm.webui.utils.Utils;
 import org.exoplatform.portal.webui.util.Util;
@@ -117,7 +118,8 @@ import org.exoplatform.webui.ext.UIExtensionManager;
                 @EventConfig(listeners = BaseUIActivity.DeleteCommentActionListener.class),
                 @EventConfig(listeners = BaseUIActivity.LikeCommentActionListener.class),
                 @EventConfig(listeners = BaseUIActivity.EditActivityActionListener.class),
-                @EventConfig(listeners = BaseUIActivity.EditCommentActionListener.class)
+                @EventConfig(listeners = BaseUIActivity.EditCommentActionListener.class),
+                @EventConfig(listeners = FileUIActivity.DownloadDocumentActionListener.class)
         }),
 })
 public class FileUIActivity extends BaseUIActivity{
@@ -184,7 +186,15 @@ public class FileUIActivity extends BaseUIActivity{
 
   private TrashService         trashService;
 
-  List<ActivityFileAttachment> activityFileAttachments = new ArrayList<>();
+  private List<ActivityFileAttachment> activityFileAttachments = new ArrayList<>();
+
+  private String                          downloadLink            = null;
+
+  private String                          downloadResourceId      = null;
+
+  private List<String>                    downloadLinks           = new ArrayList<>();
+
+  private List<String>                    downloadResourceIds     = new ArrayList<>();
 
   public FileUIActivity() throws Exception {
     super();
@@ -1197,48 +1207,60 @@ public class FileUIActivity extends BaseUIActivity{
   }
 
   public String getDownloadAllLink() {
-    try {
-      if (activityFileAttachments.isEmpty()) {
-        return null;
-      }
-      if(activityFileAttachments.size() == 1) {
-        return getDownloadLink(0);
-      }
-
-      // Get binary data from node
-      DownloadService dservice = WCMCoreUtils.getService(DownloadService.class);
-
-      NodeLocation[] nodeLocations = new NodeLocation[activityFileAttachments.size()];
-
-      for (int i = 0; i < activityFileAttachments.size(); i++) {
-        nodeLocations[i] = activityFileAttachments.get(i).getNodeLocation();
-      }
-
-      // Make download stream
-      ActivityFilesDownloadResource dresource = new ActivityFilesDownloadResource(nodeLocations);
-      String fileName = "activity_" + getActivity().getId() + "_";
-      Long postedTime = getActivity().getPostedTime();
-      if(postedTime != null) {
-        Calendar postedDate = Calendar.getInstance();
-        fileName += convertDateUsingFormat(postedDate, ISO8601.COMPLETE_DATE_FORMAT).replaceAll("/", "-");
-      }
-      dresource.setDownloadName(fileName + ".zip");
-      return dservice.getDownloadLink(dservice.addDownloadResource(dresource)) ;
-    }catch (Exception e) {
-      return "";
+    if (activityFileAttachments.isEmpty()) {
+      return null;
     }
+
+    // Get binary data from node
+    DownloadService dservice = WCMCoreUtils.getService(DownloadService.class);
+
+    if (downloadResourceId != null && downloadLink != null) {
+      DownloadResource downloadResource = dservice.getDownloadResource(downloadResourceId);
+      if (downloadResource != null) {
+        return downloadLink;
+      }
+    }
+
+    NodeLocation[] nodeLocations = new NodeLocation[activityFileAttachments.size()];
+
+    for (int i = 0; i < activityFileAttachments.size(); i++) {
+      nodeLocations[i] = activityFileAttachments.get(i).getNodeLocation();
+    }
+
+    String fileName = getDownloadAllFileName();
+
+    return getDownloadURL(dservice, fileName, downloadResourceId, downloadLink, nodeLocations);
+  }
+
+  private String getDownloadAllFileName() {
+    String fileName = "activity_" + getActivity().getId() + "_";
+    Long postedTime = getActivity().getPostedTime();
+    if (postedTime != null) {
+      Calendar postedDate = Calendar.getInstance();
+      try {
+        fileName += convertDateUsingFormat(postedDate, ISO8601.COMPLETE_DATE_FORMAT).replaceAll("/", "-");
+      } catch (ParseException e) {
+        LOG.warn("Error while generating date format for file name", e);
+      }
+    }
+    return fileName + ".zip";
   }
 
   public String getDownloadLink(int i) {
-    try {
-      Node contentNode = getContentNode(i);
-      if(contentNode.isNodeType(NodetypeConstant.EXO_SYMLINK)) {
-        contentNode = Utils.getNodeSymLink(contentNode);
-      }
-      return org.exoplatform.wcm.webui.Utils.getDownloadLink(contentNode);
-    }catch (Exception e) {
-      return "";
+    if (i >= activityFileAttachments.size() || i >= downloadLinks.size() || i >= downloadResourceIds.size()) {
+      return null;
     }
+    // Get binary data from node
+    DownloadService dservice = WCMCoreUtils.getService(DownloadService.class);
+
+    String resourceId = downloadResourceIds.get(i);
+    String resourceLink = downloadLinks.get(i);
+
+    // Make download stream
+    NodeLocation[] nodeLocations = new NodeLocation[] { activityFileAttachments.get(i).getNodeLocation() };
+
+    String contentName = activityFileAttachments.get(i).getContentName();
+    return getDownloadURL(dservice, contentName, resourceId, resourceLink, nodeLocations);
   }
 
   /**
@@ -1271,6 +1293,32 @@ public class FileUIActivity extends BaseUIActivity{
     return false;
   }
 
+  private String getDownloadURL(DownloadService dservice,
+                                String fileName,
+                                String resourceId,
+                                String resourceLink,
+                                NodeLocation[] nodelocations) {
+    try {
+      if (resourceId != null && resourceLink != null) {
+        DownloadResource downloadResource = dservice.getDownloadResource(downloadResourceId);
+        if (downloadResource != null) {
+          return downloadLink;
+        }
+      }
+
+      ActivityFilesDownloadResource dresource = new ActivityFilesDownloadResource(nodelocations);
+      dresource.setDownloadName(fileName + ".zip");
+      return dservice.getDownloadLink(dservice.addDownloadResource(dresource));
+    } catch (Exception e) {
+      if (LOG.isDebugEnabled()) {
+        LOG.warn("An error occurred while generating download URL", e);
+      } else {
+        LOG.warn("An error occurred while generating download URL: {}", e.getMessage());
+      }
+      return "";
+    }
+  }
+
   public static class ViewDocumentActionListener extends EventListener<FileUIActivity> {
     @Override
     public void execute(Event<FileUIActivity> event) throws Exception {
@@ -1294,27 +1342,19 @@ public class FileUIActivity extends BaseUIActivity{
       event.getRequestContext().addUIComponentToUpdateByAjax(uiPopupContainer);
     }
   }
-  
+
   public static class DownloadDocumentActionListener extends EventListener<FileUIActivity> {
     @Override
     public void execute(Event<FileUIActivity> event) throws Exception {
-    	FileUIActivity uiComp = event.getSource();
-    	String index = event.getRequestContext().getRequestParameter(OBJECTID);
-    	int i = Integer.parseInt(index);
-      String downloadLink = null;
-      if (getRealNode(uiComp.getContentNode(i)).getPrimaryNodeType().getName().equals(NodetypeConstant.NT_FILE)) {
-        downloadLink = Utils.getDownloadRestServiceLink(uiComp.getContentNode(i));
+      FileUIActivity uiComp = event.getSource();
+      String index = event.getRequestContext().getRequestParameter(OBJECTID);
+      if (StringUtils.isBlank(index)) {
+        String downloadLink = uiComp.getDownloadAllLink();
+        event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
+      } else {
+        String downloadLink = uiComp.getDownloadLink(Integer.parseInt(index));
+        event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
       }
-      event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
-    }
-    
-    private Node getRealNode(Node node) throws Exception {
-      // TODO: Need to add to check symlink node
-      if (node.isNodeType("nt:frozenNode")) {
-        String uuid = node.getProperty("jcr:frozenUuid").getString();
-        return node.getSession().getNodeByUUID(uuid);
-      }
-      return node;
     }
   }
 
