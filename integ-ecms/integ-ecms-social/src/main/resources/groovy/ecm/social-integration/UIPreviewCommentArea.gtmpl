@@ -38,7 +38,7 @@ def authorProfileUri = LinkProvider.getUserProfileUri(authorIdentity.getRemoteId
 def authorAvatarImgSrc = authorIdentity.profile.avatarUrl;
 if (!authorAvatarImgSrc) authorAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
 def activityStatus = uicomponent.getActivityStatus();
-def activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
+def activityPostedTime = uicomponent.getRelativeTimeLabel(_ctx, activity.postedTime);
 def displayedIdentityLikes = uicomponent.getDisplayedIdentityLikes();
 def identityLikesNum = 0;
 if (displayedIdentityLikes != null) identityLikesNum = displayedIdentityLikes.length;
@@ -109,7 +109,7 @@ def isLiked = uicomponent.isLiked();
               if (systemComment != null && systemComment.length > 0) {
                  commentMessage = uicomponent.getCommentMessage(activityParams);
               }
-              def commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
+              def commentPostedTime = uicomponent.getRelativeTimeLabel(_ctx, it.postedTime);
               def commenterAvatarImgSrc = commentIdentity.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
               def idPreviewCommentContainer = "previewCommentContainer${it.id}";
