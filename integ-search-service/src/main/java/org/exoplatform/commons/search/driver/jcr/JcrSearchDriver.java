@@ -19,6 +19,8 @@ import org.exoplatform.commons.search.service.UnifiedSearchService;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
 
 public class JcrSearchDriver extends SearchService {
     private final static Log LOG = ExoLogger.getLogger(JcrSearchDriver.class);
@@ -35,6 +37,9 @@ public class JcrSearchDriver extends SearchService {
   }
     @Override
     public Map<String, Collection<SearchResult>> search(SearchContext context, String query, Collection<String> sites, Collection<String> types, int offset, int limit, String sort, String order) {
+      Identity currentUser = ConversationState.getCurrent().getIdentity();
+      String userId = currentUser.getUserId();
+      boolean isAnonymous = userId == null || userId.isEmpty() || userId.equals("__anonim");
 
       query = replaceSpecialCharacters(query);
       HashMap<String, ArrayList<String>> terms = parse(query); //parse query for single and quoted terms
@@ -46,6 +51,9 @@ public class JcrSearchDriver extends SearchService {
         for(SearchServiceConnector connector:this.getConnectors()){
             if(!enabledTypes.contains(connector.getSearchType())) continue; //ignore disabled types
             if(!types.contains("all") && !types.contains(connector.getSearchType())) continue; //search requested types only
+            if (isAnonymous && !connector.isEnabledForAnonymous()) {
+                continue;
+            }
             LOG.debug("\n[UNIFIED SEARCH]: connector = " + connector.getClass().getSimpleName());
             try {
               String connectorQuery = null;
