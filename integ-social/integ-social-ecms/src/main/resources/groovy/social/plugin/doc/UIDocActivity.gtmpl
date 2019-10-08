@@ -147,7 +147,7 @@
 
   //make sures commentFormFocused is set to false to prevent any refresh to focus, only focus after post a comment
   uicomponent.setCommentFormFocused(false);
-  def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace;
+  def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime;
   def listPeopleLikeBlockClass = "", listPeopleBGClass = "";
 
   if (!likesDisplayed) {
@@ -184,7 +184,7 @@
   }
 
   activityContentTitle = activity.title;
-  activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
+  activityPostedTime = uicomponent.getRelativeTimeLabel(_ctx, activity.postedTime);
 
   def ownerIdentity = uicomponent.ownerIdentity;
   if (uicomponent.isUserActivity()) {
@@ -288,9 +288,6 @@
                                </a>
                          </div>
 					    <% if (uicomponent.isUserActivity() && uicomponent.isSpaceStreamOwner() && !uicomponent.isUISpaceActivitiesDisplay()) {%>
-							<%
-							activityPostedTimeInSpace = uicomponent.getPostedTimeInSpaceString(_ctx, activity.postedTime);
-						 %>
                         <div class="ownerName">
  						    <a title="$ownerName" href="$ownerUri">$ownerName</a>
  					    </div>
@@ -510,8 +507,8 @@
                          }
                     }
 					commentMessage = it.title;
-					commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
-		                        commentEditedTime = uicomponent.getPostedTimeString(_ctx, it.updated.getTime());
+					commentPostedTime = uicomponent.getRelativeTimeLabel(_ctx, it.postedTime);
+		                        commentEditedTime = uicomponent.getRelativeTimeLabel(_ctx, it.updated.getTime());
 					commenterAvatarImgSrc = id.profile.avatarUrl;
 					if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
                     def commentId = it.parentCommentId == null ? it.id : it.parentCommentId;

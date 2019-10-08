@@ -142,12 +142,12 @@
     docVersion = null;
   }
 
-  def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityPostedTimeInSpace, activityUpdatedTime;
+  def ownerName, ownerUri = "#", ownerAvatar, activityPostedTime, activityUpdatedTime;
   def activityStatus = uicomponent.getActivityStatus();
   def activityTitle = uicomponent.getActivityTitle();
 
-  activityPostedTime = uicomponent.getPostedTimeString(_ctx, activity.postedTime);
-  activityUpdatedTime =uicomponent.getPostedTimeString(_ctx,activity.updated.getTime());
+  activityPostedTime = uicomponent.getRelativeTimeLabel(_ctx, activity.postedTime);
+  activityUpdatedTime =uicomponent.getRelativeTimeLabel(_ctx, activity.updated.getTime());
 
   def ownerIdentity = uicomponent.ownerIdentity;
   if (uicomponent.isUserActivity()) {
@@ -571,8 +571,8 @@
               } else {
                 commentMessage = it.title;
               }
-              commentPostedTime = uicomponent.getPostedTimeString(_ctx, it.postedTime);
-              commentEditedTime = uicomponent.getPostedTimeString(_ctx, it.updated.getTime());
+              commentPostedTime = uicomponent.getRelativeTimeLabel(_ctx, it.postedTime);
+              commentEditedTime = uicomponent.getRelativeTimeLabel(_ctx, it.updated.getTime());
               commentEditedTime = _ctx.appRes("UIActivity.label.EditedFrom").replace("{0}",commentEditedTime);
               commenterAvatarImgSrc = commentId.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;

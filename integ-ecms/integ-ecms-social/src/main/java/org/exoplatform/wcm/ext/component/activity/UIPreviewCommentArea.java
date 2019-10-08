@@ -18,6 +18,7 @@ import org.exoplatform.webui.event.EventListener;
 
 import javax.jcr.Node;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @ComponentConfig(
@@ -110,8 +111,8 @@ public class UIPreviewCommentArea extends UIComponent {
     return uiDocumentPreview.getEmbedHtml();
   }
 
-  private String getPostedTimeString(WebuiBindingContext resourceBundle, long postedTime) throws Exception {
-    return this.getBaseUIActivity().getPostedTimeString(resourceBundle, postedTime);
+  private String getRelativeTimeLabel(WebuiBindingContext webuiBindingContext, long postedTime) {
+    return this.getBaseUIActivity().getRelativeTimeLabel(webuiBindingContext, postedTime);
   }
 
   private String[] getSystemCommentTitle(Map<String, String> activityParams) {
