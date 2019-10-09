@@ -422,7 +422,7 @@ for(def index = 0; index < uicomponent.getFilesCount(); index++) {
                                                                 path:'" + currentNode.getPath().replace("'", "\\'") + "', \
                                                                 title:'" + activityContentTitle.replace("'", "\\'") + "', \
                                                                 openUrl: '" + docOpenUri + "', \
-                                                                downloadUrl:'" + docDownloadUrl + "', \
+                                                                downloadUrl:'" + docDownloadUrl.replaceAll("'", "\\\\'") + "', \
                                                                 remoteEditURL:'" + remoteEditURL.replaceAll("'", "\\\\'") + "', \
                                                                 remoteEditTitle :'" + remoteEditTitle + "', \
                                                                 remoteEditClass :'" + remoteEditClass + "', \

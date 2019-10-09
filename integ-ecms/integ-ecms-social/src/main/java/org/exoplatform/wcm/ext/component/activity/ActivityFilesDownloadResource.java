@@ -16,12 +16,9 @@
  */
 package org.exoplatform.wcm.ext.component.activity;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-import javax.jcr.Node;
+import javax.jcr.*;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -56,41 +53,57 @@ public class ActivityFilesDownloadResource extends DownloadResource {
       return null;
     }
 
-    File zipFile = File.createTempFile("activity_files", ".zip");
-    ZipArchiveOutputStream zipOutputStream = new ZipArchiveOutputStream(zipFile);
-    try {
-      zipOutputStream.setCreateUnicodeExtraFields(UnicodeExtraFieldPolicy.ALWAYS);
-      zipOutputStream.setEncoding("UTF-8");
-      for (NodeLocation nodeLocation : nodeLocations) {
-        Node node = NodeLocation.getNodeByLocation(nodeLocation);
+    if (nodeLocations.length == 1) {
+      NodeLocation nodeLocation = nodeLocations[0];
+      Node node = NodeLocation.getNodeByLocation(nodeLocation);
+      try {
         if (node.isNodeType(NodetypeConstant.NT_FILE) && node.hasNode(NodetypeConstant.JCR_CONTENT)) {
           Node contentNode = node.getNode(NodetypeConstant.JCR_CONTENT);
           if (contentNode.hasProperty(NodetypeConstant.JCR_DATA)) {
-            String fileName = node.hasProperty(NodetypeConstant.EXO_NAME) ? node.getProperty(NodetypeConstant.EXO_NAME).getString() : node.getName();
-            ZipArchiveEntry entry = new ZipArchiveEntry(fileName);
-            zipOutputStream.putArchiveEntry(entry);
-            InputStream inputStream = null;
-            try {
-              inputStream = contentNode.getProperty(NodetypeConstant.JCR_DATA).getStream();
-              IOUtils.copy(inputStream, zipOutputStream);
-            } finally {
-              if (inputStream != null) {
-                inputStream.close();
-              }
-            }
-            zipOutputStream.closeArchiveEntry();
+            return contentNode.getProperty(NodetypeConstant.JCR_DATA).getStream();
           }
         }
+      } catch (Exception e) {
+        throw new IllegalStateException("Error getting inputstream of file content", e);
       }
-    } catch (Exception exp) {
-      IOUtils.closeQuietly(zipOutputStream);
-      zipFile.delete();
-      LOG.error("An error occurred when generating the ZIP file", exp);
-      throw new RuntimeException("An error occurred when generating the ZIP file", exp);
-    } finally {
-      IOUtils.closeQuietly(zipOutputStream);
+      return null;
+    } else {
+      File resultFile = File.createTempFile("activity_files", ".zip");
+      ZipArchiveOutputStream zipOutputStream = new ZipArchiveOutputStream(resultFile);
+      try {
+        zipOutputStream.setCreateUnicodeExtraFields(UnicodeExtraFieldPolicy.ALWAYS);
+        zipOutputStream.setEncoding("UTF-8");
+        for (NodeLocation nodeLocation : nodeLocations) {
+          Node node = NodeLocation.getNodeByLocation(nodeLocation);
+          if (node.isNodeType(NodetypeConstant.NT_FILE) && node.hasNode(NodetypeConstant.JCR_CONTENT)) {
+            Node contentNode = node.getNode(NodetypeConstant.JCR_CONTENT);
+            if (contentNode.hasProperty(NodetypeConstant.JCR_DATA)) {
+              String fileName = node.hasProperty(NodetypeConstant.EXO_NAME) ? node.getProperty(NodetypeConstant.EXO_NAME).getString() : node.getName();
+              ZipArchiveEntry entry = new ZipArchiveEntry(fileName);
+              zipOutputStream.putArchiveEntry(entry);
+              InputStream inputStream = null;
+              try {
+                inputStream = contentNode.getProperty(NodetypeConstant.JCR_DATA).getStream();
+                IOUtils.copy(inputStream, zipOutputStream);
+              } finally {
+                if (inputStream != null) {
+                  inputStream.close();
+                }
+              }
+              zipOutputStream.closeArchiveEntry();
+            }
+          }
+        }
+      } catch (Exception exp) {
+        IOUtils.closeQuietly(zipOutputStream);
+        resultFile.delete();
+        LOG.error("An error occurred when generating the ZIP file", exp);
+        throw new RuntimeException("An error occurred when generating the ZIP file", exp);
+      } finally {
+        IOUtils.closeQuietly(zipOutputStream);
+      }
+      return new FileInputStream(resultFile);
     }
-    return new FileInputStream(zipFile);
   }
 
 }
