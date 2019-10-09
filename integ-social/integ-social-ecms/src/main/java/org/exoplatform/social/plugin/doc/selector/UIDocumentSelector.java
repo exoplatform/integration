@@ -64,12 +64,9 @@ import org.exoplatform.webui.cssfile.CssClassUtils;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 
-@ComponentConfig(
-  template = "classpath:groovy/social/plugin/doc/selector/UIDocumentSelector.gtmpl",
-  events = {
+@ComponentConfig(template = "classpath:groovy/social/plugin/doc/selector/UIDocumentSelector.gtmpl", events = {
     @EventConfig(listeners = UIDocumentSelector.SelectActionListener.class)
-  }
-)
+})
 public class UIDocumentSelector extends UIAbstractSelectFileComposer {
 
   public static final String  ACTIVITY_PARAMS_SEPARATOR     = "/@/";
@@ -92,10 +89,6 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
 
   private LinkManager         linkManager;
 
-  private List<Object>        breadCrumb                    = new ArrayList<>();
-
-  private List<String>        breadCrumbTitle               = new ArrayList<>();
-
   private List<String>        selectedFilePaths             = new ArrayList<>();
 
   private List<String>        selectedFileTitles             = new ArrayList<>();
@@ -105,6 +98,10 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
   private String              lastSelectedDocumentTitle     = null;
 
   private boolean             documentAlreadySelectedError  = false;
+
+  private boolean             folderSelection               = false;
+
+  private BreadcrumbLocation  breadcrumbLocation            = new BreadcrumbLocation();
 
   public UIDocumentSelector() throws Exception {
     super();
@@ -137,13 +134,19 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
     }
 
     if (selectedDriveData != null) {
-      breadCrumb.clear();
-      breadCrumbTitle.clear();
-      breadCrumb.add(selectedDriveData);
-      breadCrumbTitle.add(getDriveTitle(selectedDriveData));
+      breadcrumbLocation = new BreadcrumbLocation();
+      breadcrumbLocation.addLocation(selectedDriveData);
     }
 
     addChild(UIDocumentSelectorUpdate.class, null, null);
+  }
+
+  public boolean isFolderSelection() {
+    return folderSelection;
+  }
+
+  public void setFolderSelection(boolean folderSelection) {
+    this.folderSelection = folderSelection;
   }
 
   public String getLastSelectedDocumentTitle() {
@@ -167,7 +170,7 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
   }
 
   public List<DriveData> getDrives() throws Exception {
-    if (breadCrumb.isEmpty()) {
+    if (breadcrumbLocation.isEmpty()) {
       List<DriveData> driveDatas = new ArrayList<>();
       driveDatas.addAll(driveService.getMainDrives(Util.getPortalRequestContext().getRemoteUser(), Utils.getMemberships()));
       driveDatas.addAll(driveService.getGroupDrives(Util.getPortalRequestContext().getRemoteUser(), Utils.getMemberships()));
@@ -179,25 +182,15 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
   }
 
   public List<Node> getFolders() throws Exception {
-    if (breadCrumb.isEmpty()) {
+    Node currentFolder = breadcrumbLocation.getCurrentFolder();
+    if (currentFolder == null) {
       return Collections.emptyList();
     } else {
-      DriveData drive = (DriveData) breadCrumb.get(0);
-      String path = null;
-
-      if (breadCrumb.size() == 1) {
-        path = getDriveHomePath(drive);
-      } else {
-        path = (String) breadCrumb.get(breadCrumb.size() - 1);
-      }
-
-      Node docNode = NodeLocation.getNodeByExpression(WCMCoreUtils.getRepository().getConfiguration().getName() + ":"
-          + drive.getWorkspace() + ":" + path);
       List<Node> folderNodes = new ArrayList<>();
 
-      NodeIterator nodesIterator = docNode.getNodes();
+      NodeIterator nodesIterator = currentFolder.getNodes();
       while (nodesIterator.hasNext()) {
-        Node node = (Node) nodesIterator.nextNode();
+        Node node = nodesIterator.nextNode();
         if (node.isNodeType(FCKUtils.EXO_HIDDENABLE))
           continue;
         if (node.isNodeType("exo:symlink") && node.hasProperty("exo:uuid") && node.hasProperty("exo:workspace")) {
@@ -212,21 +205,10 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
   }
 
   public List<Node> getFiles() throws Exception {
-    if (breadCrumb.isEmpty()) {
+    if (folderSelection || breadcrumbLocation.isEmpty()) {
       return Collections.emptyList();
     } else {
-      DriveData drive = (DriveData) breadCrumb.get(0);
-
-      String path = null;
-
-      if (breadCrumb.size() == 1) {
-        path = getDriveHomePath(drive);
-      } else {
-        path = (String) breadCrumb.get(breadCrumb.size() - 1);
-      }
-
-      Node docNode = NodeLocation.getNodeByExpression(WCMCoreUtils.getRepository().getConfiguration().getName() + ":"
-          + drive.getWorkspace() + ":" + path);
+      Node docNode = breadcrumbLocation.getCurrentFolder();
       List<Node> fileNodes = new ArrayList<>();
 
       NodeIterator nodesIterator = docNode.getNodes();
@@ -245,19 +227,6 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
     }
   }
 
-  public String getDriveTitle(DriveData drive) throws Exception {
-    String name = drive.getName();
-    if (name.startsWith(".")) {
-      String groupLabel = getGroupLabel(drive);
-      if (groupLabel == null) {
-        groupLabel = getGroupLabel(name, !name.startsWith("/spaces"));
-      }
-      return groupLabel;
-    } else {
-      return getLabel(name);
-    }
-  }
-
   public String getDriveCSSClasses(DriveData drive) throws Exception {
     if (drive.getName().startsWith(".")) {
       return "uiIconEcms24x24Drive" + drive.getName().replaceAll(" ", "") + " uiIconEcms24x24DriveGroup";
@@ -268,92 +237,12 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
     }
   }
 
-  public String getLabel(String id) {
-    RequestContext context = RequestContext.getCurrentInstance();
-    ResourceBundle res = context.getApplicationResourceBundle();
-    try {
-      String userDisplayName = "";
-      if (ManageDriveServiceImpl.USER_DRIVE_NAME.equals(id)) {
-        RequestContext ctx = Util.getPortalRequestContext();
-        if (ctx != null) {
-          String username = ctx.getRemoteUser();
-          try {
-            User user = this.getApplicationComponent(OrganizationService.class).getUserHandler().findUserByName(username);
-            if (user != null) {
-              userDisplayName = user.getDisplayName();
-            }
-          } catch (Exception ex) {
-            userDisplayName = username;
-          }
-        }
-      }
-      return res.getString("Drives.label." + id.replace(" ", "")).replace("{0}", userDisplayName);
-    } catch (Exception ex) {
-      return id;
-    }
-  }
-
-  public String getGroupLabel(DriveData driveData) throws Exception {
-    try {
-      RepositoryService repoService = WCMCoreUtils.getService(RepositoryService.class);
-      NodeHierarchyCreator nodeHierarchyCreator = WCMCoreUtils.getService(NodeHierarchyCreator.class);
-      String groupPath = nodeHierarchyCreator.getJcrPath(BasePath.CMS_GROUPS_PATH);
-      String absPath = groupPath + driveData.getName().replace(".", "/");
-      ManageableRepository currentRepository = repoService.getCurrentRepository();
-      String workspace = currentRepository.getConfiguration().getDefaultWorkspaceName();
-
-      return getNode(workspace, absPath).getProperty(NodetypeConstant.EXO_LABEL).getString();
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
-  public Node getNode(String workspace, String absPath) throws Exception {
-    RepositoryService repoService = WCMCoreUtils.getService(RepositoryService.class);
-    ManageableRepository currentRepository = repoService.getCurrentRepository();
-    Node groupNode = (Node) WCMCoreUtils.getSystemSessionProvider().getSession(workspace, currentRepository).getItem(absPath);
-    return groupNode;
-  }
-
-  public String getGroupLabel(String groupId, boolean isFull) {
-    String ret = groupId.replace(".", " / ");
-    if (!isFull) {
-      if (ret.startsWith(" / spaces")) {
-        return ret.substring(ret.lastIndexOf("/") + 1).trim();
-      }
-      int count = 0;
-      int slashPosition = -1;
-      for (int i = 0; i < ret.length(); i++) {
-        if ('/' == ret.charAt(i)) {
-          if (++count == 4) {
-            slashPosition = i;
-            break;
-          }
-        }
-      }
-      if (slashPosition > 0) {
-        ret = ret.substring(0, slashPosition) + "...";
-      } else if (ret.length() > 70) {
-        ret = ret.substring(0, 70) + "...";
-      }
-    }
-    return ret;
-  }
-
   public String getFileTitle(Node fileNode) throws Exception {
     return Utils.getTitle(fileNode);
   }
 
   public String getFilePath(Node fileNode) throws Exception {
     return fileNode.getSession().getWorkspace().getName() + "@" + fileNode.getPath();
-  }
-
-  public String getBreadCrumbTitle(Object element) throws Exception {
-    if (element instanceof DriveData) {
-      return getDriveTitle((DriveData) element);
-    } else {
-      return breadCrumbTitle.get(breadCrumb.indexOf(element));
-    }
   }
 
   public String getFolderNodeIcon(Node node) throws Exception {
@@ -389,13 +278,25 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
   }
 
   public boolean isFileSelected(Node fileNode) throws Exception {
-    return breadCrumb.size() > 0 && breadCrumb.get(0) != null
-        && StringUtils.equals(((DriveData) breadCrumb.get(0)).getWorkspace(), fileNode.getSession().getWorkspace().getName())
+    return !breadcrumbLocation.isEmpty()
+        && StringUtils.equals(breadcrumbLocation.getWorkspace(), fileNode.getSession().getWorkspace().getName())
         && selectedFilePaths.contains(getFilePath(fileNode));
   }
 
   public List<Object> getBreadCrumb() {
-    return breadCrumb;
+    return breadcrumbLocation.getBreadCrumb();
+  }
+
+  public BreadcrumbLocation getBreadcrumbLocation() {
+    return breadcrumbLocation;
+  }
+
+  public String getBreadCrumbTitle(Object obj) throws Exception {
+    return breadcrumbLocation.getBreadCrumbTitle(obj);
+  }
+  
+  public String getDriveTitle(DriveData driveData) throws Exception {
+    return BreadcrumbLocation.getDriveTitle(driveData);
   }
 
   public String getFolderTitle(Node folderNode) throws Exception {
@@ -424,8 +325,7 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
           LOG.warn("No entry was selected: {}", selectedElement);
           return;
         } else if (elementType.equals("DRIVES")) {
-          component.breadCrumb.clear();
-          component.breadCrumbTitle.clear();
+          component.breadcrumbLocation = new BreadcrumbLocation();
         } else {
           int breadCrumbIndex = Integer.parseInt(selectedPath);
           if (elementType.equals("DRIVE")) {
@@ -433,15 +333,13 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
               LOG.warn("Selected index isn't a drive: {} ", breadCrumbIndex);
               return;
             }
-            component.breadCrumb = component.getBreadCrumb().subList(0, 1);
-            component.breadCrumbTitle = component.breadCrumbTitle.subList(0, 1);
+            component.breadcrumbLocation.subList(0, 1);
           } else if (elementType.equals("FOLDER")) {
-            if (component.breadCrumb.size() < 2) {
+            if (component.breadcrumbLocation.size() < 2) {
               LOG.warn("No folder was selected: {}", breadCrumbIndex);
               return;
             }
-            component.breadCrumb = component.breadCrumb.subList(0, breadCrumbIndex + 1);
-            component.breadCrumbTitle = component.breadCrumbTitle.subList(0, breadCrumbIndex + 1);
+            component.breadcrumbLocation.subList(0, breadCrumbIndex + 1);
           } else {
             LOG.warn("Invalid breadcrumb element type: {} ", elementType);
             return;
@@ -449,28 +347,24 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
         }
       } else if (selectionType.equals("SELECTIONBOX")) {
         if (elementType.equals("DRIVE")) {
-          if (component.getBreadCrumb().size() > 0) {
+          if (!component.getBreadCrumb().isEmpty()) {
             LOG.warn("Can't switch to another Drive while a drive is already selected: {} ", selectedPath);
             return;
           }
           DriveData driveData = component.driveService.getDriveByName(selectedPath);
           if (driveData != null && component.hasPermissionOnDrive(driveData)) {
-            component.breadCrumb.clear();
-            component.breadCrumbTitle.clear();
-            component.breadCrumb.add(driveData);
-            component.breadCrumbTitle.add(component.getDriveTitle(driveData));
+            component.breadcrumbLocation = new BreadcrumbLocation();
+            component.breadcrumbLocation.addLocation(driveData);
           } else {
             LOG.warn("Can't find drive with name {}", selectedPath);
             return;
           }
         } else if (elementType.equals("FOLDER")) {
-          if (component.getBreadCrumb().size() == 0) {
+          if (component.getBreadCrumb().isEmpty()) {
             LOG.warn("Can't find the selected drive for selected folder: {} ", selectedPath);
             return;
           }
-          DriveData driveData = (DriveData) component.getBreadCrumb().get(0);
-          component.breadCrumb.add(selectedPath);
-          component.breadCrumbTitle.add(component.getFolderTitle(component.getNode(driveData.getWorkspace(), selectedPath)));
+          component.breadcrumbLocation.addLocation(selectedPath);
         } else if (elementType.equals("FILE")) {
           UIDocActivityPopup docActivityPopup = component.getAncestorOfType(UIDocActivityPopup.class);
           componentToUpdate = component.getChild(UIDocumentSelectorUpdate.class);
@@ -488,7 +382,7 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
           } else {
             component.lastSelectedDocumentTitle = selectedFileTitle;
 
-            if(component.selectedFileTitles.contains(selectedFileTitle)) {
+            if (component.selectedFileTitles.contains(selectedFileTitle)) {
               component.documentAlreadySelectedError = true;
             } else {
               docActivityPopup.setLimitReached(component.selectedFilePaths.size() >= docActivityPopup.getMaxFilesCount());
@@ -509,15 +403,6 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
 
       event.getRequestContext().addUIComponentToUpdateByAjax(componentToUpdate);
     }
-  }
-
-  protected String getDriveHomePath(DriveData driveData) throws Exception {
-    String homePath = driveData.getHomePath();
-    if (homePath.contains("${userId}")) {
-      homePath = org.exoplatform.services.cms.impl.Utils.getPersonalDrivePath(homePath,
-                                                                              Util.getPortalRequestContext().getRemoteUser());
-    }
-    return homePath;
   }
 
   protected boolean hasPermissionOnDrive(DriveData drive) throws Exception {
@@ -557,7 +442,7 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
         String selectedFileWS = selectedFile.substring(0, selectedFile.indexOf("@"));
         String selectedFilePath = selectedFile.substring(selectedFile.indexOf("@") + 1);
 
-        Node node = getNode(selectedFileWS, selectedFilePath);
+        Node node = BreadcrumbLocation.getNode(selectedFileWS, selectedFilePath);
 
         ComposerFileItem composerFileItem = new ComposerFileItem();
         composerFileItem.setName(node.getName());
@@ -598,13 +483,12 @@ public class UIDocumentSelector extends UIAbstractSelectFileComposer {
     String path = fileItem.getId();
     String selectedFileWS = path.substring(0, path.indexOf("@"));
     String selectedFilePath = path.substring(path.indexOf("@") + 1);
-    return getNode(selectedFileWS, selectedFilePath);
+    return BreadcrumbLocation.getNode(selectedFileWS, selectedFilePath);
   }
 
   @Override
   public void resetSelection() {
-    breadCrumb.clear();
-    breadCrumbTitle.clear();
+    breadcrumbLocation = new BreadcrumbLocation();
     selectedFilePaths.clear();
     validSelectedFilePaths.clear();
     selectedFileTitles.clear();

@@ -6,10 +6,12 @@ import java.util.List;
 import javax.jcr.Node;
 
 import org.exoplatform.social.plugin.doc.UIDocActivityPopup;
+import org.exoplatform.social.plugin.doc.UIFolderActivityPopup;
 import org.exoplatform.web.application.JavascriptManager;
 import org.exoplatform.web.application.RequireJS;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIContainerLifecycle;
 
@@ -42,22 +44,32 @@ public class UIDocumentSelectorUpdate extends UIContainer {
       }
     }
     RequireJS jqueryJS = jsManager.require("SHARED/jquery", "gj");
-    if(((UIDocActivityPopup)uiParent.getParent()).isLimitReached()) {
-      jqueryJS.addScripts("gj('.UIDocActivityPopup .countLimit').addClass('error');");
-    } else {
-      jqueryJS.addScripts("gj('.UIDocActivityPopup .countLimit').removeClass('error');");
+    UIComponent parent = uiParent.getParent();
+    if (parent instanceof UIDocActivityPopup) {
+      if (((UIDocActivityPopup) parent).isLimitReached()) {
+        jqueryJS.addScripts("gj('.UIDocActivityPopup .countLimit').addClass('error');");
+      } else {
+        jqueryJS.addScripts("gj('.UIDocActivityPopup .countLimit').removeClass('error');");
+      }
+      if(uiParent.hasSelectedFiles()) {
+        jqueryJS.addScripts("gj('.selectFileBTN').attr('disabled', null);");
+      } else {
+        jqueryJS.addScripts("gj('.selectFileBTN').attr('disabled', 'disabled');");
+      }
+      if(uiParent.isDocumentAlreadySelectedError()) {
+        jqueryJS.addScripts("gj('.fileAlreadySelected').show();gj('.fileAlreadySelected b').html('" + uiParent.getLastSelectedDocumentTitle() + "');gj('.fileAlreadySelected').delay(5000).fadeOut('slow');");
+        uiParent.setDocumentAlreadySelectedError(false);
+      } else {
+        jqueryJS.addScripts("gj('.fileAlreadySelected').hide();");
+      }
+    } else if (parent instanceof UIFolderActivityPopup) {
+      if (((UIFolderActivityPopup) parent).isFolder()) {
+        jqueryJS.addScripts("gj('.selectFolderBTN').attr('disabled', null);");
+      } else {
+        jqueryJS.addScripts("gj('.selectFolderBTN').attr('disabled', 'disabled');");
+      }
     }
-    if(uiParent.hasSelectedFiles()) {
-      jqueryJS.addScripts("gj('.selectFileBTN').attr('disabled', null);");
-    } else {
-      jqueryJS.addScripts("gj('.selectFileBTN').attr('disabled', 'disabled');");
-    }
-    if(uiParent.isDocumentAlreadySelectedError()) {
-      jqueryJS.addScripts("gj('.fileAlreadySelected').show();gj('.fileAlreadySelected b').html('" + uiParent.getLastSelectedDocumentTitle() + "');gj('.fileAlreadySelected').delay(5000).fadeOut('slow');");
-      uiParent.setDocumentAlreadySelectedError(false);
-    } else {
-      jqueryJS.addScripts("gj('.fileAlreadySelected').hide();");
-    }
+
     jqueryJS.addScripts("gj(document).ready(function() { gj(\"*[rel='tooltip']\").tooltip();});");
   }
 

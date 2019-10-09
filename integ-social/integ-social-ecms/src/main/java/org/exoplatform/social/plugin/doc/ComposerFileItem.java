@@ -2,34 +2,45 @@ package org.exoplatform.social.plugin.doc;
 
 import java.io.Serializable;
 
+import javax.jcr.*;
+
 import org.apache.commons.lang.StringUtils;
 
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.services.cms.link.LinkManager;
+import org.exoplatform.services.wcm.core.NodeLocation;
+import org.exoplatform.services.wcm.core.NodetypeConstant;
+import org.exoplatform.social.plugin.doc.selector.BreadcrumbLocation;
+import org.exoplatform.social.plugin.doc.selector.UIComposerMultiUploadSelector;
+
 public class ComposerFileItem implements Serializable, Comparable<ComposerFileItem> {
-  private static final long serialVersionUID = -290642886983269011L;
+  private static final long            serialVersionUID = -290642886983269011L;
 
-  private static long       sharedIndice;
+  private static long                  sharedIndice;
 
-  private String            name;
+  private String                       name;
 
-  private String            title;
+  private String                       title;
 
-  private String            id;
+  private String                       id;
 
-  private String            mimeType;
+  private String                       mimeType;
 
-  private String            nodeIcon;
+  private String                       nodeIcon;
 
-  private String            link;
+  private String                       link;
 
-  private String            size;
+  private String                       size;
 
-  private String            path;
+  private String                       path;
 
-  private double            sizeInBytes;
+  private double                       sizeInBytes;
 
-  private String            resolverType;
-  
-  private long              indice;
+  private String                       resolverType;
+
+  private long                         indice;
+
+  private transient BreadcrumbLocation destinationLocation;
 
   public ComposerFileItem() {
     setIndice(sharedIndice++);
@@ -123,6 +134,34 @@ public class ComposerFileItem implements Serializable, Comparable<ComposerFileIt
     this.indice = indice;
   }
 
+  public BreadcrumbLocation getDestinationLocation() {
+    return destinationLocation;
+  }
+
+  public void setDestinationLocation(BreadcrumbLocation destinationLocation) {
+    this.destinationLocation = destinationLocation;
+  }
+
+  public String getDestinationBreadCrumb() throws Exception {
+    if (destinationLocation == null) {
+      return null;
+    } else {
+      return destinationLocation.getCurrentFolderBreadcrumb();
+    }
+  }
+
+  public String getDestinationTitle() throws Exception {
+    if (destinationLocation == null) {
+      return null;
+    } else {
+      return destinationLocation.getCurrentFolderTitle();
+    }
+  }
+
+  public boolean isUploadedFile() {
+    return StringUtils.equals(UIComposerMultiUploadSelector.UPLOAD_RESOLVER_TYPE, resolverType);
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof ComposerFileItem)) {
@@ -144,4 +183,20 @@ public class ComposerFileItem implements Serializable, Comparable<ComposerFileIt
   public int compareTo(ComposerFileItem o) {
     return (int) (getIndice() - o.getIndice());
   }
+
+  private String getTitle(Node destinationNode) throws RepositoryException {
+    if (destinationNode == null) {
+      return null;
+    } else {
+      if (destinationNode.isNodeType(NodetypeConstant.EXO_SYMLINK)) {
+        destinationNode = CommonsUtils.getService(LinkManager.class).getTarget(destinationNode);
+      }
+      if (destinationNode.hasProperty(NodetypeConstant.EXO_TITLE)) {
+        return destinationNode.getProperty(NodetypeConstant.EXO_TITLE).getString();
+      } else {
+        return destinationNode.getName();
+      }
+    }
+  }
+
 }

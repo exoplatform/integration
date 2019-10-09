@@ -17,15 +17,7 @@
 
 package org.exoplatform.social.plugin.doc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -48,10 +40,9 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.plugin.doc.selector.BreadcrumbLocation;
 import org.exoplatform.social.plugin.doc.selector.UIComposerMultiUploadSelector;
-import org.exoplatform.social.webui.composer.PopupContainer;
-import org.exoplatform.social.webui.composer.UIActivityComposer;
-import org.exoplatform.social.webui.composer.UIComposer;
+import org.exoplatform.social.webui.composer.*;
 import org.exoplatform.social.webui.composer.UIComposer.PostContext;
 import org.exoplatform.social.webui.profile.UIUserActivitiesDisplay;
 import org.exoplatform.wcm.connector.fckeditor.DriverConnector;
@@ -77,21 +68,23 @@ import org.exoplatform.webui.form.UIFormStringInput;
     @EventConfig(listeners = UIActivityComposer.SubmitContentActionListener.class),
     @EventConfig(listeners = UIActivityComposer.ActivateActionListener.class),
     @EventConfig(listeners = UIDocActivityComposer.SelectDocumentActionListener.class),
+    @EventConfig(listeners = UIDocActivityComposer.SelectDestinationFolderActionListener.class),
+    @EventConfig(listeners = UIDocActivityComposer.RemoveDestinationFolderActionListener.class),
     @EventConfig(listeners = UIDocActivityComposer.RemoveDocumentActionListener.class) })
 public class UIDocActivityComposer extends UIActivityComposer implements UISelectable {
-  private static final Log                          LOG                     = ExoLogger.getLogger(UIDocActivityComposer.class);
+  private static final Log                          LOG                       = ExoLogger.getLogger(UIDocActivityComposer.class);
 
-  public static final String                        REPOSITORY              = "repository";
+  public static final String                        REPOSITORY                = "repository";
 
-  public static final String                        WORKSPACE               = "collaboration";
+  public static final String                        WORKSPACE                 = "collaboration";
 
-  protected static final String                     UI_COMPOSER_MULTIUPLOAD = "UIComposerMultiUpload";
+  protected static final String                     UI_COMPOSER_MULTIUPLOAD   = "UIComposerMultiUpload";
 
-  private static final String                       FILE_SPACES             = "files:spaces";
+  private static final String                       FILE_SPACES               = "files:spaces";
 
-  private final static String                       POPUP_COMPOSER          = "UIPopupComposer";
+  private final static String                       POPUP_COMPOSER            = "UIPopupComposer";
 
-  private final String                              docActivityTitle        = "<a href=\"${" + UIDocActivity.DOCLINK
+  private final String                              docActivityTitle          = "<a href=\"${" + UIDocActivity.DOCLINK
       + "}\">" + "${" + UIDocActivity.DOCNAME + "}</a>";
 
   private SpaceService                              spaceService;
@@ -100,21 +93,23 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 
   private ActivityManager                           activityManager;
 
-  private List<ComposerFileItem>                    selectedFileItems        = new ArrayList<>();
+  private List<ComposerFileItem>                    selectedFileItems         = new ArrayList<>();
 
   private String                                    currentUser;
 
-  private int                                       maxFilesCount           = 20;
+  private int                                       maxFilesCount             = 20;
 
-  private int                                       maxFileSize             = 5;
+  private int                                       maxFileSize               = 5;
 
-  private int                                       filesCounter            = 5;
+  private int                                       filesCounter              = 5;
 
-  private boolean                                   duplicatedFilesSelection   = false;
+  private boolean                                   duplicatedFilesSelection  = false;
 
-  private List<String>                              duplicatedFileNames   = new ArrayList<>();
+  private List<String>                              duplicatedFileNames       = new ArrayList<>();
 
-  private Map<String, UIAbstractSelectFileComposer> uiFileSelectors         = new HashMap<>();
+  private Map<String, UIAbstractSelectFileComposer> uiFileSelectors           = new HashMap<>();
+
+  private BreadcrumbLocation                        selectedDestinationFolder = null;
 
   /**
    * constructor
@@ -140,7 +135,9 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 
     addChild(new UIFormStringInput("InputDoc", "InputDoc", null));
 
-    UIComposerMultiUploadSelector uiMultiUpload = addChild(UIComposerMultiUploadSelector.class, null, UIComposerMultiUploadSelector.CONTAINER_ID);
+    UIComposerMultiUploadSelector uiMultiUpload = addChild(UIComposerMultiUploadSelector.class,
+                                                           null,
+                                                           UIComposerMultiUploadSelector.CONTAINER_ID);
     uiMultiUpload.init(maxFilesCount, maxFileSize);
 
     uiFileSelectors.put(uiMultiUpload.getId(), uiMultiUpload);
@@ -157,11 +154,28 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     return filesCounter++;
   }
 
+  public String getDestinationBreadCrumb() throws Exception {
+    if (selectedDestinationFolder == null) {
+      return null;
+    } else {
+      return selectedDestinationFolder.getCurrentFolderBreadcrumb();
+    }
+  }
+
+  public String getDestinationTitle() throws Exception {
+    if (selectedDestinationFolder == null) {
+      return null;
+    } else {
+      return selectedDestinationFolder.getCurrentFolderTitle();
+    }
+  }
+
   private void resetValues() {
     selectedFileItems.clear();
     for (UIAbstractSelectFileComposer selectFileComposer : getUIFileSelectors().values()) {
       selectFileComposer.resetSelection();
     }
+    selectedDestinationFolder = null;
     setReadyForPostingActivity(false);
   }
 
@@ -214,6 +228,9 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 
       for (ComposerFileItem composerFileItem : selectedFileItemsList) {
         UIAbstractSelectFileComposer uiSelectFileComposer = getResolver(composerFileItem.getResolverType());
+        if (composerFileItem.getDestinationLocation() == null) {
+          composerFileItem.setDestinationLocation(selectedDestinationFolder);
+        }
         Object obj = uiSelectFileComposer.preActivitySave(composerFileItem, postContext);
         uiSelectFileComposer.putActivityParams(obj, composerFileItem, activityParams);
       }
@@ -267,36 +284,47 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
 
   @SuppressWarnings("unchecked")
   public void doSelect(String selectField, Object value) throws Exception {
-    if (StringUtils.isEmpty(selectField) || !selectField.equals(UIAbstractSelectFileComposer.COMPOSER_SELECTION_TYPE)) {
+    if (StringUtils.isBlank(selectField)) {
       LOG.warn("No selection is not retrieved with expected type");
-      return;
-    }
+    } else if (selectField.equals(UIAbstractSelectFileComposer.COMPOSER_SELECTION_TYPE)) {
+      Set<ComposerFileItem> selectedComposerChildItems = (Set<ComposerFileItem>) value;
+      Set<ComposerFileItem> duplicatedItems = new HashSet<>(selectedComposerChildItems);
+      duplicatedItems.retainAll(selectedFileItems);
+      for (ComposerFileItem composerFileItem : duplicatedItems) {
+        addDuplicatedFileName(composerFileItem.getName());
+      }
 
-    Set<ComposerFileItem> selectedComposerChildItems = (Set<ComposerFileItem>) value;
-    Set<ComposerFileItem> duplicatedItems = new HashSet<>(selectedComposerChildItems);
-    duplicatedItems.retainAll(selectedFileItems);
-    for (ComposerFileItem composerFileItem : duplicatedItems) {
-      addDuplicatedFileName(composerFileItem.getName());
-    }
-
-    selectedComposerChildItems.removeAll(selectedFileItems);
-    int remainingFilesToSelect = getRemainingFilesToSelect();
-    if(remainingFilesToSelect >= selectedComposerChildItems.size()) {
-      for (ComposerFileItem composerFileItem : selectedComposerChildItems) {
-        if(!selectedFileItems.contains(composerFileItem)) {
-          selectedFileItems.add(composerFileItem);
+      selectedComposerChildItems.removeAll(selectedFileItems);
+      int remainingFilesToSelect = getRemainingFilesToSelect();
+      if (remainingFilesToSelect >= selectedComposerChildItems.size()) {
+        for (ComposerFileItem composerFileItem : selectedComposerChildItems) {
+          if (!selectedFileItems.contains(composerFileItem)) {
+            selectedFileItems.add(composerFileItem);
+          }
         }
+      } else {
+        ArrayList<ComposerFileItem> selectedItemList = new ArrayList<>(selectedComposerChildItems);
+        List<ComposerFileItem> subList = selectedItemList.subList(0, remainingFilesToSelect);
+        selectedFileItems.addAll(subList);
+      }
+      Collections.sort(selectedFileItems);
+    } else if (selectField.equals(UIAbstractSelectFileComposer.COMPOSER_DESTINATION_FOLDER)) {
+      this.selectedDestinationFolder = (BreadcrumbLocation) value;
+    } else if (selectedFileItems != null && !selectedFileItems.isEmpty()) {
+      ComposerFileItem selectedComposerFileItem = getFileItem(selectField);
+      if (selectedComposerFileItem == null) {
+        LOG.warn("Unknown selection field '{}'", selectField);
+      } else {
+        BreadcrumbLocation selectedFileLocation = (BreadcrumbLocation) value;
+        selectedComposerFileItem.setDestinationLocation(selectedFileLocation);
       }
     } else {
-      ArrayList<ComposerFileItem> selectedItemList = new ArrayList<>(selectedComposerChildItems);
-      List<ComposerFileItem> subList = selectedItemList.subList(0, remainingFilesToSelect);
-      selectedFileItems.addAll(subList);
+      LOG.warn("Unknown selection field '{}'", selectField);
     }
-    Collections.sort(selectedFileItems);
   }
 
   public boolean testAndSetMaxCountReached(boolean duplicated) {
-    if(duplicatedFilesSelection) {
+    if (duplicatedFilesSelection) {
       duplicatedFilesSelection = duplicated;
       return true;
     } else {
@@ -326,6 +354,17 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     selectedFileItems.remove(fileItem);
   }
 
+  public void removeDestinationFolder(String fileId) {
+    if (StringUtils.isBlank(fileId)) {
+      selectedDestinationFolder = null;
+    } else {
+      ComposerFileItem fileItem = getFileItem(fileId);
+      if (fileItem != null) {
+        fileItem.setDestinationLocation(null);
+      }
+    }
+  }
+
   public List<ComposerFileItem> getSelectedFileItems() {
     return getSelectedFileItems(true);
   }
@@ -334,9 +373,9 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
     if (computeFromSelectors) {
       for (UIAbstractSelectFileComposer selectFileComposer : uiFileSelectors.values()) {
         Set<ComposerFileItem> selectFiles = selectFileComposer.getSelectFiles();
-        if(selectFiles != null && !selectFiles.isEmpty()) {
+        if (selectFiles != null && !selectFiles.isEmpty()) {
           for (ComposerFileItem composerFileItem : selectFiles) {
-            if(!selectedFileItems.contains(composerFileItem)) {
+            if (!selectedFileItems.contains(composerFileItem)) {
               selectedFileItems.add(composerFileItem);
             }
           }
@@ -345,6 +384,13 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
       }
     }
     return selectedFileItems;
+  }
+
+  private ComposerFileItem getFileItem(String fileId) {
+    return selectedFileItems.stream()
+                            .filter(item -> StringUtils.equals(item.getId(), fileId))
+                            .findFirst()
+                            .orElse(null);
   }
 
   private ExoSocialActivity saveActivity(Map<String, String> activityParams,
@@ -379,6 +425,31 @@ public class UIDocActivityComposer extends UIActivityComposer implements UISelec
       }
       uiDocActivityPopup.setMaxFilesCount(docActivityComposer.getRemainingFilesToSelect());
       event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+    }
+  }
+
+  public static class SelectDestinationFolderActionListener extends EventListener<UIDocActivityComposer> {
+    @Override
+    public void execute(Event<UIDocActivityComposer> event) throws Exception {
+      UIDocActivityComposer docActivityComposer = event.getSource();
+      String destinationFileId = event.getRequestContext().getRequestParameter(OBJECTID);
+
+      PopupContainer popupContainer = docActivityComposer.getAncestorOfType(UIPortletApplication.class)
+                                                         .findFirstComponentOfType(PopupContainer.class);
+      UIFolderActivityPopup uiFolderActivityPopup = popupContainer.createUIComponent(UIFolderActivityPopup.class, null, null);
+      uiFolderActivityPopup.setDestinationFileId(destinationFileId);
+      popupContainer.activate(uiFolderActivityPopup, 570, 0, false, POPUP_COMPOSER);
+      event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
+    }
+  }
+
+  public static class RemoveDestinationFolderActionListener extends EventListener<UIDocActivityComposer> {
+    @Override
+    public void execute(Event<UIDocActivityComposer> event) throws Exception {
+      UIDocActivityComposer docActivityComposer = event.getSource();
+      String destinationFileId = event.getRequestContext().getRequestParameter(OBJECTID);
+      docActivityComposer.removeDestinationFolder(destinationFileId);
+      event.getRequestContext().addUIComponentToUpdateByAjax(docActivityComposer);
     }
   }
 
