@@ -192,10 +192,6 @@ public class FileUIActivity extends BaseUIActivity{
 
   private String                          downloadResourceId      = null;
 
-  private List<String>                    downloadLinks           = new ArrayList<>();
-
-  private List<String>                    downloadResourceIds     = new ArrayList<>();
-
   public FileUIActivity() throws Exception {
     super();
     if(WebuiRequestContext.getCurrentInstance() != null) {
@@ -1247,20 +1243,17 @@ public class FileUIActivity extends BaseUIActivity{
   }
 
   public String getDownloadLink(int i) {
-    if (i >= activityFileAttachments.size() || i >= downloadLinks.size() || i >= downloadResourceIds.size()) {
+    if (i >= activityFileAttachments.size()) {
       return null;
     }
     // Get binary data from node
     DownloadService dservice = WCMCoreUtils.getService(DownloadService.class);
 
-    String resourceId = downloadResourceIds.get(i);
-    String resourceLink = downloadLinks.get(i);
-
     // Make download stream
     NodeLocation[] nodeLocations = new NodeLocation[] { activityFileAttachments.get(i).getNodeLocation() };
 
     String contentName = activityFileAttachments.get(i).getContentName();
-    return getDownloadURL(dservice, contentName, resourceId, resourceLink, nodeLocations);
+    return getDownloadURL(dservice, contentName, null, null, nodeLocations);
   }
 
   /**
@@ -1302,12 +1295,12 @@ public class FileUIActivity extends BaseUIActivity{
       if (resourceId != null && resourceLink != null) {
         DownloadResource downloadResource = dservice.getDownloadResource(downloadResourceId);
         if (downloadResource != null) {
-          return downloadLink;
+          return resourceLink;
         }
       }
 
       ActivityFilesDownloadResource dresource = new ActivityFilesDownloadResource(nodelocations);
-      dresource.setDownloadName(fileName + ".zip");
+      dresource.setDownloadName(fileName);
       return dservice.getDownloadLink(dservice.addDownloadResource(dresource));
     } catch (Exception e) {
       if (LOG.isDebugEnabled()) {
@@ -1348,10 +1341,13 @@ public class FileUIActivity extends BaseUIActivity{
     public void execute(Event<FileUIActivity> event) throws Exception {
       FileUIActivity uiComp = event.getSource();
       String index = event.getRequestContext().getRequestParameter(OBJECTID);
-      if (StringUtils.isBlank(index)) {
+      if (StringUtils.isBlank(index) && uiComp.getFilesCount() > 1) {
         String downloadLink = uiComp.getDownloadAllLink();
         event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
       } else {
+        if (StringUtils.isBlank(index)) {
+          index = "0";
+        }
         String downloadLink = uiComp.getDownloadLink(Integer.parseInt(index));
         event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
       }
