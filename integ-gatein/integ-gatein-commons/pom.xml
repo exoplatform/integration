@@ -5,7 +5,7 @@
   <parent>
     <artifactId>integ-gatein</artifactId>
     <groupId>org.exoplatform.integration</groupId>
-    <version>5.3.x-portal-rdbms-SNAPSHOT</version>
+    <version>6.0.x-SNAPSHOT</version>
   </parent>
   <artifactId>integ-gatein-commons</artifactId>
   <packaging>jar</packaging>
