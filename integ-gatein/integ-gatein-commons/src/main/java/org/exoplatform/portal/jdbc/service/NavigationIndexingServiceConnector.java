@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.chromattic.ext.format.BaseEncodingObjectFormatter;
 import org.exoplatform.commons.search.domain.Document;
 import org.exoplatform.commons.search.index.impl.ElasticIndexingServiceConnector;
 import org.exoplatform.container.xml.InitParams;
@@ -51,6 +52,8 @@ import org.exoplatform.services.seo.SEOService;
 public class NavigationIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
   private static final Log LOG = ExoLogger.getLogger(NavigationIndexingServiceConnector.class);
+
+  private static final BaseEncodingObjectFormatter formatter = new BaseEncodingObjectFormatter();
 
   public final static String TYPE = "navigation";
 
@@ -130,7 +133,9 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
 
   private String getSEO(NodeData node) {
     try {
-      final Map<String, PageMetadataModel> metaModels = seoService.getPageMetadata(node.getId());
+      NavigationData nav = this.navigationStore.loadNavigationData(node.getId());
+      String siteName = formatter.encodeNodeName(null, nav.getSiteKey().getName());
+      final Map<String, PageMetadataModel> metaModels = seoService.getPageMetadatas(node.getId(), siteName);
       if (metaModels != null && metaModels.size() > 0) {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(metaModels.values());

@@ -70,12 +70,12 @@ public class PageESListenerImpl extends Listener<PageService, PageKey> {
     //Score are always tracked, even with sort
     //https://www.impl.co/guide/en/elasticsearch/reference/current/search-request-sort.html#_track_scores
     esQuery.append("     \"track_scores\": true,\n");
-    esQuery.append("     \"_source\": [pageRef],");
+    esQuery.append("     \"_source\": [\"pageRef\"],");
     esQuery.append("     \"query\": {\n");
     esQuery.append("        \"bool\" : {\n");
     esQuery.append("            \"must\" : {\n");
     esQuery.append("                \"query_string\" : {\n");
-    esQuery.append("                    \"fields\" : [pageRef],\n");
+    esQuery.append("                    \"fields\" : [\"pageRef\"],\n");
     esQuery.append("                    \"query\" : \"" + escapedQuery + "\"\n");
     esQuery.append("                }\n");
     esQuery.append("            },\n");
@@ -84,7 +84,7 @@ public class PageESListenerImpl extends Listener<PageService, PageKey> {
     esQuery.append("                \"must\" : [\n");
     String sitesFilter = getSitesFilter(sites);
     if (StringUtils.isNotBlank(sitesFilter)) {
-      esQuery.append("                  ,{\n");
+      esQuery.append("                  {\n");
       esQuery.append("                   \"bool\" : {\n");
       esQuery.append("                     \"should\" : \n");
       esQuery.append("                      " + sitesFilter + "\n");
@@ -162,7 +162,7 @@ public class PageESListenerImpl extends Listener<PageService, PageKey> {
 
       if (jsonHits != null) {
         for (Object jsonHit : jsonHits) {
-          results.add((String) ((JSONObject) jsonHit).get("id"));
+          results.add((String) ((JSONObject) jsonHit).get("_id"));
         }
       }
     }
