@@ -1,10 +1,6 @@
 package org.exoplatform.portal.jdbc.listener;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,13 +9,8 @@ import org.exoplatform.commons.search.es.ElasticSearchException;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.search.index.IndexingService;
 import org.exoplatform.portal.jdbc.service.NavigationIndexingServiceConnector;
-import org.exoplatform.portal.mop.SiteKey;
-import org.exoplatform.portal.mop.navigation.GenericScope;
-import org.exoplatform.portal.mop.navigation.NavigationContext;
-import org.exoplatform.portal.mop.navigation.NavigationService;
-import org.exoplatform.portal.mop.navigation.NodeContext;
-import org.exoplatform.portal.mop.navigation.NodeModel;
-import org.exoplatform.portal.mop.navigation.Scope;
+import org.exoplatform.portal.mop.navigation.*;
+import org.exoplatform.portal.mop.page.PageService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -39,12 +30,18 @@ public class SeoESListenerImpl extends Listener<SEOService, PageMetadataModel> {
 
   private IndexingService indexingService;
 
-  private NavigationService navigationService;
+  private PageService pageService;
 
-  public SeoESListenerImpl(ElasticSearchingClient client, IndexingService indexingService, NavigationService navigationService) {
+  private NavigationStore navigationStore;
+
+  public SeoESListenerImpl(ElasticSearchingClient client,
+                           IndexingService indexingService,
+                           PageService pageService,
+                           NavigationStore navigationStore) {
     this.client = client;
     this.indexingService = indexingService;
-    this.navigationService = navigationService;
+    this.pageService = pageService;
+    this.navigationStore = navigationStore;
   }
 
   @Override
@@ -60,12 +57,16 @@ public class SeoESListenerImpl extends Listener<SEOService, PageMetadataModel> {
   }
 
   public List<String> search(PageMetadataModel seo) {
-    SiteKey siteKey = seo.getSiteKey();
-    NavigationContext context = navigationService.loadNavigation(seo.getSiteKey());
-    NodeContext node = navigationService.loadNode(NodeModel.SELF_MODEL, context, GenericScope.branchShape(seo.getUri().split("/")), null);
-    String esQuery = buildFilteredQuery(node.getId(), Arrays.asList(siteKey.toString()));
-    String jsonResponse = this.client.sendRequest(esQuery, null, NavigationIndexingServiceConnector.TYPE);
-    List<String> ids = buildResult(jsonResponse);
+    String pageRef = seo.getPageReference();
+    NodeData[] nodes = navigationStore.loadNodes(pageRef);
+    List<String> ids = new ArrayList<>();
+    for(NodeData node : nodes) {
+      ids.add(node.getId());
+//      String esQuery = buildFilteredQuery(node.getId(), Collections.emptyList());
+//      String jsonResponse = this.client.sendRequest(esQuery, null, NavigationIndexingServiceConnector.TYPE);
+//      ids.addAll(buildResult(jsonResponse));
+    }
+
     return ids;
   }
 
@@ -78,12 +79,12 @@ public class SeoESListenerImpl extends Listener<SEOService, PageMetadataModel> {
     //Score are always tracked, even with sort
     //https://www.impl.co/guide/en/elasticsearch/reference/current/search-request-sort.html#_track_scores
     esQuery.append("     \"track_scores\": true,\n");
-    esQuery.append("     \"_source\": [nodeId],");
+    esQuery.append("     \"_source\": [\"nodeId\"],");
     esQuery.append("     \"query\": {\n");
     esQuery.append("        \"bool\" : {\n");
     esQuery.append("            \"must\" : {\n");
     esQuery.append("                \"query_string\" : {\n");
-    esQuery.append("                    \"fields\" : [nodeId],\n");
+    esQuery.append("                    \"fields\" : [\"nodeId\"],\n");
     esQuery.append("                    \"query\" : \"" + escapedQuery + "\"\n");
     esQuery.append("                }\n");
     esQuery.append("            },\n");
@@ -92,7 +93,7 @@ public class SeoESListenerImpl extends Listener<SEOService, PageMetadataModel> {
     esQuery.append("                \"must\" : [\n");
     String sitesFilter = getSitesFilter(sites);
     if (StringUtils.isNotBlank(sitesFilter)) {
-      esQuery.append("                  ,{\n");
+      esQuery.append("                  {\n");
       esQuery.append("                   \"bool\" : {\n");
       esQuery.append("                     \"should\" : \n");
       esQuery.append("                      " + sitesFilter + "\n");
@@ -170,7 +171,7 @@ public class SeoESListenerImpl extends Listener<SEOService, PageMetadataModel> {
 
       if (jsonHits != null) {
         for (Object jsonHit : jsonHits) {
-          results.add((String) ((JSONObject) jsonHit).get("id"));
+          results.add((String) ((JSONObject) jsonHit).get("_id"));
         }
       }
     }
