@@ -28,8 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.chromattic.ext.format.BaseEncodingObjectFormatter;
 import org.exoplatform.commons.search.domain.Document;
@@ -48,6 +46,10 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.seo.PageMetadataModel;
 import org.exoplatform.services.seo.SEOService;
+import org.gatein.portal.controller.resource.script.Module;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class NavigationIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
@@ -83,11 +85,14 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
     LOG.debug("get navigation ndoe document for node={}", nodeId);
 
     NodeData node = navigationStore.loadNode(nodeId);
+    NavigationData nav = this.navigationStore.loadNavigationData(node.getId());
+    String uri = getUri(node);
 
     Map<String, String> fields = new HashMap<>();
     fields.put("name", node.getName());
     fields.put("nodeId", node.getId());
-    String uri = getUri(node);
+    fields.put("siteName", nav.getSiteKey().getName());
+    fields.put("siteType", nav.getSiteKey().getTypeName());
 
     //seo
     String seoMetadata = getSEO(node);
@@ -109,8 +114,14 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
     //description
     Map<Locale, Described.State> descriptions = descriptionService.getDescriptions(node.getId());
     if (descriptions != null && descriptions.size() > 0) {
-      Set<String> states = descriptions.values().stream().map(state -> state.getName()).collect(Collectors.toSet());
-      fields.put("descriptions", StringUtils.join(states));
+      JSONObject json = new JSONObject();
+      try {
+        for (Locale locale : descriptions.keySet()) {
+          Described.State state = descriptions.get(locale);
+          json.put(locale.toLanguageTag(), state.getName());
+        }
+        fields.put("descriptions", json.toString());
+      } catch (JSONException ex) {}
     }
 
     Date createdDate = new Date();
@@ -127,6 +138,10 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
       node = navigationStore.loadNode(node.getParentId());
       nodes.add(0, node);
     }
+    // Remove the default node
+    nodes.remove(0);
+
+    // Build path
     List<String> paths = nodes.stream().map(n -> n.getName()).collect(Collectors.toList());
     return StringUtils.join(paths, "/");
   }
@@ -137,8 +152,17 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
       String siteName = formatter.encodeNodeName(null, nav.getSiteKey().getName());
       final Map<String, PageMetadataModel> metaModels = seoService.getPageMetadatas(node.getId(), siteName);
       if (metaModels != null && metaModels.size() > 0) {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(metaModels.values());
+        JSONObject seo = new JSONObject();
+        for(String key : metaModels.keySet()) {
+          PageMetadataModel meta = metaModels.get(key);
+          JSONObject json = new JSONObject();
+          json.put("description", meta.getDescription());
+          json.put("keywords", meta.getKeywords());
+          json.put("title", meta.getTitle());
+          json.put("robotContent", meta.getRobotsContent());
+          seo.put(key, json);
+        }
+        return seo.toString();
       }
     } catch (Exception e) {
       LOG.error("Can not get SEO metadata of node " + node.getId(), e);
@@ -195,11 +219,13 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
             .append("        }")
             .append("      }")
             .append("    },\n")
-            .append("    \"nodeId\" : {\"type\" : \"text\", \"index_options\": \"offsets\"},\n")
-            .append("    \"pageRef\" : {\"type\" : \"text\", \"index_options\": \"offsets\"},\n")
+            .append("    \"nodeId\" : {\"type\" : \"keyword\"},\n")
+            .append("    \"siteName\": {\"type\" : \"keyword\"},\n")
+            .append("    \"siteType\": {\"type\" : \"keyword\"},\n")
+            .append("    \"pageRef\" : {\"type\" : \"keyword\"},\n")
             .append("    \"pageTitle\" : {\"type\" : \"text\", \"index_options\": \"offsets\"},\n")
-            .append("    \"seo\" : {\"type\" : \"object\", \"index_options\": \"offsets\"},\n")
-            .append("    \"descriptions\" : {\"type\" : \"keyword\", \"index_options\": \"offsets\"},\n")
+            .append("    \"seo\" : {\"type\" : \"text\", \"index_options\": \"offsets\"},\n")
+            .append("    \"descriptions\" : {\"type\" : \"text\", \"index_options\": \"offsets\"},\n")
             .append("    \"permissions\" : {\"type\" : \"keyword\"},\n")
             .append("    \"lastUpdatedDate\" : {\"type\" : \"date\", \"format\": \"epoch_millis\"}\n")
             .append("  }\n")
