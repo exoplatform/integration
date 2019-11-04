@@ -172,7 +172,7 @@ window.initSearch = function initSearch() {
         $("#lstContentTypes").html(contentTypes.join(""));
       } else {
         // Disable All Content Types checkbox if there's no content type to show
-        $(":checkbox[name='contentType'][value='all']").attr("disabled", "disabled");
+        $(":checkbox[name='contentType'][value='all']").prop("disabled", "disabled");
       }
     }
 
@@ -186,7 +186,7 @@ window.initSearch = function initSearch() {
           $("#lstSites").html(siteNames.join(""));
         } else {
           // Disable All Sites checkbox if there's no site to show
-          $(":checkbox[name='site'][value='all']").attr("disabled", "disabled");
+          $(":checkbox[name='site'][value='all']").prop("disabled", "disabled");
         }
         if(callback) callback(sites); //pass the available sites to be used in the callback function
       });
@@ -596,12 +596,12 @@ window.initSearch = function initSearch() {
     $(document).on("click",":checkbox[name='contentType']", function(){
       if("all"==this.value){ //All Content Types checked
         if($(this).is(":checked")) { // check/uncheck all
-          $(":checkbox[name='contentType']").attr('checked', true);
+          $(":checkbox[name='contentType']").prop('checked', true);
         } else {
-          $(":checkbox[name='contentType']").attr('checked', false);
+          $(":checkbox[name='contentType']").prop('checked', false);
         }
       } else {
-        $(":checkbox[name='contentType'][value='all']").attr('checked', false); //uncheck All Content Types
+        $(":checkbox[name='contentType'][value='all']").prop('checked', false); //uncheck All Content Types
       }
 
       window.search = search(); //perform search again to update the results
@@ -610,12 +610,12 @@ window.initSearch = function initSearch() {
     $(document).on("click",":checkbox[name='site']", function(){
       if("all"==this.value){ //All Sites checked
         if($(this).is(":checked")) { // check/uncheck all
-          $(":checkbox[name='site']").attr('checked', true);
+          $(":checkbox[name='site']").prop('checked', true);
         } else {
-          $(":checkbox[name='site']").attr('checked', false);
+          $(":checkbox[name='site']").prop('checked', false);
         }
       } else {
-        $(":checkbox[name='site'][value='all']").attr('checked', false); //uncheck All Sites
+        $(":checkbox[name='site'][value='all']").prop('checked', false); //uncheck All Sites
       }
 
       window.search = search(); //perform search again to update the results
@@ -692,10 +692,10 @@ window.initSearch = function initSearch() {
           if(types) {
           var typesArray = types.split(','); // create an Array of types and split them on comma
             $.each($(":checkbox[name='contentType']"), function(){
-              $(this).attr('checked', typesArray.includes(this.value) || typesArray.includes("all")); //check the according options
+              $(this).prop('checked', typesArray.includes(this.value) || typesArray.includes("all")); //check the according options
             });
           } else {
-            $(":checkbox[name='contentType']").attr("checked", true); //check all types by default
+            $(":checkbox[name='contentType']").prop("checked", true); //check all types by default
           }
         }
 
@@ -729,10 +729,10 @@ window.initSearch = function initSearch() {
               var sites = getUrlParam("sites"); //get the requested sites from url
               if(sites) {
                 $.each($(":checkbox[name='site']"), function(){
-                  $(this).attr('checked', -1!=sites.indexOf(this.value) || -1!=sites.indexOf("all")); //check the according options
+                  $(this).prop('checked', -1!=sites.indexOf(this.value) || -1!=sites.indexOf("all")); //check the according options
                 });
               } else {
-                $(":checkbox[name='site']").attr('checked', true);  //check all sites by default
+                $(":checkbox[name='site']").prop('checked', true);  //check all sites by default
               }
             }
             //window.search = search();
@@ -802,12 +802,12 @@ window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk)
     $('body').on('click', ":checkbox[name='searchInOption']", function() {
       if("all"==this.value){ //All checked
         if($(this).is(":checked")) { // check/uncheck all
-          $(":checkbox[name='searchInOption']").attr('checked', true);
+          $(":checkbox[name='searchInOption']").prop('checked', true);
         } else {
-          $(":checkbox[name='searchInOption']").attr('checked', false);
+          $(":checkbox[name='searchInOption']").prop('checked', false);
         }
       } else {
-        $(":checkbox[name='searchInOption'][value='all']").attr('checked', false); //uncheck All Sites
+        $(":checkbox[name='searchInOption'][value='all']").prop('checked', false); //uncheck All Sites
       }
     });
 
@@ -830,12 +830,12 @@ window.initSearchSetting = function initSearchSetting(allMsg,alertOk,alertNotOk)
       // Display the previously saved (or default) search setting
       $.getJSON("/rest/search/setting", function(setting){
         if(-1 != $.inArray("all", setting.searchTypes)) {
-          $(":checkbox[name='searchInOption']").attr('checked', true);
+          $(":checkbox[name='searchInOption']").prop('checked', true);
         } else {
-          $(":checkbox[name='searchInOption']").attr('checked', false);
+          $(":checkbox[name='searchInOption']").prop('checked', false);
           $.each($(":checkbox[name='searchInOption']"), function(){
             if(-1 != $.inArray(this.value, setting.searchTypes)) {
-              $(this).attr('checked', true);
+              $(this).prop('checked', true);
             }
           });
         }
