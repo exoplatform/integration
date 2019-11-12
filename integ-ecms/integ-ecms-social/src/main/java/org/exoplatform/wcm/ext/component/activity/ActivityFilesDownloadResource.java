@@ -43,7 +43,7 @@ public class ActivityFilesDownloadResource extends DownloadResource {
   private NodeLocation[] nodeLocations;
 
   public ActivityFilesDownloadResource(NodeLocation[] nodelocations) {
-    super("application/zip");
+    super(getMimetype(nodelocations));
     this.nodeLocations = nodelocations;
   }
 
@@ -106,4 +106,27 @@ public class ActivityFilesDownloadResource extends DownloadResource {
     }
   }
 
+  private static String getMimetype(NodeLocation[] nodeLocations) {
+    if (nodeLocations == null || nodeLocations.length == 0) {
+      return null;
+    }
+
+    if (nodeLocations.length == 1) {
+      NodeLocation nodeLocation = nodeLocations[0];
+      Node node = NodeLocation.getNodeByLocation(nodeLocation);
+      try {
+        if (node.isNodeType(NodetypeConstant.NT_FILE) && node.hasNode(NodetypeConstant.JCR_CONTENT)) {
+          Node contentNode = node.getNode(NodetypeConstant.JCR_CONTENT);
+          if (contentNode.hasProperty(NodetypeConstant.JCR_MIMETYPE)) {
+            return contentNode.getProperty(NodetypeConstant.JCR_MIMETYPE).getString();
+          }
+        }
+      } catch (Exception e) {
+        throw new IllegalStateException("Error getting mimetype of file", e);
+      }
+      return "application/octet-stream";
+    } else {
+      return "application/zip";
+    }
+  }
 }
