@@ -84,8 +84,8 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
     long ts = System.currentTimeMillis();
     LOG.debug("get navigation ndoe document for node={}", nodeId);
 
-    NodeData node = navigationStore.loadNode(nodeId);
-    NavigationData nav = this.navigationStore.loadNavigationData(node.getId());
+    NodeData node = navigationStore.loadNode(Util.parseLong(nodeId));
+    NavigationData nav = this.navigationStore.loadNavigationData(Util.parseLong(node.getId()));
     String uri = getUri(node);
 
     Map<String, String> fields = new HashMap<>();
@@ -135,7 +135,7 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
     List<NodeData> nodes = new ArrayList<>();
     nodes.add(node);
     while (node.getParentId() != null) {
-      node = navigationStore.loadNode(node.getParentId());
+      node = navigationStore.loadNode(Util.parseLong(node.getParentId()));
       nodes.add(0, node);
     }
     // Remove the default node
@@ -148,7 +148,7 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
 
   private String getSEO(NodeData node) {
     try {
-      NavigationData nav = this.navigationStore.loadNavigationData(node.getId());
+      NavigationData nav = this.navigationStore.loadNavigationData(Util.parseLong(node.getId()));
       String siteName = formatter.encodeNodeName(null, nav.getSiteKey().getName());
       final Map<String, PageMetadataModel> metaModels = seoService.getPageMetadatas(node.getId(), siteName);
       if (metaModels != null && metaModels.size() > 0) {
@@ -195,7 +195,7 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
   private Collection<? extends String> getNodes(String rootId) {
     List<String> ids = new ArrayList<>();
     ids.add(rootId);
-    NodeData node = navigationStore.loadNode(rootId);
+    NodeData node = navigationStore.loadNode(Util.parseLong(rootId));
 
     Iterator<String> nodes = node.iterator(false);
     while (nodes != null && nodes.hasNext()) {
