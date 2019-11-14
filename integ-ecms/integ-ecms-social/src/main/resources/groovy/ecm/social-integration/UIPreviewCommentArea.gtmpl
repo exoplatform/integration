@@ -110,6 +110,7 @@ def isLiked = uicomponent.isLiked();
                  commentMessage = uicomponent.getCommentMessage(activityParams);
               }
               def commentPostedTime = uicomponent.getRelativeTimeLabel(_ctx, it.postedTime);
+              def commentAbsolutePostedTime = uicomponent.getAbsolutePostedTime(it.postedTime);
               def commenterAvatarImgSrc = commentIdentity.profile.avatarUrl;
               if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
               def idPreviewCommentContainer = "previewCommentContainer${it.id}";
@@ -129,6 +130,7 @@ def isLiked = uicomponent.isLiked();
                             _ctx.put("activityID", activity.id);
                             _ctx.put("commentPostedTime", commentPostedTime);
                             _ctx.put("commentEditedTime", commentEditedTime);
+                            _ctx.put("commentAbsolutePostedTime", commentAbsolutePostedTime);
                             def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
                             _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
                          %>
