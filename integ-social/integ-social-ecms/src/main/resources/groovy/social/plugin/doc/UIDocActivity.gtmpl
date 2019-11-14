@@ -453,7 +453,7 @@
 				 <% } %>
 				<div class="commentList">
 				  <%
-				  def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc;
+				  def commenterFullName, commenterProfileUri, commentMessage, commentPostedTime, commenterAvatarImgSrc, commentAbsolutePostedTime;
 				  def first = true, commentContentClass;
 				  def commentCounter = 0;
                   def subCommentSize = 0;
@@ -508,7 +508,8 @@
                     }
 					commentMessage = it.title;
 					commentPostedTime = uicomponent.getRelativeTimeLabel(_ctx, it.postedTime);
-		                        commentEditedTime = uicomponent.getRelativeTimeLabel(_ctx, it.updated.getTime());
+		            commentEditedTime = uicomponent.getRelativeTimeLabel(_ctx, it.updated.getTime());
+		            commentAbsolutePostedTime = uicomponent.getAbsolutePostedTime(it.postedTime);
 					commenterAvatarImgSrc = id.profile.avatarUrl;
 					if (!commenterAvatarImgSrc) commenterAvatarImgSrc = LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
                     def commentId = it.parentCommentId == null ? it.id : it.parentCommentId;
@@ -541,6 +542,7 @@
 							    _ctx.put("activityID", activity.id);
 							    _ctx.put("commentPostedTime", commentPostedTime);
 							    _ctx.put("commentEditedTime", commentEditedTime);
+							    _ctx.put("commentAbsolutePostedTime", commentAbsolutePostedTime);
                                 def templateCommentActions = "war:/groovy/social/webui/activity/UIActivityCommentActions.gtmpl";
                                 _ctx.include(templateCommentActions, uicomponent.getTemplateResourceResolver(_ctx.getRequestContext(), templateCommentActions));
                             %>
