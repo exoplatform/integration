@@ -784,10 +784,6 @@ public class Utils {
                                                  boolean isSystemComment,  String systemComment, String perm) throws Exception {
 		// Populate activity data
 	Map<String, String> activityParams = populateActivityData(node, activityOwnerId, activityMsgBundleKey, isSystemComment, systemComment, perm);
-	
-    String title = node.hasProperty(NodetypeConstant.EXO_TITLE) ? node.getProperty(NodetypeConstant.EXO_TITLE)
-                                                                      .getString()
-                                                               : org.exoplatform.ecm.webui.utils.Utils.getTitle(node);
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     String userId = "";
     if(ConversationState.getCurrent() != null)
@@ -806,7 +802,7 @@ public class Utils {
     } else if(StringUtils.isNotEmpty(systemComment)){
         activity.setTitle(systemComment);
     } else {
-        activity.setTitle(title);
+        activity.setTitle("");
     }
     activity.setTemplateParams(activityParams);
     return activity;
