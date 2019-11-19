@@ -53,12 +53,9 @@ public class UISharedFileBuilder extends BaseUIActivityBuilder {
       nodeUUID = activity.getTemplateParams().get(ContentUIActivity.NODE_UUID);
       workspaceName = activity.getTemplateParams().get(ContentUIActivity.WORKSPACE);
     }
-    if (activity.getTemplateParams() != null
-        && StringUtils.isNotBlank(activity.getTemplateParams().get(ShareFileToSpacePlugin.COMMENT))) {
-      fileActivity.setMessage(activity.getTitle());
+    fileActivity.setMessage(activity.getTitle());
+    if (StringUtils.isNotBlank(activity.getTitle())) {
       fileActivity.setActivityTitle(activity.getTitle().replace("</br></br>", ""));
-    } else {
-      fileActivity.setMessage(null);
     }
     //get node data
     try {
