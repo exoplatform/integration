@@ -600,12 +600,18 @@ window.initSearch = function initSearch() {
         } else {
           $(":checkbox[name='contentType']").prop('checked', false);
         }
-      } else {
-        $(":checkbox[name='contentType'][value='all']").prop('checked', false); //uncheck All Content Types
+      } else {//Check if all contentType Checkboxes are checked
+         var checkboxesSubFilter = $("input[name='contentType'][value!='all']");//Enumerate the number of checkboxes which name is contentType but their value isn't 'all'
+         if(checkboxesSubFilter.length == checkboxesSubFilter.filter(":checked").length){//Check if all contentType checkboxes which value isn't 'all' are checked
+           $(":checkbox[name='contentType'][value='all']").prop('checked', true);//Main contentType checkbox has to be checked if previous condition is true
+         } else {
+           $(":checkbox[name='contentType'][value='all']").prop('checked', false); //uncheck All contentTypes
+         }
       }
 
-      window.search = search(); //perform search again to update the results
-    });
+       window.search = search(); //perform search again to update the results
+     });
+
 
     $(document).on("click",":checkbox[name='site']", function(){
       if("all"==this.value){ //All Sites checked
@@ -613,13 +619,18 @@ window.initSearch = function initSearch() {
           $(":checkbox[name='site']").prop('checked', true);
         } else {
           $(":checkbox[name='site']").prop('checked', false);
+         }
+       } else {//Check if all site Checkboxes are checked
+         var checkboxesSubFilter = $("input[name='site'][value!='all']");//Enumerate the number of checkboxes which name is site but their value isn't 'all'
+         if(checkboxesSubFilter.length == checkboxesSubFilter.filter(":checked").length){//Check if all site checkboxes which value isn't 'all' are checked
+           $(":checkbox[name='site'][value='all']").prop('checked', true);//Main Site checkbox has to be checked if previous condition is true
+         } else {
+           $(":checkbox[name='site'][value='all']").prop('checked', false); //uncheck All Sites
         }
-      } else {
-        $(":checkbox[name='site'][value='all']").prop('checked', false); //uncheck All Sites
       }
 
-      window.search = search(); //perform search again to update the results
-    });
+       window.search = search(); //perform search again to update the results
+     });
 
     $("#btnSearch").click(function(){
       window.search = search();
