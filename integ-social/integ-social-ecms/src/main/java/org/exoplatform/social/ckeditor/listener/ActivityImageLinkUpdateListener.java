@@ -37,6 +37,7 @@ import org.exoplatform.services.jcr.core.ManageableRepository;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.exoplatform.social.ckeditor.HTMLUploadImageProcessor;
 import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
@@ -114,8 +115,13 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   @Override
   public void updateActivity(ActivityLifeCycleEvent event) {
+    String creatorId = event.getActivity().getPosterId();
+    String currentUser = ConversationState.getCurrent().getIdentity().getUserId();
     try {
-      updateImageLink(event);
+      if (!creatorId.equals(currentUser)) {
+        return;
+      }
+        updateImageLink(event);
     } catch (Exception e) {
       LOG.warn("Error while processing activity body for attached images", e);
     }
@@ -123,8 +129,13 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   @Override
   public void saveComment(ActivityLifeCycleEvent event) {
+    String currentUser = ConversationState.getCurrent().getIdentity().getUserId();
+    String creatorId = event.getActivity().getPosterId();
     try {
-      updateImageLink(event);
+      if (!creatorId.equals(currentUser)) {
+        return;
+      }
+        updateImageLink(event);
     } catch (Exception e) {
       LOG.warn("Error while processing activity body for attached images", e);
     }
