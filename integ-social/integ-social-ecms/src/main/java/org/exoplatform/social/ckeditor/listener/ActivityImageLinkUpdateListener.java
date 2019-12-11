@@ -43,6 +43,8 @@ import org.exoplatform.social.ckeditor.HTMLUploadImageProcessor;
 import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.ActivityListenerPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -106,7 +108,15 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   @Override
   public void saveActivity(ActivityLifeCycleEvent event) {
+    String creatorId = event.getActivity().getUserId();
+    String currentUser = getCurrentUser();
     try {
+      if (StringUtils.isBlank(creatorId)) {
+        return;
+      }
+      if (!creatorId.equals(currentUser)) {
+        return;
+      }
       updateImageLink(event);
     } catch (Exception e) {
       LOG.warn("Error while processing activity body for attached images", e);
@@ -116,7 +126,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
   @Override
   public void updateActivity(ActivityLifeCycleEvent event) {
     String creatorId = event.getActivity().getPosterId();
-    String currentUser = ConversationState.getCurrent().getIdentity().getUserId();
+    String currentUser = getCurrentUser();
     try {
       if (!creatorId.equals(currentUser)) {
         return;
@@ -129,7 +139,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   @Override
   public void saveComment(ActivityLifeCycleEvent event) {
-    String currentUser = ConversationState.getCurrent().getIdentity().getUserId();
+    String currentUser = getCurrentUser();
     String creatorId = event.getActivity().getPosterId();
     try {
       if (!creatorId.equals(currentUser)) {
@@ -198,6 +208,13 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
     }
   }
 
+  private String getCurrentUser() {
+    String currentUser = null;
+    ConversationState conversationState = ConversationState.getCurrent();
+    Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId());
+    currentUser = userIdentity.getId();
+    return currentUser;
+  }
   private Node getFolderNode(ExoSocialActivity activity) throws Exception {
     String posterId = activity.getPosterId();
     String userName = identityManager.getIdentity(posterId, false).getRemoteId();
