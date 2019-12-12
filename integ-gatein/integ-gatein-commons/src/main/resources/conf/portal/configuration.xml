@@ -105,8 +105,7 @@
         <properties-param>
           <name>constructor.params</name>
           <property name="index_alias" value="navigation_alias"/>
-          <property name="index_previous" value="navigation"/>
-          <property name="index_current" value="navigation_v2"/>
+          <property name="index_current" value="navigation_v1"/>
           <property name="type" value="navigation"/>
         </properties-param>
       </init-params>
