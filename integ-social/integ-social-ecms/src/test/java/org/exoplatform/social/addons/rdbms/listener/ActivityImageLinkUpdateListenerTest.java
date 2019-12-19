@@ -35,17 +35,14 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityRegistry;
-import org.exoplatform.social.ckeditor.listener.ActivityImageLinkUpdateListener;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.storage.api.ActivityStorage;
 import org.exoplatform.upload.UploadService;
 
-import static org.mockito.Mockito.*;
 
 @ConfiguredBy({ @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/test-root-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/configuration.xml"),
@@ -209,27 +206,5 @@ public class ActivityImageLinkUpdateListenerTest extends BaseCommonsTestCase {
       begin();
     }
     return activity;
-  }
-
-  public void testShouldNotUpdateImageLinkWhenLikeActivity() throws Exception  {
-    //Given
-    Identity marryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "marry", true);
-    String uploadId = String.valueOf((long) (Math.random() * 100000L));
-    String body = "body";
-    Map<String, String> templateParams = new HashMap<>();
-    ExoSocialActivity activity = createActivityWithEmbeddedImage(rootIdentity, body, uploadId, templateParams);
-
-    // Update activity with Storage to not trigger update listener
-    ActivityStorage activityStorage = getContainer().getComponentInstanceOfType(ActivityStorage.class);
-    String imageURL = "<img src=\"http://localhost:8080/test?uploadId=" + uploadId + "\" />";
-    templateParams.put("comment", imageURL);
-    activity.setTemplateParams(templateParams);
-    activity = activityStorage.saveActivity(rootIdentity, activity);
-    //When
-    activityManager.saveLike(activity,marryIdentity);
-
-    //Then
-    String imageNotModified = activity.getTemplateParams().get("comment");
-    assertEquals(imageURL, imageNotModified);
   }
 }

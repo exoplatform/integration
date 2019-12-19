@@ -108,15 +108,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   @Override
   public void saveActivity(ActivityLifeCycleEvent event) {
-    String creatorId = event.getActivity().getUserId();
-    String currentUser = getCurrentUser();
     try {
-      if (StringUtils.isBlank(creatorId)) {
-        return;
-      }
-      if (!creatorId.equals(currentUser)) {
-        return;
-      }
       updateImageLink(event);
     } catch (Exception e) {
       LOG.warn("Error while processing activity body for attached images", e);
@@ -125,13 +117,8 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   @Override
   public void updateActivity(ActivityLifeCycleEvent event) {
-    String creatorId = event.getActivity().getPosterId();
-    String currentUser = getCurrentUser();
     try {
-      if (!creatorId.equals(currentUser)) {
-        return;
-      }
-        updateImageLink(event);
+      updateImageLink(event);
     } catch (Exception e) {
       LOG.warn("Error while processing activity body for attached images", e);
     }
@@ -139,13 +126,8 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   @Override
   public void saveComment(ActivityLifeCycleEvent event) {
-    String currentUser = getCurrentUser();
-    String creatorId = event.getActivity().getPosterId();
     try {
-      if (!creatorId.equals(currentUser)) {
-        return;
-      }
-        updateImageLink(event);
+      updateImageLink(event);
     } catch (Exception e) {
       LOG.warn("Error while processing activity body for attached images", e);
     }
@@ -191,30 +173,25 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
     // update links in template params
     Map<String, String> templateParams = activity.getTemplateParams();
-    if(templateParams != null) {
+    if (templateParams != null) {
       for (String param : templateParams.keySet()) {
         String paramValue = templateParams.get(param);
-        String processedParamValue = imageProcessor.processImages(paramValue, folderNode, getImagesFolderPath(activity));
-        if(!paramValue.equals(processedParamValue)) {
-          templateParams.put(param, processedParamValue);
-          activity.setTemplateParams(templateParams);
-          storeActivity = true;
+        if (StringUtils.isNotBlank(paramValue)) {
+          String processedParamValue = imageProcessor.processImages(paramValue, folderNode, getImagesFolderPath(activity));
+          if (!paramValue.equals(processedParamValue)) {
+            templateParams.put(param, processedParamValue);
+            activity.setTemplateParams(templateParams);
+            storeActivity = true;
+          }
         }
       }
     }
 
     if (storeActivity) {
-      activityManager.updateActivity(activity);
+      activityManager.updateActivity(activity, false);
     }
   }
 
-  private String getCurrentUser() {
-    String currentUser = null;
-    ConversationState conversationState = ConversationState.getCurrent();
-    Identity userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId());
-    currentUser = userIdentity.getId();
-    return currentUser;
-  }
   private Node getFolderNode(ExoSocialActivity activity) throws Exception {
     String posterId = activity.getPosterId();
     String userName = identityManager.getIdentity(posterId, false).getRemoteId();
@@ -283,7 +260,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
   }
 
   private Session getSession(String workspaceName) throws Exception {
-    SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
+    SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
     if(sessionProvider == null) {
       return null;
     }
