@@ -115,13 +115,8 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   @Override
   public void updateActivity(ActivityLifeCycleEvent event) {
-    String creatorId = event.getActivity().getPosterId();
-    String currentUser = ConversationState.getCurrent().getIdentity().getUserId();
     try {
-      if (!creatorId.equals(currentUser)) {
-        return;
-      }
-        updateImageLink(event);
+	  updateImageLink(event);
     } catch (Exception e) {
       LOG.warn("Error while processing activity body for attached images", e);
     }
@@ -129,13 +124,8 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
 
   @Override
   public void saveComment(ActivityLifeCycleEvent event) {
-    String currentUser = ConversationState.getCurrent().getIdentity().getUserId();
-    String creatorId = event.getActivity().getPosterId();
     try {
-      if (!creatorId.equals(currentUser)) {
-        return;
-      }
-        updateImageLink(event);
+	  updateImageLink(event);
     } catch (Exception e) {
       LOG.warn("Error while processing activity body for attached images", e);
     }
@@ -194,7 +184,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
     }
 
     if (storeActivity) {
-      activityManager.updateActivity(activity);
+      activityManager.updateActivity(activity,false);
     }
   }
 
@@ -266,7 +256,7 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
   }
 
   private Session getSession(String workspaceName) throws Exception {
-    SessionProvider sessionProvider = WCMCoreUtils.getUserSessionProvider();
+    SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
     if(sessionProvider == null) {
       return null;
     }
