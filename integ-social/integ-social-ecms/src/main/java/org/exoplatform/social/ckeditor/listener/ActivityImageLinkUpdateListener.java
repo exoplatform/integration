@@ -174,12 +174,14 @@ public class ActivityImageLinkUpdateListener extends ActivityListenerPlugin {
     if(templateParams != null) {
       for (String param : templateParams.keySet()) {
         String paramValue = templateParams.get(param);
+        if (StringUtils.isNotBlank(paramValue)) {
         String processedParamValue = imageProcessor.processImages(paramValue, folderNode, getImagesFolderPath(activity));
         if(!paramValue.equals(processedParamValue)) {
           templateParams.put(param, processedParamValue);
           activity.setTemplateParams(templateParams);
           storeActivity = true;
-        }
+         }
+	}
       }
     }
 
