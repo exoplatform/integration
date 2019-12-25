@@ -87,6 +87,7 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
     NodeData node = navigationStore.loadNode(Util.parseLong(nodeId));
     if (node == null) {
       LOG.warn("Node with id {} does not exist or has been removed", nodeId);
+      return null;
     }
     NavigationData nav = this.navigationStore.loadNavigationData(Util.parseLong(node.getId()));
     String uri = getUri(node);
