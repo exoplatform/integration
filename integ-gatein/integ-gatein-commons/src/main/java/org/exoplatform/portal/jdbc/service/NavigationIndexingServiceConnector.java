@@ -16,40 +16,26 @@
  */
 package org.exoplatform.portal.jdbc.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.chromattic.ext.format.BaseEncodingObjectFormatter;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import org.exoplatform.commons.search.domain.Document;
 import org.exoplatform.commons.search.index.impl.ElasticIndexingServiceConnector;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.portal.mop.Described;
 import org.exoplatform.portal.mop.SiteType;
 import org.exoplatform.portal.mop.description.DescriptionService;
-import org.exoplatform.portal.mop.navigation.NavigationData;
-import org.exoplatform.portal.mop.navigation.NavigationStore;
-import org.exoplatform.portal.mop.navigation.NodeData;
-import org.exoplatform.portal.mop.page.PageContext;
-import org.exoplatform.portal.mop.page.PageKey;
-import org.exoplatform.portal.mop.page.PageService;
+import org.exoplatform.portal.mop.navigation.*;
+import org.exoplatform.portal.mop.page.*;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.seo.PageMetadataModel;
 import org.exoplatform.services.seo.SEOService;
-import org.gatein.portal.controller.resource.script.Module;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class NavigationIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
@@ -82,11 +68,10 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
     }
 
     long ts = System.currentTimeMillis();
-    LOG.debug("get navigation ndoe document for node={}", nodeId);
 
     NodeData node = navigationStore.loadNode(Util.parseLong(nodeId));
     if (node == null) {
-      LOG.warn("Node with id {} does not exist or has been removed", nodeId);
+      LOG.debug("Node with id {} does not exist or has been removed", nodeId);
       return null;
     }
     NavigationData nav = this.navigationStore.loadNavigationData(Util.parseLong(node.getId()));
@@ -122,15 +107,23 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
       try {
         for (Locale locale : descriptions.keySet()) {
           Described.State state = descriptions.get(locale);
-          json.put(locale.toLanguageTag(), state.getName());
+          if (state != null && state.getName() != null && locale.toLanguageTag() != null) {
+            json.put(locale.toLanguageTag(), state.getName());
+          }
         }
         fields.put("descriptions", json.toString());
-      } catch (JSONException ex) {}
+      } catch (JSONException ex) {
+        LOG.warn("Error while parsing description field to JSON", ex);
+      }
     }
 
     Date createdDate = new Date();
     Document document = new Document(TYPE, nodeId, uri, createdDate, permissions, fields);
-    LOG.info("page document generated for node={} name={} duration_ms={}", nodeId, node.getName(), System.currentTimeMillis() - ts);
+
+    LOG.debug("page document generated for node={} name={} duration_ms={}",
+              nodeId,
+              node.getName(),
+              System.currentTimeMillis() - ts);
 
     return document;
   }
@@ -169,7 +162,7 @@ public class NavigationIndexingServiceConnector extends ElasticIndexingServiceCo
         return seo.toString();
       }
     } catch (Exception e) {
-      LOG.error("Can not get SEO metadata of node " + node.getId(), e);
+      LOG.warn("Can not get SEO metadata of node {}, return null", node.getId(), e);
     }
     return null;
   }

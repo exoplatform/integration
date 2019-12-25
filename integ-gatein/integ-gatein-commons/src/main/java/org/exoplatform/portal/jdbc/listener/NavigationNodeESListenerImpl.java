@@ -27,7 +27,7 @@ public class NavigationNodeESListenerImpl extends Listener<NavigationService, No
   public void onEvent(Event<NavigationService, NodeContext> event) throws Exception {
     String eventName = event.getEventName();
     NodeContext node = event.getData();
-    LOG.info("Notifying indexing service for navigation node={}", node.getId());
+    LOG.debug("Notifying indexing service for navigation node={}", node.getId());
     //
     if (EventType.NAVIGATION_NODE_ADD.equals(eventName) ||
             EventType.NAVIGATION_NODE_CREATE.equals(eventName)) {

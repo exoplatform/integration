@@ -5,42 +5,34 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import org.exoplatform.commons.search.es.ElasticSearchException;
-import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.search.index.IndexingService;
 import org.exoplatform.portal.jdbc.service.NavigationIndexingServiceConnector;
-import org.exoplatform.portal.mop.navigation.*;
-import org.exoplatform.portal.mop.page.PageService;
+import org.exoplatform.portal.mop.navigation.NavigationStore;
+import org.exoplatform.portal.mop.navigation.NodeData;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.seo.PageMetadataModel;
 import org.exoplatform.services.seo.SEOService;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class SeoESListenerImpl extends Listener<SEOService, PageMetadataModel> {
 
   private static final Log LOG = ExoLogger.getExoLogger(SeoESListenerImpl.class);
 
-  private ElasticSearchingClient client;
-
   private IndexingService indexingService;
-
-  private PageService pageService;
 
   private NavigationStore navigationStore;
 
-  public SeoESListenerImpl(ElasticSearchingClient client,
-                           IndexingService indexingService,
-                           PageService pageService,
+  public SeoESListenerImpl(IndexingService indexingService,
                            NavigationStore navigationStore) {
-    this.client = client;
     this.indexingService = indexingService;
-    this.pageService = pageService;
     this.navigationStore = navigationStore;
   }
 
@@ -62,11 +54,7 @@ public class SeoESListenerImpl extends Listener<SEOService, PageMetadataModel> {
     List<String> ids = new ArrayList<>();
     for(NodeData node : nodes) {
       ids.add(node.getId());
-//      String esQuery = buildFilteredQuery(node.getId(), Collections.emptyList());
-//      String jsonResponse = this.client.sendRequest(esQuery, null, NavigationIndexingServiceConnector.TYPE);
-//      ids.addAll(buildResult(jsonResponse));
     }
-
     return ids;
   }
 

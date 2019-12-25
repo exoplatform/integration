@@ -1,16 +1,10 @@
 package org.exoplatform.portal.jdbc.listener;
 
 import org.exoplatform.commons.search.index.IndexingService;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.portal.jdbc.service.NavigationIndexingServiceConnector;
 import org.exoplatform.portal.mop.EventType;
 import org.exoplatform.portal.mop.SiteKey;
-import org.exoplatform.portal.mop.navigation.NavigationContext;
-import org.exoplatform.portal.mop.navigation.NavigationService;
-import org.exoplatform.portal.mop.navigation.NodeContext;
-import org.exoplatform.portal.mop.navigation.NodeModel;
-import org.exoplatform.portal.mop.navigation.Scope;
-import org.exoplatform.portal.mop.user.UserNavigation;
+import org.exoplatform.portal.mop.navigation.*;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -32,7 +26,7 @@ public class NavigationESListenerImpl extends Listener<NavigationService, SiteKe
   @Override
   public void onEvent(Event<NavigationService, SiteKey> event) throws Exception {
     SiteKey siteKey = event.getData();
-    LOG.info("Notifying indexing service for navigation={}", siteKey);
+    LOG.debug("Notifying indexing service for navigation={}", siteKey);
 
     if (EventType.NAVIGATION_DESTROY.equals(event.getEventName())) {
       NavigationContext nav = navigationService.loadNavigation(siteKey);
