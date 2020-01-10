@@ -140,6 +140,11 @@
         <artifactId>integ-wiki-social</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.exoplatform.integration</groupId>
+        <artifactId>integ-gatein-commons</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <!-- Import versions from forum project -->
       <dependency>
         <groupId>org.exoplatform.forum</groupId>
@@ -192,6 +197,11 @@
       <dependency>
         <groupId>org.exoplatform.gatein.portal</groupId>
         <artifactId>exo.portal.component.common</artifactId>
+        <version>${org.exoplatform.gatein.portal.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.gatein.portal</groupId>
+        <artifactId>exo.portal.component.jdbc</artifactId>
         <version>${org.exoplatform.gatein.portal.version}</version>
       </dependency>
       <dependency>

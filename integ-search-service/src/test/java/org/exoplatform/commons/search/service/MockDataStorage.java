@@ -33,6 +33,7 @@ import org.exoplatform.portal.config.model.Container;
 import org.exoplatform.portal.config.model.ModelObject;
 import org.exoplatform.portal.config.model.Page;
 import org.exoplatform.portal.config.model.PortalConfig;
+import org.exoplatform.portal.mop.importer.Imported;
 import org.exoplatform.portal.pom.data.ModelChange;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -251,6 +252,16 @@ public class MockDataStorage implements DataStorage,Startable {
   @Override
   public <A> A adapt(ModelObject modelObject, Class<A> type, boolean create) {
     return null;
+  }
+
+  @Override
+  public Imported.Status getImportStatus() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void saveImportStatus(Imported.Status status) {
+    throw new UnsupportedOperationException();
   }
 
   /* (non-Javadoc)

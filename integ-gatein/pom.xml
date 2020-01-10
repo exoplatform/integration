@@ -10,6 +10,6 @@
   <packaging>pom</packaging>
   <name>eXo PLF:: Integration - GateIn</name>
   <modules>
-    <!-- MODULES -->
+    <module>integ-gatein-commons</module>
   </modules>
 </project>
