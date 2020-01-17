@@ -252,7 +252,10 @@ public class UIComposerMultiUploadSelector extends UIAbstractSelectFileComposer 
         parentNode.addNode(FOLDER_UPLOAD_PARENT_NAME);
         session.save();
       }
-
+      //I get the node in the second time with user session to save it with user that create it
+      SessionProvider sessionProviderUser = WCMCoreUtils.getUserSessionProvider();
+      session = sessionProviderUser.getSession(workspaceName, currentRepository);
+      parentNode= (Node) session.getItem(parentNode.getPath());
       parentUploadNode = parentNode.getNode(FOLDER_UPLOAD_PARENT_NAME);
     }
 
