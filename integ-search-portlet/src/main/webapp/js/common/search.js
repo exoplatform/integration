@@ -219,7 +219,7 @@ window.initSearch = function initSearch() {
     }
     
     function renderSearchResult(result) {
-      var query = $("#txtQuery").val();
+      var query = encodeURI($("#txtQuery").val().trim());
       var terms = query.split(/\s+/g);
       var avatar = "";
       var breadcrumb = "";
@@ -457,7 +457,7 @@ window.initSearch = function initSearch() {
       });
     }
     function pushStateToHistory(current_results){
-         var query = $("#txtQuery").val();
+         var query = encodeURI($("#txtQuery").val().trim());
          var types = getUrlParam("types");
          var searchPage = window.location.pathname;
          var urlPath= searchPage + "?q="+query+"&types="+types;
@@ -465,7 +465,7 @@ window.initSearch = function initSearch() {
      }
 
     function getFromServer(callback){
-      var query = $("#txtQuery").val();
+      var query = encodeURI($("#txtQuery").val().trim());
       if(""==query) {
         clearResultPage();
         return;
