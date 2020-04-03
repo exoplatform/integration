@@ -136,7 +136,7 @@ public class Utils {
     /** The date formatter. */
     DateFormat dateFormatter = null;
     dateFormatter = new SimpleDateFormat(ISO8601.SIMPLE_DATETIME_FORMAT);
-    LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
+    LinkManager linkManager = CommonsUtils.getService(LinkManager.class);
 
     if(node.canAddMixin(NodetypeConstant.MIX_REFERENCEABLE)){
       node.addMixin(NodetypeConstant.MIX_REFERENCEABLE);
@@ -201,7 +201,7 @@ public class Utils {
   }
 
   private static String getDefaultThumbnailUrl(Node node) throws RepositoryException {
-    LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
+    LinkManager linkManager = CommonsUtils.getService(LinkManager.class);
     String cssClass = CssClassUtils.getCSSClassByFileNameAndFileType(
         node.getName(), getMimeType(linkManager.isLink(node)?linkManager.getTarget(node, true):node), CssClassManager.ICON_SIZE.ICON_64);
 
@@ -213,7 +213,7 @@ public class Utils {
 
   private static String getThumbnailUrl(Node node, String repository, String workspace) {
     try {
-      LinkManager linkManager = WCMCoreUtils.getService(LinkManager.class);
+      LinkManager linkManager = CommonsUtils.getService(LinkManager.class);
       String mimeType = getMimeType(linkManager.isLink(node)?linkManager.getTarget(node, true):node);
       ExoContainer container = ExoContainerContext.getCurrentContainer();
       PortalContainerInfo containerInfo = (PortalContainerInfo) container.getComponentInstanceOfType(PortalContainerInfo.class);
@@ -246,7 +246,7 @@ public class Utils {
   }
 
   private static String getWebdavURL(Node contentNode, String repository, String workspace) throws Exception {
-    FriendlyService friendlyService = WCMCoreUtils.getService(FriendlyService.class);
+    FriendlyService friendlyService = CommonsUtils.getService(FriendlyService.class);
     String link = "#";
 
     String portalName = PortalContainer.getCurrentPortalContainerName();
@@ -308,25 +308,24 @@ public class Utils {
     if (isSkipRaiseAct != null && Boolean.valueOf(isSkipRaiseAct.toString())) {
       return null;
     }
-//    if (!isSupportedContent(node)) {
-//      return null;
-//    }
+
+    ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
+    activityType = StringUtils.isNotEmpty(activityType) ? activityType : FILE_SPACES;
+    if(! activityManager.isActivityTypeEnabled(activityType)) {
+      return null;
+    }
 
     // get services
-    ExoContainer container = ExoContainerContext.getCurrentContainer();
-    ActivityManager activityManager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
-    IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
-    ActivityCommonService activityCommonService =
-            (ActivityCommonService)container.getComponentInstanceOfType(ActivityCommonService.class);
-
-    SpaceService spaceService = WCMCoreUtils.getService(SpaceService.class);
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    ActivityCommonService activityCommonService = CommonsUtils.getService(ActivityCommonService.class);
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
 
     // refine to get the valid node
     refineNode(node);
 
     // get owner
     String activityOwnerId = getActivityOwnerId(node);
-    String nodeActivityID = StringUtils.EMPTY;
+    String nodeActivityID;
     ExoSocialActivity exa =null;
     if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
       try {
@@ -346,9 +345,9 @@ public class Utils {
       commentFlag = (activity != null);
     }
     if (activity==null) {
-      String _activityType = StringUtils.isNotEmpty(activityType)?activityType:CONTENT_SPACES;
+		
       activity = createActivity(identityManager, activityOwnerId,
-                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment, perm);
+                                node, activityMsgBundleKey, activityType, isSystemComment, systemComment, perm);
       setActivityType(null);
     }
     
@@ -393,21 +392,18 @@ public class Utils {
           && space != null) {
         // post activity to space stream
         Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,
-            space.getPrettyName(),
-            true);
+            space.getPrettyName());
         activityManager.saveActivityNoReturn(spaceIdentity, activity);
       } else if (activityOwnerId != null && activityOwnerId.length() > 0) {
         // post activity to user status stream
         Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
-            activityOwnerId,
-            true);
+            activityOwnerId);
         activityManager.saveActivityNoReturn(ownerIdentity, activity);
       } else {
         return null;
       }
-      String activityId = activity.getId();
-      if (!StringUtils.isEmpty(activityId)) {
-        ActivityTypeUtils.attachActivityId(node, activityId);
+        if (!StringUtils.isEmpty(activity.getId())) {
+        ActivityTypeUtils.attachActivityId(node, activity.getId());
       }
       updateMainActivity(activityManager, node, activity);
 
@@ -449,25 +445,24 @@ public class Utils {
     if (isSkipRaiseAct != null && Boolean.valueOf(isSkipRaiseAct.toString())) {
       return null;
     }
-//    if (!isSupportedContent(node)) {
-//      return null;
-//    }
+    
+    ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
+    activityType = StringUtils.isNotEmpty(activityType) ? activityType : FILE_SPACES;
+    if(! activityManager.isActivityTypeEnabled(activityType)) {
+      return null;
+    }
 
     // get services
-    ExoContainer container = ExoContainerContext.getCurrentContainer();
-    ActivityManager activityManager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
-    IdentityManager identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
-    ActivityCommonService activityCommonService =
-            (ActivityCommonService)container.getComponentInstanceOfType(ActivityCommonService.class);
-
-    SpaceService spaceService = WCMCoreUtils.getService(SpaceService.class);
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    ActivityCommonService activityCommonService = CommonsUtils.getService(ActivityCommonService.class);
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
 
     // refine to get the valid node
     refineNode(node);
 
     // get owner
     String activityOwnerId = getActivityOwnerId(node);
-    String nodeActivityID = StringUtils.EMPTY;
+    String nodeActivityID;
     ExoSocialActivity exa =null;    
     if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
       try {
@@ -488,9 +483,9 @@ public class Utils {
       }
     }
     if (activity==null) {
-      String _activityType = StringUtils.isNotEmpty(activityType)?activityType:FILE_SPACES;
+      
       activity = createActivity(identityManager, activityOwnerId,
-                                node, activityMsgBundleKey, _activityType, isSystemComment, systemComment, perm);
+                                node, activityMsgBundleKey, activityType, isSystemComment, systemComment, perm);
       setActivityType(null);
     }
     
@@ -532,8 +527,7 @@ public class Utils {
           && space != null) {
         // post activity to space stream
         Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME,
-            space.getPrettyName(),
-            true);
+            space.getPrettyName());
         activityManager.saveActivityNoReturn(spaceIdentity, activity);
       } else if (activityOwnerId != null && activityOwnerId.length() > 0) {
         if (!isPublic(node)) {
@@ -542,15 +536,13 @@ public class Utils {
         }
         // post activity to user status stream
         Identity ownerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
-            activityOwnerId,
-            true);
+            activityOwnerId);
         activityManager.saveActivityNoReturn(ownerIdentity, activity);
       } else {
         return null;
       }
-      String activityId = activity != null ? activity.getId() : null;
-      if (!StringUtils.isEmpty(activityId)) {
-        ActivityTypeUtils.attachActivityId(node, activityId);
+        if (!StringUtils.isEmpty(activity.getId())) {
+        ActivityTypeUtils.attachActivityId(node, activity.getId());
       }
 
       if (node.isNodeType(ActivityTypeUtils.EXO_ACTIVITY_INFO)) {
@@ -578,7 +570,7 @@ public class Utils {
   public static void updateNotifyMessages(ExoSocialActivity activity, String activityMsgBundleKey, String systemComment)
       throws Exception {     
     Locale locale = new Locale("en");
-    ResourceBundleService resourceBundleService = WCMCoreUtils.getService(ResourceBundleService.class);
+    ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
     ResourceBundle res = resourceBundleService.getResourceBundle("locale.extension.SocialIntegration", locale);
     StringBuffer sb = new StringBuffer();
     String[] keys = activityMsgBundleKey.split(ActivityCommonService.VALUE_SEPERATOR);
@@ -608,7 +600,7 @@ public class Utils {
     String nodeType = null;
     String documentTypeLabel;
     String currentVersion = null;
-    TemplateService templateService = WCMCoreUtils.getService(TemplateService.class);
+    TemplateService templateService = CommonsUtils.getService(TemplateService.class);
     try {
       nodeType = contentNode.getPrimaryNodeType().getName();
       documentTypeLabel = templateService.getTemplateLabel(nodeType);
@@ -834,7 +826,7 @@ public class Utils {
    * @return the illustrative image
    */
   public static String getIllustrativeImage(Node node) {
-    WebSchemaConfigService schemaConfigService = WCMCoreUtils.getService(WebSchemaConfigService.class);
+    WebSchemaConfigService schemaConfigService = CommonsUtils.getService(WebSchemaConfigService.class);
     WebContentSchemaHandler contentSchemaHandler = schemaConfigService.getWebSchemaHandlerByType(WebContentSchemaHandler.class);
     Node illustrativeImage = null;
     String uri = "";
