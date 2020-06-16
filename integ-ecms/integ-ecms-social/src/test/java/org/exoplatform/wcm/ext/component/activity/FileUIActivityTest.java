@@ -37,7 +37,7 @@ public class FileUIActivityTest {
 
   @Test
   public void testActivityMessageToDisplay() throws Exception {
-    String activityTitle = "Test tile";
+    String activityTitle = "<a href=\"test.odt\">test.odt</a>";
 
     FileUIActivityBuilder activityBuilder = new FileUIActivityBuilder();
     FileUIActivity fileUIActivity = new FileUIActivity();
