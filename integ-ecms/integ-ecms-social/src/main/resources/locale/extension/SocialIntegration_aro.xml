@@ -65,7 +65,7 @@
       <revisionChanged>تم استعادة المنشور إلى الاصدار: {0}</revisionChanged>
       <version>الإصدار: {0}</version>
       <updatedOn>تم التحديث بتاريخ</updatedOn>
-      <updatedBy>by</updatedBy>
+      <updatedBy>من قبل</updatedBy>
       <loadMoreFiles>+{0} أكثر</loadMoreFiles>
     </messages>
     <publicationStates>
@@ -84,7 +84,7 @@
     <edit>تغيير</edit>
     <download>تنزيل هذا الملف</download>
     <downloadAll>تنزيل الكلّ</downloadAll>
-    <preview>Preview</preview>
+    <preview>معاينة</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
@@ -134,7 +134,7 @@
   </UIPopupWindow>
   <UIShareDocuments>
     <label>
-      <ShareButton>Share</ShareButton>
+      <ShareButton>مشاركة</ShareButton>
       <CancelButton>الغاء</CancelButton>
       <TextAreaInit>إرسال رسالة مع مشاركة...</TextAreaInit>
       <ShareWith>مشاركة مع</ShareWith>
@@ -161,7 +161,7 @@
       <invite>
         <placeholder>أدخل أسماء المستخدمين أو فضاءات...</placeholder>
       </invite>
-      <owner>Owner</owner>
+      <owner>المالك</owner>
     </label>
   </UIShareDocuments>
 
