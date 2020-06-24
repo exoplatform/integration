@@ -41,7 +41,7 @@
       <removeTitle>Title has been removed.</removeTitle>
       <removeName>Name has been removed.</removeName>
       <removeSummary>Summary has been removed.</removeSummary>
-      <removeDescription>تفصیل ہٹا دیا گیا ہے ۔.</removeDescription>
+      <removeDescription>Description has been removed.</removeDescription>
       <removeCreator>Creator: {0} has been removed.</removeCreator>
       <removeMultiCreator>Creators: {0} have been removed.</removeMultiCreator>
       <removeLanguage>Language has been removed.</removeLanguage>
@@ -65,7 +65,7 @@
       <revisionChanged>Publication has been restored to version: {0}</revisionChanged>
       <version>Version: {0}</version>
       <updatedOn>Updated on</updatedOn>
-      <updatedBy>نے</updatedBy>
+      <updatedBy>by</updatedBy>
       <loadMoreFiles>+{0} more</loadMoreFiles>
     </messages>
     <publicationStates>
@@ -74,21 +74,21 @@
       <unpublished>Unpublished</unpublished>
       <draft>Draft</draft>
       <pending>Pending</pending>
-      <approved>منظور ہوگیا</approved>
+      <approved>Approved</approved>
       <inreview>In Review</inreview>
       <staged>Staged</staged>
       <published>Published</published>
       <live>Published</live>
     </publicationStates>
-    <view>ملاحظہ کریں</view>
-    <edit>ترمیم</edit>
-    <download>ڈاؤن لوڈ</download>
+    <view>View</view>
+    <edit>Edit</edit>
+    <download>Download</download>
     <downloadAll>Download All</downloadAll>
-    <preview>پیش نظارہ</preview>
+    <preview>Preview</preview>
   </SocialIntegration>
   <UIPopupWindow>
     <title>
-      <DocViewer>پیش نظارہ</DocViewer>
+      <DocViewer>Preview</DocViewer>
       <UIReadOnlyFileConfirmMessage>Open Document</UIReadOnlyFileConfirmMessage>
     </title>
   </UIPopupWindow>
@@ -101,7 +101,7 @@
   </ElementSet>
   <UIPreviewCommentArea>
     <label>
-      <commentTextAreaPreview>اپنا تبصرہ شامل کریں...</commentTextAreaPreview>
+      <commentTextAreaPreview>Add your comment...</commentTextAreaPreview>
       <no-comment-yet>No comment yet</no-comment-yet>
     </label>
   </UIPreviewCommentArea>
@@ -135,10 +135,10 @@
   <UIShareDocuments>
     <label>
       <ShareButton>Share</ShareButton>
-      <CancelButton>منسوخ</CancelButton>
+      <CancelButton>Cancel</CancelButton>
       <TextAreaInit>Send a message upon sharing...</TextAreaInit>
       <ShareWith>Share with</ShareWith>
-      <Access>اجازت</Access>
+      <Access>Access</Access>
       <SpaceMember>Space Members</SpaceMember>
       <SelectASpace>Select a Space</SelectASpace>
       <SharedADocument>shared a document</SharedADocument>
