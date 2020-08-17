@@ -187,15 +187,11 @@
     ownerAvatar = ownerIdentity.profile.avatarUrl;
     ownerName = StringEscapeUtils.escapeHtml(ownerIdentity.profile.fullName);
     if (!ownerAvatar) ownerAvatar= LinkProvider.PROFILE_DEFAULT_AVATAR_URL;
-    if (spaceGroupId.length() > 0) {
-      pageLink = uicomponent.getPageURLFromSpace();
-    }
   } else {
     Space space = Utils.getSpaceService().getSpaceByName(ownerIdentity.remoteId);
     ownerUri = space.url;
     ownerAvatar = space.avatarUrl;
     ownerName = space.displayName;
-    pageLink = uicomponent.getPageURLFromSpace();
     if (!ownerAvatar) ownerAvatar = LinkProvider.SPACE_DEFAULT_AVATAR_URL;
   }
 
