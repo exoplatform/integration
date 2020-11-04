@@ -16,6 +16,7 @@
  */
 package org.exoplatform.commons.search.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.api.search.SearchService;
 import org.exoplatform.commons.api.search.SearchServiceConnector;
 import org.exoplatform.commons.api.search.data.SearchContext;
@@ -43,6 +44,8 @@ import javax.ws.rs.core.*;
 import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.File;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -125,8 +128,13 @@ public class UnifiedSearchService implements ResourceContainer {
       SearchContext context = new SearchContext(this.router, siteName);
       context.lang(lang);
       
-      if(null==query || query.isEmpty()) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-  
+      if(StringUtils.isBlank(query)) return Response.ok("", MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+      query = URLDecoder.decode(query, StandardCharsets.UTF_8.name());
+      query = query.replace("#", " ")
+                   .replace("$", " ")
+                   .replace("_", " ")
+                   .replace("?", " ")
+                   .replace(".", " ");
       String userId = ConversationState.getCurrent().getIdentity().getUserId();
       boolean isAnonymous = null==userId || userId.isEmpty() || userId.equals("__anonim");
       SearchSetting searchSetting = isAnonymous ? getAnonymSearchSetting() : getSearchSetting();
